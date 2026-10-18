@@ -13,6 +13,19 @@ def test_unknown_intent_hands_off(client):
     assert body["tool_calls"] == []
 
 
+def test_tool_error_hands_off(client):
+    body = client.post("/chat/demo", json={"message": "balance for CUST-404"}).json()
+    assert body["status"] == "needs_human"
+    assert body["tool_calls"] == []
+
+
+def test_disallowed_tool_hands_off(client, monkeypatch):
+    monkeypatch.setattr("app.guardrails.ALLOWED_TOOLS", {"lookup_account"})
+    body = client.post("/chat/demo", json={"message": "create a ticket"}).json()
+    assert body["status"] == "needs_human"
+    assert body["tool_calls"] == []
+
+
 def test_conversation_and_logs_are_visible(client):
     client.post("/chat/demo", json={"message": "balance for CUST-001"})
     conversation = client.get("/conversations/demo")

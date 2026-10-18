@@ -17,6 +17,9 @@ class Classification:
 
 
 class MockLLM:
+    def __init__(self, mode: str = "mock") -> None:
+        self.mode = mode
+
     def classify(self, message: str, trace_id: str) -> Classification:
         lowered = message.lower()
         if "balance" in lowered:
@@ -26,7 +29,7 @@ class MockLLM:
             result = Classification("support_ticket", 0.9, {"summary": message[:200]})
         else:
             result = Classification("unknown", 0.2, {})
-        log_event("llm_call", trace_id, model="mock", latency_ms=0, tokens=0, fallback=True)
+        log_event("llm_call", trace_id, model="mock", latency_ms=0, tokens=0, mode=self.mode)
         return result
 
     def respond(self, message: str, tool_result: dict[str, Any], trace_id: str) -> str:
@@ -34,14 +37,14 @@ class MockLLM:
             reply = f"The balance for {tool_result['customer_id']} is ${tool_result['balance']:.2f}."
         else:
             reply = f"I created ticket #{tool_result['ticket_id']}."
-        log_event("llm_call", trace_id, model="mock", latency_ms=0, tokens=0, fallback=True)
+        log_event("llm_call", trace_id, model="mock", latency_ms=0, tokens=0, mode=self.mode)
         return reply
 
 
 class ClaudeProvider:
     def __init__(self) -> None:
         self.client = Anthropic(api_key=config.ANTHROPIC_API_KEY, timeout=config.LLM_TIMEOUT)
-        self.mock = MockLLM()
+        self.mock = MockLLM(mode="fallback")
 
     def _call(self, model: str, prompt: str, trace_id: str) -> str:
         started = time.perf_counter()
@@ -57,7 +60,7 @@ class ClaudeProvider:
                     "llm_call", trace_id, model=model,
                     latency_ms=round((time.perf_counter() - started) * 1000),
                     tokens=response.usage.input_tokens + response.usage.output_tokens,
-                    fallback=False,
+                    mode="live",
                 )
                 return text
             except Exception as error:
@@ -89,4 +92,3 @@ class ClaudeProvider:
 
 def get_llm() -> MockLLM | ClaudeProvider:
     return ClaudeProvider() if config.USE_LIVE_LLM and config.ANTHROPIC_API_KEY else MockLLM()
-

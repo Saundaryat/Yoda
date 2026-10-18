@@ -3,7 +3,7 @@ from uuid import uuid4
 from sqlmodel import Session
 
 from app.db import engine
-from app.guardrails import is_action_allowed, redact_pii
+from app.guardrails import is_action_allowed, redact_data, redact_pii
 from app.llm import get_llm
 from app.logging_utils import log_event
 from app.models import Conversation, Message
@@ -48,6 +48,8 @@ def run(conversation_id: str, message: str) -> dict:
         session.add(Message(conversation_id=conversation_id, role="user", content=safe_message))
         session.add(Message(conversation_id=conversation_id, role="assistant", content=reply))
         session.commit()
-    log_event("agent_run", trace_id, intent=classification.intent, status=status, tool_calls=tool_calls)
+    log_event(
+        "agent_run", trace_id, intent=classification.intent,
+        status=status, tool_calls=redact_data(tool_calls),
+    )
     return {"reply": reply, "status": status, "tool_calls": tool_calls, "trace_id": trace_id}
-
