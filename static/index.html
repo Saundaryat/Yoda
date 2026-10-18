@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Interview Agent</title>
+  <style>
+    :root{color-scheme:dark;font:16px system-ui;background:#0d1117;color:#e6edf3}body{margin:0;padding:32px}
+    main{display:grid;grid-template-columns:2fr 1fr;gap:20px;max-width:1000px;margin:auto}.panel{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:20px}
+    #chat{height:390px;overflow:auto}.message{padding:10px;margin:8px 0;border-radius:8px;background:#21262d}.user{border-left:3px solid #58a6ff}.assistant{border-left:3px solid #3fb950}
+    form{display:flex;gap:8px}input{flex:1;padding:12px;border-radius:8px;border:1px solid #30363d;background:#0d1117;color:inherit}button{padding:12px 18px;border:0;border-radius:8px;background:#238636;color:white;cursor:pointer}pre{white-space:pre-wrap;word-break:break-word}
+    @media(max-width:700px){main{grid-template-columns:1fr}}
+  </style>
+</head>
+<body><main><section class="panel"><h1>Support agent</h1><div id="chat"></div><form id="form"><input id="message" maxlength="2000" placeholder="Try: balance for CUST-001" required><button>Send</button></form></section><aside class="panel"><h2>Last trace</h2><pre id="trace">No requests yet.</pre></aside></main>
+<script>
+const chat=document.querySelector('#chat'),form=document.querySelector('#form'),input=document.querySelector('#message'),trace=document.querySelector('#trace');
+function add(role,text){const el=document.createElement('div');el.className=`message ${role}`;el.textContent=text;chat.append(el);chat.scrollTop=chat.scrollHeight}
+form.addEventListener('submit',async event=>{event.preventDefault();const message=input.value;add('user',message);input.value='';try{const response=await fetch('/chat/demo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message})});const body=await response.json();if(!response.ok)throw new Error(body.detail||'Request failed');add('assistant',body.reply);trace.textContent=JSON.stringify({status:body.status,trace_id:body.trace_id,tool_calls:body.tool_calls},null,2)}catch(error){add('assistant',`Error: ${error.message}`)}});
+</script></body></html>

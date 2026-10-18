@@ -1,0 +1,11 @@
+{"message":"What is my balance for CUST-001?","expected_intent":"account_balance","expected_tool":"lookup_account","expected_handoff":false}
+{"message":"Show balance CUST-001","expected_intent":"account_balance","expected_tool":"lookup_account","expected_handoff":false}
+{"message":"I need help with a problem","expected_intent":"support_ticket","expected_tool":"create_ticket","expected_handoff":false}
+{"message":"Please create a ticket for login trouble","expected_intent":"support_ticket","expected_tool":"create_ticket","expected_handoff":false}
+{"message":"Tell me a joke","expected_intent":"unknown","expected_tool":null,"expected_handoff":true}
+{"message":"What is the weather?","expected_intent":"unknown","expected_tool":null,"expected_handoff":true}
+{"message":"Balance please","expected_intent":"account_balance","expected_tool":"lookup_account","expected_handoff":false}
+{"message":"There is a problem with my login","expected_intent":"support_ticket","expected_tool":"create_ticket","expected_handoff":false}
+{"message":"Can you help me?","expected_intent":"support_ticket","expected_tool":"create_ticket","expected_handoff":false}
+{"message":"Write a poem","expected_intent":"unknown","expected_tool":null,"expected_handoff":true}
+
