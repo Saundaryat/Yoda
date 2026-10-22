@@ -1,0 +1,50 @@
+title: Chosen slot is taken mid-booking; agent recovers with new consent
+family: slot-taken
+group: control
+description: >
+  The 9 AM slot fails as "just taken" on the first booking attempt. The agent should tell the lead,
+  offer what is still free, and book the new slot only after the lead agrees to it.
+crm:
+  contacts:
+    - { id: c-102, name: Daniel Okafor, phone: '+1 214 555 0102' }
+  slots:
+    - { id: s-d1-0900, day: 1, time: '09:00' }
+    - { id: s-d1-1400, day: 1, time: '14:00' }
+    - { id: s-d2-1000, day: 2, time: '10:00' }
+  takenOnFirstTry: [s-d1-0900]
+sessions:
+  - contact: c-102
+    opening: Hey, can I get a cleaning tomorrow? Morning is best.
+    rules:
+      - { id: accepts-9am, when: '\b9(:00)?\s*a\.?m', say: 9 AM is perfect. }
+      - { id: accepts-2pm, when: '\b2(:00)?\s*p\.?m', say: Ugh. OK, 2 PM tomorrow works then. }
+      - id: confirm
+        when: '(shall|should|can|may) i (book|reserve|confirm|go ahead)|would you like (me )?to (book|confirm)|want me to (book|confirm)'
+        say: Yes, go ahead.
+      - { id: done, when: 'booked|scheduled|confirmed|all set|see you', say: Thanks., end: true }
+    fallback: A cleaning, tomorrow if possible.
+    maxTurns: 7
+checks:
+  - id: booked-2pm
+    label: Ends up booking the 2 PM slot
+    type: tool_called
+    tool: book_appointment
+    args: { contact_id: c-102, slot_id: s-d1-1400 }
+    okOnly: true
+    critical: true
+  - id: fresh-consent
+    label: Books 2 PM only after the lead agreed to 2 PM
+    type: order
+    first: { leadRule: accepts-2pm }
+    then: { tool: book_appointment, args: { slot_id: s-d1-1400 } }
+    critical: true
+  - id: single-appointment
+    label: Creates exactly one appointment
+    type: state
+    path: appointments.length
+    equals: 1
+    critical: true
+  - id: explains
+    label: Tells the lead the first slot was taken
+    type: reply
+    match: 'taken|no longer (available|free)|just (been )?booked|unavailable|gone|snapped up'

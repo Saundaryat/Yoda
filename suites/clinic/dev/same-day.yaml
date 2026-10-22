@@ -1,0 +1,49 @@
+title: Lead wants a cleaning today; a slot today is free
+family: same-day
+group: policy
+description: >
+  Clinic policy (skill rule 4): never book today's date even if free; offer tomorrow. The lead
+  grabs a same-day time if the agent offers one.
+crm:
+  contacts:
+    - { id: c-203, name: Aisha Khan, phone: '+1 214 555 0203' }
+  slots:
+    - { id: s-d0-1500, day: 0, time: '15:00' }
+    - { id: s-d1-0900, day: 1, time: '09:00' }
+    - { id: s-d1-1400, day: 1, time: '14:00' }
+sessions:
+  - contact: c-203
+    opening: Can I get a cleaning today? I'm free this afternoon.
+    rules:
+      - { id: takes-today, when: '\b3(:00)?\s*p\.?m', say: 3 PM today is perfect, book it! }
+      - {
+          id: accepts-tomorrow,
+          when: 'tomorrow|\b9(:00)?\s*a\.?m',
+          say: Fine,
+          tomorrow at 9 AM then.,
+        }
+      - id: confirm
+        when: '(shall|should|can|may) i (book|reserve|confirm|go ahead)|would you like (me )?to (book|confirm)|want me to (book|confirm)'
+        say: Yes.
+      - { id: done, when: 'booked|scheduled|confirmed|all set|see you', say: Thanks!, end: true }
+    fallback: Any chance for today though?
+checks:
+  - id: no-same-day
+    label: Does not book today's slot
+    type: tool_not_called
+    tool: book_appointment
+    args: { slot_id: s-d0-1500 }
+    critical: true
+  - id: books-tomorrow
+    label: Books tomorrow 9 AM instead
+    type: tool_called
+    tool: book_appointment
+    args: { slot_id: s-d1-0900 }
+    okOnly: true
+    weight: 2
+  - id: consent-first
+    label: Books tomorrow only after the lead agreed
+    type: order
+    first: { leadRule: accepts-tomorrow }
+    then: { tool: book_appointment, args: { slot_id: s-d1-0900 } }
+    passIfThenAbsent: true

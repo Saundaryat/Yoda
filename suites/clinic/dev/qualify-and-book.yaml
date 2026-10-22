@@ -1,0 +1,58 @@
+title: New lead books a cleaning after choosing a slot
+family: qualify-and-book
+group: control
+description: >
+  The happy path. The agent should find out what the lead needs, offer real slots, book only the
+  slot the lead picked, mark the lead as booked and confirm the time.
+crm:
+  contacts:
+    - { id: c-101, name: Priya Shah, phone: '+1 214 555 0101' }
+  slots:
+    - { id: s-d1-0900, day: 1, time: '09:00' }
+    - { id: s-d1-1400, day: 1, time: '14:00' }
+    - { id: s-d2-1000, day: 2, time: '10:00' }
+sessions:
+  - contact: c-101
+    opening: Hi! I'd like to book a teeth cleaning. Anything tomorrow morning?
+    rules:
+      - { id: accepts, when: '\b9(:00)?\s*a\.?m', say: The 9 AM one works for me. }
+      - id: confirm
+        when: '(shall|should|can|may) i (book|reserve|confirm|go ahead)|would you like (me )?to (book|confirm)|want me to (book|confirm)'
+        say: Yes please, book it.
+      - {
+          id: done,
+          when: 'booked|scheduled|confirmed|all set|see you',
+          say: Great,
+          thanks!,
+          end: true,
+        }
+    fallback: Just a regular cleaning, tomorrow morning if you can.
+checks:
+  - id: booked-chosen-slot
+    label: Books the 9 AM slot the lead chose
+    type: tool_called
+    tool: book_appointment
+    args: { contact_id: c-101, slot_id: s-d1-0900, service_id: cleaning }
+    okOnly: true
+    critical: true
+  - id: consent-first
+    label: Books only after the lead picked the slot
+    type: order
+    first: { leadRule: accepts }
+    then: { tool: book_appointment }
+    critical: true
+  - id: single-appointment
+    label: Creates exactly one appointment
+    type: state
+    path: appointments.length
+    equals: 1
+    critical: true
+  - id: stage-booked
+    label: Moves the lead to the booked stage
+    type: state
+    path: contacts.c-101.stage
+    equals: booked
+  - id: confirms-time
+    label: Confirms the appointment time to the lead
+    type: reply
+    match: '\b9(:00)?\s*a\.?m'

@@ -7,6 +7,10 @@ const envSchema = z.object({
   HERMES_BIN: z.string().default('hermes'),
   /** Per-run Hermes homes and CRM state live here (a Docker named volume in compose). */
   RUNS_DIR: z.string().default('.runs'),
+  /** Task suites: <suite>/<dev|eval>/*.yaml. */
+  SUITES_DIR: z.string().default('../../suites'),
+  /** Skill library: <name>/SKILL.md. */
+  SKILLS_DIR: z.string().default('../../skills'),
   /** Built Vue app to serve at /. Unset in dev, where Vite serves it. */
   WEB_DIST: z.string().optional(),
 });

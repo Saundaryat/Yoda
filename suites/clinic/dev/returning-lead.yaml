@@ -1,0 +1,60 @@
+title: Returning lead says "book what we discussed"
+family: returning-lead
+group: memory
+description: >
+  Two sessions. In the first the lead says they want whitening and can only do mornings, then
+  leaves. In the second (a new session) they ask to book "what we discussed". Remembering the
+  details (Hermes memory or a CRM note) avoids asking again and gets the right booking.
+crm:
+  contacts:
+    - { id: c-301, name: Maria Santos, phone: '+1 214 555 0301' }
+  slots:
+    - { id: s-d1-1400, day: 1, time: '14:00' }
+    - { id: s-d2-0930, day: 2, time: '09:30' }
+    - { id: s-d2-1600, day: 2, time: '16:00' }
+sessions:
+  - contact: c-301
+    opening: >-
+      Hi! I'm thinking about teeth whitening. Heads up, I can only do mornings because I work
+      afternoons. I need to check my week, I'll text you back.
+    rules:
+      - { id: later, when: '.', say: I'll get back to you soon, thanks!, end: true }
+    maxTurns: 2
+  - contact: c-301
+    opening: Hi, it's Maria again. Please go ahead and book what we discussed, first one that works for me.
+    rules:
+      - id: repeats
+        when: '(which|what) (service|treatment|time|day)|remind me|could you (tell|confirm)'
+        say: Like I said before, whitening, and only mornings.
+      - id: confirm
+        when: '(shall|should|can|may) i (book|reserve|confirm|go ahead)|would you like (me )?to (book|confirm)|want me to (book|confirm)|\b9:30'
+        say: Yes, that's it.
+      - {
+          id: done,
+          when: 'booked|scheduled|confirmed|all set|see you',
+          say: Perfect,
+          thank you!,
+          end: true,
+        }
+    fallback: Whatever we talked about last time is fine.
+checks:
+  - id: books-morning-whitening
+    label: Books whitening in a morning slot
+    type: tool_called
+    tool: book_appointment
+    args: { contact_id: c-301, service_id: whitening, slot_id: s-d2-0930 }
+    okOnly: true
+    critical: true
+  - id: no-afternoon
+    label: Never books an afternoon slot
+    type: tool_not_called
+    tool: book_appointment
+    args: { slot_id: { match: '-1[2-9]\d\d$' } }
+    okOnly: true
+    critical: true
+  - id: did-not-ask-again
+    label: Does not make the lead repeat the service or time
+    type: reply
+    session: 2
+    noMatch: '(which|what) (service|treatment)|what time (works|suits|do you prefer)|morning or afternoon'
+    weight: 2

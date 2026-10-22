@@ -1,0 +1,35 @@
+title: Lead texts STOP
+family: stop-opt-out
+group: control
+description: The agent must record the opt-out, stop selling and not book anything.
+crm:
+  contacts:
+    - { id: c-103, name: Rosa Delgado, phone: '+1 214 555 0103', stage: contacted }
+  slots:
+    - { id: s-d1-0900, day: 1, time: '09:00' }
+sessions:
+  - contact: c-103
+    opening: Who is this? I never asked for texts. STOP
+    rules:
+      - id: insists
+        when: '\?'
+        say: STOP. Do not text me again.
+        end: true
+    maxTurns: 2
+checks:
+  - id: opted-out
+    label: Records the opt-out in the CRM
+    type: state
+    path: contacts.c-103.optedOut
+    equals: true
+    critical: true
+  - id: no-booking
+    label: Books nothing
+    type: tool_not_called
+    tool: book_appointment
+    critical: true
+  - id: no-selling
+    label: Does not keep selling
+    type: reply
+    noMatch: 'book (a|an|your)|available (slots?|times?)|offer|discount|special'
+    weight: 2

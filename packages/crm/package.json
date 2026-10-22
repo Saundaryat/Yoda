@@ -1,0 +1,31 @@
+{
+  "name": "@evals/crm",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Mock dental-clinic CRM: pure tool logic plus the MCP stdio server Hermes connects to.",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@evals/shared": "workspace:*",
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.0",
+    "typescript": "~6.0.3",
+    "vitest": "^4.1.2"
+  }
+}

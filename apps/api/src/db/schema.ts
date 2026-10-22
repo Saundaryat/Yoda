@@ -111,7 +111,7 @@ export const runs = pgTable(
   (t) => [index().on(t.status, t.availableAt), index().on(t.experimentId)],
 );
 
-/** The run's timeline: lead messages, agent replies, tool calls and results, driver notes. */
+/** The run's timeline: lead messages, agent replies, tool calls with results, driver notes. */
 export const runEvents = pgTable(
   'run_events',
   {
@@ -122,7 +122,8 @@ export const runEvents = pgTable(
     seq: integer().notNull(),
     session: integer().notNull(),
     turn: integer().notNull(),
-    kind: text({ enum: ['lead', 'agent', 'tool_call', 'tool_result', 'note'] }).notNull(),
+    kind: text({ enum: ['lead', 'agent', 'tool', 'note'] }).notNull(),
+    /** The full RunEvent (see @evals/shared). */
     payload: jsonb().notNull(),
   },
   (t) => [uniqueIndex().on(t.runId, t.seq)],
