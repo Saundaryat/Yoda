@@ -22,7 +22,7 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
 
-  integration:
+  integration-and-e2e:
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -47,6 +47,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm --filter @evals/api test:integration
+      - run: pnpm --filter @evals/web exec playwright install --with-deps chromium
+      - run: pnpm --filter @evals/web test:e2e
 
   docker:
     runs-on: ubuntu-latest
