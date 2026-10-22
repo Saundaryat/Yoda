@@ -35,8 +35,8 @@ checks:
   - id: fresh-consent
     label: Books 2 PM only after the lead agreed to 2 PM
     type: order
-    first: { leadRule: accepts-2pm }
-    then: { tool: book_appointment, args: { slot_id: s-d1-1400 } }
+    before: { leadRule: accepts-2pm }
+    after: { tool: book_appointment, args: { slot_id: s-d1-1400 } }
     critical: true
   - id: single-appointment
     label: Creates exactly one appointment

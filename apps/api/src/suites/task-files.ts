@@ -57,8 +57,8 @@ export function lintTask(task: TaskDefinition): string[] {
     }
     if (check.type === 'tool_called' || check.type === 'tool_not_called') selector(check, where);
     if (check.type === 'order') {
-      selector(check.first, `${where}.first`);
-      selector(check.then, `${where}.then`);
+      selector(check.before, `${where}.before`);
+      selector(check.after, `${where}.after`);
     }
     if (check.type === 'reply') {
       if (check.match) regex(check.match, where);

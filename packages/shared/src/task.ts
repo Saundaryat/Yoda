@@ -72,10 +72,10 @@ export const checkSchema = z.discriminatedUnion('type', [
   z.object({
     ...checkBase,
     type: z.literal('order'),
-    first: eventSelectorSchema,
-    then: eventSelectorSchema,
-    /** Pass when `then` never happens (default false: both must happen, in order). */
-    passIfThenAbsent: z.boolean().default(false),
+    before: eventSelectorSchema,
+    after: eventSelectorSchema,
+    /** Pass when `after` never happens (default false: both must happen, in this order). */
+    afterOptional: z.boolean().default(false),
   }),
   z.object({
     ...checkBase,

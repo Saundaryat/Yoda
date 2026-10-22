@@ -167,8 +167,8 @@ describe('order checks', () => {
     id: 'consent',
     label: '',
     type: 'order',
-    first: { leadRule: 'accepts' },
-    then: { tool: 'book_appointment' },
+    before: { leadRule: 'accepts' },
+    after: { tool: 'book_appointment' },
   };
 
   it('passes when the lead agrees before the booking', () => {
@@ -187,7 +187,7 @@ describe('order checks', () => {
   });
 
   it('treats a missing second event as the task says', () => {
-    const lenient = { ...consentFirst, passIfThenAbsent: true };
+    const lenient = { ...consentFirst, afterOptional: true };
     expect(scoreRun(task([consentFirst]), [], crm).checks[0]?.passed).toBe(false);
     expect(scoreRun(task([lenient]), [], crm).checks[0]?.passed).toBe(true);
   });

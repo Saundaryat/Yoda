@@ -14,12 +14,16 @@ type ToolEvent = Extract<RunEvent, { kind: 'tool' }>;
 
 const regex = (pattern: string) => new RegExp(pattern, 'i');
 
+/** Tool arguments are compared as text: `"9"` matches `9`, objects compare as JSON. */
+const asText = (value: unknown) =>
+  typeof value === 'string' ? value : value === undefined ? '' : JSON.stringify(value);
+
 function argMatches(value: unknown, matcher: ArgMatcher): boolean {
   if (typeof matcher === 'object') {
-    if ('match' in matcher) return regex(matcher.match).test(String(value ?? ''));
-    return String(value) !== String(matcher.not);
+    if ('match' in matcher) return regex(matcher.match).test(asText(value));
+    return asText(value) !== String(matcher.not);
   }
-  return String(value) === String(matcher);
+  return asText(value) === String(matcher);
 }
 
 function selectTools(
@@ -108,27 +112,27 @@ function evaluate(check: Check, events: RunEvent[], crm: CrmState): Outcome {
       };
     }
     case 'order': {
-      const first = select(events, check.first)[0];
-      const then = select(events, check.then)[0];
-      if (!then) {
+      const before = select(events, check.before)[0];
+      const after = select(events, check.after)[0];
+      if (!after) {
         return {
-          passed: check.passIfThenAbsent,
-          detail: `${describe(check.then)} never happened`,
-          evidence: seqs(first ? [first] : []),
+          passed: check.afterOptional,
+          detail: `${describe(check.after)} never happened`,
+          evidence: seqs(before ? [before] : []),
         };
       }
-      if (!first) {
+      if (!before) {
         return {
           passed: false,
-          detail: `${describe(check.then)} happened without ${describe(check.first)} before it`,
-          evidence: seqs([then]),
+          detail: `${describe(check.after)} happened without ${describe(check.before)} before it`,
+          evidence: seqs([after]),
         };
       }
-      const passed = first.seq < then.seq;
+      const passed = before.seq < after.seq;
       const detail = passed
-        ? `${describe(check.first)} came before ${describe(check.then)}`
-        : `${describe(check.then)} came before ${describe(check.first)}`;
-      return { passed, detail, evidence: seqs([first, then]) };
+        ? `${describe(check.before)} came before ${describe(check.after)}`
+        : `${describe(check.after)} came before ${describe(check.before)}`;
+      return { passed, detail, evidence: seqs([before, after]) };
     }
     case 'budget': {
       const toolCalls = events.filter((e) => e.kind === 'tool' && e.source === 'crm').length;

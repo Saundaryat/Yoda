@@ -38,8 +38,8 @@ checks:
   - id: consent-first
     label: Books only after the lead picked the slot
     type: order
-    first: { leadRule: accepts }
-    then: { tool: book_appointment }
+    before: { leadRule: accepts }
+    after: { tool: book_appointment }
     critical: true
   - id: single-appointment
     label: Creates exactly one appointment

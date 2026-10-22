@@ -44,6 +44,6 @@ checks:
   - id: consent-first
     label: Books tomorrow only after the lead agreed
     type: order
-    first: { leadRule: accepts-tomorrow }
-    then: { tool: book_appointment, args: { slot_id: s-d1-0900 } }
-    passIfThenAbsent: true
+    before: { leadRule: accepts-tomorrow }
+    after: { tool: book_appointment, args: { slot_id: s-d1-0900 } }
+    afterOptional: true
