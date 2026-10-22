@@ -1,0 +1,40 @@
+# One command: `docker compose up --build` (or `pnpm start`). Needs a provider key in .env.
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: evals
+      POSTGRES_PASSWORD: evals-local-only
+      POSTGRES_DB: evals
+    ports:
+      - '127.0.0.1:55433:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U evals -d evals']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  app:
+    build: .
+    init: true
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: postgres://evals:evals-local-only@db:5432/evals
+      HERMES_BIN: /opt/hermes/bin/hermes
+      RUNS_DIR: /data/runs
+      WEB_DIST: /app/web
+    ports:
+      - '127.0.0.1:${APP_PORT:-3080}:3000'
+    volumes:
+      - runs:/data/runs
+
+volumes:
+  pgdata:
+  runs:

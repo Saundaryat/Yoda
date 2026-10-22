@@ -1,0 +1,13 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+# Per-run Hermes homes and CRM state: transcripts, keys, logs
+.runs/
+spike/runs/
+playwright-report/
+test-results/
+.DS_Store
+*.tsbuildinfo

@@ -1,0 +1,7 @@
+packages:
+  - apps/*
+  - packages/*
+
+# drizzle-kit loads its config through esbuild.
+allowBuilds:
+  esbuild: true
