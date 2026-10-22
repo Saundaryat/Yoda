@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { createExperimentSchema, type CreateExperiment } from '@evals/shared';
 import { filter, interval, map, merge, Observable } from 'rxjs';
+import { AnalysisService } from '../analysis/analysis.service.js';
 import { ZodValidationPipe } from '../common/zod-validation.pipe.js';
 import { RunQueueService } from '../runner/run-queue.service.js';
 import { ExperimentsService } from './experiments.service.js';
@@ -19,6 +20,7 @@ export class ExperimentsController {
   constructor(
     private readonly experiments: ExperimentsService,
     private readonly queue: RunQueueService,
+    private readonly analysis: AnalysisService,
   ) {}
 
   /** Creates a draft. Nothing runs (and nothing is spent) until it is started. */
@@ -50,6 +52,12 @@ export class ExperimentsController {
   @Post(':id/retry-errors')
   retryErrors(@Param('id', ParseUUIDPipe) id: string) {
     return this.experiments.retryErrors(id);
+  }
+
+  /** The comparison so far. Provisional while runs are still open (see coverage.openRuns). */
+  @Get(':id/results')
+  results(@Param('id', ParseUUIDPipe) id: string) {
+    return this.analysis.results(id);
   }
 
   @Get(':id/runs')

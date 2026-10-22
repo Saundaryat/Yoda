@@ -101,6 +101,12 @@ describe('experiments end to end', () => {
     expect(new Set([runs[0]!.configId, runs[1]!.configId]).size).toBe(2);
     expect(runs.every((r) => r.passed)).toBe(true);
 
+    const results = (await api.get(`/api/experiments/${id}/results`).expect(200)).body;
+    expect(results.comparison).toMatchObject({ pairedTasks: 2, plannedTasks: 2, difference: 0 });
+    expect(results.coverage).toMatchObject({ plannedRuns: 8, scoredRuns: 8, openRuns: 0 });
+    expect(results.tasks.map((t: { a: unknown[] }) => t.a.length)).toEqual([2, 2]);
+    expect(results.metrics.costUsd.a).toBeGreaterThan(0);
+
     const detail = (await api.get(`/api/runs/${runs[0]!.id}`).expect(200)).body;
     expect(detail.events[0]).toMatchObject({ kind: 'lead', seq: 1 });
     expect(detail.checks.length).toBeGreaterThan(0);
