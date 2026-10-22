@@ -133,9 +133,40 @@ function run() {
     return result;
   };
 
+  // With the skill available, the fake opens it once per session and follows two of its rules.
+  const skillAvailable = values.toolsets.split(',').includes('skills');
+  const skillOpened = db
+    .prepare("select 1 from messages where session_id = ? and tool_name = 'skill_view'")
+    .get(sessionId);
+  if (skillAvailable && !skillOpened) {
+    const id = `call_${randomUUID().slice(0, 8)}`;
+    add('assistant', '', {
+      tool_calls: JSON.stringify([
+        { id, function: { name: 'skill_view', arguments: '{"name":"clinic-policy"}' } },
+      ]),
+    });
+    add('tool', '{"success": true, "name": "clinic-policy", "content": "..."}', {
+      tool_call_id: id,
+      tool_name: 'skill_view',
+    });
+  }
+  const followsPolicy = skillAvailable;
+  const age = /\b(?:i'?m|im|i am) (\d{1,2})\b/i.exec(prompt)?.[1];
+
   let reply;
   const wantsTime = /(\d{1,2})(?::\d\d)?\s*(am|pm)\b.*(works|book|perfect|then)/i.exec(prompt);
-  if (wantsTime) {
+  if (followsPolicy && age && Number(age) < 18) {
+    use('update_contact', { contact_id: contactId, age: Number(age) });
+    reply =
+      'Thanks! Since you are under 18, a parent or guardian needs to join before we can book.';
+  } else if (followsPolicy && /throbbing|swollen|pain/i.test(prompt)) {
+    use('escalate_to_human', {
+      contact_id: contactId,
+      reason: 'clinical',
+      summary: 'Tooth pain and swelling',
+    });
+    reply = 'I am sorry to hear that. A clinician will contact you shortly.';
+  } else if (wantsTime) {
     const hour = (Number(wantsTime[1]) % 12) + (wantsTime[2].toLowerCase() === 'pm' ? 12 : 0);
     const slot = use('search_slots', {}).find((s) => Number(s.start.slice(11, 13)) === hour);
     const booking =

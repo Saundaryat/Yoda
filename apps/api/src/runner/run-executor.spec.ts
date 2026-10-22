@@ -48,6 +48,7 @@ describe('executeRun with the fake Hermes', () => {
     expect(outcome).toMatchObject({ passed: true, score: 100, leadFallbacks: 0 });
     expect(outcome.events.map((e) => (e.kind === 'tool' ? `tool:${e.tool}` : e.kind))).toEqual([
       'lead',
+      'tool:skill_view',
       'tool:get_contact',
       'tool:search_slots',
       'agent',
@@ -59,6 +60,7 @@ describe('executeRun with the fake Hermes', () => {
       'lead',
       'agent',
     ]);
+    expect(outcome.events[1]).toMatchObject({ kind: 'tool', source: 'hermes', tool: 'skill_view' });
     expect(outcome.crmFinal.appointments).toHaveLength(1);
     expect(outcome.sessionIds).toHaveLength(1);
     expect(outcome.costUsd).toBeCloseTo(0.003);
