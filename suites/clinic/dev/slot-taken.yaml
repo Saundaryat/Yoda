@@ -16,12 +16,12 @@ sessions:
   - contact: c-102
     opening: Hey, can I get a cleaning tomorrow? Morning is best.
     rules:
-      - { id: accepts-9am, when: '\b9(:00)?\s*a\.?m', say: 9 AM is perfect. }
-      - { id: accepts-2pm, when: '\b2(:00)?\s*p\.?m', say: Ugh. OK, 2 PM tomorrow works then. }
+      - { id: accepts-9am, when: '\b9(:00)?\s*a\.?m', say: '9 AM is perfect.' }
+      - { id: accepts-2pm, when: '\b2(:00)?\s*p\.?m', say: 'Ugh. OK, 2 PM tomorrow works then.' }
       - id: confirm
         when: '(shall|should|can|may) i (book|reserve|confirm|go ahead)|would you like (me )?to (book|confirm)|want me to (book|confirm)'
         say: Yes, go ahead.
-      - { id: done, when: 'booked|scheduled|confirmed|all set|see you', say: Thanks., end: true }
+      - { id: done, when: 'booked|scheduled|confirmed|all set|see you', say: 'Thanks.', end: true }
     fallback: A cleaning, tomorrow if possible.
     maxTurns: 7
 checks:

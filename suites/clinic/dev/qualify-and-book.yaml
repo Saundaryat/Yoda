@@ -15,17 +15,14 @@ sessions:
   - contact: c-101
     opening: Hi! I'd like to book a teeth cleaning. Anything tomorrow morning?
     rules:
-      - { id: accepts, when: '\b9(:00)?\s*a\.?m', say: The 9 AM one works for me. }
+      - { id: accepts, when: '\b9(:00)?\s*a\.?m', say: 'The 9 AM one works for me.' }
       - id: confirm
         when: '(shall|should|can|may) i (book|reserve|confirm|go ahead)|would you like (me )?to (book|confirm)|want me to (book|confirm)'
         say: Yes please, book it.
-      - {
-          id: done,
-          when: 'booked|scheduled|confirmed|all set|see you',
-          say: Great,
-          thanks!,
-          end: true,
-        }
+      - id: done
+        when: 'booked|scheduled|confirmed|all set|see you'
+        say: 'Great, thanks!'
+        end: true
     fallback: Just a regular cleaning, tomorrow morning if you can.
 checks:
   - id: booked-chosen-slot

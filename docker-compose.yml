@@ -29,6 +29,8 @@ services:
       DATABASE_URL: postgres://evals:evals-local-only@db:5432/evals
       HERMES_BIN: /opt/hermes/bin/hermes
       RUNS_DIR: /data/runs
+      SUITES_DIR: /app/suites
+      SKILLS_DIR: /app/skills
       WEB_DIST: /app/web
     ports:
       - '127.0.0.1:${APP_PORT:-3080}:3000'

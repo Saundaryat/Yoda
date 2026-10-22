@@ -14,7 +14,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run --passWithNoTests",
     "test:integration": "vitest run --config vitest.config.integration.ts",
-    "db:generate": "drizzle-kit generate"
+    "db:generate": "drizzle-kit generate && node scripts/unqualify-migrations.mjs"
   },
   "dependencies": {
     "@evals/crm": "workspace:*",

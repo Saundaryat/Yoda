@@ -22,6 +22,32 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
 
+  integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: evals
+          POSTGRES_PASSWORD: evals-local-only
+          POSTGRES_DB: evals
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U evals" --health-interval 2s --health-timeout 3s --health-retries 30
+    env:
+      DATABASE_URL: postgres://evals:evals-local-only@localhost:5432/evals
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm --filter @evals/api test:integration
+
   docker:
     runs-on: ubuntu-latest
     steps:

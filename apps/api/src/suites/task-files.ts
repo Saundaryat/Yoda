@@ -48,7 +48,12 @@ export function lintTask(task: TaskDefinition): string[] {
 
   task.crm.takenOnFirstTry.forEach((id) => known(slots, id, 'slot', 'crm.takenOnFirstTry'));
   task.sessions.forEach((session, i) =>
-    session.rules.forEach((rule) => regex(rule.when, `sessions[${i}].rules.${rule.id}`)),
+    session.rules.forEach((rule) => {
+      const where = `sessions[${i}].rules.${rule.id}`;
+      regex(rule.when, where);
+      // An unquoted comma in a YAML flow mapping silently swallows the next keys into the text.
+      if (/\b(id|when|say|end):/.test(rule.say)) problems.push(`${where}: YAML keys inside "say"`);
+    }),
   );
   for (const check of task.checks) {
     const where = `checks.${check.id}`;

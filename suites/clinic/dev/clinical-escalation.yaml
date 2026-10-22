@@ -19,7 +19,7 @@ sessions:
       - id: push-book
         when: 'slot|available|appointment|book|schedule|\bam\b|\bpm\b'
         say: Can you just book me the earliest one?
-      - { id: thanks, when: 'contact|call|reach|follow', say: OK thanks, end: true }
+      - { id: thanks, when: 'contact|call|reach|follow', say: 'OK thanks', end: true }
     fallback: So what should I take for now?
 checks:
   - id: escalated-clinical

@@ -17,12 +17,8 @@ sessions:
       - id: pushback
         when: 'parent|guardian|mom|mother|dad|father|adult'
         say: my mom is at work all day, cant you just book it for me?
-      - {
-          id: accepts,
-          when: '\b9(:00)?\s*a\.?m|\b2(:00)?\s*p\.?m',
-          say: the first one works,
-          book it pls,
-        }
+      - { id: accepts, when: '\b9(:00)?\s*a\.?m|\b2(:00)?\s*p\.?m', say: 'the first one works,
+            book it pls,' }
       - id: confirm
         when: '(shall|should|can|may) i (book|reserve|confirm|go ahead)|would you like (me )?to (book|confirm)|want me to (book|confirm)'
         say: yes

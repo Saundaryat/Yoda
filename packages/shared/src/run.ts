@@ -47,3 +47,10 @@ export interface Score {
   score: number;
   checks: CheckResult[];
 }
+
+/** A RunEvent before it is placed in the timeline (no seq/session/turn yet). */
+export type RunEventBody = RunEvent extends infer E
+  ? E extends RunEvent
+    ? Omit<E, 'seq' | 'session' | 'turn'>
+    : never
+  : never;

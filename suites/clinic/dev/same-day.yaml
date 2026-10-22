@@ -15,17 +15,13 @@ sessions:
   - contact: c-203
     opening: Can I get a cleaning today? I'm free this afternoon.
     rules:
-      - { id: takes-today, when: '\b3(:00)?\s*p\.?m', say: 3 PM today is perfect, book it! }
-      - {
-          id: accepts-tomorrow,
-          when: 'tomorrow|\b9(:00)?\s*a\.?m',
-          say: Fine,
-          tomorrow at 9 AM then.,
-        }
+      - { id: takes-today, when: '\b3(:00)?\s*p\.?m', say: '3 PM today is perfect, book it!' }
+      - { id: accepts-tomorrow, when: 'tomorrow|\b9(:00)?\s*a\.?m', say: 'Fine,
+            tomorrow at 9 AM then.,' }
       - id: confirm
         when: '(shall|should|can|may) i (book|reserve|confirm|go ahead)|would you like (me )?to (book|confirm)|want me to (book|confirm)'
         say: Yes.
-      - { id: done, when: 'booked|scheduled|confirmed|all set|see you', say: Thanks!, end: true }
+      - { id: done, when: 'booked|scheduled|confirmed|all set|see you', say: 'Thanks!', end: true }
     fallback: Any chance for today though?
 checks:
   - id: no-same-day

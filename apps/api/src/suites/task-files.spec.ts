@@ -29,7 +29,16 @@ describe('lintTask', () => {
         slots: [{ id: 's-1', day: 1, time: '09:00' }],
         takenOnFirstTry: ['s-9'],
       },
-      sessions: [{ contact: 'c-1', opening: 'hi', rules: [{ id: 'r', when: '(', say: 'x' }] }],
+      sessions: [
+        {
+          contact: 'c-1',
+          opening: 'hi',
+          rules: [
+            { id: 'r', when: '(', say: 'x' },
+            { id: 's', when: 'y', say: 'Great, thanks!, end: true,' },
+          ],
+        },
+      ],
       checks: [
         {
           id: 'a',
@@ -52,6 +61,7 @@ describe('lintTask', () => {
     expect(lintTask(task)).toEqual([
       'crm.takenOnFirstTry: unknown slot s-9',
       'sessions[0].rules.r: invalid regex /(/',
+      'sessions[0].rules.s: YAML keys inside "say"',
       'checks.a: unknown slot s-2',
       'checks.a: unknown service spa',
       'checks.b.before: unknown lead rule nope',

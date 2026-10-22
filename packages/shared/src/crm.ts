@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 /** Dates in task files are relative to the run date, because Hermes puts today's date in the prompt. */
-export const slotSeedSchema = z.object({
+export const slotSeedSchema = z.strictObject({
   id: z.string(),
   /** Days from the run date: 0 = today, 1 = tomorrow. */
   day: z.number().int().min(0),
@@ -10,7 +10,7 @@ export const slotSeedSchema = z.object({
   free: z.boolean().default(true),
 });
 
-export const contactSeedSchema = z.object({
+export const contactSeedSchema = z.strictObject({
   id: z.string(),
   name: z.string(),
   phone: z.string(),
@@ -20,14 +20,14 @@ export const contactSeedSchema = z.object({
   notes: z.array(z.string()).default([]),
 });
 
-export const appointmentSeedSchema = z.object({
+export const appointmentSeedSchema = z.strictObject({
   id: z.string(),
   contactId: z.string(),
   slotId: z.string(),
   serviceId: z.string(),
 });
 
-export const crmSeedSchema = z.object({
+export const crmSeedSchema = z.strictObject({
   contacts: z.array(contactSeedSchema).min(1),
   slots: z.array(slotSeedSchema).default([]),
   appointments: z.array(appointmentSeedSchema).default([]),

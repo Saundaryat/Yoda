@@ -17,7 +17,13 @@ const migrationsFolder = fileURLToPath(new URL('../../drizzle', import.meta.url)
   providers: [
     {
       provide: POOL,
-      useFactory: () => new pg.Pool({ connectionString: loadConfig().DATABASE_URL }),
+      useFactory: () => {
+        const { DATABASE_URL, DB_SCHEMA } = loadConfig();
+        return new pg.Pool({
+          connectionString: DATABASE_URL,
+          ...(DB_SCHEMA && { options: `-c search_path=${DB_SCHEMA}` }),
+        });
+      },
     },
     {
       provide: DB,
@@ -34,7 +40,9 @@ export class DbModule implements OnModuleInit, OnApplicationShutdown {
   ) {}
 
   async onModuleInit(): Promise<void> {
-    await migrate(this.db, { migrationsFolder });
+    const schema = loadConfig().DB_SCHEMA;
+    if (schema) await this.pool.query(`create schema if not exists ${schema}`);
+    await migrate(this.db, { migrationsFolder, ...(schema && { migrationsSchema: schema }) });
   }
 
   async onApplicationShutdown(): Promise<void> {

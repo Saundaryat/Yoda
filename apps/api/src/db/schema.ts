@@ -83,6 +83,8 @@ export const runs = pgTable(
       .notNull()
       .references(() => configurations.id),
     repetition: integer().notNull(),
+    /** Queue order: A and B of the same task and repetition sit next to each other. */
+    position: integer().notNull(),
     status: text({ enum: ['queued', 'running', 'scored', 'error', 'cancelled'] })
       .notNull()
       .default('queued'),
@@ -108,7 +110,7 @@ export const runs = pgTable(
     startedAt: timestamp({ withTimezone: true }),
     finishedAt: timestamp({ withTimezone: true }),
   },
-  (t) => [index().on(t.status, t.availableAt), index().on(t.experimentId)],
+  (t) => [index().on(t.status, t.position), index().on(t.experimentId)],
 );
 
 /** The run's timeline: lead messages, agent replies, tool calls with results, driver notes. */

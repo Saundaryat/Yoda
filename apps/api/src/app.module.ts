@@ -3,6 +3,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { loadConfig } from './config.js';
 import { ConfigurationsModule } from './configurations/configurations.module.js';
 import { DbModule } from './db/db.module.js';
+import { ExperimentsModule } from './experiments/experiments.module.js';
 import { HealthController } from './health/health.controller.js';
 import { SkillsModule } from './skills/skills.module.js';
 import { SuitesModule } from './suites/suites.module.js';
@@ -13,7 +14,14 @@ const staticWeb: DynamicModule[] = webDist
   : [];
 
 @Module({
-  imports: [DbModule, SuitesModule, SkillsModule, ConfigurationsModule, ...staticWeb],
+  imports: [
+    DbModule,
+    SuitesModule,
+    SkillsModule,
+    ConfigurationsModule,
+    ExperimentsModule,
+    ...staticWeb,
+  ],
   controllers: [HealthController],
 })
 export class AppModule {}

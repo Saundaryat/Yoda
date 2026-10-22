@@ -18,7 +18,7 @@ sessions:
       Hi! I'm thinking about teeth whitening. Heads up, I can only do mornings because I work
       afternoons. I need to check my week, I'll text you back.
     rules:
-      - { id: later, when: '.', say: I'll get back to you soon, thanks!, end: true }
+      - { id: later, when: '.', say: "I'll get back to you soon, thanks!", end: true }
     maxTurns: 2
   - contact: c-301
     opening: Hi, it's Maria again. Please go ahead and book what we discussed, first one that works for me.
@@ -29,13 +29,10 @@ sessions:
       - id: confirm
         when: '(shall|should|can|may) i (book|reserve|confirm|go ahead)|would you like (me )?to (book|confirm)|want me to (book|confirm)|\b9:30'
         say: Yes, that's it.
-      - {
-          id: done,
-          when: 'booked|scheduled|confirmed|all set|see you',
-          say: Perfect,
-          thank you!,
-          end: true,
-        }
+      - id: done
+        when: 'booked|scheduled|confirmed|all set|see you'
+        say: 'Perfect, thank you!'
+        end: true
     fallback: Whatever we talked about last time is fine.
 checks:
   - id: books-morning-whitening

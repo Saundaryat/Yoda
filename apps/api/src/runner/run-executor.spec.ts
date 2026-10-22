@@ -1,0 +1,126 @@
+import { configurationSpecSchema, type TaskDefinition } from '@evals/shared';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { readTaskFiles } from '../suites/task-files.js';
+import { InfraError } from './hermes-cli.js';
+import { executeRun, type ExecutorSettings } from './run-executor.js';
+
+const FAKE_HERMES = fileURLToPath(new URL('../../test/fake-hermes.mjs', import.meta.url));
+const tasks = new Map(
+  readTaskFiles(fileURLToPath(new URL('../../../../suites', import.meta.url))).map((f) => [
+    f.key,
+    f.definition,
+  ]),
+);
+const task = (key: string) => tasks.get(key) as TaskDefinition;
+
+const spec = configurationSpecSchema.parse({
+  provider: 'openai',
+  model: 'gpt-test',
+  systemPrompt: 'You are the Bright Smile Dental SMS assistant.',
+  skills: ['clinic-policy'],
+});
+
+let runsDir: string;
+let settings: ExecutorSettings;
+beforeEach(() => {
+  runsDir = mkdtempSync(join(tmpdir(), 'evals-runs-'));
+  settings = {
+    hermesBin: FAKE_HERMES,
+    runsDir,
+    turnTimeoutMs: 20_000,
+    runBudgetSeconds: 60,
+    providerKeys: { OPENAI_API_KEY: 'sk-test-only' },
+    skillContent: () => '---\nname: clinic-policy\ndescription: test\n---\nRules.',
+  };
+});
+afterEach(() => rmSync(runsDir, { recursive: true, force: true }));
+
+describe('executeRun with the fake Hermes', () => {
+  it('runs a scenario end to end and scores it', async () => {
+    const outcome = await executeRun(
+      { runId: 'r1', attempt: 1, task: task('qualify-and-book'), spec },
+      settings,
+    );
+    expect(outcome.checks.filter((c) => !c.passed)).toEqual([]);
+    expect(outcome).toMatchObject({ passed: true, score: 100, leadFallbacks: 0 });
+    expect(outcome.events.map((e) => (e.kind === 'tool' ? `tool:${e.tool}` : e.kind))).toEqual([
+      'lead',
+      'tool:get_contact',
+      'tool:search_slots',
+      'agent',
+      'lead',
+      'tool:search_slots',
+      'tool:book_appointment',
+      'tool:update_contact',
+      'agent',
+      'lead',
+      'agent',
+    ]);
+    expect(outcome.crmFinal.appointments).toHaveLength(1);
+    expect(outcome.sessionIds).toHaveLength(1);
+    expect(outcome.costUsd).toBeCloseTo(0.003);
+    expect(outcome.context).toMatchObject({ model: 'gpt-test', billingProvider: 'openai-api' });
+  });
+
+  it('records the recovery when the chosen slot is taken', async () => {
+    const outcome = await executeRun(
+      { runId: 'r2', attempt: 1, task: task('slot-taken'), spec },
+      settings,
+    );
+    const bookings = outcome.events.filter(
+      (e) => e.kind === 'tool' && e.tool === 'book_appointment',
+    );
+    expect(bookings.map((e) => e.kind === 'tool' && e.ok)).toEqual([false, true]);
+    expect(outcome.passed).toBe(true);
+  });
+
+  it('gives Hermes a home with only the configured provider key', async () => {
+    await executeRun({ runId: 'r3', attempt: 2, task: task('stop-opt-out'), spec }, settings);
+    const home = join(runsDir, 'r3', 'attempt-2', 'home');
+    expect(readFileSync(join(home, '.env'), 'utf8')).toBe('OPENAI_API_KEY=sk-test-only\n');
+    const config = JSON.parse(readFileSync(join(home, 'config.yaml'), 'utf8'));
+    expect(config).toMatchObject({
+      fallback_providers: [],
+      auth: { adopt_external_logins: false },
+      auxiliary: { background_review: { enabled: false } },
+      memory: { memory_enabled: false },
+    });
+    expect(
+      readFileSync(join(home, 'skills', 'clinic', 'clinic-policy', 'SKILL.md'), 'utf8'),
+    ).toContain('Rules.');
+  });
+
+  it.each([
+    ['rate_limit', 'rate_limit', true],
+    ['account', 'account', false],
+  ])('classifies a %s failure', async (mode, kind, retryable) => {
+    const attempt = executeRun(
+      { runId: 'r4', attempt: 1, task: task('qualify-and-book'), spec },
+      { ...settings, extraEnv: { FAKE_HERMES_FAIL: mode } },
+    );
+    await expect(attempt).rejects.toBeInstanceOf(InfraError);
+    await expect(attempt).rejects.toMatchObject({ kind, retryable });
+  });
+
+  it('kills a hung turn at the hard timeout', async () => {
+    const attempt = executeRun(
+      { runId: 'r5', attempt: 1, task: task('qualify-and-book'), spec },
+      { ...settings, turnTimeoutMs: 500, extraEnv: { FAKE_HERMES_FAIL: 'hang' } },
+    );
+    await expect(attempt).rejects.toMatchObject({ kind: 'timeout' });
+  });
+
+  it('stops immediately when the provider key is missing', async () => {
+    const attempt = executeRun(
+      { runId: 'r6', attempt: 1, task: task('qualify-and-book'), spec },
+      { ...settings, providerKeys: {} },
+    );
+    await expect(attempt).rejects.toMatchObject({
+      kind: 'account',
+      message: 'OPENAI_API_KEY is not set',
+    });
+  });
+});

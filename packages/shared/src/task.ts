@@ -14,7 +14,7 @@ const argMatcherSchema = z.union([
 ]);
 
 /** Selects tool calls by name (CRM tools without prefix, Hermes tools like `skill_view` as-is). */
-const toolSelectorSchema = z.object({
+const toolSelectorSchema = z.strictObject({
   tool: z.string(),
   args: z.record(z.string(), argMatcherSchema).optional(),
   /** Only calls the CRM accepted (default: every attempt counts, rejected ones too). */
@@ -22,10 +22,10 @@ const toolSelectorSchema = z.object({
 });
 
 /** Selects agent replies (the SMS text the lead sees) by a case-insensitive regex. */
-const replySelectorSchema = z.object({ reply: z.string() });
+const replySelectorSchema = z.strictObject({ reply: z.string() });
 
 /** Selects the lead message produced by a given lead rule, e.g. the lead accepting a slot. */
-const leadRuleSelectorSchema = z.object({ leadRule: z.string() });
+const leadRuleSelectorSchema = z.strictObject({ leadRule: z.string() });
 
 export const eventSelectorSchema = z.union([
   toolSelectorSchema,
@@ -46,22 +46,22 @@ const checkBase = {
 };
 
 export const checkSchema = z.discriminatedUnion('type', [
-  z.object({
+  z.strictObject({
     ...checkBase,
     type: z.literal('tool_called'),
     ...toolSelectorSchema.shape,
     min: z.number().int().min(0).default(1),
     max: z.number().int().min(0).optional(),
   }),
-  z.object({ ...checkBase, type: z.literal('tool_not_called'), ...toolSelectorSchema.shape }),
-  z.object({
+  z.strictObject({ ...checkBase, type: z.literal('tool_not_called'), ...toolSelectorSchema.shape }),
+  z.strictObject({
     ...checkBase,
     type: z.literal('state'),
     /** Dotted path into the final CRM state, e.g. `contacts.c-101.stage` or `appointments.length`. */
     path: z.string(),
     equals: z.union([z.string(), z.number(), z.boolean(), z.null()]),
   }),
-  z.object({
+  z.strictObject({
     ...checkBase,
     type: z.literal('reply'),
     /** Some agent reply must match... */
@@ -69,7 +69,7 @@ export const checkSchema = z.discriminatedUnion('type', [
     /** ...and no agent reply may match. */
     noMatch: z.string().optional(),
   }),
-  z.object({
+  z.strictObject({
     ...checkBase,
     type: z.literal('order'),
     before: eventSelectorSchema,
@@ -77,7 +77,7 @@ export const checkSchema = z.discriminatedUnion('type', [
     /** Pass when `after` never happens (default false: both must happen, in this order). */
     afterOptional: z.boolean().default(false),
   }),
-  z.object({
+  z.strictObject({
     ...checkBase,
     type: z.literal('budget'),
     maxToolCalls: z.number().int().positive().optional(),
@@ -89,7 +89,7 @@ export type Check = z.infer<typeof checkSchema>;
 export type CheckType = Check['type'];
 
 /** A lead rule: when the agent's latest reply matches `when`, the lead says `say`. */
-const leadRuleSchema = z.object({
+const leadRuleSchema = z.strictObject({
   id: z.string(),
   when: z.string(),
   say: z.string(),
@@ -97,7 +97,7 @@ const leadRuleSchema = z.object({
   end: z.boolean().default(false),
 });
 
-export const sessionSchema = z.object({
+export const sessionSchema = z.strictObject({
   contact: z.string(),
   opening: z.string(),
   rules: z.array(leadRuleSchema).default([]),
@@ -108,7 +108,7 @@ export const sessionSchema = z.object({
 });
 
 export const taskSchema = z
-  .object({
+  .strictObject({
     title: z.string(),
     family: z.string(),
     split: z.enum(['dev', 'eval']),
