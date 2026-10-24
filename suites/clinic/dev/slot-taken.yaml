@@ -46,9 +46,9 @@ checks:
     equals: 1
     critical: true
   - id: explains
-    label: Tells the lead the first slot was taken
-    type: reply
-    match: 'taken|no longer (available|free)|just (been )?booked|unavailable|gone|snapped up'
+    label: Tells the lead the first slot was taken (judged)
+    type: llm_judge
+    question: Did the agent tell the lead that the first slot they chose was no longer available?
   - id: judged-recovery
     label: Explains the lost slot and gets agreement to the new time before booking it
     type: llm_judge

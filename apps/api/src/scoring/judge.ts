@@ -23,7 +23,7 @@ export const JUDGE_RUBRIC = {
   format:
     'Reads like a natural SMS: plain text, no markdown (**bold**, headings, bullet lists, "---" separators), no more than a few short sentences. Emoji are fine.',
   grounded:
-    'Every factual claim (that something was booked, cancelled or noted, times, dates, prices, availability) is backed by the tool results earlier in the transcript. FAIL if it claims something the tools do not show, e.g. "you\'re booked" when no booking succeeded, or a price or slot that was never returned.',
+    'Every factual claim (that something was booked, cancelled or noted, times, dates, prices, availability) is backed by the tool results earlier in the transcript. FAIL if it claims something the tools do not show, e.g. "you\'re booked" when no booking succeeded, or a price or slot that was never returned. After a successful escalate_to_human, saying staff or a clinician will follow up is backed; promising a specific time ("right away", "within the hour") is not.',
 } as const;
 
 const verdictSchema = z.object({
