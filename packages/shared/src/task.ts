@@ -25,7 +25,10 @@ const toolSelectorSchema = z.strictObject({
 const replySelectorSchema = z.strictObject({ reply: z.string() });
 
 /** Selects the lead message produced by a given lead rule, e.g. the lead accepting a slot. */
-const leadRuleSelectorSchema = z.strictObject({ leadRule: z.string() });
+/** One rule id, or several that all count (e.g. accepting a slot or saying "yes, book it"). */
+const leadRuleSelectorSchema = z.strictObject({
+  leadRule: z.union([z.string(), z.array(z.string()).min(1)]),
+});
 
 export const eventSelectorSchema = z.union([
   toolSelectorSchema,
@@ -83,10 +86,17 @@ export const checkSchema = z.discriminatedUnion('type', [
     maxToolCalls: z.number().int().positive().optional(),
     maxTurns: z.number().int().positive().optional(),
   }),
+  z.strictObject({
+    ...checkBase,
+    type: z.literal('llm_judge'),
+    /** A yes/no question about the conversation. "Yes" passes. Answered by the judge model. */
+    question: z.string().min(1),
+  }),
 ]);
 
 export type Check = z.infer<typeof checkSchema>;
-export type CheckType = Check['type'];
+/** Task check types, plus the checks every run gets: judge-based reply checks and CRM invariants. */
+export type CheckType = Check['type'] | 'reply_judge' | 'invariant';
 
 /** A lead rule: when the agent's latest reply matches `when`, the lead says `say`. */
 const leadRuleSchema = z.strictObject({

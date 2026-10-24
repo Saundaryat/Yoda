@@ -74,6 +74,10 @@ export interface ExperimentResults {
     durationMs: MetricComparison;
     totalTokens: MetricComparison;
     leadFallbacks: MetricComparison;
+    /** Share of replies the judge passed on audience, format and grounding (judged runs only). */
+    replyQuality: MetricComparison;
+    /** CRM calls the CRM rejected (wrong ids, unavailable slots...): a sign of sloppy tool use. */
+    rejectedToolCalls: MetricComparison;
   };
   /** Share of runs that called each Hermes tool (skill_view, memory, ...): the mechanism, not just the outcome. */
   hermesToolUse: { tool: string; a: number; b: number }[];

@@ -1,16 +1,9 @@
-import Anthropic from '@anthropic-ai/sdk';
 import { betaZodOutputFormat } from '@anthropic-ai/sdk/helpers/beta/zod';
 import type { SessionScript } from '@evals/shared';
 import { z } from 'zod';
+import { claudeFailure, estimateCost, type ClaudeClient } from './anthropic.js';
 import { InfraError } from './hermes-cli.js';
 import type { Lead, LeadMessage } from './lead.js';
-
-/** Per-million-token list prices, for the lead's cost estimate. Unknown models report no cost. */
-const PRICES: Record<string, { input: number; output: number }> = {
-  'claude-opus-5-5': { input: 4, output: 20 },
-  'claude-sonnet-5-5': { input: 2, output: 10 },
-  'claude-haiku-4-5': { input: 1, output: 5 },
-};
 
 export interface LeadUsage {
   model: string;
@@ -20,8 +13,8 @@ export interface LeadUsage {
   costUsd: number | null;
 }
 
-/** The slice of the Anthropic client the lead uses, so tests can pass a fake. */
-export type LeadModelClient = Pick<Anthropic['beta']['messages'], 'parse'>;
+/** Kept as an alias so existing imports keep reading naturally. */
+export type LeadModelClient = ClaudeClient;
 
 export interface LlmLeadInput {
   session: SessionScript;
@@ -39,9 +32,11 @@ const replySchema = (ruleIds: string[]) =>
       .describe(
         'Your next SMS to the clinic. Empty only if end is true and you have nothing to add.',
       ),
-    intent: z
-      .enum(['none', ...ruleIds] as [string, ...string[]])
-      .describe('The scripted line your message means the same as, or "none".'),
+    intents: z
+      .array(z.enum(['none', ...ruleIds] as [string, ...string[]]))
+      .describe(
+        'Ids of every scripted line your message means, most important first. Empty if none.',
+      ),
     end: z.boolean().describe('True when the conversation is over for you.'),
   });
 
@@ -69,7 +64,7 @@ export function leadSystemPrompt({ session, contactName, situation }: LlmLeadInp
     "- Only answer what you're asked or what naturally follows. Don't volunteer extra details or coach the clinic.",
     "- Never change the facts above (age, availability, what you want). If asked something they don't cover, give a plausible answer that fits.",
     '- Never mention that you are an AI, a test or a script.',
-    '- Set intent to the id of the scripted line your message corresponds to, or "none".',
+    '- In intents, list the id of every scripted line your message means (one message can mean several, e.g. accepting a time and saying "yes, book it"). Leave it empty if none apply.',
     "- Set end to true when you're done: your goal is met and you've wrapped up, you've refused further contact, or there's nothing left to say.",
   ]
     .filter((line) => line !== '')
@@ -114,11 +109,8 @@ export class LlmLead implements Lead {
     this.sent += 1;
     this.ending = reply.end;
     this.transcript.push({ from: 'you', text: reply.text });
-    return {
-      text: reply.text,
-      ruleId: reply.intent === 'none' ? null : reply.intent,
-      fallback: false,
-    };
+    const ruleIds = reply.intents.filter((id) => id !== 'none');
+    return { text: reply.text, ruleId: ruleIds[0] ?? null, ruleIds, fallback: false };
   }
 
   private async ask(prompt: string) {
@@ -134,7 +126,7 @@ export class LlmLead implements Lead {
         messages: [{ role: 'user', content: prompt }],
       });
     } catch (error) {
-      throw leadFailure(error);
+      throw claudeFailure('LLM lead', error);
     }
     this.record(response.usage);
     if (response.stop_reason === 'refusal' || !response.parsed_output) {
@@ -150,31 +142,10 @@ export class LlmLead implements Lead {
     this.usage.calls += 1;
     this.usage.inputTokens += usage.input_tokens;
     this.usage.outputTokens += usage.output_tokens;
-    const price = PRICES[this.input.model];
-    this.usage.costUsd = price
-      ? (this.usage.inputTokens * price.input + this.usage.outputTokens * price.output) / 1e6
-      : null;
+    this.usage.costUsd = estimateCost(
+      this.input.model,
+      this.usage.inputTokens,
+      this.usage.outputTokens,
+    );
   }
-}
-
-/** Map SDK errors to the runner's failure kinds: retry transient ones, stop on key or request problems. */
-export function leadFailure(error: unknown): InfraError {
-  const detail = `LLM lead: ${error instanceof Error ? error.message : String(error)}`;
-  if (
-    error instanceof Anthropic.AuthenticationError ||
-    error instanceof Anthropic.PermissionDeniedError
-  ) {
-    return new InfraError('account', detail);
-  }
-  if (error instanceof Anthropic.BadRequestError || error instanceof Anthropic.NotFoundError) {
-    return new InfraError('account', detail);
-  }
-  if (error instanceof Anthropic.RateLimitError) return new InfraError('rate_limit', detail);
-  if (error instanceof Anthropic.APIError) return new InfraError('provider_error', detail);
-  return new InfraError('provider_error', detail);
-}
-
-export function anthropicLeadClient(apiKey: string): LeadModelClient {
-  // Explicit base URL: never inherit a stray ANTHROPIC_BASE_URL from the host environment.
-  return new Anthropic({ apiKey, baseURL: 'https://api.anthropic.com' }).beta.messages;
 }

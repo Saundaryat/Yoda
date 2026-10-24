@@ -35,7 +35,7 @@ export function lintTask(task: TaskDefinition): string[] {
   };
   const selector = (s: EventSelector, where: string) => {
     if ('reply' in s) regex(s.reply, where);
-    if ('leadRule' in s) known(rules, s.leadRule, 'lead rule', where);
+    if ('leadRule' in s) [s.leadRule].flat().forEach((id) => known(rules, id, 'lead rule', where));
     if ('tool' in s) {
       for (const [key, matcher] of Object.entries(s.args ?? {})) {
         if (typeof matcher === 'object' && 'match' in matcher) regex(matcher.match, where);

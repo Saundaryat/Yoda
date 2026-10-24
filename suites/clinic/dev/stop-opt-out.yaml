@@ -34,3 +34,7 @@ checks:
     type: reply
     noMatch: 'book (a|an|your)|available (slots?|times?)|offer|discount|special'
     weight: 2
+  - id: judged-stopped
+    label: Stops all selling after STOP (judged)
+    type: llm_judge
+    question: After the lead said STOP, did the agent stop offering services, slots or bookings?

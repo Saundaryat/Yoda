@@ -3,6 +3,7 @@ import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { Judge } from '../scoring/judge.js';
 import { readTaskFiles } from '../suites/task-files.js';
 import { InfraError } from './hermes-cli.js';
 import { executeRun, type ExecutorSettings } from './run-executor.js';
@@ -36,6 +37,7 @@ beforeEach(() => {
     skillContent: () => '---\nname: clinic-policy\ndescription: test\n---\nRules.',
     leadClient: null,
     leadModel: 'claude-test',
+    judge: null,
   };
 });
 afterEach(() => rmSync(runsDir, { recursive: true, force: true }));
@@ -122,8 +124,8 @@ describe('executeRun with the fake Hermes', () => {
 
   it('runs a scenario with Claude playing the lead (fake client) and keeps rule-based checks working', async () => {
     const replies = [
-      { text: 'oh nice, 9am works for me!', intent: 'accepts', end: false },
-      { text: 'perfect thank you', intent: 'done', end: true },
+      { text: 'oh nice, 9am works for me!', intents: ['accepts', 'confirm'], end: false },
+      { text: 'perfect thank you', intents: ['done'], end: true },
     ];
     const leadClient = {
       parse: async () => ({
@@ -149,6 +151,43 @@ describe('executeRun with the fake Hermes', () => {
       model: 'claude-haiku-4-5',
     });
     expect(outcome.leadUsage?.costUsd).toBeCloseTo((1600 * 1 + 120 * 5) / 1e6);
+  });
+
+  it('has every reply judged after the run and scores the standard checks', async () => {
+    // Fake judge: fails the first reply's audience with a quote taken from that reply.
+    const judgeClient = {
+      parse: async (params: { messages: { content: string }[] }) => {
+        const prompt = params.messages[0]!.content;
+        const replies = [...prompt.matchAll(/#(\d+) AGENT REPLY \(sent to the lead\): (.*)/g)];
+        const ok = { pass: true, quote: '', reason: 'ok' };
+        return {
+          parsed_output: {
+            turns: replies.map(([, seq, text], i) => ({
+              seq: Number(seq),
+              audience: i === 0 ? { pass: false, quote: text!.slice(0, 12), reason: 'test' } : ok,
+              format: ok,
+              grounded: ok,
+            })),
+            questions: [],
+          },
+          stop_reason: 'end_turn',
+          usage: { input_tokens: 2000, output_tokens: 300 },
+        };
+      },
+    } as unknown as ConstructorParameters<typeof Judge>[0];
+    const outcome = await executeRun(
+      { runId: 'r9', attempt: 1, task: task('qualify-and-book'), spec, leadMode: 'scripted' },
+      { ...settings, judge: new Judge(judgeClient, 'claude-sonnet-5-5') },
+    );
+    const byId = Object.fromEntries(outcome.checks.map((c) => [c.checkId, c]));
+    expect(byId['reply-audience']).toMatchObject({
+      passed: false,
+      evidence: [{ eventSeq: expect.any(Number) }],
+    });
+    expect(byId['reply-grounded']?.passed).toBe(true);
+    expect(byId['stage-matches-bookings']?.passed).toBe(true);
+    expect(outcome.judge?.turns.length).toBe(3);
+    expect(outcome.passed).toBe(true); // audience isn't critical; 9 of 10 weight points
   });
 
   it('needs ANTHROPIC_API_KEY for the LLM lead', async () => {

@@ -49,3 +49,9 @@ checks:
     label: Tells the lead the first slot was taken
     type: reply
     match: 'taken|no longer (available|free)|just (been )?booked|unavailable|gone|snapped up'
+  - id: judged-recovery
+    label: Explains the lost slot and gets agreement to the new time before booking it
+    type: llm_judge
+    question: >-
+      When the first slot could not be booked, did the agent tell the lead and get the lead's
+      clear agreement to the new time before booking that new time?

@@ -4,6 +4,8 @@ export interface LeadMessage {
   text: string;
   /** The rule that produced this message; null for the opening and the fallback. */
   ruleId: string | null;
+  /** LLM lead only: every rule the message means. */
+  ruleIds?: string[];
   fallback: boolean;
 }
 

@@ -33,7 +33,9 @@ const explanation = computed(() => {
     case 'inconclusive':
       return `${rates} The interval includes zero and differences bigger than ${Math.round(practicalMargin * 100)} points, so this experiment can't tell yet.${detectable}`;
     case 'incomplete':
-      return `Only ${pairedTasks} of ${plannedTasks} tasks have scored runs under both configurations. Finish or retry the failed runs before reading the result.`;
+      return props.provisional
+        ? `Runs are still in progress: ${pairedTasks} of ${plannedTasks} tasks have results under both configurations so far.`
+        : `Only ${pairedTasks} of ${plannedTasks} tasks have scored runs under both configurations. Retry the failed runs before reading the result.`;
   }
   return '';
 });

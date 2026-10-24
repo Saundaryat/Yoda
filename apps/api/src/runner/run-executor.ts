@@ -2,6 +2,7 @@ import { CRM_SERVER_PATH, loadState, materialize, saveState } from '@evals/crm';
 import type {
   ConfigurationSpec,
   CrmState,
+  JudgeReport,
   LeadMode,
   RunEvent,
   Score,
@@ -10,6 +11,7 @@ import type {
 import { existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { scoreRun } from '../scoring/checks.js';
+import type { Judge } from '../scoring/judge.js';
 import { classifyTurn, InfraError, runTurn, stopGateway } from './hermes-cli.js';
 import { PROVIDER_KEY_ENV, seedHome } from './hermes-home.js';
 import { LeadScript, type Lead, type LeadMessage } from './lead.js';
@@ -28,6 +30,8 @@ export interface ExecutorSettings {
   /** Anthropic client for the LLM-played lead; null when ANTHROPIC_API_KEY isn't set. */
   leadClient: LeadModelClient | null;
   leadModel: string;
+  /** Grades every reply after the run; null when ANTHROPIC_API_KEY isn't set (judge checks skipped). */
+  judge: Judge | null;
 }
 
 export interface RunInput {
@@ -52,6 +56,8 @@ export interface RunOutcome extends Score {
   leadFallbacks: number;
   /** LLM lead calls, tokens and estimated cost; null for the scripted lead. */
   leadUsage: LeadUsage | null;
+  /** The judge's per-reply verdicts and answers; null when no judge is configured. */
+  judge: JudgeReport | null;
   durationMs: number;
   context: {
     /** The system prompt Hermes built for each session (skills index, memory, SOUL...). */
@@ -152,6 +158,7 @@ export async function executeRun(input: RunInput, settings: ExecutorSettings): P
           kind: 'lead',
           text: message.text,
           ruleId: message.ruleId,
+          ...(message.ruleIds && { ruleIds: message.ruleIds }),
           fallback: message.fallback,
           by: input.leadMode === 'llm' ? 'llm' : 'script',
         });
@@ -210,12 +217,14 @@ export async function executeRun(input: RunInput, settings: ExecutorSettings): P
   }
 
   const crmFinal = loadState(stateFile);
+  const judge = settings.judge ? await settings.judge.judge(task, events) : null;
   const store = new HermesStore(home);
   const sessions = sessionIds.map((id) => store.session(id));
   store.close();
   const session = sessions[0];
   return {
-    ...scoreRun(task, events, crmFinal),
+    ...scoreRun(task, events, crmFinal, { judge, crmInitial }),
+    judge,
     events,
     crmInitial,
     crmFinal,

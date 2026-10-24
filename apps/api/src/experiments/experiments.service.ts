@@ -195,7 +195,7 @@ export class ExperimentsService {
       .select({
         status: runs.status,
         n: sql<number>`count(*)::int`,
-        cost: sql<number>`coalesce(sum(coalesce(cost_usd, 0) + coalesce(lead_cost_usd, 0)), 0)::float`,
+        cost: sql<number>`coalesce(sum(coalesce(cost_usd, 0) + coalesce(lead_cost_usd, 0) + coalesce(judge_cost_usd, 0)), 0)::float`,
       })
       .from(runs)
       .where(eq(runs.experimentId, row.id))

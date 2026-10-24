@@ -3,6 +3,7 @@ import type {
   CheckResult,
   Configuration,
   CrmState,
+  JudgeReport,
   RunEvent,
   RunStatus,
   TaskDefinition,
@@ -32,6 +33,8 @@ interface RunDetail {
     inputTokens: number | null;
     outputTokens: number | null;
     costUsd: number | null;
+    judge: JudgeReport | null;
+    judgeCostUsd: number | null;
     durationMs: number | null;
     leadFallbacks: number | null;
     crmInitial: CrmState | null;
@@ -125,6 +128,14 @@ const spec = computed(() => data.value?.configuration.spec);
         {{ (data.run.inputTokens ?? 0) + (data.run.outputTokens ?? 0) }}
       </div>
       <div><span class="muted">Attempts</span> {{ data.run.attempts }}</div>
+      <div>
+        <span class="muted">Judge</span>
+        {{
+          data.run.judge
+            ? `${data.run.judge.model} · ${money(data.run.judgeCostUsd)}`
+            : 'not judged'
+        }}
+      </div>
       <div v-if="data.run.context?.lead">
         <span class="muted">Lead</span> {{ data.run.context.lead.model }} ·
         {{ data.run.context.lead.calls }} calls · {{ money(data.run.context.lead.costUsd) }}
@@ -164,7 +175,11 @@ const spec = computed(() => data.value?.configuration.spec);
     <div class="layout">
       <section class="card">
         <h2>Conversation</h2>
-        <Timeline :events="data.events" :highlighted="highlighted" />
+        <Timeline
+          :events="data.events"
+          :highlighted="highlighted"
+          :judgments="data.run.judge?.turns"
+        />
       </section>
       <aside class="card checks-col">
         <h2>Checks</h2>

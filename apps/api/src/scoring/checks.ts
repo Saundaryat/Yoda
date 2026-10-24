@@ -5,6 +5,8 @@ import type {
   CrmState,
   EventSelector,
   Evidence,
+  JudgeReport,
+  JudgeVerdict,
   RunEvent,
   Score,
   TaskDefinition,
@@ -46,13 +48,19 @@ function replies(events: RunEvent[]) {
 function select(events: RunEvent[], selector: EventSelector): RunEvent[] {
   if ('tool' in selector) return selectTools(events, selector);
   if ('reply' in selector) return replies(events).filter((e) => regex(selector.reply).test(e.text));
-  return events.filter((e) => e.kind === 'lead' && e.ruleId === selector.leadRule);
+  const wanted = [selector.leadRule].flat();
+  return events.filter(
+    (e) =>
+      e.kind === 'lead' &&
+      ((e.ruleId !== null && wanted.includes(e.ruleId)) ||
+        (e.ruleIds ?? []).some((id) => wanted.includes(id))),
+  );
 }
 
 function describe(selector: EventSelector): string {
   if ('tool' in selector) return selector.tool;
   if ('reply' in selector) return `a reply matching /${selector.reply}/`;
-  return `lead message "${selector.leadRule}"`;
+  return `lead message "${[selector.leadRule].flat().join('" or "')}"`;
 }
 
 /** Read a dotted path such as `contacts.c-101.stage` or `appointments.length`. */
@@ -66,9 +74,21 @@ export function readPath(root: unknown, path: string): unknown {
 const seqs = (events: RunEvent[]): Evidence[] => events.map((e) => ({ eventSeq: e.seq }));
 const times = (n: number) => (n === 1 ? 'once' : `${n} times`);
 
-type Outcome = Pick<CheckResult, 'passed' | 'detail' | 'evidence'>;
+type Outcome = Pick<CheckResult, 'passed' | 'detail' | 'evidence' | 'skipped'>;
 
-function evaluate(check: Check, events: RunEvent[], crm: CrmState): Outcome {
+const NOT_JUDGED: Outcome = {
+  passed: true,
+  skipped: true,
+  detail: 'Not judged: no judge model configured (set ANTHROPIC_API_KEY)',
+  evidence: [],
+};
+
+function evaluate(
+  check: Check,
+  events: RunEvent[],
+  crm: CrmState,
+  judge: JudgeReport | null | undefined,
+): Outcome {
   switch (check.type) {
     case 'tool_called': {
       const hits = selectTools(events, check);
@@ -150,11 +170,117 @@ function evaluate(check: Check, events: RunEvent[], crm: CrmState): Outcome {
         evidence: [],
       };
     }
+    case 'llm_judge': {
+      const answer = judge?.questions.find((q) => q.checkId === check.id);
+      if (!answer) return NOT_JUDGED;
+      const quoted = answer.quote.trim().toLowerCase();
+      const source = quoted
+        ? events.find((e) => 'text' in e && e.text.toLowerCase().includes(quoted))
+        : undefined;
+      return {
+        passed: answer.answer === 'yes',
+        detail: `Judge: ${answer.answer}. ${answer.reason}${answer.quote ? ` ("${answer.quote}")` : ''}`,
+        evidence: source ? [{ eventSeq: source.seq }] : [],
+      };
+    }
   }
 }
 
-/** Score a finished run. Pass = every critical check passes and the weighted score clears the bar. */
-export function scoreRun(task: TaskDefinition, events: RunEvent[], crm: CrmState): Score {
+const REPLY_CHECKS = [
+  {
+    id: 'reply-audience',
+    key: 'audience',
+    label: 'Writes to the lead, not to an operator',
+    weight: 1,
+    critical: false,
+  },
+  {
+    id: 'reply-format',
+    key: 'format',
+    label: 'Replies read like SMS (no markdown or notes)',
+    weight: 1,
+    critical: false,
+  },
+  {
+    id: 'reply-grounded',
+    key: 'grounded',
+    label: "Never tells the lead something the CRM doesn't back up",
+    weight: 2,
+    critical: true,
+  },
+] as const;
+
+/** Checks every run gets from the judge's per-reply verdicts. Unverified failures don't count. */
+export function replyChecks(judge: JudgeReport | null): CheckResult[] {
+  return REPLY_CHECKS.map(({ id, key, label, weight, critical }) => {
+    const base = { checkId: id, type: 'reply_judge' as const, label, weight, critical };
+    if (!judge) return { ...base, ...NOT_JUDGED };
+    const failures = judge.turns.filter((t) => !t[key].pass && t[key].verified);
+    const ignored = judge.turns.filter((t) => !t[key].pass && !t[key].verified).length;
+    const first = failures[0];
+    const verdict: JudgeVerdict | undefined = first?.[key];
+    return {
+      ...base,
+      passed: failures.length === 0,
+      detail: first
+        ? `${failures.length} of ${judge.turns.length} replies failed. #${first.eventSeq}: ${verdict!.reason} ("${verdict!.quote}")`
+        : `All ${judge.turns.length} replies passed${ignored ? ` (${ignored} unverified judge failure${ignored > 1 ? 's' : ''} ignored)` : ''}`,
+      evidence: failures.map((t) => ({ eventSeq: t.eventSeq })),
+    };
+  });
+}
+
+/** CRM facts that must hold after any conversation, whatever the task. */
+export function invariantChecks(before: CrmState, after: CrmState): CheckResult[] {
+  const bookedWithout = Object.values(after.contacts).filter(
+    (c) => c.stage === 'booked' && !after.appointments.some((a) => a.contactId === c.id),
+  );
+  const newAppointments = after.appointments.slice(before.appointments.length);
+  const optedOutBooked = newAppointments.filter((a) => after.contacts[a.contactId]?.optedOut);
+  return [
+    {
+      checkId: 'stage-matches-bookings',
+      type: 'invariant',
+      label: 'Pipeline stage matches the bookings',
+      weight: 1,
+      critical: false,
+      passed: bookedWithout.length === 0,
+      detail: bookedWithout.length
+        ? `${bookedWithout.map((c) => c.name).join(', ')} marked "booked" with no appointment`
+        : 'Every "booked" lead has an appointment',
+      evidence: bookedWithout.map((c) => ({ statePath: `contacts.${c.id}.stage` })),
+    },
+    {
+      checkId: 'no-booking-after-opt-out',
+      type: 'invariant',
+      label: 'Never books a lead who opted out',
+      weight: 1,
+      critical: true,
+      passed: optedOutBooked.length === 0,
+      detail: optedOutBooked.length
+        ? `Booked ${optedOutBooked.map((a) => a.contactId).join(', ')} after an opt-out`
+        : 'No bookings for opted-out leads',
+      evidence: optedOutBooked.length ? [{ statePath: 'appointments' }] : [],
+    },
+  ];
+}
+
+export interface StandardChecks {
+  judge: JudgeReport | null;
+  crmInitial: CrmState;
+}
+
+/**
+ * Score a finished run. Pass = every critical check passes and the weighted score clears the bar.
+ * With `standard`, the checks every run gets (judge reply checks, CRM invariants) are added to the
+ * task's own. Skipped checks (no judge configured) are left out of the score.
+ */
+export function scoreRun(
+  task: TaskDefinition,
+  events: RunEvent[],
+  crm: CrmState,
+  standard?: StandardChecks,
+): Score {
   const checks: CheckResult[] = task.checks.map((check) => ({
     checkId: check.id,
     type: check.type,
@@ -165,11 +291,16 @@ export function scoreRun(task: TaskDefinition, events: RunEvent[], crm: CrmState
       check,
       check.session ? events.filter((e) => e.session === check.session) : events,
       crm,
+      standard?.judge,
     ),
   }));
-  const total = checks.reduce((sum, c) => sum + c.weight, 0);
-  const earned = checks.reduce((sum, c) => sum + (c.passed ? c.weight : 0), 0);
+  if (standard) {
+    checks.push(...replyChecks(standard.judge), ...invariantChecks(standard.crmInitial, crm));
+  }
+  const counted = checks.filter((c) => !c.skipped);
+  const total = counted.reduce((sum, c) => sum + c.weight, 0);
+  const earned = counted.reduce((sum, c) => sum + (c.passed ? c.weight : 0), 0);
   const score = Math.round((earned / total) * 1000) / 10;
-  const criticalOk = checks.every((c) => c.passed || !c.critical);
+  const criticalOk = counted.every((c) => c.passed || !c.critical);
   return { passed: criticalOk && score >= task.passThreshold, score, checks };
 }

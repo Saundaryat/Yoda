@@ -36,7 +36,7 @@ checks:
   - id: consent-first
     label: Books only after the lead picked the slot
     type: order
-    before: { leadRule: accepts }
+    before: { leadRule: [accepts, confirm] }
     after: { tool: book_appointment }
     critical: true
   - id: single-appointment

@@ -15,7 +15,8 @@ import { DB, type Db } from '../db/db.module.js';
 import { checkResults, configurations, experiments, runEvents, runs, tasks } from '../db/schema.js';
 import { SkillsService } from '../skills/skills.service.js';
 import { InfraError } from './hermes-cli.js';
-import { anthropicLeadClient } from './llm-lead.js';
+import { Judge } from '../scoring/judge.js';
+import { claudeClient } from './anthropic.js';
 import { executeRun, type ExecutorSettings, type RunOutcome } from './run-executor.js';
 
 type RunRow = typeof runs.$inferSelect;
@@ -58,9 +59,12 @@ export class RunQueueService implements OnApplicationBootstrap, OnApplicationShu
       },
       skillContent: (name) => skills.get(name)?.content,
       leadClient: this.config.ANTHROPIC_API_KEY
-        ? anthropicLeadClient(this.config.ANTHROPIC_API_KEY)
+        ? claudeClient(this.config.ANTHROPIC_API_KEY)
         : null,
       leadModel: this.config.LEAD_MODEL,
+      judge: this.config.ANTHROPIC_API_KEY
+        ? new Judge(claudeClient(this.config.ANTHROPIC_API_KEY), this.config.JUDGE_MODEL)
+        : null,
     };
   }
 
@@ -178,6 +182,8 @@ export class RunQueueService implements OnApplicationBootstrap, OnApplicationShu
           costUsd: outcome.costUsd,
           costStatus: outcome.costStatus,
           leadCostUsd: outcome.leadUsage?.costUsd ?? null,
+          judge: outcome.judge,
+          judgeCostUsd: outcome.judge?.usage.costUsd ?? null,
           durationMs: outcome.durationMs,
           sessionIds: outcome.sessionIds,
           crmInitial: outcome.crmInitial,
@@ -278,7 +284,7 @@ export class RunQueueService implements OnApplicationBootstrap, OnApplicationShu
     const [stats] = (await this.db
       .select({
         open: sql<number>`count(*) filter (where status in ('queued', 'running'))::int`,
-        cost: sql<number>`coalesce(sum(coalesce(cost_usd, 0) + coalesce(lead_cost_usd, 0)), 0)::float`,
+        cost: sql<number>`coalesce(sum(coalesce(cost_usd, 0) + coalesce(lead_cost_usd, 0) + coalesce(judge_cost_usd, 0)), 0)::float`,
       })
       .from(runs)
       .where(eq(runs.experimentId, experimentId))) as [{ open: number; cost: number }];

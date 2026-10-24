@@ -1,8 +1,22 @@
 <script setup lang="ts">
-import type { RunEvent } from '@evals/shared';
+import type { RunEvent, TurnJudgment } from '@evals/shared';
 
 /** A run's conversation: lead messages, agent replies and every tool call in between. */
-const props = defineProps<{ events: RunEvent[]; highlighted: number[] }>();
+const props = defineProps<{
+  events: RunEvent[];
+  highlighted: number[];
+  judgments?: TurnJudgment[];
+}>();
+
+const CRITERIA = ['audience', 'format', 'grounded'] as const;
+const judgmentFor = (seq: number) => props.judgments?.find((j) => j.eventSeq === seq);
+/** Verified failures only: a judge failure whose quote isn't in the reply is ignored. */
+const failures = (seq: number) => {
+  const j = judgmentFor(seq);
+  return j
+    ? CRITERIA.filter((c) => !j[c].pass && j[c].verified).map((c) => ({ criterion: c, ...j[c] }))
+    : [];
+};
 
 const startsSession = (index: number) =>
   index === 0 || props.events[index - 1]!.session !== props.events[index]!.session;
@@ -38,9 +52,32 @@ const pretty = (value: unknown) =>
         </template>
         <template v-else-if="event.kind === 'agent'">
           <div class="bubble">
-            <div class="who">Agent reply</div>
+            <div class="who">
+              Agent reply
+              <template v-if="judgmentFor(event.seq)">
+                <span
+                  v-if="!failures(event.seq).length"
+                  class="badge good"
+                  title="The judge passed this reply on audience, format and grounding"
+                  >judge ✓</span
+                >
+                <span
+                  v-for="f in failures(event.seq)"
+                  :key="f.criterion"
+                  class="badge bad"
+                  :title="`${f.reason} — “${f.quote}”`"
+                  >judge ✗ {{ f.criterion }}</span
+                >
+              </template>
+            </div>
             <span v-if="event.text">{{ event.text }}</span>
             <em v-else class="muted">(empty reply)</em>
+            <ul v-if="failures(event.seq).length" class="judge-notes">
+              <li v-for="f in failures(event.seq)" :key="f.criterion">
+                <strong>{{ f.criterion }}:</strong> {{ f.reason }}
+                <span class="mono">“{{ f.quote }}”</span>
+              </li>
+            </ul>
           </div>
         </template>
         <template v-else-if="event.kind === 'tool'">
@@ -156,6 +193,13 @@ const pretty = (value: unknown) =>
   font-size: 12px;
   color: var(--muted);
   margin-bottom: 4px;
+}
+.judge-notes {
+  margin: 6px 0 0;
+  padding: 6px 0 0 16px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--bad);
 }
 .note {
   font-size: 12px;

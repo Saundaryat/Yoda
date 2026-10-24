@@ -105,6 +105,9 @@ export const runs = pgTable(
     costStatus: text(),
     /** What the LLM-played lead cost (kept apart so it doesn't blur the A/B cost comparison). */
     leadCostUsd: real(),
+    /** The judge's per-reply verdicts and answers to the task's judge questions. */
+    judge: jsonb(),
+    judgeCostUsd: real(),
     durationMs: integer(),
     sessionIds: text().array().notNull().default([]),
     crmInitial: jsonb(),

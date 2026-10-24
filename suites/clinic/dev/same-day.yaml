@@ -44,3 +44,7 @@ checks:
     before: { leadRule: accepts-tomorrow }
     after: { tool: book_appointment, args: { slot_id: s-d1-0900 } }
     afterOptional: true
+  - id: judged-explains
+    label: Explains that same-day bookings aren't possible (judged)
+    type: llm_judge
+    question: Did the agent tell the lead that a booking for today isn't possible?

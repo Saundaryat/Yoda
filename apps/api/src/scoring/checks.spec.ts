@@ -218,3 +218,33 @@ describe('session scope', () => {
     expect(scoreRun(task([{ ...check, session: 2 }]), events, crm).checks[0]?.passed).toBe(true);
   });
 });
+
+describe('lead rule selectors', () => {
+  it("accept a list of rules and the LLM lead's multiple intents", () => {
+    const consent = {
+      id: 'consent',
+      label: '',
+      type: 'order',
+      before: { leadRule: ['accepts', 'confirm'] },
+      after: { tool: 'book_appointment' },
+    };
+    const byRule = [lead('yes please book it', 'confirm'), tool('book_appointment', {})];
+    expect(scoreRun(task([consent]), byRule, crm).checks[0]?.passed).toBe(true);
+
+    seq = 0;
+    const multi: RunEvent[] = [
+      {
+        seq: ++seq,
+        session: 1,
+        turn: 1,
+        kind: 'lead',
+        text: 'yes, 9am works',
+        ruleId: 'confirm',
+        ruleIds: ['confirm', 'accepts'],
+      },
+      tool('book_appointment', {}),
+    ];
+    const single = { ...consent, before: { leadRule: 'accepts' } };
+    expect(scoreRun(task([single]), multi, crm).checks[0]?.passed).toBe(true);
+  });
+});

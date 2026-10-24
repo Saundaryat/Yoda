@@ -7,7 +7,8 @@ export const BUSINESS: BusinessInfo = {
   name: 'Bright Smile Dental',
   address: '1200 Elm St, Dallas, TX 75201',
   timezone: CLINIC_TIMEZONE,
-  hours: 'Mon–Sat 8:00 AM – 6:00 PM',
+  // Open every day: task slot dates are relative to the run date, which can fall on any weekday.
+  hours: 'Open 7 days, 8:00 AM – 6:00 PM',
   services: [
     { id: 'cleaning', name: 'Cleaning and checkup', priceUsd: 120, durationMin: 60 },
     { id: 'whitening', name: 'Teeth whitening', priceUsd: 350, durationMin: 90 },

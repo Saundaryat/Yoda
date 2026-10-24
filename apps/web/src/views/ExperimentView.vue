@@ -115,6 +115,20 @@ const metricRows = computed(() => {
       diff: m.leadFallbacks.difference?.toFixed(2) ?? '—',
       ci: '',
     },
+    {
+      label: 'Replies passing the judge (audience, format, grounding)',
+      a: percent(m.replyQuality.a),
+      b: percent(m.replyQuality.b),
+      diff: points(m.replyQuality.difference),
+      ci: m.replyQuality.ci?.map((x) => points(x)).join(' to ') ?? '',
+    },
+    {
+      label: 'Rejected CRM calls per run',
+      a: m.rejectedToolCalls.a?.toFixed(2) ?? '—',
+      b: m.rejectedToolCalls.b?.toFixed(2) ?? '—',
+      diff: m.rejectedToolCalls.difference?.toFixed(2) ?? '—',
+      ci: m.rejectedToolCalls.ci?.map((x) => x.toFixed(2)).join(' to ') ?? '',
+    },
   ];
 });
 </script>

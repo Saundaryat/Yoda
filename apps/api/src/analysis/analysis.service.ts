@@ -2,6 +2,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import type {
   CheckFlip,
   ExperimentResults,
+  JudgeReport,
   RunEvent,
   TaskDefinition,
   TaskResult,
@@ -85,6 +86,13 @@ export class AnalysisService {
         b: forSide('b'),
       };
     });
+    const rejectedByRun = new Map<string, number>();
+    for (const { runId, payload } of hermesTools) {
+      const event = payload as Extract<RunEvent, { kind: 'tool' }>;
+      if (event.source === 'crm' && !event.ok)
+        rejectedByRun.set(runId, (rejectedByRun.get(runId) ?? 0) + 1);
+    }
+
     const passes: TaskRuns[] = taskResults.map((t) => ({
       taskId: t.taskId,
       a: t.a.map((r) => r.passed),
@@ -132,6 +140,8 @@ export class AnalysisService {
         durationMs: compareMetric(metric((r) => r.durationMs)),
         totalTokens: compareMetric(metric((r) => (r.inputTokens ?? 0) + (r.outputTokens ?? 0))),
         leadFallbacks: compareMetric(metric((r) => r.leadFallbacks)),
+        replyQuality: compareMetric(metric((r) => replyQuality(r.judge as JudgeReport | null))),
+        rejectedToolCalls: compareMetric(metric((r) => rejectedByRun.get(r.id) ?? 0)),
       },
       hermesToolUse: this.hermesToolUse(scored, hermesTools, sideOf),
     };
@@ -203,4 +213,13 @@ export class AnalysisService {
       .sort()
       .map((tool) => ({ tool, a: share(tool, 'a'), b: share(tool, 'b') }));
   }
+}
+
+/** Share of a run's replies with no verified judge failure; null when the run wasn't judged. */
+function replyQuality(judge: JudgeReport | null): number | null {
+  if (!judge?.turns.length) return null;
+  const clean = judge.turns.filter((t) =>
+    [t.audience, t.format, t.grounded].every((v) => v.pass || !v.verified),
+  );
+  return clean.length / judge.turns.length;
 }

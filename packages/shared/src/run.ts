@@ -8,8 +8,10 @@ export type RunEvent =
       turn: number;
       kind: 'lead';
       text: string;
-      /** Scripted: the rule that fired. LLM: the rule whose meaning the message matches, if any. */
+      /** Scripted: the rule that fired. LLM: the main rule the message means, if any. */
       ruleId: string | null;
+      /** LLM lead: every rule the message means (e.g. accepting a slot and "yes, book it" at once). */
+      ruleIds?: string[];
       /** Scripted lead said its "nothing matched" line. */
       fallback?: boolean;
       by?: 'script' | 'llm';
@@ -43,6 +45,31 @@ export interface CheckResult {
   passed: boolean;
   detail: string;
   evidence: Evidence[];
+  /** Not evaluated (e.g. no judge model configured); left out of the score. */
+  skipped?: boolean;
+}
+
+/** The judge's verdict on one agent reply. A failure carries a verbatim quote from the reply. */
+export interface TurnJudgment {
+  eventSeq: number;
+  audience: JudgeVerdict;
+  format: JudgeVerdict;
+  grounded: JudgeVerdict;
+}
+
+export interface JudgeVerdict {
+  pass: boolean;
+  quote: string;
+  reason: string;
+  /** False when the judge failed a reply but its quote isn't in the reply: the failure is ignored. */
+  verified: boolean;
+}
+
+export interface JudgeReport {
+  model: string;
+  turns: TurnJudgment[];
+  questions: { checkId: string; answer: 'yes' | 'no'; quote: string; reason: string }[];
+  usage: { inputTokens: number; outputTokens: number; costUsd: number | null };
 }
 
 export interface Score {

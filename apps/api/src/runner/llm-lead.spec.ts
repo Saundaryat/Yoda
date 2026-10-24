@@ -1,7 +1,8 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { sessionSchema } from '@evals/shared';
 import { InfraError } from './hermes-cli.js';
-import { leadFailure, leadSystemPrompt, LlmLead, type LeadModelClient } from './llm-lead.js';
+import { claudeFailure } from './anthropic.js';
+import { leadSystemPrompt, LlmLead, type LeadModelClient } from './llm-lead.js';
 
 const session = sessionSchema.parse({
   contact: 'c-1',
@@ -15,7 +16,7 @@ const session = sessionSchema.parse({
   maxTurns: 3,
 });
 
-type Reply = { text: string; intent: string; end: boolean } | null;
+type Reply = { text: string; intents: string[]; end: boolean } | null;
 
 /** A fake of client.beta.messages.parse that returns queued replies and records requests. */
 function fakeClient(replies: Reply[], stopReason = 'end_turn') {
@@ -45,13 +46,14 @@ const lead = (client: LeadModelClient, model = 'claude-opus-5-5') =>
 describe('LlmLead', () => {
   it('opens with the scripted line, then answers in character with a mapped intent', async () => {
     const { client, requests } = fakeClient([
-      { text: 'ugh my mom works all day, can u just do it', intent: 'pushback', end: false },
+      { text: 'ugh my mom works all day, can u just do it', intents: ['pushback'], end: false },
     ]);
     const l = lead(client);
     expect(l.opening()).toEqual({ text: session.opening, ruleId: null, fallback: false });
     expect(await l.next('We need a parent or guardian to book for under-18s.')).toEqual({
       text: 'ugh my mom works all day, can u just do it',
       ruleId: 'pushback',
+      ruleIds: ['pushback'],
       fallback: false,
     });
     const prompt = (requests[0]!.messages as { content: string }[])[0]!.content;
@@ -62,8 +64,8 @@ describe('LlmLead', () => {
 
   it('maps "none" to no rule and stops after an ending reply', async () => {
     const { client } = fakeClient([
-      { text: 'ok thx', intent: 'none', end: true },
-      { text: 'should not be asked', intent: 'none', end: false },
+      { text: 'ok thx', intents: [], end: true },
+      { text: 'should not be asked', intents: [], end: false },
     ]);
     const l = lead(client);
     l.opening();
@@ -72,7 +74,7 @@ describe('LlmLead', () => {
   });
 
   it('respects maxTurns', async () => {
-    const reply = { text: 'hm', intent: 'none', end: false };
+    const reply = { text: 'hm', intents: [], end: false };
     const { client, requests } = fakeClient([reply, reply, reply]);
     const l = lead(client);
     l.opening();
@@ -83,7 +85,7 @@ describe('LlmLead', () => {
   });
 
   it('adds up tokens and estimated cost', async () => {
-    const reply = { text: 'hm', intent: 'none', end: false };
+    const reply = { text: 'hm', intents: [], end: false };
     const { client } = fakeClient([reply, reply]);
     const l = lead(client);
     l.opening();
@@ -123,12 +125,15 @@ describe('leadSystemPrompt', () => {
   });
 });
 
-describe('leadFailure', () => {
+describe('claudeFailure', () => {
   it('retries rate limits and stops on bad keys', () => {
     const rateLimited = new Anthropic.RateLimitError(429, {}, 'slow down', new Headers());
     const badKey = new Anthropic.AuthenticationError(401, {}, 'invalid x-api-key', new Headers());
-    expect(leadFailure(rateLimited)).toMatchObject({ kind: 'rate_limit', retryable: true });
-    expect(leadFailure(badKey)).toMatchObject({ kind: 'account', retryable: false });
-    expect(leadFailure(new Error('socket hang up'))).toBeInstanceOf(InfraError);
+    expect(claudeFailure('LLM lead', rateLimited)).toMatchObject({
+      kind: 'rate_limit',
+      retryable: true,
+    });
+    expect(claudeFailure('LLM lead', badKey)).toMatchObject({ kind: 'account', retryable: false });
+    expect(claudeFailure('LLM lead', new Error('socket hang up'))).toBeInstanceOf(InfraError);
   });
 });
