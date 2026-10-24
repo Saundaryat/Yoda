@@ -7,12 +7,19 @@ export interface LeadMessage {
   fallback: boolean;
 }
 
+/** Who plays the lead in one session: the scripted rules or an LLM (see llm-lead.ts). */
+export interface Lead {
+  opening(): LeadMessage;
+  /** The lead's answer to `agentReply`, or null when the conversation is over. */
+  next(agentReply: string): LeadMessage | null | Promise<LeadMessage | null>;
+}
+
 /**
  * The simulated lead for one session. Deterministic: given the same agent replies it always says
  * the same thing, so A/B pairs face the same lead. Each rule fires at most once; the first unfired
  * rule whose pattern matches the agent's latest reply wins.
  */
-export class LeadScript {
+export class LeadScript implements Lead {
   private readonly fired = new Set<string>();
   private fallbackUsed = false;
   private sent = 0;

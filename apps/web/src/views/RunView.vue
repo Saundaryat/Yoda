@@ -46,6 +46,7 @@ interface RunDetail {
       memoryAfter: string | null;
       userProfileAfter: string | null;
       auxiliaryCalls: number;
+      lead: { model: string; calls: number; costUsd: number | null } | null;
     } | null;
   };
   task: { id: string; key: string; title: string; definition: TaskDefinition };
@@ -124,7 +125,13 @@ const spec = computed(() => data.value?.configuration.spec);
         {{ (data.run.inputTokens ?? 0) + (data.run.outputTokens ?? 0) }}
       </div>
       <div><span class="muted">Attempts</span> {{ data.run.attempts }}</div>
-      <div><span class="muted">Lead fallbacks</span> {{ data.run.leadFallbacks ?? '—' }}</div>
+      <div v-if="data.run.context?.lead">
+        <span class="muted">Lead</span> {{ data.run.context.lead.model }} ·
+        {{ data.run.context.lead.calls }} calls · {{ money(data.run.context.lead.costUsd) }}
+      </div>
+      <div v-else>
+        <span class="muted">Lead fallbacks</span> {{ data.run.leadFallbacks ?? '—' }}
+      </div>
     </div>
 
     <div v-if="data.run.status === 'error'" class="card">

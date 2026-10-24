@@ -15,6 +15,7 @@ import { DB, type Db } from '../db/db.module.js';
 import { checkResults, configurations, experiments, runEvents, runs, tasks } from '../db/schema.js';
 import { SkillsService } from '../skills/skills.service.js';
 import { InfraError } from './hermes-cli.js';
+import { anthropicLeadClient } from './llm-lead.js';
 import { executeRun, type ExecutorSettings, type RunOutcome } from './run-executor.js';
 
 type RunRow = typeof runs.$inferSelect;
@@ -56,6 +57,10 @@ export class RunQueueService implements OnApplicationBootstrap, OnApplicationShu
         ANTHROPIC_API_KEY: this.config.ANTHROPIC_API_KEY,
       },
       skillContent: (name) => skills.get(name)?.content,
+      leadClient: this.config.ANTHROPIC_API_KEY
+        ? anthropicLeadClient(this.config.ANTHROPIC_API_KEY)
+        : null,
+      leadModel: this.config.LEAD_MODEL,
     };
   }
 
@@ -126,6 +131,10 @@ export class RunQueueService implements OnApplicationBootstrap, OnApplicationShu
       .select()
       .from(configurations)
       .where(eq(configurations.id, run.configId));
+    const [experiment] = await this.db
+      .select({ leadMode: experiments.leadMode })
+      .from(experiments)
+      .where(eq(experiments.id, run.experimentId));
     try {
       const outcome = await executeRun(
         {
@@ -133,6 +142,7 @@ export class RunQueueService implements OnApplicationBootstrap, OnApplicationShu
           attempt: run.attempts,
           task: task!.definition as TaskDefinition,
           spec: configuration!.spec as ConfigurationSpec,
+          leadMode: experiment!.leadMode,
           signal,
         },
         this.settings,
@@ -167,11 +177,12 @@ export class RunQueueService implements OnApplicationBootstrap, OnApplicationShu
           outputTokens: outcome.outputTokens,
           costUsd: outcome.costUsd,
           costStatus: outcome.costStatus,
+          leadCostUsd: outcome.leadUsage?.costUsd ?? null,
           durationMs: outcome.durationMs,
           sessionIds: outcome.sessionIds,
           crmInitial: outcome.crmInitial,
           crmFinal: outcome.crmFinal,
-          context: outcome.context,
+          context: { ...outcome.context, lead: outcome.leadUsage },
           leadFallbacks: outcome.leadFallbacks,
           errorKind: null,
           errorDetail: null,
@@ -267,7 +278,7 @@ export class RunQueueService implements OnApplicationBootstrap, OnApplicationShu
     const [stats] = (await this.db
       .select({
         open: sql<number>`count(*) filter (where status in ('queued', 'running'))::int`,
-        cost: sql<number>`coalesce(sum(cost_usd), 0)::float`,
+        cost: sql<number>`coalesce(sum(coalesce(cost_usd, 0) + coalesce(lead_cost_usd, 0)), 0)::float`,
       })
       .from(runs)
       .where(eq(runs.experimentId, experimentId))) as [{ open: number; cost: number }];

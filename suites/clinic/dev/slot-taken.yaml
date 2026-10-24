@@ -15,6 +15,7 @@ crm:
 sessions:
   - contact: c-102
     opening: Hey, can I get a cleaning tomorrow? Morning is best.
+    persona: 'Daniel, 41, busy dad. Mildly annoyed when plans change but flexible if given a clear alternative.'
     rules:
       - { id: accepts-9am, when: '\b9(:00)?\s*a\.?m', say: '9 AM is perfect.' }
       - { id: accepts-2pm, when: '\b2(:00)?\s*p\.?m', say: 'Ugh. OK, 2 PM tomorrow works then.' }

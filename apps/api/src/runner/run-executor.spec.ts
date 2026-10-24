@@ -34,6 +34,8 @@ beforeEach(() => {
     runBudgetSeconds: 60,
     providerKeys: { OPENAI_API_KEY: 'sk-test-only' },
     skillContent: () => '---\nname: clinic-policy\ndescription: test\n---\nRules.',
+    leadClient: null,
+    leadModel: 'claude-test',
   };
 });
 afterEach(() => rmSync(runsDir, { recursive: true, force: true }));
@@ -41,7 +43,7 @@ afterEach(() => rmSync(runsDir, { recursive: true, force: true }));
 describe('executeRun with the fake Hermes', () => {
   it('runs a scenario end to end and scores it', async () => {
     const outcome = await executeRun(
-      { runId: 'r1', attempt: 1, task: task('qualify-and-book'), spec },
+      { runId: 'r1', attempt: 1, task: task('qualify-and-book'), spec, leadMode: 'scripted' },
       settings,
     );
     expect(outcome.checks.filter((c) => !c.passed)).toEqual([]);
@@ -69,7 +71,7 @@ describe('executeRun with the fake Hermes', () => {
 
   it('records the recovery when the chosen slot is taken', async () => {
     const outcome = await executeRun(
-      { runId: 'r2', attempt: 1, task: task('slot-taken'), spec },
+      { runId: 'r2', attempt: 1, task: task('slot-taken'), spec, leadMode: 'scripted' },
       settings,
     );
     const bookings = outcome.events.filter(
@@ -80,7 +82,10 @@ describe('executeRun with the fake Hermes', () => {
   });
 
   it('gives Hermes a home with only the configured provider key', async () => {
-    await executeRun({ runId: 'r3', attempt: 2, task: task('stop-opt-out'), spec }, settings);
+    await executeRun(
+      { runId: 'r3', attempt: 2, task: task('stop-opt-out'), spec, leadMode: 'scripted' },
+      settings,
+    );
     const home = join(runsDir, 'r3', 'attempt-2', 'home');
     expect(readFileSync(join(home, '.env'), 'utf8')).toBe('OPENAI_API_KEY=sk-test-only\n');
     const config = JSON.parse(readFileSync(join(home, 'config.yaml'), 'utf8'));
@@ -100,7 +105,7 @@ describe('executeRun with the fake Hermes', () => {
     ['account', 'account', false],
   ])('classifies a %s failure', async (mode, kind, retryable) => {
     const attempt = executeRun(
-      { runId: 'r4', attempt: 1, task: task('qualify-and-book'), spec },
+      { runId: 'r4', attempt: 1, task: task('qualify-and-book'), spec, leadMode: 'scripted' },
       { ...settings, extraEnv: { FAKE_HERMES_FAIL: mode } },
     );
     await expect(attempt).rejects.toBeInstanceOf(InfraError);
@@ -109,15 +114,54 @@ describe('executeRun with the fake Hermes', () => {
 
   it('kills a hung turn at the hard timeout', async () => {
     const attempt = executeRun(
-      { runId: 'r5', attempt: 1, task: task('qualify-and-book'), spec },
+      { runId: 'r5', attempt: 1, task: task('qualify-and-book'), spec, leadMode: 'scripted' },
       { ...settings, turnTimeoutMs: 500, extraEnv: { FAKE_HERMES_FAIL: 'hang' } },
     );
     await expect(attempt).rejects.toMatchObject({ kind: 'timeout' });
   });
 
+  it('runs a scenario with Claude playing the lead (fake client) and keeps rule-based checks working', async () => {
+    const replies = [
+      { text: 'oh nice, 9am works for me!', intent: 'accepts', end: false },
+      { text: 'perfect thank you', intent: 'done', end: true },
+    ];
+    const leadClient = {
+      parse: async () => ({
+        parsed_output: replies.shift(),
+        stop_reason: 'end_turn',
+        usage: { input_tokens: 800, output_tokens: 60 },
+      }),
+    } as unknown as ExecutorSettings['leadClient'];
+    const outcome = await executeRun(
+      { runId: 'r7', attempt: 1, task: task('qualify-and-book'), spec, leadMode: 'llm' },
+      { ...settings, leadClient, leadModel: 'claude-haiku-4-5' },
+    );
+    const leads = outcome.events.filter((e) => e.kind === 'lead');
+    expect(leads.map((e) => e.kind === 'lead' && [e.by, e.ruleId])).toEqual([
+      ['llm', null],
+      ['llm', 'accepts'],
+      ['llm', 'done'],
+    ]);
+    expect(outcome.passed).toBe(true);
+    expect(outcome.leadUsage).toMatchObject({
+      calls: 2,
+      inputTokens: 1600,
+      model: 'claude-haiku-4-5',
+    });
+    expect(outcome.leadUsage?.costUsd).toBeCloseTo((1600 * 1 + 120 * 5) / 1e6);
+  });
+
+  it('needs ANTHROPIC_API_KEY for the LLM lead', async () => {
+    const attempt = executeRun(
+      { runId: 'r8', attempt: 1, task: task('qualify-and-book'), spec, leadMode: 'llm' },
+      settings,
+    );
+    await expect(attempt).rejects.toMatchObject({ kind: 'account' });
+  });
+
   it('stops immediately when the provider key is missing', async () => {
     const attempt = executeRun(
-      { runId: 'r6', attempt: 1, task: task('qualify-and-book'), spec },
+      { runId: 'r6', attempt: 1, task: task('qualify-and-book'), spec, leadMode: 'scripted' },
       { ...settings, providerKeys: {} },
     );
     await expect(attempt).rejects.toMatchObject({

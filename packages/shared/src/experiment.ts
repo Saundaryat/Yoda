@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+export const LEAD_MODES = ['scripted', 'llm'] as const;
+export type LeadMode = (typeof LEAD_MODES)[number];
+
 export const createExperimentSchema = z.strictObject({
   name: z.string().min(1),
   /** Written down before running, so the result is read against a stated expectation. */
@@ -8,6 +11,11 @@ export const createExperimentSchema = z.strictObject({
   candidateConfigId: z.uuid(),
   taskIds: z.array(z.uuid()).min(1),
   repetitions: z.number().int().min(1).max(10).default(3),
+  /**
+   * Who plays the lead. scripted: the task's regex rules (deterministic, free, best for A/B).
+   * llm: Claude plays the lead from a persona (realistic, varied, costs a little per turn).
+   */
+  leadMode: z.enum(LEAD_MODES).default('scripted'),
 });
 
 export type CreateExperiment = z.infer<typeof createExperimentSchema>;
@@ -42,10 +50,12 @@ export interface ExperimentSummary {
   candidateConfigId: string;
   taskIds: string[];
   repetitions: number;
+  leadMode: LeadMode;
   createdAt: string;
   startedAt: string | null;
   finishedAt: string | null;
   counts: Record<RunStatus, number>;
+  /** Agent (Hermes) spend plus LLM-lead spend. */
   costUsd: number;
 }
 

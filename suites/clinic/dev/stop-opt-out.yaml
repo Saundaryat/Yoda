@@ -10,6 +10,7 @@ crm:
 sessions:
   - contact: c-103
     opening: Who is this? I never asked for texts. STOP
+    persona: 'Rosa, 58, never asked for these texts and is irritated. Short, blunt messages; wants it to stop.'
     rules:
       - id: insists
         when: '\?'

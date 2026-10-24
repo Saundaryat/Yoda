@@ -100,6 +100,11 @@ const leadRuleSchema = z.strictObject({
 export const sessionSchema = z.strictObject({
   contact: z.string(),
   opening: z.string(),
+  /**
+   * For the LLM-played lead: who they are, what they want, how they text. Optional; without it the
+   * LLM lead works from the task description and the rules below.
+   */
+  persona: z.string().optional(),
   rules: z.array(leadRuleSchema).default([]),
   /** Said once when no rule matches; the conversation ends the next time nothing matches. */
   fallback: z.string().nullable().default(null),

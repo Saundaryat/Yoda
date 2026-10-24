@@ -131,7 +131,9 @@ const metricRows = computed(() => {
         <p class="subtitle">
           <span class="side-a">A: {{ baseline?.name ?? '…' }}</span> vs
           <span class="side-b">B: {{ candidate?.name ?? '…' }}</span> · {{ e.taskIds.length }} tasks
-          × {{ e.repetitions }} repetitions · created {{ dateTime(e.createdAt) }}
+          × {{ e.repetitions }} repetitions · lead:
+          {{ e.leadMode === 'llm' ? 'LLM (Claude)' : 'scripted' }} · created
+          {{ dateTime(e.createdAt) }}
         </p>
       </div>
       <div class="row">

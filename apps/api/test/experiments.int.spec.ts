@@ -91,7 +91,11 @@ describe('experiments end to end', () => {
     await queue.drain(id);
 
     const summary = (await api.get(`/api/experiments/${id}`)).body;
-    expect(summary).toMatchObject({ status: 'finished', counts: { scored: 8, error: 0 } });
+    expect(summary).toMatchObject({
+      status: 'finished',
+      leadMode: 'scripted',
+      counts: { scored: 8, error: 0 },
+    });
     const runs = (await api.get(`/api/experiments/${id}/runs`)).body as {
       id: string;
       configId: string;
@@ -134,6 +138,26 @@ describe('experiments end to end', () => {
     expect(detail.run.attemptLog).toEqual([
       expect.objectContaining({ attempt: 1, kind: 'rate_limit' }),
     ]);
+  });
+
+  it('refuses to run an LLM-lead experiment without ANTHROPIC_API_KEY, without retrying', async () => {
+    const body = {
+      name: 'llm lead',
+      baselineConfigId: ids.baseline,
+      candidateConfigId: ids.candidate,
+      taskIds: [ids['qualify-and-book']],
+      repetitions: 1,
+      leadMode: 'llm',
+    };
+    const id = (await api.post('/api/experiments').send(body).expect(201)).body.id as string;
+    await api.post(`/api/experiments/${id}/start`).expect(201);
+    await queue.drain(id);
+    const runs = (await api.get(`/api/experiments/${id}/runs`)).body as {
+      errorKind: string;
+      errorDetail: string;
+    }[];
+    expect(runs.map((r) => r.errorKind)).toEqual(['account', 'account']);
+    expect(runs[0]!.errorDetail).toMatch(/ANTHROPIC_API_KEY/);
   });
 
   it('stops the whole experiment on a bad key, and runs it after retry', async () => {

@@ -195,7 +195,7 @@ export class ExperimentsService {
       .select({
         status: runs.status,
         n: sql<number>`count(*)::int`,
-        cost: sql<number>`coalesce(sum(cost_usd), 0)::float`,
+        cost: sql<number>`coalesce(sum(coalesce(cost_usd, 0) + coalesce(lead_cost_usd, 0)), 0)::float`,
       })
       .from(runs)
       .where(eq(runs.experimentId, row.id))
@@ -215,6 +215,7 @@ export class ExperimentsService {
       candidateConfigId: row.candidateConfigId,
       taskIds: row.taskIds,
       repetitions: row.repetitions,
+      leadMode: row.leadMode,
       createdAt: row.createdAt.toISOString(),
       startedAt: row.startedAt?.toISOString() ?? null,
       finishedAt: row.finishedAt?.toISOString() ?? null,

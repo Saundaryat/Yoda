@@ -27,10 +27,11 @@ const pretty = (value: unknown) =>
           <div class="bubble">
             <div class="who">
               Lead
-              <span v-if="event.ruleId" class="badge">rule: {{ event.ruleId }}</span>
-              <span v-else-if="event.seq > 1 && !startsSession(index)" class="badge warn"
-                >fallback</span
-              >
+              <span v-if="event.by === 'llm'" class="badge info">LLM</span>
+              <span v-if="event.ruleId" class="badge">
+                {{ event.by === 'llm' ? 'means' : 'rule' }}: {{ event.ruleId }}
+              </span>
+              <span v-if="event.fallback" class="badge warn">fallback</span>
             </div>
             {{ event.text }}
           </div>

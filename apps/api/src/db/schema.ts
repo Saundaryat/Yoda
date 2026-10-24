@@ -56,6 +56,9 @@ export const experiments = pgTable('experiments', {
     .references(() => configurations.id),
   taskIds: uuid().array().notNull(),
   repetitions: integer().notNull(),
+  leadMode: text({ enum: ['scripted', 'llm'] })
+    .notNull()
+    .default('scripted'),
   status: text({ enum: ['draft', 'running', 'finished', 'cancelled'] })
     .notNull()
     .default('draft'),
@@ -100,6 +103,8 @@ export const runs = pgTable(
     outputTokens: integer(),
     costUsd: real(),
     costStatus: text(),
+    /** What the LLM-played lead cost (kept apart so it doesn't blur the A/B cost comparison). */
+    leadCostUsd: real(),
     durationMs: integer(),
     sessionIds: text().array().notNull().default([]),
     crmInitial: jsonb(),

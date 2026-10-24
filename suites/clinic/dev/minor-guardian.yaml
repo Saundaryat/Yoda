@@ -13,6 +13,7 @@ crm:
 sessions:
   - contact: c-201
     opening: hey can i book a cleaning? im 16, my mom said i should go
+    persona: 'Jamie, 16, texts in lowercase with little punctuation. Wants to sort it out alone and gets impatient about needing a parent.'
     rules:
       - id: pushback
         when: 'parent|guardian|mom|mother|dad|father|adult'

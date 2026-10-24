@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Configuration, CreateExperiment, ExperimentSummary } from '@evals/shared';
+import type { Configuration, CreateExperiment, ExperimentSummary, LeadMode } from '@evals/shared';
 import { computed, ref, watch } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import { api } from '../api.js';
@@ -26,6 +26,7 @@ const form = ref({
   baselineConfigId: '',
   candidateConfigId: '',
   repetitions: 3,
+  leadMode: 'scripted' as LeadMode,
 });
 const selected = ref(new Set<string>());
 const error = ref<string | null>(null);
@@ -148,6 +149,23 @@ async function create() {
         <input v-model.number="form.repetitions" type="number" min="1" max="10" />
         <small>Agents are not deterministic. 3 repetitions show how consistent each one is.</small>
       </label>
+      <fieldset class="field lead">
+        <span>Who plays the lead</span>
+        <label class="check">
+          <input v-model="form.leadMode" type="radio" value="scripted" />
+          <span>
+            <strong>Scripted</strong> — the task's rules. Identical for A and B, free, best for a
+            fair comparison.
+          </span>
+        </label>
+        <label class="check">
+          <input v-model="form.leadMode" type="radio" value="llm" />
+          <span>
+            <strong>LLM (Claude)</strong> — plays the lead from a persona: realistic, varied
+            wording. Needs <span class="mono">ANTHROPIC_API_KEY</span>; adds a little cost per turn.
+          </span>
+        </label>
+      </fieldset>
 
       <div class="summary">
         <div>
@@ -192,6 +210,16 @@ async function create() {
 </template>
 
 <style scoped>
+.lead {
+  border: none;
+  padding: 0;
+  margin: 0 0 14px;
+}
+.lead > span {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
 .summary {
   background: var(--surface-2);
   border-radius: 6px;

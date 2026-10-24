@@ -30,7 +30,10 @@ const envSchema = z.object({
   /** Stop an experiment's remaining runs once its estimated spend passes this. */
   MAX_EXPERIMENT_COST_USD: z.coerce.number().default(25),
   OPENAI_API_KEY: z.string().optional(),
+  /** Used by Hermes when a configuration's provider is anthropic, and by the LLM-played lead. */
   ANTHROPIC_API_KEY: z.string().optional(),
+  /** Claude model that plays the lead in experiments with lead mode "llm". */
+  LEAD_MODEL: z.string().default('claude-opus-5-5'),
 });
 
 export type AppConfig = z.infer<typeof envSchema>;

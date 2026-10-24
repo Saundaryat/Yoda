@@ -8,7 +8,11 @@ export type RunEvent =
       turn: number;
       kind: 'lead';
       text: string;
+      /** Scripted: the rule that fired. LLM: the rule whose meaning the message matches, if any. */
       ruleId: string | null;
+      /** Scripted lead said its "nothing matched" line. */
+      fallback?: boolean;
+      by?: 'script' | 'llm';
     }
   | { seq: number; session: number; turn: number; kind: 'agent'; text: string }
   | {

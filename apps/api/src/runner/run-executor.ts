@@ -1,11 +1,19 @@
 import { CRM_SERVER_PATH, loadState, materialize, saveState } from '@evals/crm';
-import type { ConfigurationSpec, CrmState, RunEvent, Score, TaskDefinition } from '@evals/shared';
+import type {
+  ConfigurationSpec,
+  CrmState,
+  LeadMode,
+  RunEvent,
+  Score,
+  TaskDefinition,
+} from '@evals/shared';
 import { existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { scoreRun } from '../scoring/checks.js';
 import { classifyTurn, InfraError, runTurn, stopGateway } from './hermes-cli.js';
 import { PROVIDER_KEY_ENV, seedHome } from './hermes-home.js';
-import { LeadScript } from './lead.js';
+import { LeadScript, type Lead, type LeadMessage } from './lead.js';
+import { LlmLead, type LeadModelClient, type LeadUsage } from './llm-lead.js';
 import { HermesStore, turnEvents } from './transcript.js';
 
 export interface ExecutorSettings {
@@ -17,6 +25,9 @@ export interface ExecutorSettings {
   skillContent: (name: string) => string | undefined;
   /** Extra variables for Hermes. Only tests use this, to steer the fake Hermes. */
   extraEnv?: Record<string, string>;
+  /** Anthropic client for the LLM-played lead; null when ANTHROPIC_API_KEY isn't set. */
+  leadClient: LeadModelClient | null;
+  leadModel: string;
 }
 
 export interface RunInput {
@@ -24,6 +35,7 @@ export interface RunInput {
   attempt: number;
   task: TaskDefinition;
   spec: ConfigurationSpec;
+  leadMode: LeadMode;
   signal?: AbortSignal;
   now?: Date;
 }
@@ -38,6 +50,8 @@ export interface RunOutcome extends Score {
   costUsd: number | null;
   costStatus: string;
   leadFallbacks: number;
+  /** LLM lead calls, tokens and estimated cost; null for the scripted lead. */
+  leadUsage: LeadUsage | null;
   durationMs: number;
   context: {
     /** The system prompt Hermes built for each session (skills index, memory, SOUL...). */
@@ -71,6 +85,10 @@ export async function executeRun(input: RunInput, settings: ExecutorSettings): P
   const providerKey = settings.providerKeys[PROVIDER_KEY_ENV[spec.provider]];
   if (!providerKey)
     throw new InfraError('account', `${PROVIDER_KEY_ENV[spec.provider]} is not set`);
+  const leadClient = settings.leadClient;
+  if (input.leadMode === 'llm' && !leadClient) {
+    throw new InfraError('account', 'ANTHROPIC_API_KEY is not set (the LLM lead needs it)');
+  }
 
   const dir = join(settings.runsDir, input.runId, `attempt-${input.attempt}`);
   rmSync(dir, { recursive: true, force: true });
@@ -102,13 +120,25 @@ export async function executeRun(input: RunInput, settings: ExecutorSettings): P
   const sessionIds: string[] = [];
   const totals = { input: 0, output: 0, cost: 0, auxiliaryCalls: 0, costKnown: true };
   let leadFallbacks = 0;
+  const llmLeads: LlmLead[] = [];
 
   try {
     for (const [index, script] of task.sessions.entries()) {
       const sessionNo = index + 1;
       const contact = crmInitial.contacts[script.contact]!;
-      const lead = new LeadScript(script);
-      let message: ReturnType<LeadScript['next']> = lead.opening();
+      let lead: Lead = new LeadScript(script);
+      if (input.leadMode === 'llm') {
+        const llmLead = new LlmLead({
+          session: script,
+          contactName: contact.name,
+          situation: task.description || task.title,
+          client: leadClient!,
+          model: settings.leadModel,
+        });
+        llmLeads.push(llmLead);
+        lead = llmLead;
+      }
+      let message: LeadMessage | null = lead.opening();
       let sessionId: string | null = null;
       let lastMessageId = 0;
       let turn = 0;
@@ -122,6 +152,8 @@ export async function executeRun(input: RunInput, settings: ExecutorSettings): P
           kind: 'lead',
           text: message.text,
           ruleId: message.ruleId,
+          fallback: message.fallback,
+          by: input.leadMode === 'llm' ? 'llm' : 'script',
         });
         if (message.fallback) leadFallbacks += 1;
 
@@ -169,7 +201,7 @@ export async function executeRun(input: RunInput, settings: ExecutorSettings): P
           });
         }
 
-        message = lead.next(text);
+        message = await lead.next(text);
       }
       if (sessionId) sessionIds.push(sessionId);
     }
@@ -193,6 +225,7 @@ export async function executeRun(input: RunInput, settings: ExecutorSettings): P
     costUsd: totals.costKnown ? totals.cost : null,
     costStatus: totals.costKnown ? 'estimated' : 'unknown',
     leadFallbacks,
+    leadUsage: llmLeads.length ? sumLeadUsage(llmLeads.map((l) => l.usage)) : null,
     durationMs: Date.now() - started,
     context: {
       systemPrompts: sessions.map((s) => s.systemPrompt),
@@ -207,4 +240,14 @@ export async function executeRun(input: RunInput, settings: ExecutorSettings): P
       auxiliaryCalls: totals.auxiliaryCalls,
     },
   };
+}
+
+function sumLeadUsage(usages: LeadUsage[]): LeadUsage {
+  return usages.reduce((total, u) => ({
+    model: u.model,
+    calls: total.calls + u.calls,
+    inputTokens: total.inputTokens + u.inputTokens,
+    outputTokens: total.outputTokens + u.outputTokens,
+    costUsd: total.costUsd === null || u.costUsd === null ? null : total.costUsd + u.costUsd,
+  }));
 }

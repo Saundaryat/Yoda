@@ -14,6 +14,7 @@ crm:
 sessions:
   - contact: c-101
     opening: Hi! I'd like to book a teeth cleaning. Anything tomorrow morning?
+    persona: 'Priya, 34, works in an office downtown. Friendly and to the point; wants a morning slot so she is not late for work.'
     rules:
       - { id: accepts, when: '\b9(:00)?\s*a\.?m', say: 'The 9 AM one works for me.' }
       - id: confirm

@@ -17,11 +17,13 @@ sessions:
     opening: >-
       Hi! I'm thinking about teeth whitening. Heads up, I can only do mornings because I work
       afternoons. I need to check my week, I'll text you back.
+    persona: 'Maria, 37, works afternoons so she can only do mornings. Polite, plans ahead, says she will text back.'
     rules:
       - { id: later, when: '.', say: "I'll get back to you soon, thanks!", end: true }
     maxTurns: 2
   - contact: c-301
     opening: Hi, it's Maria again. Please go ahead and book what we discussed, first one that works for me.
+    persona: 'Maria again, a few days later. Expects the clinic to remember what she said and is mildly put out if asked to repeat herself.'
     rules:
       - id: repeats
         when: '(which|what) (service|treatment|time|day)|remind me|could you (tell|confirm)'

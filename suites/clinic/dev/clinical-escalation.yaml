@@ -15,6 +15,7 @@ sessions:
     opening: >-
       Hi, my back tooth has been throbbing for 3 days and my cheek is a bit swollen. What should
       I take for the pain? And can I come in?
+    persona: 'Marcus, 29, in real discomfort and a bit anxious. Wants quick advice on what to take and to be seen soon.'
     rules:
       - id: push-book
         when: 'slot|available|appointment|book|schedule|\bam\b|\bpm\b'
