@@ -1,27 +1,21 @@
 <script setup lang="ts">
-import type { RunEvent, TurnJudgment } from '@evals/shared';
+import type { LeadLabel, RunEvent, TurnJudgment } from '@evals/shared';
+import { ISSUE_TEXT, label } from '../format.js';
 
 /** A run's conversation: lead messages, agent replies and every tool call in between. */
 const props = defineProps<{
   events: RunEvent[];
   highlighted: number[];
   judgments?: TurnJudgment[];
+  leadLabels?: LeadLabel[];
 }>();
-
-const CRITERIA = ['audience', 'format', 'grounded'] as const;
-const judgmentFor = (seq: number) => props.judgments?.find((j) => j.eventSeq === seq);
-/** Verified failures only: a judge failure whose quote isn't in the reply is ignored. */
-const failures = (seq: number) => {
-  const j = judgmentFor(seq);
-  return j
-    ? CRITERIA.filter((c) => !j[c].pass && j[c].verified).map((c) => ({ criterion: c, ...j[c] }))
-    : [];
-};
 
 const startsSession = (index: number) =>
   index === 0 || props.events[index - 1]!.session !== props.events[index]!.session;
 const pretty = (value: unknown) =>
   typeof value === 'string' ? value : JSON.stringify(value, null, 2);
+const judgmentFor = (seq: number) => props.judgments?.find((j) => j.eventSeq === seq);
+const leadLabelFor = (seq: number) => props.leadLabels?.find((l) => l.eventSeq === seq);
 </script>
 
 <template>
@@ -46,6 +40,13 @@ const pretty = (value: unknown) =>
                 {{ event.by === 'llm' ? 'means' : 'rule' }}: {{ event.ruleId }}
               </span>
               <span v-if="event.fallback" class="badge warn">fallback</span>
+              <span
+                v-if="leadLabelFor(event.seq)"
+                class="badge"
+                title="Judge's label for this message"
+              >
+                {{ label(leadLabelFor(event.seq)!.intent) }} · {{ leadLabelFor(event.seq)!.mood }}
+              </span>
             </div>
             {{ event.text }}
           </div>
@@ -55,27 +56,28 @@ const pretty = (value: unknown) =>
             <div class="who">
               Agent reply
               <template v-if="judgmentFor(event.seq)">
-                <span
-                  v-if="!failures(event.seq).length"
-                  class="badge good"
-                  title="The judge passed this reply on audience, format and grounding"
+                <span class="badge" title="What kind of reply this was">{{
+                  label(judgmentFor(event.seq)!.act)
+                }}</span>
+                <span v-if="!judgmentFor(event.seq)!.issues.length" class="badge good"
                   >judge ✓</span
                 >
                 <span
-                  v-for="f in failures(event.seq)"
-                  :key="f.criterion"
+                  v-for="issue in judgmentFor(event.seq)!.issues"
+                  :key="issue.label"
                   class="badge bad"
-                  :title="`${f.reason} — “${f.quote}”`"
-                  >judge ✗ {{ f.criterion }}</span
+                  :title="`${issue.reason} — “${issue.quote}”`"
+                  >{{ ISSUE_TEXT[issue.label] ?? label(issue.label) }}</span
                 >
               </template>
             </div>
             <span v-if="event.text">{{ event.text }}</span>
             <em v-else class="muted">(empty reply)</em>
-            <ul v-if="failures(event.seq).length" class="judge-notes">
-              <li v-for="f in failures(event.seq)" :key="f.criterion">
-                <strong>{{ f.criterion }}:</strong> {{ f.reason }}
-                <span class="mono">“{{ f.quote }}”</span>
+            <ul v-if="judgmentFor(event.seq)?.issues.length" class="judge-notes">
+              <li v-for="issue in judgmentFor(event.seq)!.issues" :key="issue.label">
+                <strong>{{ ISSUE_TEXT[issue.label] ?? label(issue.label) }}:</strong>
+                {{ issue.reason }}
+                <span class="mono">“{{ issue.quote }}”</span>
               </li>
             </ul>
           </div>

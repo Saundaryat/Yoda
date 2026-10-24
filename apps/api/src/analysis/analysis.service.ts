@@ -10,6 +10,7 @@ import type {
 import { and, eq, inArray } from 'drizzle-orm';
 import { DB, type Db } from '../db/db.module.js';
 import { checkResults, experiments, runEvents, runs, tasks } from '../db/schema.js';
+import { improvementSummary } from './labels.js';
 import {
   allRunsPassRate,
   compare,
@@ -140,9 +141,19 @@ export class AnalysisService {
         durationMs: compareMetric(metric((r) => r.durationMs)),
         totalTokens: compareMetric(metric((r) => (r.inputTokens ?? 0) + (r.outputTokens ?? 0))),
         leadFallbacks: compareMetric(metric((r) => r.leadFallbacks)),
-        replyQuality: compareMetric(metric((r) => replyQuality(r.judge as JudgeReport | null))),
+        replyQuality: compareMetric(
+          metric((r) => (r.judge as JudgeReport | null)?.replyQuality ?? null),
+        ),
         rejectedToolCalls: compareMetric(metric((r) => rejectedByRun.get(r.id) ?? 0)),
       },
+      improvement: improvementSummary(
+        scored.map((r) => ({
+          runId: r.id,
+          taskKey: taskResults.find((t) => t.taskId === r.taskId)!.key,
+          side: sideOf(r.configId),
+          judge: r.judge as JudgeReport | null,
+        })),
+      ),
       hermesToolUse: this.hermesToolUse(scored, hermesTools, sideOf),
     };
   }
@@ -213,13 +224,4 @@ export class AnalysisService {
       .sort()
       .map((tool) => ({ tool, a: share(tool, 'a'), b: share(tool, 'b') }));
   }
-}
-
-/** Share of a run's replies with no verified judge failure; null when the run wasn't judged. */
-function replyQuality(judge: JudgeReport | null): number | null {
-  if (!judge?.turns.length) return null;
-  const clean = judge.turns.filter((t) =>
-    [t.audience, t.format, t.grounded].every((v) => v.pass || !v.verified),
-  );
-  return clean.length / judge.turns.length;
 }

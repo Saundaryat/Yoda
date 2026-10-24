@@ -25,6 +25,12 @@ const emit = defineEmits<{ focus: [seqs: number[]]; state: [path: string] }>();
           >every run</span
         >
         <span v-if="check.skipped" class="badge">not judged</span>
+        <span
+          v-if="check.informational"
+          class="badge warn"
+          title="Reply quality is scored separately from pass/fail"
+          >reply quality · not scored</span
+        >
         <span v-if="check.critical" class="badge warn">critical</span>
         <span class="badge">weight {{ check.weight }}</span>
       </div>

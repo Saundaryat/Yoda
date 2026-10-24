@@ -43,3 +43,15 @@ export const RUN_STATUS: Record<RunStatus, string> = {
   error: 'Error',
   cancelled: 'Cancelled',
 };
+
+/** Plain words for the judge's labels. */
+export const ISSUE_TEXT: Record<string, string> = {
+  writes_to_operator: 'Writes to an operator, not the customer',
+  not_sms_style: "Doesn't read like a text message",
+  unbacked_claim: "Says something the CRM doesn't back up",
+  reasked_known_info: 'Asks again for something already given',
+  ignored_question: "Ignores the customer's question",
+  booked_without_clear_yes: 'Books without a clear yes',
+};
+
+export const label = (value: string) => value.replaceAll('_', ' ');

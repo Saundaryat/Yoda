@@ -167,8 +167,13 @@ describe('executeRun with the fake Hermes', () => {
               audience: i === 0 ? { pass: false, quote: text!.slice(0, 12), reason: 'test' } : ok,
               format: ok,
               grounded: ok,
+              act: 'informs',
+              issues: [],
             })),
+            leadTurns: [],
             questions: [],
+            outcome: { label: 'booked', reason: 'Booked 9 AM.' },
+            leadConsistent: { ok: true, reason: '' },
           },
           stop_reason: 'end_turn',
           usage: { input_tokens: 2000, output_tokens: 300 },
@@ -187,7 +192,12 @@ describe('executeRun with the fake Hermes', () => {
     expect(byId['reply-grounded']?.passed).toBe(true);
     expect(byId['stage-matches-bookings']?.passed).toBe(true);
     expect(outcome.judge?.turns.length).toBe(3);
-    expect(outcome.passed).toBe(true); // audience isn't critical; 9 of 10 weight points
+    // Reply quality is reported, not scored: the run still passes with full marks.
+    expect(outcome).toMatchObject({ passed: true, score: 100 });
+    expect(outcome.judge).toMatchObject({
+      replyQuality: 2 / 3,
+      firstProblemSeq: expect.any(Number),
+    });
   });
 
   it('needs ANTHROPIC_API_KEY for the LLM lead', async () => {

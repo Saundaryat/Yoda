@@ -1,20 +1,27 @@
 import { betaZodOutputFormat } from '@anthropic-ai/sdk/helpers/beta/zod';
-import type {
-  JudgeReport,
-  JudgeVerdict,
-  RunEvent,
-  TaskDefinition,
-  TurnJudgment,
+import {
+  AGENT_ACTS,
+  EXTRA_ISSUES,
+  LEAD_INTENTS,
+  LEAD_MOODS,
+  OUTCOMES,
+  type Issue,
+  type JudgeReport,
+  type JudgeVerdict,
+  type RunEvent,
+  type TaskDefinition,
+  type TurnJudgment,
 } from '@evals/shared';
 import { z } from 'zod';
 import { claudeFailure, estimateCost, type ClaudeClient } from '../runner/anthropic.js';
 import { InfraError } from '../runner/hermes-cli.js';
 
 /**
- * The LLM judge: one call per finished run. It grades every agent reply on three things fixed
- * rules can't see, and answers the task's own `llm_judge` questions. A separate model from the
- * agent and the lead, so nothing grades its own output. A failed reply must be backed by a
- * verbatim quote from that reply; we check the quote and ignore failures we can't verify.
+ * The LLM judge: one call per finished run. It grades every agent reply on three criteria fixed
+ * rules can't see, labels every turn from fixed lists (so problems can be counted across runs),
+ * and answers the task's own `llm_judge` questions. A separate model from the agent and the lead,
+ * so nothing grades its own output. A problem must be backed by a verbatim quote; we check the
+ * quote and ignore problems we can't verify.
  */
 
 export const JUDGE_RUBRIC = {
@@ -25,6 +32,18 @@ export const JUDGE_RUBRIC = {
   grounded:
     'Every factual claim (that something was booked, cancelled or noted, times, dates, prices, availability) is backed by the tool results earlier in the transcript. FAIL if it claims something the tools do not show, e.g. "you\'re booked" when no booking succeeded, or a price or slot that was never returned. After a successful escalate_to_human, saying staff or a clinician will follow up is backed; promising a specific time ("right away", "within the hour") is not.',
 } as const;
+
+const LABEL_GUIDE = [
+  'Labels (use only these words):',
+  `- For every LEAD message, intent: ${LEAD_INTENTS.join(', ')}; mood: ${LEAD_MOODS.join(', ')}.`,
+  `- For every AGENT REPLY, act (its main purpose): ${AGENT_ACTS.join(', ')}.`,
+  '- For every AGENT REPLY, extra problems (zero or more), each with the exact words it is about:',
+  '  reasked_known_info: asks for something the lead already said or the agent could see in its tools.',
+  "  ignored_question: does not answer a question the lead just asked (quote the lead's question).",
+  '  booked_without_clear_yes: a booking was made before the lead clearly agreed to that time.',
+  `- For the whole conversation, outcome: ${OUTCOMES.join(', ')}.`,
+  '- leadConsistent: did the LEAD behave like one real person with one consistent situation (no contradictions, no talking like an AI or a tester)?',
+].join('\n');
 
 const verdictSchema = z.object({
   pass: z.boolean(),
@@ -41,7 +60,14 @@ const reportSchema = z.object({
       audience: verdictSchema,
       format: verdictSchema,
       grounded: verdictSchema,
+      act: z.enum(AGENT_ACTS),
+      issues: z.array(
+        z.object({ label: z.enum(EXTRA_ISSUES), quote: z.string(), reason: z.string() }),
+      ),
     }),
+  ),
+  leadTurns: z.array(
+    z.object({ seq: z.number().int(), intent: z.enum(LEAD_INTENTS), mood: z.enum(LEAD_MOODS) }),
   ),
   questions: z.array(
     z.object({
@@ -51,6 +77,8 @@ const reportSchema = z.object({
       reason: z.string(),
     }),
   ),
+  outcome: z.object({ label: z.enum(OUTCOMES), reason: z.string() }),
+  leadConsistent: z.object({ ok: z.boolean(), reason: z.string() }),
 });
 
 const truncate = (text: string, max: number) =>
@@ -88,20 +116,28 @@ export function judgeSystemPrompt(): string {
     `- format: ${JUDGE_RUBRIC.format}`,
     `- grounded: ${JUDGE_RUBRIC.grounded}`,
     '',
+    LABEL_GUIDE,
+    '',
     'Then answer each task question yes or no, from the transcript alone.',
     '',
-    'Rules: judge what is written, not what was probably meant. For every FAIL, quote the exact failing words from that reply, copied character for character. Be strict about the criteria and fair about everything else: tone, wording and helpfulness are not part of these criteria.',
+    'Rules: judge what is written, not what was probably meant. For every FAIL and every problem, quote the exact words, copied character for character. Be strict about the criteria and fair about everything else: tone and wording are not part of these criteria.',
   ].join('\n');
 }
 
 const normalize = (text: string) => text.toLowerCase().replace(/\s+/g, ' ').trim();
+const contains = (haystack: string, quote: string) =>
+  normalize(quote).length >= 3 && normalize(haystack).includes(normalize(quote));
 
 /** A failure only counts if its quote is really in the reply (judges sometimes paraphrase or invent). */
 export function verify(verdict: z.infer<typeof verdictSchema>, replyText: string): JudgeVerdict {
-  const quote = normalize(verdict.quote);
-  const verified = verdict.pass || (quote.length >= 3 && normalize(replyText).includes(quote));
-  return { ...verdict, verified };
+  return { ...verdict, verified: verdict.pass || contains(replyText, verdict.quote) };
 }
+
+const RUBRIC_ISSUE: Record<'audience' | 'format' | 'grounded', Issue> = {
+  audience: 'writes_to_operator',
+  format: 'not_sms_style',
+  grounded: 'unbacked_claim',
+};
 
 export class Judge {
   constructor(
@@ -114,6 +150,8 @@ export class Judge {
     const replies = new Map(
       events.flatMap((e) => (e.kind === 'agent' ? [[e.seq, e.text] as const] : [])),
     );
+    const leadSeqs = new Set(events.filter((e) => e.kind === 'lead').map((e) => e.seq));
+    const transcriptText = events.map((e) => ('text' in e ? e.text : '')).join('\n');
     const questions = task.checks.flatMap((c) =>
       c.type === 'llm_judge' ? [{ id: c.id, question: c.question }] : [],
     );
@@ -124,6 +162,7 @@ export class Judge {
       renderTranscript(events),
       '',
       `Judge these AGENT REPLY numbers: ${[...replies.keys()].map((seq) => `#${seq}`).join(', ')}.`,
+      `Label these LEAD message numbers: ${[...leadSeqs].map((seq) => `#${seq}`).join(', ')}.`,
       questions.length
         ? `Task questions:\n${questions.map((q) => `- id "${q.id}": ${q.question}`).join('\n')}`
         : 'Task questions: none (return an empty list).',
@@ -155,20 +194,44 @@ export class Judge {
       .filter((t) => replies.has(t.seq))
       .map((t) => {
         const text = replies.get(t.seq)!;
-        return {
-          eventSeq: t.seq,
+        const verdicts = {
           audience: verify(t.audience, text),
           format: verify(t.format, text),
           grounded: verify(t.grounded, text),
         };
+        const rubricIssues = (['audience', 'format', 'grounded'] as const)
+          .filter((key) => !verdicts[key].pass && verdicts[key].verified)
+          .map((key) => ({
+            label: RUBRIC_ISSUE[key],
+            quote: verdicts[key].quote,
+            reason: verdicts[key].reason,
+          }));
+        // Extra problems may quote the lead (e.g. the ignored question), so check the whole transcript.
+        const extraIssues = t.issues.filter((issue) => contains(transcriptText, issue.quote));
+        return {
+          eventSeq: t.seq,
+          ...verdicts,
+          act: t.act,
+          issues: [...rubricIssues, ...extraIssues],
+        };
       });
     const known = new Set(questions.map((q) => q.id));
+    const wellWritten = turns.filter((t) =>
+      [t.audience, t.format].every((v) => v.pass || !v.verified),
+    ).length;
     return {
       model: this.model,
       turns,
+      leadTurns: parsed.leadTurns
+        .filter((l) => leadSeqs.has(l.seq))
+        .map(({ seq, ...label }) => ({ eventSeq: seq, ...label })),
       questions: parsed.questions
         .filter((q) => known.has(q.id))
         .map(({ id, ...answer }) => ({ checkId: id, ...answer })),
+      outcome: parsed.outcome,
+      leadConsistent: parsed.leadConsistent,
+      firstProblemSeq: turns.find((t) => t.issues.length)?.eventSeq ?? null,
+      replyQuality: turns.length ? wellWritten / turns.length : null,
       usage: {
         inputTokens: response.usage.input_tokens,
         outputTokens: response.usage.output_tokens,

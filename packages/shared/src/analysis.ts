@@ -1,3 +1,5 @@
+import type { Issue, LeadIntent, Outcome } from './run.js';
+
 export type Verdict =
   'better' | 'worse' | 'no_meaningful_difference' | 'inconclusive' | 'incomplete';
 
@@ -79,6 +81,33 @@ export interface ExperimentResults {
     /** CRM calls the CRM rejected (wrong ids, unavailable slots...): a sign of sloppy tool use. */
     rejectedToolCalls: MetricComparison;
   };
+  /** Where the agent can improve: counts of the judge's labels across all judged runs. */
+  improvement: ImprovementSummary;
   /** Share of runs that called each Hermes tool (skill_view, memory, ...): the mechanism, not just the outcome. */
   hermesToolUse: { tool: string; a: number; b: number }[];
+}
+
+export interface ImprovementSummary {
+  judgedRuns: { a: number; b: number };
+  /** Share of judged replies with each problem, per side, with one run to look at. */
+  issues: {
+    label: Issue;
+    a: number;
+    b: number;
+    countA: number;
+    countB: number;
+    exampleRunId: string | null;
+  }[];
+  /** For each kind of lead message: how often the agent's next reply had no problems. */
+  intents: {
+    intent: LeadIntent;
+    countA: number;
+    countB: number;
+    handledA: number | null;
+    handledB: number | null;
+  }[];
+  /** How conversations ended, counted per side. */
+  outcomes: { label: Outcome; a: number; b: number }[];
+  /** Runs where the simulated lead broke character: the test, not the agent, went wrong. */
+  leadProblems: { runId: string; taskKey: string; side: 'a' | 'b'; reason: string }[];
 }

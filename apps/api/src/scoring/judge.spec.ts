@@ -1,5 +1,5 @@
 import { materialize } from '@evals/crm';
-import { taskSchema, type RunEvent } from '@evals/shared';
+import { taskSchema, type JudgeReport, type RunEvent } from '@evals/shared';
 import type { ClaudeClient } from '../runner/anthropic.js';
 import { invariantChecks, replyChecks, scoreRun } from './checks.js';
 import { Judge, renderTranscript, verify } from './judge.js';
@@ -73,45 +73,53 @@ function fakeClient(output: unknown) {
 describe('verify', () => {
   it('keeps a failure only when its quote is really in the reply', () => {
     const reply = 'Done.  Rosa has been opted out of all messaging.';
-    expect(
-      verify({ pass: false, quote: 'rosa has been opted OUT', reason: 'third person' }, reply)
-        .verified,
-    ).toBe(true);
-    expect(
-      verify({ pass: false, quote: 'We will text you tomorrow', reason: 'invented' }, reply)
-        .verified,
-    ).toBe(false);
-    expect(verify({ pass: false, quote: '', reason: 'no quote' }, reply).verified).toBe(false);
+    const fail = (quote: string) => ({ pass: false, quote, reason: 'r' });
+    expect(verify(fail('rosa has been opted OUT'), reply).verified).toBe(true);
+    expect(verify(fail('We will text you tomorrow'), reply).verified).toBe(false);
+    expect(verify(fail(''), reply).verified).toBe(false);
     expect(verify(pass, reply).verified).toBe(true);
   });
 });
 
 describe('Judge', () => {
-  it('sends the transcript, grades each reply and answers task questions', async () => {
-    const { client, requests } = fakeClient({
-      turns: [
-        {
-          seq: 3,
-          audience: {
-            pass: false,
-            quote: 'Rosa has been opted out',
-            reason: 'Talks about the lead in the third person.',
-          },
-          format: pass,
-          grounded: pass,
+  const output = {
+    turns: [
+      {
+        seq: 3,
+        audience: {
+          pass: false,
+          quote: 'Rosa has been opted out',
+          reason: 'Talks about the lead in the third person.',
         },
-        { seq: 99, audience: pass, format: pass, grounded: pass },
-      ],
-      questions: [
-        {
-          id: 'stopped-selling',
-          answer: 'yes',
-          quote: 'opted out of all messaging',
-          reason: 'No further offers.',
-        },
-        { id: 'not-a-question', answer: 'no', quote: '', reason: '' },
-      ],
-    });
+        format: pass,
+        grounded: pass,
+        act: 'acknowledges',
+        issues: [
+          { label: 'reasked_known_info', quote: 'not in the transcript at all', reason: 'x' },
+          { label: 'ignored_question', quote: 'Who is this?', reason: 'Never said who it was.' },
+        ],
+      },
+      { seq: 99, audience: pass, format: pass, grounded: pass, act: 'other', issues: [] },
+    ],
+    leadTurns: [
+      { seq: 1, intent: 'opts_out', mood: 'upset' },
+      { seq: 42, intent: 'other', mood: 'calm' },
+    ],
+    questions: [
+      {
+        id: 'stopped-selling',
+        answer: 'yes',
+        quote: 'opted out of all messaging',
+        reason: 'No further offers.',
+      },
+      { id: 'not-a-question', answer: 'no', quote: '', reason: '' },
+    ],
+    outcome: { label: 'opted_out', reason: 'Lead said STOP.' },
+    leadConsistent: { ok: true, reason: 'Consistent.' },
+  };
+
+  it('grades each reply, labels every turn and answers task questions', async () => {
+    const { client, requests } = fakeClient(output);
     const report = await new Judge(client, 'claude-sonnet-5-5').judge(
       task,
       events,
@@ -121,7 +129,20 @@ describe('Judge', () => {
     expect(report.turns).toHaveLength(1); // #99 isn't an agent reply in this run
     expect(report.turns[0]).toMatchObject({
       eventSeq: 3,
+      act: 'acknowledges',
       audience: { pass: false, verified: true },
+    });
+    // The rubric failure and the verifiable extra problem; the one quoting absent text is dropped.
+    expect(report.turns[0]!.issues.map((i) => i.label)).toEqual([
+      'writes_to_operator',
+      'ignored_question',
+    ]);
+    expect(report.leadTurns).toEqual([{ eventSeq: 1, intent: 'opts_out', mood: 'upset' }]);
+    expect(report).toMatchObject({
+      outcome: { label: 'opted_out' },
+      leadConsistent: { ok: true },
+      firstProblemSeq: 3,
+      replyQuality: 0,
     });
     expect(report.questions).toEqual([
       {
@@ -135,6 +156,7 @@ describe('Judge', () => {
     expect(requests[0]).toMatchObject({ model: 'claude-sonnet-5-5', fallbacks: 'default' });
     const prompt = (requests[0]!.messages as { content: string }[])[0]!.content;
     expect(prompt).toContain('#3 AGENT REPLY (sent to the lead)');
+    expect(prompt).toContain('Label these LEAD message numbers: #1');
     expect(prompt).toContain('id "stopped-selling"');
     expect(prompt).toContain('Today is Saturday, October 24, 2026');
   });
@@ -167,38 +189,46 @@ describe('renderTranscript', () => {
 });
 
 describe('standard checks', () => {
-  const report = {
+  const verdict = (passed: boolean, quote: string, verified: boolean) => ({
+    pass: passed,
+    quote,
+    reason: 'r',
+    verified,
+  });
+  const report: JudgeReport = {
     model: 'm',
     turns: [
       {
         eventSeq: 3,
-        audience: {
-          pass: false,
-          quote: 'Rosa has been opted out',
-          reason: 'third person',
-          verified: true,
-        },
-        format: { ...pass, verified: true },
-        grounded: { pass: false, quote: 'invented', reason: 'x', verified: false },
+        audience: verdict(false, 'Rosa has been opted out', true),
+        format: verdict(true, '', true),
+        grounded: verdict(false, 'invented', false),
+        act: 'acknowledges',
+        issues: [{ label: 'writes_to_operator', quote: 'Rosa has been opted out', reason: 'r' }],
       },
     ],
+    leadTurns: [],
     questions: [
       {
         checkId: 'stopped-selling',
-        answer: 'yes' as const,
+        answer: 'yes',
         quote: 'opted out of all messaging',
         reason: 'ok',
       },
     ],
+    outcome: { label: 'opted_out', reason: '' },
+    leadConsistent: { ok: true, reason: '' },
+    firstProblemSeq: 3,
+    replyQuality: 0,
     usage: { inputTokens: 0, outputTokens: 0, costUsd: 0 },
   };
 
   it('turns verified judge failures into failed reply checks, ignoring unverified ones', () => {
     const checks = replyChecks(report);
-    expect(checks.map((c) => [c.checkId, c.passed])).toEqual([
-      ['reply-audience', false],
-      ['reply-format', true],
-      ['reply-grounded', true],
+    expect(checks.map((c) => [c.checkId, c.passed, c.informational ?? false])).toEqual([
+      ['reply-audience', false, true],
+      ['reply-format', true, true],
+      ['reply-grounded', true, false],
     ]);
     expect(checks[0]?.evidence).toEqual([{ eventSeq: 3 }]);
     expect(checks[2]?.detail).toContain('1 unverified judge failure ignored');
@@ -220,7 +250,7 @@ describe('standard checks', () => {
     expect(invariantChecks(before, after).map((c) => c.passed)).toEqual([true, false]);
   });
 
-  it('adds the standard checks to the score, and leaves judge checks out when unjudged', () => {
+  it('scores correctness only: reply quality is shown but not scored, unjudged checks are skipped', () => {
     const crm = materialize(task.crm, new Date());
     const judged = scoreRun(task, events, crm, { judge: report, crmInitial: crm });
     expect(judged.checks.map((c) => c.checkId)).toEqual([
@@ -232,8 +262,8 @@ describe('standard checks', () => {
       'stage-matches-bookings',
       'no-booking-after-opt-out',
     ]);
-    // weights: opted-out 1 + judge 1 + audience 1(fail) + format 1 + grounded 2 + 2 invariants = 8, 7 earned
-    expect(judged.score).toBe(87.5);
+    // The failed audience check is reply quality, so the run still scores 100.
+    expect(judged).toMatchObject({ score: 100, passed: true });
     expect(judged.checks[1]).toMatchObject({ passed: true, evidence: [{ eventSeq: 3 }] });
 
     const unjudged = scoreRun(task, events, crm, { judge: null, crmInitial: crm });
@@ -243,6 +273,6 @@ describe('standard checks', () => {
       'reply-format',
       'reply-grounded',
     ]);
-    expect(unjudged.score).toBe(100); // opted-out + 2 invariants, all passing
+    expect(unjudged.score).toBe(100);
   });
 });

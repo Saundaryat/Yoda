@@ -15,7 +15,7 @@ import CrmChanges from '../components/CrmChanges.vue';
 import StatusBadge from '../components/StatusBadge.vue';
 import Timeline from '../components/Timeline.vue';
 import { useResource } from '../composables/useResource.js';
-import { money, seconds } from '../format.js';
+import { label, money, percent, seconds } from '../format.js';
 
 interface RunDetail {
   run: {
@@ -128,6 +128,12 @@ const spec = computed(() => data.value?.configuration.spec);
         {{ (data.run.inputTokens ?? 0) + (data.run.outputTokens ?? 0) }}
       </div>
       <div><span class="muted">Attempts</span> {{ data.run.attempts }}</div>
+      <div v-if="data.run.judge">
+        <span class="muted">Outcome</span> {{ label(data.run.judge.outcome.label) }}
+      </div>
+      <div v-if="data.run.judge">
+        <span class="muted">Reply quality</span> {{ percent(data.run.judge.replyQuality) }}
+      </div>
       <div>
         <span class="muted">Judge</span>
         {{
@@ -172,6 +178,18 @@ const spec = computed(() => data.value?.configuration.spec);
       </template>
     </div>
 
+    <div v-if="data.run.judge && !data.run.judge.leadConsistent.ok" class="card warning">
+      <strong>The simulated customer broke character in this run</strong> ({{
+        data.run.judge.leadConsistent.reason
+      }}). Treat this run as a test problem, not an agent problem.
+    </div>
+    <div v-if="data.run.judge?.firstProblemSeq" class="card first-problem">
+      First problem in Hermes's replies:
+      <button @click="focusEvents([data.run.judge.firstProblemSeq])">
+        show message #{{ data.run.judge.firstProblemSeq }}
+      </button>
+    </div>
+
     <div class="layout">
       <section class="card">
         <h2>Conversation</h2>
@@ -179,6 +197,7 @@ const spec = computed(() => data.value?.configuration.spec);
           :events="data.events"
           :highlighted="highlighted"
           :judgments="data.run.judge?.turns"
+          :lead-labels="data.run.judge?.leadTurns"
         />
       </section>
       <aside class="card checks-col">
@@ -269,6 +288,14 @@ const spec = computed(() => data.value?.configuration.spec);
 }
 .facts .muted {
   margin-right: 4px;
+}
+.warning {
+  border-left: 4px solid var(--warn);
+}
+.first-problem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .why.pass {
   border-left: 4px solid var(--good);

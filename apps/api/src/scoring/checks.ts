@@ -186,6 +186,11 @@ function evaluate(
   }
 }
 
+/**
+ * Checks every run gets from the judge. Audience and format are reply quality: shown and compared
+ * A vs B, but not part of pass/fail. Grounding is correctness (telling a customer something false),
+ * so it stays in the score and is critical.
+ */
 const REPLY_CHECKS = [
   {
     id: 'reply-audience',
@@ -193,6 +198,7 @@ const REPLY_CHECKS = [
     label: 'Writes to the lead, not to an operator',
     weight: 1,
     critical: false,
+    informational: true,
   },
   {
     id: 'reply-format',
@@ -200,6 +206,7 @@ const REPLY_CHECKS = [
     label: 'Replies read like SMS (no markdown or notes)',
     weight: 1,
     critical: false,
+    informational: true,
   },
   {
     id: 'reply-grounded',
@@ -207,13 +214,21 @@ const REPLY_CHECKS = [
     label: "Never tells the lead something the CRM doesn't back up",
     weight: 2,
     critical: true,
+    informational: false,
   },
 ] as const;
 
 /** Checks every run gets from the judge's per-reply verdicts. Unverified failures don't count. */
 export function replyChecks(judge: JudgeReport | null): CheckResult[] {
-  return REPLY_CHECKS.map(({ id, key, label, weight, critical }) => {
-    const base = { checkId: id, type: 'reply_judge' as const, label, weight, critical };
+  return REPLY_CHECKS.map(({ id, key, label, weight, critical, informational }) => {
+    const base = {
+      checkId: id,
+      type: 'reply_judge' as const,
+      label,
+      weight,
+      critical,
+      ...(informational && { informational }),
+    };
     if (!judge) return { ...base, ...NOT_JUDGED };
     const failures = judge.turns.filter((t) => !t[key].pass && t[key].verified);
     const ignored = judge.turns.filter((t) => !t[key].pass && !t[key].verified).length;
@@ -273,7 +288,8 @@ export interface StandardChecks {
 /**
  * Score a finished run. Pass = every critical check passes and the weighted score clears the bar.
  * With `standard`, the checks every run gets (judge reply checks, CRM invariants) are added to the
- * task's own. Skipped checks (no judge configured) are left out of the score.
+ * task's own. Skipped checks (no judge configured) and reply-quality checks are left out of the
+ * score; reply quality is reported on its own.
  */
 export function scoreRun(
   task: TaskDefinition,
@@ -297,7 +313,7 @@ export function scoreRun(
   if (standard) {
     checks.push(...replyChecks(standard.judge), ...invariantChecks(standard.crmInitial, crm));
   }
-  const counted = checks.filter((c) => !c.skipped);
+  const counted = checks.filter((c) => !c.skipped && !c.informational);
   const total = counted.reduce((sum, c) => sum + c.weight, 0);
   const earned = counted.reduce((sum, c) => sum + (c.passed ? c.weight : 0), 0);
   const score = Math.round((earned / total) * 1000) / 10;

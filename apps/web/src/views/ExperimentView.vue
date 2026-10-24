@@ -13,7 +13,7 @@ import StatusBadge from '../components/StatusBadge.vue';
 import VerdictCard from '../components/VerdictCard.vue';
 import { useExperimentEvents } from '../composables/useExperimentEvents.js';
 import { useResource } from '../composables/useResource.js';
-import { dateTime, money, percent, points, seconds } from '../format.js';
+import { dateTime, ISSUE_TEXT, label, money, percent, points, seconds } from '../format.js';
 
 const props = defineProps<{ id: string }>();
 const id = toRef(props, 'id');
@@ -116,7 +116,7 @@ const metricRows = computed(() => {
       ci: '',
     },
     {
-      label: 'Replies passing the judge (audience, format, grounding)',
+      label: 'Reply quality: written to the customer, SMS style (not part of pass/fail)',
       a: percent(m.replyQuality.a),
       b: percent(m.replyQuality.b),
       diff: points(m.replyQuality.difference),
@@ -291,6 +291,91 @@ const metricRows = computed(() => {
         </section>
       </div>
 
+      <section v-if="r.improvement.judgedRuns.a + r.improvement.judgedRuns.b" class="card">
+        <h2>Where Hermes can improve</h2>
+        <p class="hint">
+          From the judge's labels on every message ({{ r.improvement.judgedRuns.a }} A runs and
+          {{ r.improvement.judgedRuns.b }} B runs judged). Each problem is backed by a quote from
+          the reply.
+        </p>
+        <div class="grid-2">
+          <div class="table-scroll">
+            <h3>Problems in Hermes's replies</h3>
+            <p v-if="!r.improvement.issues.length" class="muted">No problems found.</p>
+            <table v-else>
+              <thead>
+                <tr>
+                  <th>Problem</th>
+                  <th class="num side-a">A</th>
+                  <th class="num side-b">B</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="issue in r.improvement.issues" :key="issue.label">
+                  <td>{{ ISSUE_TEXT[issue.label] ?? label(issue.label) }}</td>
+                  <td class="num">
+                    {{ percent(issue.a) }} <span class="hint">({{ issue.countA }})</span>
+                  </td>
+                  <td class="num">
+                    {{ percent(issue.b) }} <span class="hint">({{ issue.countB }})</span>
+                  </td>
+                  <td>
+                    <RouterLink v-if="issue.exampleRunId" :to="`/runs/${issue.exampleRunId}`"
+                      >example</RouterLink
+                    >
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="hint">Share of Hermes's replies with the problem (number of replies).</p>
+          </div>
+          <div class="table-scroll">
+            <h3>How Hermes handles each kind of customer message</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Customer message</th>
+                  <th class="num side-a">A handled well</th>
+                  <th class="num side-b">B handled well</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="row in r.improvement.intents" :key="row.intent">
+                  <td>{{ label(row.intent) }}</td>
+                  <td class="num">
+                    {{ percent(row.handledA) }} <span class="hint">({{ row.countA }})</span>
+                  </td>
+                  <td class="num">
+                    {{ percent(row.handledB) }} <span class="hint">({{ row.countB }})</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="hint">"Handled well": Hermes's next reply had no problems.</p>
+          </div>
+        </div>
+        <div class="row outcomes">
+          <strong>How conversations ended:</strong>
+          <span v-for="o in r.improvement.outcomes" :key="o.label" class="badge">
+            {{ label(o.label) }}: <span class="side-a">A {{ o.a }}</span> ·
+            <span class="side-b">B {{ o.b }}</span>
+          </span>
+        </div>
+        <p v-if="r.improvement.leadProblems.length" class="hint warn-text">
+          The simulated customer broke character in
+          {{ r.improvement.leadProblems.length }} run(s):
+          <RouterLink
+            v-for="p in r.improvement.leadProblems"
+            :key="p.runId"
+            :to="`/runs/${p.runId}`"
+          >
+            {{ p.taskKey }} ({{ p.side.toUpperCase() }})
+          </RouterLink>
+          — check those as test problems.
+        </p>
+      </section>
+
       <section class="card table-scroll">
         <h2>Metrics</h2>
         <table>
@@ -400,6 +485,15 @@ const metricRows = computed(() => {
 }
 .spaced {
   margin-top: 20px;
+}
+.outcomes {
+  margin-top: 12px;
+}
+.warn-text {
+  color: var(--warn);
+}
+.warn-text a {
+  margin-right: 6px;
 }
 .regressions {
   margin-top: 12px;
