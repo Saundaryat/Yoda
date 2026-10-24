@@ -23,6 +23,7 @@ test('a reviewer can go from the verdict down to why a run failed', async ({ pag
   // Side-by-side comparison shows B opened the skill.
   await page.getByRole('link', { name: 'Compare A and B on this task' }).click();
   await expect(page.getByRole('heading', { name: 'Checks, side by side' })).toBeVisible();
+  await expect(page.getByRole('row', { name: /Gives no medical advice/ })).toContainText('—');
   await expect(page.locator('summary', { hasText: 'skill_view' }).first()).toBeVisible();
 });
 
@@ -51,13 +52,15 @@ test('a configuration can be copied and saved as a new one', async ({ page }) =>
 
 test('a new experiment is a draft until it is started', async ({ page }) => {
   await page.goto('/experiments/new');
+  await expect(page.getByText(/This suite contains 7 scenarios/)).toBeVisible();
+  await expect(page.getByRole('button', { name: /Eval only/ })).toHaveCount(0);
   await page.getByLabel('Name').fill('Draft only');
   await page.getByLabel(/A — baseline/).selectOption({ label: 'Baseline' });
   await page.getByLabel(/B — candidate/).selectOption({ label: 'Baseline + clinic skill' });
   await expect(page.getByText(/runs \(\d+ tasks × 2 configurations × 3\)/)).toBeVisible();
   await page.getByRole('button', { name: 'Create experiment' }).click();
   await expect(page.getByText('This experiment has not started.')).toBeVisible();
-  await expect(page.getByRole('button', { name: /Run \d+ scenarios/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Start \d+ runs/ })).toBeVisible();
 });
 
 test('pages fit a phone screen without sideways scrolling', async ({ page }) => {

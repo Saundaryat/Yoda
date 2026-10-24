@@ -1,6 +1,9 @@
 export type Verdict =
   'better' | 'worse' | 'no_meaningful_difference' | 'inconclusive' | 'incomplete';
 
+/** Minimum paired scenarios required before an experiment can produce a decisive verdict. */
+export const MIN_TASKS_FOR_VERDICT = 10;
+
 export interface Comparison {
   verdict: Verdict;
   /** Mean over paired tasks of (B pass rate − A pass rate), in [-1, 1]. */

@@ -22,6 +22,13 @@
       "when": 1792834197770,
       "tag": "0002_judge",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792837992840,
+      "tag": "0003_persist-skipped-checks",
+      "breakpoints": true
     }
   ]
 }

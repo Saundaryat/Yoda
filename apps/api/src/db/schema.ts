@@ -152,6 +152,8 @@ export const checkResults = pgTable(
     weight: real().notNull(),
     critical: boolean().notNull(),
     passed: boolean().notNull(),
+    /** True when a check could not be evaluated and was excluded from the score. */
+    skipped: boolean().notNull().default(false),
     detail: text().notNull(),
     /** Pointers into the run: [{eventSeq?, statePath?}]. */
     evidence: jsonb().notNull().default([]),

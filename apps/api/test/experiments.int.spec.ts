@@ -114,6 +114,9 @@ describe('experiments end to end', () => {
     const detail = (await api.get(`/api/runs/${runs[0]!.id}`).expect(200)).body;
     expect(detail.events[0]).toMatchObject({ kind: 'lead', seq: 1 });
     expect(detail.checks.length).toBeGreaterThan(0);
+    expect(
+      detail.checks.find((check: { detail: string }) => check.detail.startsWith('Not judged:')),
+    ).toMatchObject({ skipped: true, passed: true });
     expect(detail.run.crmFinal.appointments).toHaveLength(1);
   });
 

@@ -169,7 +169,7 @@ const metricRows = computed(() => {
       </div>
       <div class="row">
         <button v-if="e.status === 'draft'" class="primary" :disabled="busy" @click="act('start')">
-          Run {{ e.taskIds.length * e.repetitions * 2 }} scenarios
+          Start {{ e.taskIds.length * e.repetitions * 2 }} runs
         </button>
         <button
           v-if="e.status === 'running'"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ExperimentResults } from '@evals/shared';
+import { MIN_TASKS_FOR_VERDICT, type ExperimentResults } from '@evals/shared';
 import { computed } from 'vue';
 import { percent, points, VERDICT } from '../format.js';
 import IntervalChart from './IntervalChart.vue';
@@ -7,6 +7,12 @@ import IntervalChart from './IntervalChart.vue';
 const props = defineProps<{ results: ExperimentResults; provisional: boolean }>();
 const c = computed(() => props.results.comparison);
 const verdict = computed(() => VERDICT[c.value.verdict]);
+
+const observedResult = computed(() => {
+  if (c.value.difference > 0) return 'The candidate scored higher in this test';
+  if (c.value.difference < 0) return 'The candidate scored lower in this test';
+  return 'The two versions scored the same in this test';
+});
 
 const headline = computed(() => {
   switch (c.value.verdict) {
@@ -17,10 +23,10 @@ const headline = computed(() => {
     case 'no_meaningful_difference':
       return 'The two versions performed about the same.';
     case 'inconclusive':
-      if (c.value.pairedTasks < 10) {
-        return `The candidate did better in this small test, but ${c.value.pairedTasks} scenarios are not enough to decide.`;
+      if (c.value.pairedTasks < MIN_TASKS_FOR_VERDICT) {
+        return `${observedResult.value}, but ${c.value.pairedTasks} scenarios are not enough to decide.`;
       }
-      return 'The candidate did better here, but there is not enough evidence to be confident yet.';
+      return `${observedResult.value}, but the evidence is not conclusive.`;
     case 'incomplete':
       return props.provisional
         ? 'Runs are still in progress, so this result can change.'
@@ -38,9 +44,12 @@ const nextStep = computed(() => {
     case 'no_meaningful_difference':
       return 'Choose based on cost, speed, or maintainability instead of pass rate.';
     case 'inconclusive':
-      if (c.value.pairedTasks < 10) {
-        const remaining = 10 - c.value.pairedTasks;
-        return `Add at least ${remaining} more ${remaining === 1 ? 'scenario' : 'scenarios'} so both versions are tested on the minimum of 10.`;
+      if (c.value.pairedTasks < MIN_TASKS_FOR_VERDICT) {
+        const remaining = MIN_TASKS_FOR_VERDICT - c.value.pairedTasks;
+        if (c.value.plannedTasks >= MIN_TASKS_FOR_VERDICT) {
+          return `Retry the missing runs so at least ${MIN_TASKS_FOR_VERDICT} scenarios have results for both versions.`;
+        }
+        return `Add ${remaining} more ${remaining === 1 ? 'scenario' : 'scenarios'} to the suite, then create a new experiment with at least ${MIN_TASKS_FOR_VERDICT}.`;
       }
       return 'Add more scenarios or repetitions before deciding whether to ship the candidate.';
     case 'incomplete':

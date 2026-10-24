@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import type { Configuration, CreateExperiment, ExperimentSummary, LeadMode } from '@evals/shared';
+import {
+  MIN_TASKS_FOR_VERDICT,
+  type Configuration,
+  type CreateExperiment,
+  type ExperimentSummary,
+  type LeadMode,
+} from '@evals/shared';
 import { computed, ref, watch } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import { api } from '../api.js';
@@ -48,6 +54,15 @@ const sections = computed(() => {
   return [...groups.entries()];
 });
 
+const splitCounts = computed(() => ({
+  dev: (tasks.value ?? []).filter((task) => task.split === 'dev').length,
+  eval: (tasks.value ?? []).filter((task) => task.split === 'eval').length,
+}));
+const scenarioShortfall = computed(() => Math.max(0, MIN_TASKS_FOR_VERDICT - selected.value.size));
+const suiteShortfall = computed(() =>
+  Math.max(0, MIN_TASKS_FOR_VERDICT - (tasks.value?.length ?? 0)),
+);
+
 function toggle(id: string) {
   const next = new Set(selected.value);
   if (next.has(id)) next.delete(id);
@@ -57,6 +72,10 @@ function toggle(id: string) {
 
 function selectSplit(split: 'dev' | 'eval') {
   selected.value = new Set((tasks.value ?? []).filter((t) => t.split === split).map((t) => t.id));
+}
+
+function selectAll() {
+  selected.value = new Set((tasks.value ?? []).map((task) => task.id));
 }
 
 const runCount = computed(() => selected.value.size * 2 * form.value.repetitions);
@@ -181,6 +200,18 @@ async function create() {
           }}
         </div>
       </div>
+      <div v-if="scenarioShortfall" class="coverage-warning">
+        <strong>Exploratory result only</strong>
+        <p v-if="suiteShortfall">
+          This suite contains {{ tasks?.length ?? 0 }} scenarios. Add {{ suiteShortfall }} more
+          {{ suiteShortfall === 1 ? 'scenario' : 'scenarios' }} before relying on a verdict; the
+          evaluator requires at least {{ MIN_TASKS_FOR_VERDICT }}.
+        </p>
+        <p v-else>
+          Select {{ scenarioShortfall }} more
+          {{ scenarioShortfall === 1 ? 'scenario' : 'scenarios' }} for a decision-grade result.
+        </p>
+      </div>
       <p v-if="error" class="error">{{ error }}</p>
       <button class="primary" type="submit" :disabled="!valid || saving">Create experiment</button>
     </div>
@@ -189,11 +220,20 @@ async function create() {
       <div class="row tasks-head">
         <h2>Tasks</h2>
         <span class="muted">{{ selected.size }} selected</span>
-        <button type="button" @click="selectSplit('eval')">All eval</button>
-        <button type="button" @click="selectSplit('dev')">All dev</button>
+        <button type="button" @click="selectAll">All scenarios</button>
+        <button v-if="splitCounts.eval" type="button" @click="selectSplit('eval')">
+          Eval only ({{ splitCounts.eval }})
+        </button>
+        <button v-if="splitCounts.dev" type="button" @click="selectSplit('dev')">
+          Dev only ({{ splitCounts.dev }})
+        </button>
       </div>
-      <p class="hint">
+      <p v-if="splitCounts.eval" class="hint">
         Use the dev split while tuning tasks and prompts; keep the eval split for real comparisons.
+      </p>
+      <p v-else class="hint">
+        Only development scenarios are available in this suite. Add a frozen eval split before using
+        results as a release gate.
       </p>
       <div v-for="[section, items] in sections" :key="section" class="section">
         <h3>{{ section }}</h3>
@@ -225,6 +265,18 @@ async function create() {
   border-radius: 6px;
   padding: 10px 12px;
   margin-bottom: 12px;
+}
+.coverage-warning {
+  margin: 14px 0;
+  padding: 13px 14px;
+  background: var(--warn-soft);
+  border: 1px solid #e5dec9;
+  border-radius: 7px;
+  font-size: 11.5px;
+}
+.coverage-warning p {
+  margin: 3px 0 0;
+  color: #64532b;
 }
 .tasks-head h2 {
   margin: 0;
