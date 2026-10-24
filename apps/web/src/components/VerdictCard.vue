@@ -31,6 +31,9 @@ const explanation = computed(() => {
     case 'no_meaningful_difference':
       return `${rates} The interval sits inside ±${Math.round(practicalMargin * 100)} points, so any difference is too small to matter.`;
     case 'inconclusive':
+      if (pairedTasks < 10) {
+        return `${rates} With only ${pairedTasks} tasks that's not enough to call: a verdict needs at least 10 tasks run under both configurations.`;
+      }
       return `${rates} The interval includes zero and differences bigger than ${Math.round(practicalMargin * 100)} points, so this experiment can't tell yet.${detectable}`;
     case 'incomplete':
       return props.provisional

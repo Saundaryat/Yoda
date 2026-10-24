@@ -1,4 +1,4 @@
-import { CRM_SERVER_PATH, loadState, materialize, saveState } from '@evals/crm';
+import { CLINIC_TIMEZONE, CRM_SERVER_PATH, loadState, materialize, saveState } from '@evals/crm';
 import type {
   ConfigurationSpec,
   CrmState,
@@ -102,7 +102,8 @@ export async function executeRun(input: RunInput, settings: ExecutorSettings): P
   const work = join(dir, 'work');
   mkdirSync(work, { recursive: true, mode: 0o700 });
   const stateFile = join(dir, 'crm.json');
-  const crmInitial = materialize(task.crm, input.now ?? new Date());
+  const now = input.now ?? new Date();
+  const crmInitial = materialize(task.crm, now);
   saveState(stateFile, crmInitial);
 
   const skills = Object.fromEntries(
@@ -217,7 +218,11 @@ export async function executeRun(input: RunInput, settings: ExecutorSettings): P
   }
 
   const crmFinal = loadState(stateFile);
-  const judge = settings.judge ? await settings.judge.judge(task, events) : null;
+  const today = new Intl.DateTimeFormat('en-US', {
+    timeZone: CLINIC_TIMEZONE,
+    dateStyle: 'full',
+  }).format(now);
+  const judge = settings.judge ? await settings.judge.judge(task, events, today) : null;
   const store = new HermesStore(home);
   const sessions = sessionIds.map((id) => store.session(id));
   store.close();

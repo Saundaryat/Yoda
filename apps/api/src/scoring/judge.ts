@@ -109,7 +109,8 @@ export class Judge {
     readonly model: string,
   ) {}
 
-  async judge(task: TaskDefinition, events: RunEvent[]): Promise<JudgeReport> {
+  /** `today`: the run date as the agent saw it, e.g. "Saturday, October 24, 2026". */
+  async judge(task: TaskDefinition, events: RunEvent[], today: string): Promise<JudgeReport> {
     const replies = new Map(
       events.flatMap((e) => (e.kind === 'agent' ? [[e.seq, e.text] as const] : [])),
     );
@@ -117,6 +118,8 @@ export class Judge {
       c.type === 'llm_judge' ? [{ id: c.id, question: c.question }] : [],
     );
     const prompt = [
+      `Today is ${today} (clinic time). The agent knows this date, so relative dates like "tomorrow" are grounded when they match it.`,
+      '',
       'Transcript:',
       renderTranscript(events),
       '',

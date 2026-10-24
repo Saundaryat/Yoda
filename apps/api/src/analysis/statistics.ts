@@ -135,8 +135,15 @@ export function compare(
   return { ...comparison, verdict: verdictFor(comparison) };
 }
 
+/**
+ * Below this many paired tasks the interval is too unstable to act on (with a handful of tasks
+ * all tied, the bootstrap interval collapses to [0, 0]); the verdict stays inconclusive.
+ */
+export const MIN_TASKS_FOR_VERDICT = 10;
+
 export function verdictFor(c: Omit<Comparison, 'verdict'>): Verdict {
   if (c.pairedTasks === 0 || c.pairedTasks < 0.9 * c.plannedTasks) return 'incomplete';
+  if (c.pairedTasks < MIN_TASKS_FOR_VERDICT) return 'inconclusive';
   const [low, high] = c.ci;
   if (low > 0) return 'better';
   if (high < 0) return 'worse';

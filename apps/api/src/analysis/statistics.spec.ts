@@ -88,6 +88,15 @@ describe('verdictFor', () => {
   });
 });
 
+describe('small experiments', () => {
+  it('never give a decisive verdict on fewer than 10 paired tasks', () => {
+    const allTied = Array.from({ length: 7 }, (_, i) => task(`t${i}`, [1], [1]));
+    expect(compare(allTied)).toMatchObject({ verdict: 'inconclusive', ci: [0, 0] });
+    const allWon = Array.from({ length: 7 }, (_, i) => task(`t${i}`, [0], [1]));
+    expect(compare(allWon).verdict).toBe('inconclusive');
+  });
+});
+
 describe('allRunsPassRate', () => {
   it('only counts tasks where every run passed', () => {
     const tasks = [task('t1', [1, 1, 1], [1]), task('t2', [1, 0, 1], [1]), task('t3', [], [0])];

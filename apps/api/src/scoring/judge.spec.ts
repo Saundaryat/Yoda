@@ -112,7 +112,11 @@ describe('Judge', () => {
         { id: 'not-a-question', answer: 'no', quote: '', reason: '' },
       ],
     });
-    const report = await new Judge(client, 'claude-sonnet-5-5').judge(task, events);
+    const report = await new Judge(client, 'claude-sonnet-5-5').judge(
+      task,
+      events,
+      'Saturday, October 24, 2026',
+    );
 
     expect(report.turns).toHaveLength(1); // #99 isn't an agent reply in this run
     expect(report.turns[0]).toMatchObject({
@@ -132,6 +136,7 @@ describe('Judge', () => {
     const prompt = (requests[0]!.messages as { content: string }[])[0]!.content;
     expect(prompt).toContain('#3 AGENT REPLY (sent to the lead)');
     expect(prompt).toContain('id "stopped-selling"');
+    expect(prompt).toContain('Today is Saturday, October 24, 2026');
   });
 
   it('treats a refusal as an infrastructure failure', async () => {
@@ -142,7 +147,7 @@ describe('Judge', () => {
         usage: { input_tokens: 1, output_tokens: 1 },
       }),
     } as unknown as ClaudeClient;
-    await expect(new Judge(client, 'm').judge(task, events)).rejects.toMatchObject({
+    await expect(new Judge(client, 'm').judge(task, events, 'today')).rejects.toMatchObject({
       kind: 'provider_error',
     });
   });
