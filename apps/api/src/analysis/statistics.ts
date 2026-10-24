@@ -7,7 +7,7 @@
  * tasks (which tasks we happened to write), then resample runs within each task (run-to-run noise).
  */
 
-import type { Comparison, Verdict } from '@evals/shared';
+import { MIN_TASKS_FOR_VERDICT, type Comparison, type Verdict } from '@evals/shared';
 
 /** Per-task samples under each configuration (one value per scored run). */
 export interface Paired<T> {
@@ -134,12 +134,6 @@ export function compare(
   };
   return { ...comparison, verdict: verdictFor(comparison) };
 }
-
-/**
- * Below this many paired tasks the interval is too unstable to act on (with a handful of tasks
- * all tied, the bootstrap interval collapses to [0, 0]); the verdict stays inconclusive.
- */
-export const MIN_TASKS_FOR_VERDICT = 10;
 
 export function verdictFor(c: Omit<Comparison, 'verdict'>): Verdict {
   if (c.pairedTasks === 0 || c.pairedTasks < 0.9 * c.plannedTasks) return 'incomplete';

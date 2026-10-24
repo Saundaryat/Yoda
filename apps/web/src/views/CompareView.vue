@@ -22,14 +22,32 @@ const repetitions = computed(() => Math.max(task.value?.a.length ?? 0, task.valu
 const repetition = ref(0);
 const a = ref<RunDetail | null>(null);
 const b = ref<RunDetail | null>(null);
+const loading = ref(true);
+const loadError = ref<string | null>(null);
+let loadGeneration = 0;
 
 watch(
   [task, repetition],
   async ([t, rep]) => {
     if (!t) return;
+    const generation = ++loadGeneration;
+    loading.value = true;
+    loadError.value = null;
+    a.value = null;
+    b.value = null;
     const load = (runId: string | undefined) =>
       runId ? api<RunDetail>(`/runs/${runId}`) : Promise.resolve(null);
-    [a.value, b.value] = await Promise.all([load(t.a[rep]?.runId), load(t.b[rep]?.runId)]);
+    try {
+      const [nextA, nextB] = await Promise.all([load(t.a[rep]?.runId), load(t.b[rep]?.runId)]);
+      if (generation !== loadGeneration) return;
+      a.value = nextA;
+      b.value = nextB;
+    } catch (error) {
+      if (generation !== loadGeneration) return;
+      loadError.value = (error as Error).message;
+    } finally {
+      if (generation === loadGeneration) loading.value = false;
+    }
   },
   { immediate: true },
 );
@@ -42,7 +60,20 @@ const checkRows = computed(() =>
     b: b.value?.checks.find((c) => c.checkId === check.checkId),
   })),
 );
-const mark = (c: CheckResult | undefined) => (c ? (c.passed ? '✓' : '✗') : '—');
+const mark = (check: CheckResult | undefined) =>
+  !check || check.skipped ? '—' : check.passed ? '✓' : '✗';
+const checkTone = (check: CheckResult | undefined) =>
+  !check || check.skipped ? '' : check.passed ? 'ok' : 'bad';
+const checksDiffer = (left: CheckResult | undefined, right: CheckResult | undefined) => {
+  if (!left || !right) return Boolean(left || right);
+  if (left.skipped || right.skipped) return left.skipped !== right.skipped;
+  return left.passed !== right.passed;
+};
+const resultLabel = (detail: RunDetail | null) => {
+  if (!detail) return 'No scored run';
+  if (detail.run.passed === null) return 'Not scored';
+  return detail.run.passed ? 'Passed' : 'Failed';
+};
 </script>
 
 <template>
@@ -66,54 +97,67 @@ const mark = (c: CheckResult | undefined) => (c ? (c.passed ? '✓' : '✗') : '
       </div>
     </div>
 
-    <section class="card table-scroll">
+    <section v-if="loading" class="card loading-card" aria-live="polite">
+      <span class="loading-line" />
+      <span class="loading-line short" />
+      Loading this A/B comparison…
+    </section>
+    <p v-else-if="loadError" class="card error">Could not load comparison: {{ loadError }}</p>
+
+    <section v-else class="card table-scroll">
       <h2>Checks, side by side</h2>
       <table>
         <thead>
           <tr>
             <th>Check</th>
-            <th class="side-a">A · {{ a?.configuration.name }}</th>
-            <th class="side-b">B · {{ b?.configuration.name }}</th>
+            <th class="side-a">A · {{ a?.configuration.name ?? 'No scored run' }}</th>
+            <th class="side-b">B · {{ b?.configuration.name ?? 'No scored run' }}</th>
           </tr>
         </thead>
         <tbody>
           <tr
             v-for="row in checkRows"
             :key="row.label"
-            :class="{ differs: row.a?.passed !== row.b?.passed }"
+            :class="{ differs: checksDiffer(row.a, row.b) }"
           >
             <td>{{ row.label }} <span v-if="row.critical" class="badge warn">critical</span></td>
-            <td :class="row.a?.passed ? 'ok' : 'bad'">
+            <td :class="checkTone(row.a)">
               {{ mark(row.a) }} <span class="muted">{{ row.a?.detail }}</span>
             </td>
-            <td :class="row.b?.passed ? 'ok' : 'bad'">
+            <td :class="checkTone(row.b)">
               {{ mark(row.b) }} <span class="muted">{{ row.b?.detail }}</span>
             </td>
           </tr>
           <tr>
             <td><strong>Result</strong></td>
             <td>
-              <strong>{{ a?.run.passed ? 'Passed' : 'Failed' }}</strong> · {{ a?.run.score }}
+              <strong>{{ resultLabel(a) }}</strong>
+              <template v-if="a?.run.score !== null && a?.run.score !== undefined">
+                · {{ a.run.score }}
+              </template>
             </td>
             <td>
-              <strong>{{ b?.run.passed ? 'Passed' : 'Failed' }}</strong> · {{ b?.run.score }}
+              <strong>{{ resultLabel(b) }}</strong>
+              <template v-if="b?.run.score !== null && b?.run.score !== undefined">
+                · {{ b.run.score }}
+              </template>
             </td>
           </tr>
         </tbody>
       </table>
     </section>
 
-    <div class="grid-2">
+    <div v-if="!loading && !loadError" class="grid-2">
       <section class="card">
         <div class="row">
-          <h2 class="side-a">A · {{ a?.configuration.name }}</h2>
+          <h2 class="side-a">A · {{ a?.configuration.name ?? 'No scored run' }}</h2>
           <RouterLink v-if="a" :to="`/runs/${a.run.id}`">Open run</RouterLink>
         </div>
         <Timeline v-if="a" :events="a.events" :highlighted="[]" />
       </section>
       <section class="card">
         <div class="row">
-          <h2 class="side-b">B · {{ b?.configuration.name }}</h2>
+          <h2 class="side-b">B · {{ b?.configuration.name ?? 'No scored run' }}</h2>
           <RouterLink v-if="b" :to="`/runs/${b.run.id}`">Open run</RouterLink>
         </div>
         <Timeline v-if="b" :events="b.events" :highlighted="[]" />
@@ -128,6 +172,22 @@ const mark = (c: CheckResult | undefined) => (c ? (c.passed ? '✓' : '✗') : '
 }
 tr.differs td {
   background: var(--warn-soft);
+}
+.loading-card {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.loading-line {
+  display: block;
+  width: 58%;
+  height: 10px;
+  background: var(--surface-2);
+  border-radius: 999px;
+}
+.loading-line.short {
+  width: 36%;
 }
 td.ok {
   color: var(--good);
