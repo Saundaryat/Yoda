@@ -75,7 +75,7 @@ useExperimentEvents(
   computed(() => data.value?.run.experimentId ?? ''),
   (event) => {
     if (
-      (event.runId === props.id || !event.runId) &&
+      (!event?.runId || event.runId === props.id) &&
       (data.value?.run.status === 'queued' || data.value?.run.status === 'running')
     )
       void reload();

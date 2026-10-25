@@ -33,7 +33,7 @@ import { reviewGrounding } from './grounding-review.js';
  * can't verify. When configured, Jev then classifies verified grounding failures by severity.
  */
 
-export const EVALUATOR_VERSION = 'evidence-grounding-v8';
+export const EVALUATOR_VERSION = 'evidence-grounding-v9';
 
 export interface GroundingAuthority {
   instructions: string;

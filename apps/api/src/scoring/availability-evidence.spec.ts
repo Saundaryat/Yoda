@@ -174,3 +174,23 @@ it('counts coordinated morning and afternoon slots as a total, without inventing
     assessAvailability([search(), reply('I have two morning slots available: 9 AM and 2 PM.')]),
   ).toMatchObject([{ supported: false }]);
 });
+
+// Paired examples ensure conditional wording cannot suppress a separate factual assertion.
+it.each(['Once', 'When', 'Whenever', 'If', 'Unless', 'Provided that', 'As soon as'])(
+  'leaves a %s condition to semantic judgment while still checking subsequent facts',
+  (condition) => {
+    expect(
+      assessAvailability([
+        reply(`${condition} we have a slot available, I can help you choose a time.`),
+      ]),
+    ).toEqual([]);
+    expect(
+      assessAvailability([reply(`${condition} you confirm, we have a slot available.`)]),
+    ).toMatchObject([{ supported: false }]);
+    expect(
+      assessAvailability([
+        reply(`${condition} we have a slot available, I can help. We have morning openings.`),
+      ]),
+    ).toMatchObject([{ supported: false, quote: 'We have morning openings' }]);
+  },
+);

@@ -29,8 +29,9 @@ const { data: configurations } = useResource<Configuration[]>('/configurations')
 let pending: ReturnType<typeof setTimeout> | undefined;
 onBeforeUnmount(() => clearTimeout(pending));
 useExperimentEvents(id, () => {
-  clearTimeout(pending);
+  if (pending) return; // Coalesce bursts without starving refreshes during repeated reconnects.
   pending = setTimeout(() => {
+    pending = undefined;
     void experiment.reload();
     void results.reload();
     void runs.reload();

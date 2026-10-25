@@ -27,14 +27,15 @@ export interface TurnResult {
 /** Why an attempt could not produce a scoreable run. `retry` kinds are retried from scratch. */
 export class InfraError extends Error {
   constructor(
-    readonly kind: 'rate_limit' | 'timeout' | 'provider_error' | 'crash' | 'account' | 'cancelled',
+    readonly kind:
+      'rate_limit' | 'timeout' | 'provider_error' | 'crash' | 'account' | 'cancelled' | 'cost_cap',
     message: string,
   ) {
     super(message);
   }
 
   get retryable(): boolean {
-    return this.kind !== 'account' && this.kind !== 'cancelled';
+    return this.kind !== 'account' && this.kind !== 'cancelled' && this.kind !== 'cost_cap';
   }
 }
 

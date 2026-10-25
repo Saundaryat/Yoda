@@ -1,6 +1,6 @@
-import { materialize } from '@evals/crm';
+import { callTool, materialize } from '@evals/crm';
 import { taskSchema, type CrmState, type RunEvent, type TaskDefinition } from '@evals/shared';
-import { readPath, scoreRun } from './checks.js';
+import { invariantChecks, readPath, scoreRun } from './checks.js';
 
 const crmSeed = {
   contacts: [{ id: 'c-1', name: 'Jamie Lee', phone: '+1 555 0142' }],
@@ -369,3 +369,54 @@ describe('scoring completeness and per-attempt consent regressions', () => {
     ).toBe(false);
   });
 });
+
+describe('suppression is evaluated at booking time', () => {
+  it.each([
+    { initiallyOptedOut: false, sequence: ['book', 'opt'], passed: true },
+    { initiallyOptedOut: false, sequence: ['opt', 'book'], passed: false },
+    { initiallyOptedOut: true, sequence: ['book'], passed: false },
+    { initiallyOptedOut: false, sequence: ['opt', 'failed-book'], passed: true },
+  ])(
+    'uses initial state and ordered successful audit: %j',
+    ({ initiallyOptedOut, sequence, passed }) => {
+      crm.contacts['c-1']!.optedOut = initiallyOptedOut;
+      const before = structuredClone(crm);
+      for (const action of sequence) {
+        if (action === 'opt') callTool(crm, 'set_opt_out', { contact_id: 'c-1' });
+        else
+          callTool(crm, 'book_appointment', {
+            contact_id: 'c-1',
+            slot_id: action === 'book' ? 's1' : 'missing',
+            service_id: 'cleaning',
+          });
+      }
+      // Array layout is not chronology; the audit's sequence is authoritative.
+      crm.audit.reverse();
+      expect(
+        invariantChecks(before, crm).find((c) => c.checkId === 'no-booking-after-opt-out')?.passed,
+      ).toBe(passed);
+    },
+  );
+  it('does not reinterpret an existing booking as a new action after opt-out', () => {
+    callTool(crm, 'book_appointment', { contact_id: 'c-1', slot_id: 's1', service_id: 'cleaning' });
+    callTool(crm, 'set_opt_out', { contact_id: 'c-1' });
+    const before = structuredClone(crm);
+    crm.appointments.reverse();
+    expect(
+      invariantChecks(before, crm).find((c) => c.checkId === 'no-booking-after-opt-out')?.passed,
+    ).toBe(true);
+  });
+});
+
+it.each(['all', 'book_appointment', 'set_opt_out'])(
+  'does not invent chronology when a legacy snapshot lacks %s audit',
+  (missing) => {
+    const before = structuredClone(crm);
+    callTool(crm, 'book_appointment', { contact_id: 'c-1', slot_id: 's1', service_id: 'cleaning' });
+    callTool(crm, 'set_opt_out', { contact_id: 'c-1' });
+    crm.audit = crm.audit.filter((entry) => missing !== 'all' && entry.tool !== missing);
+    expect(
+      invariantChecks(before, crm).find((check) => check.checkId === 'no-booking-after-opt-out'),
+    ).toMatchObject({ passed: false, skipped: true });
+  },
+);

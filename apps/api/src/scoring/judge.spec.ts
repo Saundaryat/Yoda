@@ -551,6 +551,22 @@ describe('standard checks', () => {
     after.contacts['c-1']!.stage = 'booked';
     expect(invariantChecks(before, after).map((c) => c.passed)).toEqual([false, true]);
     after.contacts['c-1']!.optedOut = true;
+    after.audit.push(
+      {
+        seq: 1,
+        tool: 'set_opt_out',
+        args: { contact_id: 'c-1' },
+        ok: true,
+        result: { optedOut: true },
+      },
+      {
+        seq: 2,
+        tool: 'book_appointment',
+        args: { contact_id: 'c-1', slot_id: 's1' },
+        ok: true,
+        result: {},
+      },
+    );
     after.appointments.push({
       id: 'a1',
       contactId: 'c-1',

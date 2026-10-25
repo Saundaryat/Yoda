@@ -373,7 +373,7 @@ it('drain waits for experiment finalization after the last run outcome commits',
     release = resolve;
   });
   vi.spyOn(internals, 'afterRun').mockImplementation(async (id) => {
-    await gate;
+    if ((await records(id)).every((run) => !['queued', 'running'].includes(run.status))) await gate;
     return finalize(id);
   });
   const experiment = await draft();
@@ -393,4 +393,260 @@ it('drain waits for experiment finalization after the last run outcome commits',
     await pending;
   }
   expect((await service.get(experiment.id)).status).toBe('finished');
+});
+
+it.each(['startup', 'poll'] as const)(
+  'finishes parents with all terminal children during %s reconciliation',
+  async (mode) => {
+    const experiment = await draft();
+    await service.start(experiment.id);
+    await queue.drain(experiment.id);
+    await until(() => (queue as unknown as { active: Map<string, unknown> }).active.size === 0);
+    await db
+      .update(experiments)
+      .set({ status: 'running', finishedAt: null })
+      .where(eq(experiments.id, experiment.id));
+    const before = await records(experiment.id);
+    if (mode === 'startup') await queue.recoverInterrupted();
+    else await queue.fill();
+    expect((await service.get(experiment.id)).status).toBe('finished');
+    expect(await records(experiment.id)).toEqual(before);
+  },
+);
+
+it.each(['saveConversation', 'saveOutcome', 'saveFailure', 'afterRun'] as const)(
+  'retains ownership across repeated %s failures without repeating paid work',
+  async (method) => {
+    const internals = queue as unknown as Record<
+      typeof method,
+      (...args: unknown[]) => Promise<void>
+    > & { active: Map<string, unknown> };
+    const original = internals[method].bind(queue);
+    let failed = 0;
+    const fixture = fakeJudge();
+    const judge = vi.spyOn(fixture, 'judge');
+    queue.settings.judge = fixture;
+    if (method === 'saveFailure') queue.settings.extraEnv = { FAKE_HERMES_FAIL: 'account' };
+    queue.persistenceRetryMs = 1;
+    const spy = vi.spyOn(internals, method).mockImplementation(async (...args) => {
+      // afterRun is also used by admission; fail only at the completion boundary.
+      if ((method !== 'afterRun' || internals.active.size > 0) && failed < 3) {
+        failed++;
+        expect(internals.active.size).toBeGreaterThan(0);
+        throw new Error('Injected database outage');
+      }
+      return original(...args);
+    });
+    const experiment = await draft();
+    await service.start(experiment.id);
+    await queue.drain(experiment.id);
+    await until(() => internals.active.size === 0);
+    expect(failed).toBe(3);
+    expect(spy.mock.calls.length).toBeGreaterThan(3);
+    const saved = await records(experiment.id);
+    expect(saved.every((run) => run.attempts <= 1)).toBe(true);
+    expect(saved.every((run) => ['scored', 'error'].includes(run.status))).toBe(true);
+    expect(judge).toHaveBeenCalledTimes(method === 'saveFailure' ? 0 : 2);
+    expect((await service.get(experiment.id)).status).toBe('finished');
+    for (const run of saved.filter((run) => run.conversation)) {
+      expect((await service.run(run.id)).events).toEqual(run.conversation!.events);
+      expect(readdirSync(join(queue.settings.runsDir, run.id))).toEqual(['attempt-1']);
+    }
+  },
+);
+
+it.each(['saveConversation', 'saveOutcome', 'saveFailure'] as const)(
+  'makes %s idempotent when a commit succeeds but its acknowledgement is lost',
+  async (method) => {
+    const internals = queue as unknown as Record<
+      typeof method,
+      (...args: unknown[]) => Promise<void>
+    >;
+    const original = internals[method].bind(queue);
+    let lost = false;
+    queue.persistenceRetryMs = 1;
+    if (method === 'saveFailure') queue.settings.extraEnv = { FAKE_HERMES_FAIL: 'account' };
+    vi.spyOn(internals, method).mockImplementation(async (...args) => {
+      await original(...args);
+      if (!lost) {
+        lost = true;
+        throw new Error('Injected lost commit acknowledgement');
+      }
+    });
+    const experiment = await draft();
+    await service.start(experiment.id);
+    await queue.drain(experiment.id);
+    await until(() => (queue as unknown as { active: Map<string, unknown> }).active.size === 0);
+    expect(lost).toBe(true);
+    expect((await service.get(experiment.id)).status).toBe('finished');
+    for (const run of await records(experiment.id)) {
+      expect(run.attempts).toBeLessThanOrEqual(1);
+      expect((run.attemptLog as unknown[]).length).toBeLessThanOrEqual(1);
+      if (run.conversation)
+        expect((await service.run(run.id)).events).toEqual(run.conversation.events);
+    }
+  },
+);
+
+it('recovers an unowned running row during polling while preserving active ownership', async () => {
+  const fill = vi.spyOn(queue, 'fill').mockResolvedValue();
+  const experiment = await draft();
+  await service.start(experiment.id);
+  await db.update(runs).set({ status: 'running' }).where(eq(runs.experimentId, experiment.id));
+  fill.mockRestore();
+  await queue.drain(experiment.id);
+  expect((await service.get(experiment.id)).counts.scored).toBe(2);
+});
+
+it.each([25, 30])('rejects concurrent retries and claims at recorded spend $%s', async (spend) => {
+  const fill = vi.spyOn(queue, 'fill').mockResolvedValue();
+  const experiment = await draft();
+  await service.start(experiment.id);
+  const saved = await records(experiment.id);
+  await db
+    .update(runs)
+    .set({
+      status: 'scored',
+      passed: true,
+      score: 100,
+      costUsd: spend - 2,
+      leadCostUsd: 1,
+      judgeCostUsd: 1,
+    })
+    .where(eq(runs.id, saved[0]!.id));
+  await db
+    .update(runs)
+    .set({ status: 'error', errorKind: 'cost_cap' })
+    .where(eq(runs.id, saved[1]!.id));
+  await db.update(experiments).set({ status: 'finished' }).where(eq(experiments.id, experiment.id));
+  const before = await records(experiment.id);
+  const retries = await Promise.allSettled([
+    service.retryErrors(experiment.id),
+    service.retryErrors(experiment.id),
+  ]);
+  expect(
+    retries.every((result) => result.status === 'rejected' && result.reason.status === 409),
+  ).toBe(true);
+  expect(await records(experiment.id)).toEqual(before);
+  // Even a queued row admitted by a different caller cannot bypass the worker's guard.
+  await db.update(runs).set({ status: 'queued' }).where(eq(runs.id, saved[1]!.id));
+  await db.update(experiments).set({ status: 'running' }).where(eq(experiments.id, experiment.id));
+  const judge = vi.spyOn(queue.settings.judge!, 'judge');
+  fill.mockRestore();
+  await queue.drain(experiment.id);
+  expect(judge).not.toHaveBeenCalled();
+  expect((await records(experiment.id)).find((run) => run.id === saved[1]!.id)).toMatchObject({
+    status: 'error',
+    errorKind: 'cost_cap',
+    attempts: 0,
+  });
+  expect((await service.get(experiment.id)).status).toBe('finished');
+});
+
+it('checks spend again between a conversation checkpoint and grading', async () => {
+  const internals = queue as unknown as {
+    saveConversation: (run: typeof runs.$inferSelect, conversation: unknown) => Promise<void>;
+  };
+  const original = internals.saveConversation.bind(queue);
+  vi.spyOn(internals, 'saveConversation').mockImplementation(async (run, conversation) => {
+    await original(run, conversation);
+    await db.update(runs).set({ costUsd: 25 }).where(eq(runs.id, run.id));
+  });
+  const judge = vi.spyOn(queue.settings.judge!, 'judge');
+  const experiment = await draft();
+  await service.start(experiment.id);
+  await queue.drain(experiment.id);
+  expect(judge).not.toHaveBeenCalled();
+  expect(
+    (await records(experiment.id)).every(
+      (run) => run.status === 'error' && run.errorKind === 'cost_cap',
+    ),
+  ).toBe(true);
+});
+
+it('cancellation during persistence recovery stays terminal without discarding the owner early', async () => {
+  const internals = queue as unknown as {
+    saveOutcome: (...args: unknown[]) => Promise<void>;
+    active: Map<string, unknown>;
+  };
+  const original = internals.saveOutcome.bind(queue);
+  let unavailable = true,
+    blocked = false;
+  queue.persistenceRetryMs = 1;
+  vi.spyOn(internals, 'saveOutcome').mockImplementation(async (...args) => {
+    if (unavailable) {
+      blocked = true;
+      throw new Error('Injected outcome write outage');
+    }
+    return original(...args);
+  });
+  const experiment = await draft();
+  await service.start(experiment.id);
+  await until(() => blocked);
+  expect(internals.active.size).toBeGreaterThan(0);
+  await service.cancel(experiment.id);
+  unavailable = false;
+  await until(() => internals.active.size === 0);
+  expect(
+    (await records(experiment.id)).every((run) => run.status === 'cancelled' && run.score === null),
+  ).toBe(true);
+});
+
+it.each(['scored', 'error', 'cancelled'] as const)(
+  'repeated polling finishes an all-%s parent idempotently without model calls',
+  async (status) => {
+    const fill = vi.spyOn(queue, 'fill').mockResolvedValue();
+    const experiment = await draft();
+    await service.start(experiment.id);
+    await db
+      .update(runs)
+      .set({ status, finishedAt: new Date() })
+      .where(eq(runs.experimentId, experiment.id));
+    const judge = vi.spyOn(queue.settings.judge!, 'judge');
+    fill.mockRestore();
+    await queue.fill();
+    const first = await service.get(experiment.id);
+    await queue.fill();
+    expect(first.status).toBe('finished');
+    expect(await service.get(experiment.id)).toEqual(first);
+    expect(judge).not.toHaveBeenCalled();
+    expect((await records(experiment.id)).every((run) => run.attempts === 0)).toBe(true);
+  },
+);
+
+it('shutdown waits for recovery of an in-flight outcome write before releasing ownership', async () => {
+  const internals = queue as unknown as {
+    saveOutcome: (...args: unknown[]) => Promise<void>;
+    active: Map<string, unknown>;
+    stopping: boolean;
+  };
+  const original = internals.saveOutcome.bind(queue);
+  let unavailable = true,
+    blocked = false,
+    stopped = false;
+  queue.persistenceRetryMs = 1;
+  vi.spyOn(internals, 'saveOutcome').mockImplementation(async (...args) => {
+    if (unavailable) {
+      blocked = true;
+      throw new Error('Injected shutdown persistence outage');
+    }
+    return original(...args);
+  });
+  const experiment = await draft();
+  await service.start(experiment.id);
+  await until(() => blocked);
+  const shutdown = queue.beforeApplicationShutdown().then(() => {
+    stopped = true;
+  });
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    expect(stopped).toBe(false);
+    expect(internals.active.size).toBeGreaterThan(0);
+  } finally {
+    unavailable = false;
+    await shutdown;
+    internals.stopping = false;
+  }
+  expect(internals.active.size).toBe(0);
+  expect((await records(experiment.id)).every((run) => run.status !== 'running')).toBe(true);
 });

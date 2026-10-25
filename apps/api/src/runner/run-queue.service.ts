@@ -7,7 +7,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import type { ConfigurationSpec, ProgressEvent, TaskDefinition } from '@evals/shared';
-import { and, eq, inArray, sql } from 'drizzle-orm';
+import { and, eq, inArray, notInArray, sql } from 'drizzle-orm';
 import { rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { Subject } from 'rxjs';
@@ -32,6 +32,7 @@ import { EVALUATOR_VERSION } from '../scoring/judge.js';
 import { COMPARISON_VERSION } from '../analysis/statistics.js';
 
 type RunRow = typeof runs.$inferSelect;
+type Transaction = Parameters<Parameters<Db['transaction']>[0]>[0];
 
 /** Seconds to wait before retrying an attempt that failed for infrastructure reasons. */
 export function backoffSeconds(kind: InfraError['kind'], attempt: number): number {
@@ -55,6 +56,7 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
   /** Overridable in tests (fake Hermes, tiny timeouts, no backoff). */
   settings: ExecutorSettings;
   backoffScale = 1;
+  persistenceRetryMs = 1_000;
   readonly progress = new Subject<ProgressEvent>();
 
   constructor(
@@ -146,14 +148,38 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
       await tx.execute(sql`update runs r set status = 'queued'
         from experiments e where e.id = r.experiment_id and e.status = 'running' and r.status = 'running'`);
     });
+    await this.reconcile();
+  }
+
+  /** Repair interrupted parent transitions during startup and every poll, without replaying work. */
+  private async reconcile(): Promise<void> {
+    const parents = await this.db
+      .select({ id: experiments.id })
+      .from(experiments)
+      .where(eq(experiments.status, 'running'));
+    for (const parent of parents) {
+      await this.db.transaction(async (tx) => {
+        await tx.select().from(experiments).where(eq(experiments.id, parent.id)).for('update');
+        // Only this process owns runs (one API worker per schema). A lost owner must not strand work.
+        const owned = [...this.active.keys()];
+        await tx
+          .update(runs)
+          .set({ status: 'queued' })
+          .where(
+            and(
+              eq(runs.experimentId, parent.id),
+              eq(runs.status, 'running'),
+              owned.length ? notInArray(runs.id, owned) : undefined,
+            ),
+          );
+      });
+      await this.persist(() => this.afterRun(parent.id));
+    }
   }
 
   async onApplicationBootstrap(): Promise<void> {
     await this.recoverInterrupted();
-    this.timer = setInterval(
-      () => void this.fill().catch((error) => this.logger.error(error)),
-      1_000,
-    );
+    this.timer = setInterval(() => this.kick(), 1_000);
   }
 
   async beforeApplicationShutdown(): Promise<void> {
@@ -178,7 +204,13 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
     return this.filling;
   }
 
+  /** Request background admission without allowing a transient DB failure to reject the HTTP action. */
+  kick(): void {
+    void this.fill().catch((error) => this.logger.error(error));
+  }
+
   private async fillAvailable(): Promise<void> {
+    await this.reconcile();
     while (!this.stopping && this.active.size < this.config.RUN_CONCURRENCY) {
       const run = await this.claim();
       if (!run) return;
@@ -224,6 +256,8 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
         order by e.created_at limit 1 for update of e skip locked`);
       const parent = parents.rows[0];
       if (!parent) return undefined;
+      // Admission is checked under the same parent lock as retries, checkpoints and outcomes.
+      if (await this.enforceBudget(tx, parent.id)) return undefined;
       const result = await tx.execute<{ id: string }>(sql`
         update runs set status = 'running', attempts = attempts + 1,
           phase_attempts = phase_attempts + 1, started_at = coalesce(started_at, now())
@@ -271,11 +305,21 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
           settings,
         );
         assertNotCancelled(signal);
-        await this.saveConversation(run, conversation);
+        await this.persist(() => this.saveConversation(run, conversation!));
         run.phaseAttempts = 1;
         run.conversation = conversation;
       }
       assertNotCancelled(signal);
+      await this.persist(async () => {
+        await this.db.transaction(async (tx) => {
+          await this.lockRunning(tx, run);
+          if (await this.budgetReached(tx, run.experimentId))
+            throw new InfraError(
+              'cost_cap',
+              'Experiment spend has reached its cost cap before grading',
+            );
+        });
+      });
       const outcome = await gradeConversation(
         task!.definition as TaskDefinition,
         conversation,
@@ -283,7 +327,7 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
         signal,
       );
       assertNotCancelled(signal);
-      await this.saveOutcome(run, outcome);
+      await this.persist(() => this.saveOutcome(run, outcome));
       this.emit(run.experimentId, run.id, 'scored');
     } catch (error) {
       const failure = signal.aborted
@@ -292,16 +336,33 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
           ? error
           : new InfraError('crash', error instanceof Error ? error.message : String(error));
       if (!(error instanceof InfraError) && !signal.aborted) this.logger.error(error);
-      await this.saveFailure(run, failure);
+      await this.persist(() => this.saveFailure(run, failure));
     } finally {
       rmSync(join(this.settings.runsDir, run.id, `attempt-${run.attempts}`, 'home', '.env'), {
         force: true,
       });
     }
-    await this.afterRun(run.experimentId);
+    await this.persist(() => this.afterRun(run.experimentId));
   }
 
-  private async lockRunning(tx: Parameters<Parameters<Db['transaction']>[0]>[0], run: RunRow) {
+  /** Keep ownership and the in-memory result until persistence succeeds, including ambiguous commits.
+   * Never rerun paid execution/grading because a database write failed. Shutdown waits for this owner;
+   * a forced process exit is recovered from the last durable checkpoint on the next startup.
+   */
+  private async persist(write: () => Promise<void>): Promise<void> {
+    for (;;) {
+      try {
+        await write();
+        return;
+      } catch (error) {
+        if (error instanceof InfraError) throw error;
+        this.logger.error('Persistence failed; retaining run ownership and retrying', error);
+        await new Promise((resolve) => setTimeout(resolve, this.persistenceRetryMs));
+      }
+    }
+  }
+
+  private async lockRunning(tx: Transaction, run: RunRow) {
     const [parent] = await tx
       .select()
       .from(experiments)
@@ -313,6 +374,8 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
   private async saveConversation(run: RunRow, conversation: RunConversation): Promise<void> {
     await this.db.transaction(async (tx) => {
       await this.lockRunning(tx, run);
+      const [saved] = await tx.select().from(runs).where(eq(runs.id, run.id));
+      if (saved?.conversation) return; // Retried after a commit whose acknowledgement was lost.
       await tx
         .update(runs)
         .set({
@@ -381,8 +444,10 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
         .from(experiments)
         .where(eq(experiments.id, run.experimentId))
         .for('update');
+      const [saved] = await tx.select().from(runs).where(eq(runs.id, run.id));
+      if (saved?.status !== 'running') return; // Idempotent after an ambiguous commit.
       const log = [
-        ...(run.attemptLog as unknown[]),
+        ...(saved.attemptLog as unknown[]),
         {
           attempt: run.attempts,
           phase: run.conversation ? 'grading' : 'execution',
@@ -454,22 +519,7 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
         .where(eq(experiments.id, experimentId))
         .for('update');
       if (parent?.status !== 'running') return false;
-      const [stats] = await tx
-        .select({
-          cost: sql<number>`coalesce(sum(coalesce(cost_usd, 0) + coalesce(lead_cost_usd, 0) + coalesce(judge_cost_usd, 0)), 0)::float`,
-        })
-        .from(runs)
-        .where(eq(runs.experimentId, experimentId));
-      if (stats!.cost > this.config.MAX_EXPERIMENT_COST_USD)
-        await tx
-          .update(runs)
-          .set({
-            status: 'error',
-            errorKind: 'cost_cap',
-            errorDetail: `Not run: spend reached $${stats!.cost.toFixed(2)} (cap $${this.config.MAX_EXPERIMENT_COST_USD})`,
-            finishedAt: new Date(),
-          })
-          .where(and(eq(runs.experimentId, experimentId), eq(runs.status, 'queued')));
+      await this.enforceBudget(tx, experimentId);
       const [remaining] = await tx
         .select({ open: sql<number>`count(*)::int` })
         .from(runs)
@@ -484,6 +534,36 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
       return true;
     });
     if (closed) this.emit(experimentId, null, 'finished');
+  }
+
+  /** Caller holds the experiment row lock. All admission paths share this spend calculation. */
+  async budgetReached(tx: Transaction, experimentId: string): Promise<boolean> {
+    return (await this.spend(tx, experimentId)) >= this.config.MAX_EXPERIMENT_COST_USD;
+  }
+
+  private async spend(tx: Transaction, experimentId: string): Promise<number> {
+    const [stats] = await tx
+      .select({
+        cost: sql<number>`coalesce(sum(coalesce(cost_usd, 0) + coalesce(lead_cost_usd, 0) + coalesce(judge_cost_usd, 0)), 0)::float`,
+      })
+      .from(runs)
+      .where(eq(runs.experimentId, experimentId));
+    return stats!.cost;
+  }
+
+  private async enforceBudget(tx: Transaction, experimentId: string): Promise<boolean> {
+    const cost = await this.spend(tx, experimentId);
+    if (cost < this.config.MAX_EXPERIMENT_COST_USD) return false;
+    await tx
+      .update(runs)
+      .set({
+        status: 'error',
+        errorKind: 'cost_cap',
+        errorDetail: `Not run: spend reached $${cost.toFixed(2)} (cap $${this.config.MAX_EXPERIMENT_COST_USD})`,
+        finishedAt: new Date(),
+      })
+      .where(and(eq(runs.experimentId, experimentId), eq(runs.status, 'queued')));
+    return true;
   }
 
   private emit(experimentId: string, runId: string | null, status: ProgressEvent['status']) {

@@ -327,8 +327,52 @@ export function invariantChecks(before: CrmState, after: CrmState): CheckResult[
   const bookedWithout = Object.values(after.contacts).filter(
     (c) => c.stage === 'booked' && !after.appointments.some((a) => a.contactId === c.id),
   );
-  const newAppointments = after.appointments.slice(before.appointments.length);
-  const optedOutBooked = newAppointments.filter((a) => after.contacts[a.contactId]?.optedOut);
+  // A final contact flag cannot establish what was true at the time of a booking.
+  const optedOut = new Set(
+    Object.values(before.contacts)
+      .filter((c) => c.optedOut)
+      .map((c) => c.id),
+  );
+  const priorSeq = Math.max(0, ...before.audit.map((entry) => entry.seq));
+  const optedOutBooked = new Set<string>();
+  for (const entry of [...after.audit].sort((a, b) => a.seq - b.seq)) {
+    if (entry.seq <= priorSeq || !entry.ok) continue;
+    const contact = entry.args.contact_id;
+    if (typeof contact !== 'string') continue;
+    if (entry.tool === 'set_opt_out') optedOut.add(contact);
+    if (entry.tool === 'book_appointment' && optedOut.has(contact)) optedOutBooked.add(contact);
+  }
+  // Seeded suppression also applies to legacy state snapshots without a complete audit trail.
+  const initialAppointments = new Set(before.appointments.map((a) => a.id));
+  for (const appointment of after.appointments) {
+    if (
+      !initialAppointments.has(appointment.id) &&
+      before.contacts[appointment.contactId]?.optedOut
+    )
+      optedOutBooked.add(appointment.contactId);
+  }
+  const unknownOrder = after.appointments.filter(
+    (appointment) =>
+      !initialAppointments.has(appointment.id) &&
+      after.contacts[appointment.contactId]?.optedOut &&
+      !before.contacts[appointment.contactId]?.optedOut &&
+      (!after.audit.some(
+        (entry) =>
+          entry.seq > priorSeq &&
+          entry.ok &&
+          entry.tool === 'book_appointment' &&
+          entry.args.contact_id === appointment.contactId &&
+          entry.args.slot_id === appointment.slotId,
+      ) ||
+        !after.audit.some(
+          (entry) =>
+            entry.seq > priorSeq &&
+            entry.ok &&
+            entry.tool === 'set_opt_out' &&
+            entry.args.contact_id === appointment.contactId,
+        )),
+  );
+  const incomplete = optedOutBooked.size === 0 && unknownOrder.length > 0;
   return [
     {
       checkId: 'stage-matches-bookings',
@@ -348,11 +392,14 @@ export function invariantChecks(before: CrmState, after: CrmState): CheckResult[
       label: 'Never books a lead who opted out',
       weight: 1,
       critical: true,
-      passed: optedOutBooked.length === 0,
-      detail: optedOutBooked.length
-        ? `Booked ${optedOutBooked.map((a) => a.contactId).join(', ')} after an opt-out`
-        : 'No bookings for opted-out leads',
-      evidence: optedOutBooked.length ? [{ statePath: 'appointments' }] : [],
+      passed: optedOutBooked.size === 0 && !incomplete,
+      ...(incomplete && { skipped: true }),
+      detail: optedOutBooked.size
+        ? `Booked ${[...optedOutBooked].join(', ')} after an opt-out`
+        : incomplete
+          ? 'Needs grading: missing booking audit prevents determining opt-out order'
+          : 'No bookings for opted-out leads',
+      evidence: optedOutBooked.size ? [{ statePath: 'appointments' }] : [],
     },
   ];
 }
