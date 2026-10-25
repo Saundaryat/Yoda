@@ -24,15 +24,15 @@ Full preregistration and verification: `2026-10-24-continuity-protocol.json`. Pr
 
 ## Results
 
-| Measure | A: preloaded | B: preloaded + continuity |
-| --- | ---: | ---: |
-| Service preference saved in first recall session | 1/3 | 3/3 |
-| Recall question passed | 1/3 | 3/3 |
-| Full remember-service scenario passed | 0/3 | 3/3 |
-| Context/memory group | 9/12 (75.0%) | 11/12 (91.7%) |
-| Policy group | 15/24 (62.5%) | 21/24 (87.5%) |
-| Control group | 20/24 (83.3%) | 21/24 (87.5%) |
-| Overall | 44/60 (73.3%) | 53/60 (88.3%) |
+| Measure                                          |  A: preloaded | B: preloaded + continuity |
+| ------------------------------------------------ | ------------: | ------------------------: |
+| Service preference saved in first recall session |           1/3 |                       3/3 |
+| Recall question passed                           |           1/3 |                       3/3 |
+| Full remember-service scenario passed            |           0/3 |                       3/3 |
+| Context/memory group                             |  9/12 (75.0%) |             11/12 (91.7%) |
+| Policy group                                     | 15/24 (62.5%) |             21/24 (87.5%) |
+| Control group                                    | 20/24 (83.3%) |             21/24 (87.5%) |
+| Overall                                          | 44/60 (73.3%) |             53/60 (88.3%) |
 
 The observed mechanism replicated in all three candidate attempts: a successful `add_note` stores the customer's service and morning preference, then a new session's `get_contact` returns it. The agent uses it without asking the service again. A's third attempt spontaneously saved and recalled the preference but failed another requirement, so recall-check pass and whole-scenario pass must not be conflated. This is a successful targeted regression test, not proof of universal memory reliability or of a particular internal attention mechanism.
 
