@@ -12,7 +12,7 @@ Evaluators can inspect the complete submission without a model account using `np
 EVAL_HERMES_ROOT=/absolute/path/to/installed/hermes-agent EVAL_SECRETS_FILE=/absolute/path/to/your/.env npm start
 ```
 
-The application finds the dependency interpreter using that checkout's `.hermes-dev/installs` selection facts. For another prepared layout, set `EVAL_HERMES_BIN`, or `EVAL_HERMES_PYTHON` and `EVAL_HERMES_RUNTIME_DIR`, as documented in README. The runner creates fresh homes for task state while borrowing installed dependencies and existing provider access; it does not copy a general user workspace into a task.
+The application finds the dependency interpreter using that checkout's `.hermes-dev/installs` selection facts. For another prepared layout, set `EVAL_HERMES_BIN`, or `EVAL_HERMES_PYTHON` and `EVAL_HERMES_RUNTIME_DIR`, as documented in the [runtime settings reference](evals-reference.md#runtime-settings). The runner creates fresh homes for task state while borrowing installed dependencies and existing provider access; it does not copy a general user workspace into a task.
 
 `npm start` installs locked application dependencies if needed, starts PostgreSQL through Compose, builds Vue and serves the API/UI. Open the printed local URL. Creating a draft makes no model calls; explicitly starting it does. Only one live worker may own a database schema. Use a separate database/schema for independent CLI experiment workers.
 
