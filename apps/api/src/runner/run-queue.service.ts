@@ -3,9 +3,10 @@ import {
   Injectable,
   Logger,
   OnApplicationBootstrap,
-  OnApplicationShutdown,
+  BeforeApplicationShutdown,
+  BadRequestException,
 } from '@nestjs/common';
-import type { ConfigurationSpec, ProgressEvent, RunErrorKind, TaskDefinition } from '@evals/shared';
+import type { ConfigurationSpec, ProgressEvent, TaskDefinition } from '@evals/shared';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import { rmSync } from 'node:fs';
 import { join } from 'node:path';
@@ -18,7 +19,17 @@ import { InfraError } from './hermes-cli.js';
 import { Judge } from '../scoring/judge.js';
 import { GroundingSeverityClassifier, typeSafeClient } from '../scoring/grounding-severity.js';
 import { claudeClient } from './anthropic.js';
-import { executeRun, type ExecutorSettings, type RunOutcome } from './run-executor.js';
+import {
+  executeConversation,
+  gradeConversation,
+  type RunConversation,
+  type ExecutorSettings,
+  type RunOutcome,
+} from './run-executor.js';
+import { assertNotCancelled } from './cancellation.js';
+import type { ExecutionSnapshot } from './execution-snapshot.js';
+import { EVALUATOR_VERSION } from '../scoring/judge.js';
+import { COMPARISON_VERSION } from '../analysis/statistics.js';
 
 type RunRow = typeof runs.$inferSelect;
 
@@ -29,17 +40,18 @@ export function backoffSeconds(kind: InfraError['kind'], attempt: number): numbe
 
 /**
  * The worker. Runs live in Postgres; this claims queued ones (FOR UPDATE SKIP LOCKED, so several
- * workers could share the table), executes them with bounded concurrency and records the outcome.
- * A failed attempt is retried from scratch: every attempt gets a fresh Hermes home and a fresh CRM,
- * so a retry can never double-apply anything.
+ * claims cannot double-apply work), executes with bounded concurrency and records the outcome.
+ * Execution retries start fresh; grading retries reuse the durable conversation checkpoint.
  */
 @Injectable()
-export class RunQueueService implements OnApplicationBootstrap, OnApplicationShutdown {
+export class RunQueueService implements OnApplicationBootstrap, BeforeApplicationShutdown {
   private readonly logger = new Logger(RunQueueService.name);
   private readonly config = loadConfig();
   private readonly active = new Map<string, AbortController>();
   private timer: NodeJS.Timeout | undefined;
   private stopping = false;
+  private filling?: Promise<void>;
+  private readonly jobs = new Map<string, Promise<void>>();
   /** Overridable in tests (fake Hermes, tiny timeouts, no backoff). */
   settings: ExecutorSettings;
   backoffScale = 1;
@@ -78,32 +90,109 @@ export class RunQueueService implements OnApplicationBootstrap, OnApplicationShu
     };
   }
 
-  async onApplicationBootstrap(): Promise<void> {
-    // A run still marked running belonged to a process that died; its attempt starts over.
-    await this.db.update(runs).set({ status: 'queued' }).where(eq(runs.status, 'running'));
-    this.timer = setInterval(() => void this.fill(), 1_000);
+  snapshot(configs: (typeof configurations.$inferSelect)[]): ExecutionSnapshot {
+    return {
+      version: 1,
+      evaluatorVersion: EVALUATOR_VERSION,
+      comparisonVersion: COMPARISON_VERSION,
+      judgeEnabled: this.settings.judge !== null,
+      judgeModel: this.settings.judge?.model ?? null,
+      classifierModel: this.config.TYPESAFE_API_KEY ? this.config.JEV_MODEL : null,
+      leadModel: this.settings.leadModel,
+      turnTimeoutMs: this.settings.turnTimeoutMs,
+      runBudgetSeconds: this.settings.runBudgetSeconds,
+      configurations: Object.fromEntries(
+        configs.map((config) => {
+          const spec = config.spec as ConfigurationSpec;
+          const skills =
+            config.skillContents ??
+            Object.fromEntries(
+              spec.skills.map((name) => {
+                const content = this.settings.skillContent(name);
+                if (!content)
+                  throw new BadRequestException(`Skill ${name} is missing from the library`);
+                return [name, content];
+              }),
+            );
+          return [config.id, { spec, skills }];
+        }),
+      ),
+    };
   }
 
-  async onApplicationShutdown(): Promise<void> {
+  validateSnapshot(snapshot: ExecutionSnapshot | null): asserts snapshot is ExecutionSnapshot {
+    if (
+      !snapshot ||
+      snapshot.version !== 1 ||
+      snapshot.evaluatorVersion !== EVALUATOR_VERSION ||
+      snapshot.comparisonVersion !== COMPARISON_VERSION ||
+      snapshot.judgeEnabled !== (this.settings.judge !== null) ||
+      snapshot.judgeModel !== (this.settings.judge?.model ?? null) ||
+      snapshot.classifierModel !== (this.config.TYPESAFE_API_KEY ? this.config.JEV_MODEL : null)
+    ) {
+      throw new InfraError(
+        'account',
+        'Frozen evaluator settings are unavailable; restore the original runtime or create a new experiment. Historical evidence can be explicitly regraded.',
+      );
+    }
+  }
+
+  async recoverInterrupted(): Promise<void> {
+    await this.db.transaction(async (tx) => {
+      // Cancellation is terminal, including work interrupted between cancel and process cleanup.
+      await tx.execute(sql`update runs r set status = 'cancelled', finished_at = now()
+        from experiments e where e.id = r.experiment_id and e.status in ('cancelled', 'finished')
+        and r.status in ('queued', 'running')`);
+      await tx.execute(sql`update runs r set status = 'queued'
+        from experiments e where e.id = r.experiment_id and e.status = 'running' and r.status = 'running'`);
+    });
+  }
+
+  async onApplicationBootstrap(): Promise<void> {
+    await this.recoverInterrupted();
+    this.timer = setInterval(
+      () => void this.fill().catch((error) => this.logger.error(error)),
+      1_000,
+    );
+  }
+
+  async beforeApplicationShutdown(): Promise<void> {
     this.stopping = true;
     clearInterval(this.timer);
     for (const controller of this.active.values()) controller.abort();
+    await this.filling;
+    // Keep the DB pool alive until cancelled work has checkpointed and cleaned up its credentials.
+    await Promise.allSettled(this.jobs.values());
   }
 
-  /** Cancel in-flight runs (their Hermes process groups are killed). */
   abort(runIds: string[]): void {
     for (const id of runIds) this.active.get(id)?.abort();
   }
 
-  /** Start runs until the concurrency limit is reached or the queue is empty. */
-  async fill(): Promise<void> {
+  /** A single fill operation owns capacity while awaiting database claims. */
+  fill(): Promise<void> {
+    if (!this.filling)
+      this.filling = this.fillAvailable().finally(() => {
+        this.filling = undefined;
+      });
+    return this.filling;
+  }
+
+  private async fillAvailable(): Promise<void> {
     while (!this.stopping && this.active.size < this.config.RUN_CONCURRENCY) {
       const run = await this.claim();
       if (!run) return;
       const controller = new AbortController();
       this.active.set(run.id, controller);
+      if (this.stopping) controller.abort();
       this.emit(run.experimentId, run.id, 'running');
-      void this.process(run, controller.signal).finally(() => this.active.delete(run.id));
+      const job = this.process(run, controller.signal)
+        .catch((error) => this.logger.error(error))
+        .finally(() => {
+          this.active.delete(run.id);
+          this.jobs.delete(run.id);
+        });
+      this.jobs.set(run.id, job);
     }
   }
 
@@ -123,55 +212,84 @@ export class RunQueueService implements OnApplicationBootstrap, OnApplicationShu
   }
 
   private async claim(): Promise<RunRow | undefined> {
-    const result = await this.db.execute<{ id: string }>(sql`
-      update runs set status = 'running', attempts = attempts + 1, started_at = now()
-      where id = (
-        select r.id from runs r join experiments e on e.id = r.experiment_id
-        where r.status = 'queued' and r.available_at <= now() and e.status = 'running'
-        order by r.position
-        limit 1
-        for update of r skip locked
-      )
-      returning id`);
-    const id = result.rows[0]?.id;
-    if (!id) return undefined;
-    const [run] = await this.db.select().from(runs).where(eq(runs.id, id));
-    return run;
+    return this.db.transaction(async (tx) => {
+      // All lifecycle operations lock the parent first: a claim cannot escape cancellation.
+      const parents = await tx.execute<{ id: string }>(sql`select e.id from experiments e
+        where e.status = 'running' and exists(select 1 from runs r
+          where r.experiment_id = e.id and r.status = 'queued' and r.available_at <= now())
+        order by e.created_at limit 1 for update of e skip locked`);
+      const parent = parents.rows[0];
+      if (!parent) return undefined;
+      const result = await tx.execute<{ id: string }>(sql`
+        update runs set status = 'running', attempts = attempts + 1,
+          phase_attempts = phase_attempts + 1, started_at = coalesce(started_at, now())
+        where id = (select id from runs where experiment_id = ${parent.id}
+          and status = 'queued' and available_at <= now() order by position
+          limit 1 for update skip locked) returning id`);
+      const id = result.rows[0]?.id;
+      if (!id) return undefined;
+      const [run] = await tx.select().from(runs).where(eq(runs.id, id));
+      return run;
+    });
   }
 
   private async process(run: RunRow, signal: AbortSignal): Promise<void> {
-    const [task] = await this.db.select().from(tasks).where(eq(tasks.id, run.taskId));
-    const [configuration] = await this.db
-      .select()
-      .from(configurations)
-      .where(eq(configurations.id, run.configId));
-    const [experiment] = await this.db
-      .select({ leadMode: experiments.leadMode })
-      .from(experiments)
-      .where(eq(experiments.id, run.experimentId));
     try {
-      const outcome = await executeRun(
-        {
-          runId: run.id,
-          attempt: run.attempts,
-          task: task!.definition as TaskDefinition,
-          spec: configuration!.spec as ConfigurationSpec,
-          leadMode: experiment!.leadMode,
-          signal,
-        },
-        this.settings,
+      const [task] = await this.db.select().from(tasks).where(eq(tasks.id, run.taskId));
+      const [experiment] = await this.db
+        .select()
+        .from(experiments)
+        .where(eq(experiments.id, run.experimentId));
+      if (experiment!.status !== 'running')
+        throw new InfraError('cancelled', 'Experiment cancelled');
+      const snapshot = experiment!.executionSnapshot;
+      this.validateSnapshot(snapshot);
+      const configuration = snapshot.configurations[run.configId];
+      if (!configuration) throw new InfraError('account', 'Frozen configuration is unavailable');
+      const settings = {
+        ...this.settings,
+        leadModel: snapshot.leadModel,
+        turnTimeoutMs: snapshot.turnTimeoutMs,
+        runBudgetSeconds: snapshot.runBudgetSeconds,
+      };
+      let conversation = run.conversation;
+      if (!conversation) {
+        conversation = await executeConversation(
+          {
+            runId: run.id,
+            attempt: run.attempts,
+            task: task!.definition as TaskDefinition,
+            spec: configuration.spec,
+            skillContents: configuration.skills,
+            leadMode: experiment!.leadMode,
+            signal,
+          },
+          settings,
+        );
+        assertNotCancelled(signal);
+        await this.saveConversation(run, conversation);
+        run.phaseAttempts = 1;
+        run.conversation = conversation;
+      }
+      assertNotCancelled(signal);
+      const outcome = await gradeConversation(
+        task!.definition as TaskDefinition,
+        conversation,
+        settings,
+        signal,
       );
+      assertNotCancelled(signal);
       await this.saveOutcome(run, outcome);
       this.emit(run.experimentId, run.id, 'scored');
     } catch (error) {
-      const failure =
-        error instanceof InfraError
+      const failure = signal.aborted
+        ? new InfraError('cancelled', 'Run cancelled')
+        : error instanceof InfraError
           ? error
           : new InfraError('crash', error instanceof Error ? error.message : String(error));
-      if (!(error instanceof InfraError)) this.logger.error(error);
+      if (!(error instanceof InfraError) && !signal.aborted) this.logger.error(error);
       await this.saveFailure(run, failure);
     } finally {
-      // The home's .env holds the provider key; nothing else in the run folder is secret.
       rmSync(join(this.settings.runsDir, run.id, `attempt-${run.attempts}`, 'home', '.env'), {
         force: true,
       });
@@ -179,37 +297,39 @@ export class RunQueueService implements OnApplicationBootstrap, OnApplicationShu
     await this.afterRun(run.experimentId);
   }
 
-  private async saveOutcome(run: RunRow, outcome: RunOutcome): Promise<void> {
+  private async lockRunning(tx: Parameters<Parameters<Db['transaction']>[0]>[0], run: RunRow) {
+    const [parent] = await tx
+      .select()
+      .from(experiments)
+      .where(eq(experiments.id, run.experimentId))
+      .for('update');
+    if (parent?.status !== 'running') throw new InfraError('cancelled', 'Experiment cancelled');
+  }
+
+  private async saveConversation(run: RunRow, conversation: RunConversation): Promise<void> {
     await this.db.transaction(async (tx) => {
+      await this.lockRunning(tx, run);
       await tx
         .update(runs)
         .set({
-          status: 'scored',
-          passed: outcome.passed,
-          score: outcome.score,
-          inputTokens: outcome.inputTokens,
-          outputTokens: outcome.outputTokens,
-          costUsd: outcome.costUsd,
-          costStatus: outcome.costStatus,
-          leadCostUsd: outcome.leadUsage?.costUsd ?? null,
-          judge: outcome.judge,
-          judgeCostUsd: outcome.judge?.usage.costUsd ?? null,
-          durationMs: outcome.durationMs,
-          sessionIds: outcome.sessionIds,
-          crmInitial: outcome.crmInitial,
-          crmFinal: outcome.crmFinal,
-          context: { ...outcome.context, lead: outcome.leadUsage },
-          leadFallbacks: outcome.leadFallbacks,
-          errorKind: null,
-          errorDetail: null,
-          finishedAt: new Date(),
+          conversation,
+          phaseAttempts: 1,
+          inputTokens: conversation.inputTokens,
+          outputTokens: conversation.outputTokens,
+          costUsd: conversation.costUsd,
+          costStatus: conversation.costStatus,
+          leadCostUsd: conversation.leadUsage?.costUsd ?? null,
+          durationMs: conversation.durationMs,
+          sessionIds: conversation.sessionIds,
+          crmInitial: conversation.crmInitial,
+          crmFinal: conversation.crmFinal,
+          context: { ...conversation.context, lead: conversation.leadUsage },
+          leadFallbacks: conversation.leadFallbacks,
         })
         .where(eq(runs.id, run.id));
-      await tx.delete(runEvents).where(eq(runEvents.runId, run.id));
-      await tx.delete(checkResults).where(eq(checkResults.runId, run.id));
-      if (outcome.events.length) {
+      if (conversation.events.length)
         await tx.insert(runEvents).values(
-          outcome.events.map((event) => ({
+          conversation.events.map((event) => ({
             runId: run.id,
             seq: event.seq,
             session: event.session,
@@ -218,7 +338,31 @@ export class RunQueueService implements OnApplicationBootstrap, OnApplicationShu
             payload: event,
           })),
         );
-      }
+    });
+    // The checkpoint is independent of the run home; judging never needs the provider credential.
+    rmSync(join(this.settings.runsDir, run.id, `attempt-${run.attempts}`, 'home', '.env'), {
+      force: true,
+    });
+  }
+
+  private async saveOutcome(run: RunRow, outcome: RunOutcome): Promise<void> {
+    await this.db.transaction(async (tx) => {
+      await this.lockRunning(tx, run);
+      await tx
+        .update(runs)
+        .set({
+          status: 'scored',
+          passed: outcome.passed,
+          score: outcome.score,
+          judge: outcome.judge,
+          judgeCostUsd: outcome.judge?.usage.costUsd ?? null,
+          durationMs: outcome.durationMs,
+          errorKind: null,
+          errorDetail: null,
+          finishedAt: new Date(),
+        })
+        .where(and(eq(runs.id, run.id), eq(runs.status, 'running')));
+      await tx.delete(checkResults).where(eq(checkResults.runId, run.id));
       await tx
         .insert(checkResults)
         .values(outcome.checks.map((check) => ({ runId: run.id, ...check })));
@@ -226,103 +370,116 @@ export class RunQueueService implements OnApplicationBootstrap, OnApplicationShu
   }
 
   private async saveFailure(run: RunRow, failure: InfraError): Promise<void> {
-    const log = [
-      ...(run.attemptLog as unknown[]),
-      { attempt: run.attempts, kind: failure.kind, detail: failure.message, at: new Date() },
-    ];
-    if (failure.kind === 'cancelled') {
-      await this.db
-        .update(runs)
-        .set({ status: 'cancelled', finishedAt: new Date() })
-        .where(eq(runs.id, run.id));
-      this.emit(run.experimentId, run.id, 'cancelled');
-      return;
-    }
-    if (failure.retryable && run.attempts < this.config.MAX_ATTEMPTS) {
-      const wait = backoffSeconds(failure.kind, run.attempts) * this.backoffScale;
-      this.logger.warn(
-        `Run ${run.id} attempt ${run.attempts}: ${failure.kind}; retrying in ${wait}s`,
-      );
-      await this.db
-        .update(runs)
-        .set({
-          status: 'queued',
-          attemptLog: log,
-          availableAt: sql`now() + make_interval(secs => ${wait})`,
-        })
-        .where(eq(runs.id, run.id));
-      this.emit(run.experimentId, run.id, 'queued');
-      return;
-    }
-    await this.markError([run.id], failure.kind as RunErrorKind, failure.message, log);
-    this.emit(run.experimentId, run.id, 'error');
-    if (!failure.retryable) {
-      // A bad key or an empty balance fails every remaining run the same way: stop them all.
-      const queued = await this.db
-        .select({ id: runs.id })
-        .from(runs)
-        .where(and(eq(runs.experimentId, run.experimentId), eq(runs.status, 'queued')));
-      await this.markError(
-        queued.map((r) => r.id),
-        failure.kind as RunErrorKind,
-        `Not run: ${failure.message}`,
-      );
-    }
+    let status: 'queued' | 'cancelled' | 'error' = 'error';
+    await this.db.transaction(async (tx) => {
+      const [parent] = await tx
+        .select()
+        .from(experiments)
+        .where(eq(experiments.id, run.experimentId))
+        .for('update');
+      const log = [
+        ...(run.attemptLog as unknown[]),
+        {
+          attempt: run.attempts,
+          phase: run.conversation ? 'grading' : 'execution',
+          kind: failure.kind,
+          detail: failure.message,
+          at: new Date(),
+        },
+      ];
+      if (parent?.status === 'running' && failure.kind === 'cancelled' && this.stopping) {
+        // Stopping the API pauses work; only an explicit experiment cancellation is terminal.
+        status = 'queued';
+        await tx
+          .update(runs)
+          .set({
+            status,
+            phaseAttempts: Math.max(0, run.phaseAttempts - 1),
+            availableAt: new Date(),
+          })
+          .where(and(eq(runs.id, run.id), eq(runs.status, 'running')));
+      } else if (parent?.status !== 'running' || failure.kind === 'cancelled') {
+        status = 'cancelled';
+        await tx
+          .update(runs)
+          .set({ status, finishedAt: new Date() })
+          .where(and(eq(runs.id, run.id), inArray(runs.status, ['running', 'queued'])));
+      } else if (failure.retryable && run.phaseAttempts < this.config.MAX_ATTEMPTS) {
+        status = 'queued';
+        const wait = backoffSeconds(failure.kind, run.phaseAttempts) * this.backoffScale;
+        await tx
+          .update(runs)
+          .set({
+            status,
+            attemptLog: log,
+            availableAt: sql`now() + make_interval(secs => ${wait})`,
+          })
+          .where(eq(runs.id, run.id));
+      } else {
+        await tx
+          .update(runs)
+          .set({
+            status: 'error',
+            errorKind: failure.kind,
+            errorDetail: failure.message,
+            attemptLog: log,
+            finishedAt: new Date(),
+          })
+          .where(eq(runs.id, run.id));
+        if (!failure.retryable)
+          await tx
+            .update(runs)
+            .set({
+              status: 'error',
+              errorKind: failure.kind,
+              errorDetail: `Not run: ${failure.message}`,
+              finishedAt: new Date(),
+            })
+            .where(and(eq(runs.experimentId, run.experimentId), eq(runs.status, 'queued')));
+      }
+    });
+    this.emit(run.experimentId, run.id, status);
   }
 
-  private async markError(
-    ids: string[],
-    kind: RunErrorKind,
-    detail: string,
-    attemptLog?: unknown[],
-  ): Promise<void> {
-    if (!ids.length) return;
-    await this.db
-      .update(runs)
-      .set({
-        status: 'error',
-        errorKind: kind,
-        errorDetail: detail,
-        finishedAt: new Date(),
-        ...(attemptLog && { attemptLog }),
-      })
-      .where(inArray(runs.id, ids));
-  }
-
-  /** Enforce the cost cap, and close the experiment when nothing is left to run. */
+  /** Enforce the cap and close the parent under the same lifecycle lock as start/cancel. */
   private async afterRun(experimentId: string): Promise<void> {
-    const [stats] = (await this.db
-      .select({
-        open: sql<number>`count(*) filter (where status in ('queued', 'running'))::int`,
-        cost: sql<number>`coalesce(sum(coalesce(cost_usd, 0) + coalesce(lead_cost_usd, 0) + coalesce(judge_cost_usd, 0)), 0)::float`,
-      })
-      .from(runs)
-      .where(eq(runs.experimentId, experimentId))) as [{ open: number; cost: number }];
-
-    if (stats.open > 0 && stats.cost > this.config.MAX_EXPERIMENT_COST_USD) {
-      const queued = await this.db
-        .select({ id: runs.id })
+    const closed = await this.db.transaction(async (tx) => {
+      const [parent] = await tx
+        .select()
+        .from(experiments)
+        .where(eq(experiments.id, experimentId))
+        .for('update');
+      if (parent?.status !== 'running') return false;
+      const [stats] = await tx
+        .select({
+          cost: sql<number>`coalesce(sum(coalesce(cost_usd, 0) + coalesce(lead_cost_usd, 0) + coalesce(judge_cost_usd, 0)), 0)::float`,
+        })
         .from(runs)
-        .where(and(eq(runs.experimentId, experimentId), eq(runs.status, 'queued')));
-      await this.markError(
-        queued.map((r) => r.id),
-        'cost_cap',
-        `Not run: spend reached $${stats.cost.toFixed(2)} (cap $${this.config.MAX_EXPERIMENT_COST_USD})`,
-      );
-    }
-    const [{ open }] = (await this.db
-      .select({ open: sql<number>`count(*)::int` })
-      .from(runs)
-      .where(
-        and(eq(runs.experimentId, experimentId), inArray(runs.status, ['queued', 'running'])),
-      )) as [{ open: number }];
-    if (open > 0) return;
-    const closed = await this.db
-      .update(experiments)
-      .set({ status: 'finished', finishedAt: new Date() })
-      .where(and(eq(experiments.id, experimentId), eq(experiments.status, 'running')))
-      .returning({ id: experiments.id });
-    if (closed.length) this.emit(experimentId, null, 'finished');
+        .where(eq(runs.experimentId, experimentId));
+      if (stats!.cost > this.config.MAX_EXPERIMENT_COST_USD)
+        await tx
+          .update(runs)
+          .set({
+            status: 'error',
+            errorKind: 'cost_cap',
+            errorDetail: `Not run: spend reached $${stats!.cost.toFixed(2)} (cap $${this.config.MAX_EXPERIMENT_COST_USD})`,
+            finishedAt: new Date(),
+          })
+          .where(and(eq(runs.experimentId, experimentId), eq(runs.status, 'queued')));
+      const [remaining] = await tx
+        .select({ open: sql<number>`count(*)::int` })
+        .from(runs)
+        .where(
+          and(eq(runs.experimentId, experimentId), inArray(runs.status, ['queued', 'running'])),
+        );
+      if (remaining!.open > 0) return false;
+      await tx
+        .update(experiments)
+        .set({ status: 'finished', finishedAt: new Date() })
+        .where(eq(experiments.id, experimentId));
+      return true;
+    });
+    if (closed) this.emit(experimentId, null, 'finished');
   }
 
   private emit(experimentId: string, runId: string | null, status: ProgressEvent['status']) {

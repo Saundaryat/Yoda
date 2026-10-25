@@ -3,6 +3,7 @@ import type { SessionScript } from '@evals/shared';
 import { z } from 'zod';
 import { claudeFailure, estimateCost, type ClaudeClient } from './anthropic.js';
 import { InfraError } from './hermes-cli.js';
+import { cancellable } from './cancellation.js';
 import type { Lead, LeadMessage } from './lead.js';
 
 export interface LeadUsage {
@@ -23,6 +24,7 @@ export interface LlmLeadInput {
   situation: string;
   client: LeadModelClient;
   model: string;
+  signal?: AbortSignal;
 }
 
 const replySchema = (ruleIds: string[]) =>
@@ -116,15 +118,20 @@ export class LlmLead implements Lead {
   private async ask(prompt: string) {
     let response;
     try {
-      response = await this.input.client.parse({
-        model: this.input.model,
-        max_tokens: 2_000,
-        betas: ['server-side-fallback-2026-07-01'],
-        fallbacks: 'default',
-        output_config: { effort: 'low', format: this.format },
-        system: this.system,
-        messages: [{ role: 'user', content: prompt }],
-      });
+      response = await cancellable(this.input.signal, () =>
+        this.input.client.parse(
+          {
+            model: this.input.model,
+            max_tokens: 2_000,
+            betas: ['server-side-fallback-2026-07-01'],
+            fallbacks: 'default',
+            output_config: { effort: 'low', format: this.format },
+            system: this.system,
+            messages: [{ role: 'user', content: prompt }],
+          },
+          { signal: this.input.signal },
+        ),
+      );
     } catch (error) {
       throw claudeFailure('LLM lead', error);
     }

@@ -28,6 +28,7 @@ export function estimateCost(model: string, inputTokens: number, outputTokens: n
 
 /** Map SDK errors to the runner's failure kinds: retry transient ones, stop on key or request problems. */
 export function claudeFailure(role: string, error: unknown): InfraError {
+  if (error instanceof InfraError) return error;
   const detail = `${role}: ${error instanceof Error ? error.message : String(error)}`;
   if (
     error instanceof Anthropic.AuthenticationError ||

@@ -43,7 +43,7 @@ export class ExperimentsService {
       throw new BadRequestException('Pick two different configurations');
     }
     const configs = await this.db
-      .select({ id: configurations.id })
+      .select()
       .from(configurations)
       .where(inArray(configurations.id, [input.baselineConfigId, input.candidateConfigId]));
     if (configs.length !== 2) throw new BadRequestException('Unknown configuration');
@@ -56,7 +56,7 @@ export class ExperimentsService {
 
     const [row] = await this.db
       .insert(experiments)
-      .values({ ...input, taskIds })
+      .values({ ...input, taskIds, executionSnapshot: this.queue.snapshot(configs) })
       .returning();
     return this.summary(row!);
   }
@@ -67,23 +67,44 @@ export class ExperimentsService {
    * down or changing mid-experiment hits both sides alike.
    */
   async start(id: string): Promise<ExperimentSummary> {
-    const experiment = await this.row(id);
-    if (experiment.status !== 'draft') throw new ConflictException('Experiment already started');
-    const pair = [experiment.baselineConfigId, experiment.candidateConfigId];
-    const values: (typeof runs.$inferInsert)[] = [];
-    for (let repetition = 1; repetition <= experiment.repetitions; repetition++) {
-      experiment.taskIds.forEach((taskId, i) => {
-        const order = (i + repetition) % 2 === 0 ? pair : [...pair].reverse();
-        for (const configId of order) {
-          values.push({ experimentId: id, taskId, configId, repetition, position: values.length });
-        }
-      });
-    }
     await this.db.transaction(async (tx) => {
+      const [experiment] = await tx
+        .select()
+        .from(experiments)
+        .where(eq(experiments.id, id))
+        .for('update');
+      if (!experiment) throw new NotFoundException(`Experiment ${id} not found`);
+      if (experiment.status !== 'draft') throw new ConflictException('Experiment already started');
+      const pair = [experiment.baselineConfigId, experiment.candidateConfigId];
+      // Legacy drafts have never run: freeze their inputs exactly once when first started.
+      const snapshot =
+        experiment.executionSnapshot ??
+        this.queue.snapshot(
+          await tx.select().from(configurations).where(inArray(configurations.id, pair)),
+        );
+      try {
+        this.queue.validateSnapshot(snapshot);
+      } catch (error) {
+        throw new ConflictException((error as Error).message);
+      }
+      const values: (typeof runs.$inferInsert)[] = [];
+      for (let repetition = 1; repetition <= experiment.repetitions; repetition++) {
+        experiment.taskIds.forEach((taskId, i) => {
+          const order = (i + repetition) % 2 === 0 ? pair : [...pair].reverse();
+          for (const configId of order)
+            values.push({
+              experimentId: id,
+              taskId,
+              configId,
+              repetition,
+              position: values.length,
+            });
+        });
+      }
       await tx.insert(runs).values(values);
       await tx
         .update(experiments)
-        .set({ status: 'running', startedAt: new Date() })
+        .set({ status: 'running', startedAt: new Date(), executionSnapshot: snapshot })
         .where(eq(experiments.id, id));
     });
     void this.queue.fill();
@@ -91,46 +112,63 @@ export class ExperimentsService {
   }
 
   async cancel(id: string): Promise<ExperimentSummary> {
-    const experiment = await this.row(id);
-    if (experiment.status !== 'running') throw new ConflictException('Experiment is not running');
-    await this.db
-      .update(experiments)
-      .set({ status: 'cancelled', finishedAt: new Date() })
-      .where(eq(experiments.id, id));
-    await this.db
-      .update(runs)
-      .set({ status: 'cancelled', finishedAt: new Date() })
-      .where(and(eq(runs.experimentId, id), eq(runs.status, 'queued')));
-    const running = await this.db
-      .select({ id: runs.id })
-      .from(runs)
-      .where(and(eq(runs.experimentId, id), eq(runs.status, 'running')));
-    this.queue.abort(running.map((r) => r.id));
+    const cancelled = await this.db.transaction(async (tx) => {
+      const [experiment] = await tx
+        .select()
+        .from(experiments)
+        .where(eq(experiments.id, id))
+        .for('update');
+      if (!experiment) throw new NotFoundException(`Experiment ${id} not found`);
+      if (experiment.status !== 'running') throw new ConflictException('Experiment is not running');
+      await tx
+        .update(experiments)
+        .set({ status: 'cancelled', finishedAt: new Date() })
+        .where(eq(experiments.id, id));
+      return tx
+        .update(runs)
+        .set({ status: 'cancelled', finishedAt: new Date() })
+        .where(and(eq(runs.experimentId, id), inArray(runs.status, ['queued', 'running'])))
+        .returning({ id: runs.id });
+    });
+    this.queue.abort(cancelled.map((run) => run.id));
     return this.get(id);
   }
 
-  /** Requeue runs that ended in an error (e.g. after fixing a key or waiting out a rate limit). */
+  /** Retry errors in their current phase; completed conversations are retained for grading. */
   async retryErrors(id: string): Promise<ExperimentSummary> {
-    const experiment = await this.row(id);
-    if (experiment.status === 'draft') throw new ConflictException('Experiment has not started');
-    const retried = await this.db
-      .update(runs)
-      .set({
-        status: 'queued',
-        attempts: 0,
-        errorKind: null,
-        errorDetail: null,
-        availableAt: new Date(),
-      })
-      .where(and(eq(runs.experimentId, id), eq(runs.status, 'error')))
-      .returning({ id: runs.id });
-    if (retried.length) {
-      await this.db
-        .update(experiments)
-        .set({ status: 'running', finishedAt: null })
-        .where(eq(experiments.id, id));
-      void this.queue.fill();
-    }
+    await this.db.transaction(async (tx) => {
+      const [experiment] = await tx
+        .select()
+        .from(experiments)
+        .where(eq(experiments.id, id))
+        .for('update');
+      if (!experiment) throw new NotFoundException(`Experiment ${id} not found`);
+      if (!['running', 'finished'].includes(experiment.status))
+        throw new ConflictException('Experiment cannot be retried');
+      try {
+        this.queue.validateSnapshot(experiment.executionSnapshot);
+      } catch (error) {
+        throw new ConflictException((error as Error).message);
+      }
+      const retried = await tx
+        .update(runs)
+        .set({
+          status: 'queued',
+          phaseAttempts: 0,
+          errorKind: null,
+          errorDetail: null,
+          finishedAt: null,
+          availableAt: new Date(),
+        })
+        .where(and(eq(runs.experimentId, id), eq(runs.status, 'error')))
+        .returning({ id: runs.id });
+      if (retried.length)
+        await tx
+          .update(experiments)
+          .set({ status: 'running', finishedAt: null })
+          .where(eq(experiments.id, id));
+    });
+    void this.queue.fill();
     return this.get(id);
   }
 

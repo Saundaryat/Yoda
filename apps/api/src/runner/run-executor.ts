@@ -17,6 +17,7 @@ import { PROVIDER_KEY_ENV, seedHome } from './hermes-home.js';
 import { LeadScript, type Lead, type LeadMessage } from './lead.js';
 import { LlmLead, type LeadModelClient, type LeadUsage } from './llm-lead.js';
 import { HermesStore, turnEvents } from './transcript.js';
+import { assertNotCancelled, cancellable } from './cancellation.js';
 
 export interface ExecutorSettings {
   hermesBin: string;
@@ -42,6 +43,7 @@ export interface RunInput {
   leadMode: LeadMode;
   signal?: AbortSignal;
   now?: Date;
+  skillContents?: Record<string, string>;
 }
 
 export interface RunOutcome extends Score {
@@ -75,6 +77,8 @@ export interface RunOutcome extends Score {
   };
 }
 
+export type RunConversation = Omit<RunOutcome, keyof Score | 'judge'> & { judgeDate: string };
+
 const readIfExists = (path: string) => (existsSync(path) ? readFileSync(path, 'utf8') : null);
 
 /** What the agent receives each turn: an inbound SMS with enough to look the lead up. */
@@ -86,7 +90,11 @@ export function inboundSms(contact: { id: string; name: string }, text: string):
  * Run one attempt of one scenario from a fresh Hermes home and a fresh CRM, then score it.
  * Throws InfraError when the attempt can't be scored (rate limit, timeout, crash, bad key).
  */
-export async function executeRun(input: RunInput, settings: ExecutorSettings): Promise<RunOutcome> {
+export async function executeConversation(
+  input: RunInput,
+  settings: ExecutorSettings,
+): Promise<RunConversation> {
+  assertNotCancelled(input.signal);
   const started = Date.now();
   const { task, spec } = input;
   const providerKey = settings.providerKeys[PROVIDER_KEY_ENV[spec.provider]];
@@ -109,7 +117,7 @@ export async function executeRun(input: RunInput, settings: ExecutorSettings): P
 
   const skills = Object.fromEntries(
     spec.skills.map((name) => {
-      const content = settings.skillContent(name);
+      const content = input.skillContents ? input.skillContents[name] : settings.skillContent(name);
       if (!content) throw new InfraError('account', `Skill ${name} is missing from the library`);
       return [name, content];
     }),
@@ -142,6 +150,7 @@ export async function executeRun(input: RunInput, settings: ExecutorSettings): P
           situation: task.description || task.title,
           client: leadClient!,
           model: settings.leadModel,
+          signal: input.signal,
         });
         llmLeads.push(llmLead);
         lead = llmLead;
@@ -152,6 +161,7 @@ export async function executeRun(input: RunInput, settings: ExecutorSettings): P
       let turn = 0;
 
       while (message) {
+        assertNotCancelled(input.signal);
         turn += 1;
         const at = { session: sessionNo, turn };
         events.push({
@@ -210,7 +220,7 @@ export async function executeRun(input: RunInput, settings: ExecutorSettings): P
           });
         }
 
-        message = await lead.next(text);
+        message = await cancellable(input.signal, () => Promise.resolve(lead.next(text)));
       }
       if (sessionId) sessionIds.push(sessionId);
     }
@@ -218,6 +228,7 @@ export async function executeRun(input: RunInput, settings: ExecutorSettings): P
     await stopGateway(settings.hermesBin, home);
   }
 
+  assertNotCancelled(input.signal);
   const crmFinal = loadState(stateFile);
   const today = new Intl.DateTimeFormat('en-US', {
     timeZone: CLINIC_TIMEZONE,
@@ -230,16 +241,12 @@ export async function executeRun(input: RunInput, settings: ExecutorSettings): P
         ? Object.entries(skills).map(([name, content]) => ({ name, content }))
         : [],
   };
-  const judge = settings.judge
-    ? await settings.judge.judge(task, events, today, groundingAuthority)
-    : null;
   const store = new HermesStore(home);
   const sessions = sessionIds.map((id) => store.session(id));
   store.close();
   const session = sessions[0];
   return {
-    ...scoreRun(task, events, crmFinal, { judge, crmInitial }),
-    judge,
+    judgeDate: today,
     events,
     crmInitial,
     crmFinal,
@@ -265,6 +272,48 @@ export async function executeRun(input: RunInput, settings: ExecutorSettings): P
       auxiliaryCalls: totals.auxiliaryCalls,
     },
   };
+}
+
+/** Grade a persisted conversation without starting Hermes or regenerating customer messages. */
+export async function gradeConversation(
+  task: TaskDefinition,
+  conversation: RunConversation,
+  settings: ExecutorSettings,
+  signal?: AbortSignal,
+): Promise<RunOutcome> {
+  assertNotCancelled(signal);
+  const started = Date.now();
+  const judge = settings.judge
+    ? await cancellable(signal, () =>
+        settings.judge!.judge(
+          task,
+          conversation.events,
+          conversation.judgeDate,
+          conversation.context.groundingAuthority,
+          signal,
+        ),
+      )
+    : null;
+  assertNotCancelled(signal);
+  return {
+    ...conversation,
+    ...scoreRun(task, conversation.events, conversation.crmFinal, {
+      judge,
+      crmInitial: conversation.crmInitial,
+    }),
+    judge,
+    durationMs: conversation.durationMs + Date.now() - started,
+  };
+}
+
+/** Standalone convenience entry point; the queue checkpoints between these two phases. */
+export async function executeRun(input: RunInput, settings: ExecutorSettings): Promise<RunOutcome> {
+  return gradeConversation(
+    input.task,
+    await executeConversation(input, settings),
+    settings,
+    input.signal,
+  );
 }
 
 function sumLeadUsage(usages: LeadUsage[]): LeadUsage {

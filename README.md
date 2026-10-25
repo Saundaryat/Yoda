@@ -75,7 +75,7 @@ Compare pass rates, uncertainty, costs, and individual failures
 
 Runs use isolated Hermes homes and CRM state. When a scenario spans multiple customer sessions, those sessions share that run's home and CRM so the eval can test continuity. Different runs start independently.
 
-Agent versions, task definitions, and experiment setup are saved as snapshots. Changing a configuration or grading rule does not silently rewrite old results.
+Agent versions, task definitions, and experiment setup are saved as snapshots. Changing a configuration or grading rule does not silently rewrite old results. Skill contents and evaluator settings are frozen for new experiments. If grading fails, retries reuse the saved conversation. See [experiment lifecycle and upgrade behavior](docs/experiment-lifecycle.md).
 
 ## How scoring works
 

@@ -1,3 +1,5 @@
+import type { RunConversation } from '../runner/run-executor.js';
+import type { ExecutionSnapshot } from '../runner/execution-snapshot.js';
 import {
   bigserial,
   boolean,
@@ -41,6 +43,7 @@ export const configurations = pgTable('configurations', {
   description: text().notNull().default(''),
   spec: jsonb().notNull(),
   specHash: text().notNull(),
+  skillContents: jsonb().$type<Record<string, string>>(),
   createdAt: createdAt(),
 });
 
@@ -63,6 +66,7 @@ export const experiments = pgTable('experiments', {
     .notNull()
     .default('draft'),
   analysis: jsonb(),
+  executionSnapshot: jsonb().$type<ExecutionSnapshot>(),
   createdAt: createdAt(),
   startedAt: timestamp({ withTimezone: true }),
   finishedAt: timestamp({ withTimezone: true }),
@@ -93,6 +97,10 @@ export const runs = pgTable(
       .default('queued'),
     availableAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
     attempts: integer().notNull().default(0),
+    /** Retries in the current execution or grading phase; reset by explicit retry. */
+    phaseAttempts: integer().notNull().default(0),
+    /** Durable evidence checkpoint: grading retries and restarts reuse this exact conversation. */
+    conversation: jsonb().$type<RunConversation>(),
     /** Failed infrastructure attempts that were retried from scratch: [{attempt, kind, detail, at}]. */
     attemptLog: jsonb().notNull().default([]),
     errorKind: text(),
@@ -118,7 +126,16 @@ export const runs = pgTable(
     startedAt: timestamp({ withTimezone: true }),
     finishedAt: timestamp({ withTimezone: true }),
   },
-  (t) => [index().on(t.status, t.position), index().on(t.experimentId)],
+  (t) => [
+    index().on(t.status, t.position),
+    index().on(t.experimentId),
+    uniqueIndex('runs_experiment_task_config_repetition_unique').on(
+      t.experimentId,
+      t.taskId,
+      t.configId,
+      t.repetition,
+    ),
+  ],
 );
 
 /** The run's timeline: lead messages, agent replies, tool calls with results, driver notes. */

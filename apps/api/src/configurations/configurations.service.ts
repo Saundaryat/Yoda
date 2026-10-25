@@ -28,10 +28,15 @@ export class ConfigurationsService {
   async create(input: CreateConfiguration): Promise<Configuration> {
     const missing = input.spec.skills.filter((name) => !this.skills.get(name));
     if (missing.length) throw new BadRequestException(`Unknown skills: ${missing.join(', ')}`);
-    const specHash = createHash('sha256').update(JSON.stringify(input.spec)).digest('hex');
+    const skillContents = Object.fromEntries(
+      input.spec.skills.map((name) => [name, this.skills.get(name)!.content]),
+    );
+    const specHash = createHash('sha256')
+      .update(JSON.stringify({ spec: input.spec, skillContents }))
+      .digest('hex');
     const [row] = await this.db
       .insert(configurations)
-      .values({ ...input, specHash })
+      .values({ ...input, specHash, skillContents })
       .returning();
     return toConfiguration(row!);
   }

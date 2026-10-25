@@ -15,6 +15,7 @@ import {
 import { z } from 'zod';
 import { claudeFailure, estimateCost, type ClaudeClient } from '../runner/anthropic.js';
 import { InfraError } from '../runner/hermes-cli.js';
+import { cancellable } from '../runner/cancellation.js';
 import type { GroundingSeverityClassifier } from './grounding-severity.js';
 import { CLINICAL_EVIDENCE_RULES } from './clinical-evidence.js';
 import {
@@ -173,6 +174,7 @@ export class Judge {
     events: RunEvent[],
     today: string,
     authority?: GroundingAuthority,
+    signal?: AbortSignal,
   ): Promise<JudgeReport> {
     const replies = new Map(
       events.flatMap((e) => (e.kind === 'agent' ? [[e.seq, e.text] as const] : [])),
@@ -207,15 +209,20 @@ export class Judge {
 
     let response;
     try {
-      response = await this.client.parse({
-        model: this.model,
-        max_tokens: 16_000,
-        betas: ['server-side-fallback-2026-07-01'],
-        fallbacks: 'default',
-        output_config: { effort: 'medium', format: betaZodOutputFormat(reportSchema) },
-        system: judgeSystemPrompt(),
-        messages: [{ role: 'user', content: prompt }],
-      });
+      response = await cancellable(signal, () =>
+        this.client.parse(
+          {
+            model: this.model,
+            max_tokens: 16_000,
+            betas: ['server-side-fallback-2026-07-01'],
+            fallbacks: 'default',
+            output_config: { effort: 'medium', format: betaZodOutputFormat(reportSchema) },
+            system: judgeSystemPrompt(),
+            messages: [{ role: 'user', content: prompt }],
+          },
+          { signal },
+        ),
+      );
     } catch (error) {
       throw claudeFailure('LLM judge', error);
     }
@@ -325,6 +332,7 @@ export class Judge {
           proposed,
           `${renderAuthority(authority)}\n${CLINICAL_EVIDENCE_RULES}\n${transcriptText}`,
           authority,
+          signal,
         )
       : null;
     const reviewedTurns = unclassifiedTurns.map((turn): TurnJudgment => {
@@ -375,6 +383,7 @@ export class Judge {
         ? await this.groundingClassifier.classify(
             `${renderAuthority(authority)}\n\n${renderTranscript(events)}`,
             groundingClaims,
+            signal,
           )
         : null;
     const turns = reviewedTurns.map((turn): TurnJudgment => {
