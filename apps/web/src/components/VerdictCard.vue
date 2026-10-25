@@ -1,41 +1,13 @@
 <script setup lang="ts">
 import { MIN_TASKS_FOR_VERDICT, type ExperimentResults } from '@evals/shared';
 import { computed } from 'vue';
-import { percent, points, VERDICT } from '../format.js';
+import { observedResult, percent, points, VERDICT } from '../format.js';
 import IntervalChart from './IntervalChart.vue';
 
 const props = defineProps<{ results: ExperimentResults; provisional: boolean }>();
 const c = computed(() => props.results.comparison);
-const verdict = computed(() => VERDICT[c.value.verdict]);
-
-const observedResult = computed(() => {
-  if (c.value.difference > 0) return 'The candidate scored higher in this test';
-  if (c.value.difference < 0) return 'The candidate scored lower in this test';
-  return 'The two versions scored the same in this test';
-});
-
-const headline = computed(() => {
-  switch (c.value.verdict) {
-    case 'better':
-      return 'The candidate performed reliably better on these scenarios.';
-    case 'worse':
-      return 'The candidate performed reliably worse on these scenarios.';
-    case 'no_meaningful_difference':
-      return 'The two versions performed about the same.';
-    case 'inconclusive':
-      if (c.value.pairedTasks < MIN_TASKS_FOR_VERDICT) {
-        return c.value.difference === 0
-          ? 'Observed tie. More coverage needed.'
-          : 'Observed difference. More coverage needed.';
-      }
-      return `${observedResult.value}, but the evidence is not conclusive.`;
-    case 'incomplete':
-      return (
-        c.value.incompleteReason ?? 'Some planned repetitions or required judgments are missing.'
-      );
-  }
-  return '';
-});
+const result = computed(() => observedResult(c.value));
+const assessment = computed(() => VERDICT[c.value.verdict]);
 
 const nextStep = computed(() => {
   switch (c.value.verdict) {
@@ -66,10 +38,10 @@ const nextStep = computed(() => {
   <section class="card verdict">
     <div class="verdict-label">
       <span>Result</span>
-      <span class="badge big" :class="verdict.tone">{{ verdict.label }}</span>
+      <span class="badge big" :class="result.tone">{{ result.label }}</span>
       <span v-if="provisional" class="badge warn">Runs still open</span>
     </div>
-    <h2>{{ headline }}</h2>
+    <h2>{{ result.headline }}</h2>
     <p v-if="c.pairedTasks" class="rate-summary">
       <strong>B passed {{ percent(c.passRateB) }}</strong>
       <span>compared with A at {{ percent(c.passRateA) }}</span>
@@ -77,11 +49,14 @@ const nextStep = computed(() => {
     </p>
     <details v-if="c.pairedTasks" class="statistical-detail">
       <summary>Confidence &amp; methodology</summary>
-      <p>{{ nextStep }}</p>
-      <p class="hint">
-        An inconclusive comparison means the evidence does not establish a winner. It is not a
-        scenario-quality score. More tasks do not guarantee a winner.
+      <p class="confidence-assessment">
+        Statistical assessment: <strong>{{ assessment.label }}</strong>
       </p>
+      <p v-if="c.verdict === 'inconclusive'" class="hint">
+        The pass rates show what happened in this test. There is not enough evidence yet to say that
+        the observed difference will reliably repeat.
+      </p>
+      <p>{{ nextStep }}</p>
       <IntervalChart :estimate="c.difference" :ci="c.ci" :margin="c.practicalMargin" />
       <p class="hint">
         A better or worse verdict requires the entire 95% range to clear the practical margin of ±{{

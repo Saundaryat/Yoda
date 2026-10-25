@@ -1,5 +1,11 @@
 # Handoff: Agent Evals on Hermes (2026-10-25)
 
+## Observed-result presentation (2026-10-25)
+
+On 3080, the experiment list and comparison headline now state the observed pass-rate result: **A scored higher**, **B scored higher**, or **Same pass rate**. For example, experiment `36780c0d-c90d-4fb5-bf4d-6da3800192be` displays **B scored higher in this test: 72% vs 60%**. The unchanged statistical assessment (including Inconclusive, where applicable), confidence interval and practical margin remain under **Confidence & methodology**. Missing repetitions or required judgments still display **Incomplete**. Numerical scores, grader behavior and comparison verdicts were not altered.
+
+Four browser regression cases cover either version scoring higher, floating-point ties and limited coverage; missing-grading and margin checks remain covered. **30 browser tests, build, typecheck and lint passed**. Live browser verification confirmed both list/detail behavior and no console errors. Before/after hashes match for **1,586 runs, 12,512 checks and 20,628 events**, and all **21 saved comparison results** match exactly. Verification and screenshot: `docs/experiments/2026-10-25-observed-results-ui.{json,png}`.
+
 ## Latest candidate improvement: completed 20-task comparison (2026-10-25)
 
 [Final experiment on 3080](http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f):

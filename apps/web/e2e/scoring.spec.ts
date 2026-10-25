@@ -95,6 +95,8 @@ test('paired task presence cannot disguise missing repetitions or a gain below t
             ? 'Every planned repetition on both versions must have complete grading, and the experiment must be finished.'
             : undefined,
           difference: 0.05,
+          passRateA: 0.7,
+          passRateB: 0.75,
           ci: [0.01, 0.08],
           practicalMargin: 0.1,
         },
@@ -109,8 +111,9 @@ test('paired task presence cannot disguise missing repetitions or a gain below t
   await expect(page.getByText(/40 of 120 planned runs have complete grading/)).toBeVisible();
   incomplete = false;
   await page.reload();
-  await expect(page.locator('.verdict .badge').first()).toHaveText('No meaningful difference');
+  await expect(page.locator('.verdict .badge').first()).toHaveText('B scored higher');
   await page.getByText('Confidence & methodology', { exact: true }).click();
+  await expect(page.locator('.confidence-assessment')).toContainText('No meaningful difference');
   await expect(page.getByText(/practical margin of ±10 pts/)).toBeVisible();
   await expect(page.getByText(/Comparison paired-task-bootstrap-v2/)).toBeVisible();
 });
@@ -417,3 +420,88 @@ test('a cleared future-plan finding preserves the original accusation for review
   );
   await expect(event).toContainText('I will book it');
 });
+
+const observedCases = [
+  {
+    name: 'B has the higher rate despite uncertain repeatability',
+    a: 0.6,
+    b: 43 / 60,
+    ci: [-1 / 30, 17 / 60],
+    tasks: 20,
+    label: 'B scored higher',
+    headline: 'B scored higher in this test: 72% vs 60%.',
+  },
+  {
+    name: 'A has the higher rate despite uncertain repeatability',
+    a: 0.75,
+    b: 0.6,
+    ci: [-0.32, 0.03],
+    tasks: 20,
+    label: 'A scored higher',
+    headline: 'A scored higher in this test: 75% vs 60%.',
+  },
+  {
+    name: 'equal rates stay a tie despite floating-point noise',
+    a: 0.6,
+    b: 0.6000000000000001,
+    ci: [-0.2, 0.2],
+    tasks: 20,
+    label: 'Same pass rate',
+    headline: 'A and B had the same pass rate in this test: 60%.',
+  },
+  {
+    name: 'limited coverage still reports the observed higher rate',
+    a: 0.5,
+    b: 0.75,
+    ci: [0.05, 0.45],
+    tasks: 7,
+    label: 'B scored higher',
+    headline: 'B scored higher in this test: 75% vs 50%.',
+  },
+];
+
+for (const sample of observedCases) {
+  test(`observed result: ${sample.name}`, async ({ page }) => {
+    const { experiment, results } = await fixture(page.request);
+    const experiments = await (await page.request.get('/api/experiments')).json();
+    const comparison = {
+      ...results.comparison,
+      verdict: 'inconclusive',
+      complete: true,
+      passRateA: sample.a,
+      passRateB: sample.b,
+      difference: sample.b - sample.a,
+      ci: sample.ci,
+      pairedTasks: sample.tasks,
+      plannedTasks: sample.tasks,
+    };
+    await page.route('**/api/experiments', (route) =>
+      route.fulfill({
+        json: experiments.map((e: { id: string }) =>
+          e.id === experiment.id ? { ...e, result: comparison } : e,
+        ),
+      }),
+    );
+    await page.route(`**/api/experiments/${experiment.id}/results`, (route) =>
+      route.fulfill({ json: { ...results, comparison } }),
+    );
+    await page.goto('/');
+    const card = page.getByRole('link', { name: /E2E skill experiment/ });
+    const published = card.getByLabel('Experiment result');
+    await expect(published.locator('.result-decision strong')).toHaveText(sample.label);
+    await expect(published).not.toContainText('Inconclusive');
+    await expect(published).not.toContainText('No clear winner');
+    await card.click();
+    await expect(page.locator('.verdict .badge').first()).toHaveText(sample.label);
+    await expect(page.locator('.verdict h2')).toHaveText(sample.headline);
+    await expect(page.getByText('Inconclusive', { exact: true })).not.toBeVisible();
+    await page.getByText('Confidence & methodology', { exact: true }).click();
+    await expect(page.locator('.confidence-assessment')).toContainText('Inconclusive');
+    await expect(page.getByText(/not enough evidence yet to say/)).toBeVisible();
+    await expect(page.getByRole('img', { name: /95% interval/ })).toBeVisible();
+    const unchanged = await (
+      await page.request.get(`/api/experiments/${experiment.id}/results`)
+    ).json();
+    expect(unchanged.comparison).toEqual(results.comparison);
+  });
+}

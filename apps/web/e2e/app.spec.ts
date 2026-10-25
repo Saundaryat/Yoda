@@ -430,7 +430,7 @@ test('the experiments list publishes results and completed runs do not look like
   const card = page.getByRole('link', { name: /E2E skill experiment/ });
   await expect(card.getByLabel('Experiment result')).toContainText('A pass rate');
   await expect(card.getByLabel('Experiment result')).toContainText('B pass rate');
-  await expect(card.getByLabel('Experiment result')).toContainText('Inconclusive');
+  await expect(card.getByLabel('Experiment result')).toContainText('B scored higher');
   await expect(card.locator('.progress-track')).toHaveCount(0);
   await card.click();
   await expect(page.getByText('Expected outcome', { exact: true })).toHaveCount(0);

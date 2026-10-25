@@ -10,7 +10,7 @@ import {
 import { RouterLink } from 'vue-router';
 import StatusBadge from '../components/StatusBadge.vue';
 import { useResource } from '../composables/useResource.js';
-import { dateTime, money, percent, points, VERDICT } from '../format.js';
+import { dateTime, money, observedResult, percent, points } from '../format.js';
 
 const { data: experiments, error } = useResource<ExperimentSummary[]>('/experiments');
 const { data: configurations } = useResource<Configuration[]>('/configurations');
@@ -158,10 +158,7 @@ const runProgress = (e: ExperimentSummary) => {
         </div>
         <div class="result-decision">
           <span>{{ e.status === 'running' ? 'Provisional' : 'Result' }}</span
-          ><strong>{{ VERDICT[e.result.verdict].label }}</strong
-          ><small v-if="e.result.verdict === 'inconclusive'">{{
-            e.result.pairedTasks < 10 ? 'Limited scenario coverage' : 'No clear winner'
-          }}</small>
+          ><strong>{{ observedResult(e.result).label }}</strong>
         </div>
       </div>
       <div class="card-bottom">

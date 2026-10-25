@@ -1,0 +1,53 @@
+{
+  "change": "Presentation only: observed pass-rate result is primary; unchanged statistical assessment is available in details.",
+  "tests": {
+    "browser": 30,
+    "build": "passed",
+    "typecheck": "passed",
+    "lint": "passed"
+  },
+  "preservation": {
+    "before": {
+      "runs": {
+        "hash": "000af35d7924406870a737bf96ba72de",
+        "count": 1586
+      },
+      "checks": {
+        "hash": "334c399794c332771e3eafc5d965d27a",
+        "count": 12512
+      },
+      "events": {
+        "hash": "630920d3e28f93e74e78dfc475fa2c0c",
+        "count": 20628
+      }
+    },
+    "after": {
+      "runs": {
+        "hash": "000af35d7924406870a737bf96ba72de",
+        "count": 1586
+      },
+      "checks": {
+        "hash": "334c399794c332771e3eafc5d965d27a",
+        "count": 12512
+      },
+      "events": {
+        "hash": "630920d3e28f93e74e78dfc475fa2c0c",
+        "count": 20628
+      }
+    },
+    "matched": true,
+    "unchangedComparisons": 21
+  },
+  "browser": {
+    "url": "http://127.0.0.1:3080/experiments/36780c0d-c90d-4fb5-bf4d-6da3800192be",
+    "verified": [
+      "experiment list shows B scored higher with 72% vs 60% and no Inconclusive headline",
+      "comparison headline shows the observed outcome",
+      "unchanged statistical assessment and interval available under Confidence & methodology",
+      "no browser console errors"
+    ],
+    "listCardText": "25 OCT 2026, 18:08\n05 \u00b7 Grounded replies \u00b7 full 20-task A/B comparison\n\nNew conversation batch\n\nFinished\nA \u00b7 STARTING VERSION\nV4 \u00b7 Save and recall customer preferences\n\u2192\nB \u00b7 PROPOSED VERSION\nContinuity + grounded customer replies v1 (Haiku 4.5)\nA pass rate\n60%\nB pass rate\n72%\nChange\n+12 pts\nResult\nB scored higher\n120 runs scored\nSpend\n$8.48\nView comparison\n\u2197",
+    "detailAccessibilityState": "Browser tab: 7, Title: \"Agent Evals\", URL: \"http://127.0.0.1:3080/experiments/36780c0d-c90d-4fb5-bf4d-6da3800192be\".\n0 AXWebArea Agent Evals, URL: 127.0.0.1:3080/experiments/36780c0d-c90d-4fb5-bf4d-6da3800192be\n\t1 container app\n\t\t2 link Description: Skip to content, Value: 127.0.0.1:3080/experiments/36780c0d-c90d-4fb5-bf4d-6da3800192be#main-content\n\t\t3 container\n\t\t\t4 link Description: Tracework home, Value: 127.0.0.1:3080/\n\t\t\t5 container Primary navigation\n\t\t\t\t6 link Description: Experiments, Value: 127.0.0.1:3080/\n\t\t\t\t7 link Description: Scenarios, Value: 127.0.0.1:3080/tasks\n\t\t\t\t8 link Description: Configurations, Value: 127.0.0.1:3080/configurations\n\t\t9 container\n\t\t\t10 text Agent evaluations Local environment\n\t\t\t11 container User profile\n\t\t\t\t12 text L\n\t\t13 container main-content\n\t\t\t14 link Description: Back to experiments, Value: 127.0.0.1:3080/\n\t\t\t15 text EXPERIMENT RESULTS\n\t\t\t16 heading 05 \u00b7 Grounded replies \u00b7 full 20-task A/B comparison, Value: 1\n\t\t\t\t17 text 05 \u00b7 Grounded replies \u00b7 full 20-task A/B comparison\n\t\t\t18 text Finished\n\t\t\t19 text Compare the starting version with the proposed change. Open a scenario or run to inspect the evidence.\n\t\t\t20 container Experiment sections\n\t\t\t\t21 checkbox Overview, Value: 1\n\t\t\t\t22 checkbox Scenarios 20, Value: 0\n\t\t\t\t23 checkbox Metrics & evidence, Value: 0\n\t\t\t34 container\n\t\t\t\t35 text RESULT B Scored Higher\n\t\t\t\t36 heading B scored higher in this test: 72% vs 60%., Value: 2\n\t\t\t\t\t37 text B scored higher in this test: 72% vs 60%.\n\t\t\t\t38 text B passed 72% compared with A at 60% +12 pts\n\t\t\t\t39 button (expanded) Confidence & methodology, Secondary Actions: Collapse\n\t\t\t\t\t40 text Confidence & methodology\n\t\t\t\t47 container\n\t\t\t\t\t48 text Statistical assessment:  Inconclusive\n\t\t\t\t49 text The pass rates show what happened in this test. There is not enough evidence yet to say that the observed difference will reliably repeat.\n\t\t\t\t50 text Add more scenarios or repetitions before deciding whether to ship the candidate.\n\t\t\t\t51 container Difference 12 points, 95% interval -3 to 28\n\t\t\t\t52 text A better or worse verdict requires the entire 95% range to clear the practical margin of \u00b110 pts. Comparison paired-task-bootstrap-v2. The 95% range is -3 pts to +28 pts. B won 7 scenarios, lost 3, and tied 10. Sign-test p = 0.344.\n\t\t\t25 button (collapsed) Setup & hypothesis \u00b7 20 scenarios \u00d7 2 versions \u00d7 3 repetitions, Secondary Actions: Expand\n\t\t\t\t26 text Setup & hypothesis \u00b7 20 scenarios \u00d7 2 versions \u00d7 3 repetitions\n\t\t\t27 container Compared agent versions\n\t\t\t\t28 text A \u00b7 BASELINE\n\t\t\t\t29 link Description: V4 \u00b7 Save and recall customer preferences, Value: 127.0.0.1:3080/configurations/1a381370-08c5-4fbb-b822-f2678ec1d588\n\t\t\t\t30 text COMPARED WITH B \u00b7 CANDIDATE\n\t\t\t\t31 link Description: Continuity + grounded customer replies v1 (Haiku 4.5), Value: 127.0.0.1:3080/configurations/466a1ada-76e5-48dc-8815-a072797560f0\n\t\t\t32 container\n\t\t\t\t33 text RUN STATUS 120 of 120 finished 120 scored \u00b7 0 running \u00b7 0 queued Total spend $8.48\n\t\t\t41 container\n\t\t\t\t42 text WHAT CHANGED\n\t\t\t\t43 heading Performance by scenario group, Value: 2\n\t\t\t\t\t44 text Performance by scenario group\n\t\t\t\t45 button Open full evidence \u2192\n\t\t\t\t46 text Everyday requests 8 scenarios A 96% B 92% -4 pts Clinic rules & safety 8 scenarios A 25% B 46% +21 pts Returning customers 4 scenarios A 58% B 83% +25 pts\n\nThe focused UI element is 39 button (expanded) Confidence & methodology, Secondary Actions: Collapse",
+    "consoleErrors": []
+  }
+}

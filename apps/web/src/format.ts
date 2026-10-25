@@ -1,4 +1,4 @@
-import type { RunStatus, Verdict } from '@evals/shared';
+import type { Comparison, RunStatus, Verdict } from '@evals/shared';
 
 export const percent = (x: number | null | undefined, digits = 0) =>
   x === null || x === undefined ? '—' : `${(x * 100).toFixed(digits)}%`;
@@ -35,6 +35,45 @@ export const VERDICT: Record<
   inconclusive: { label: 'Inconclusive', tone: 'warn' },
   incomplete: { label: 'Incomplete', tone: 'warn' },
 };
+
+/** Report the observed pass-rate result separately from evidence about repeatability. */
+export function observedResult(comparison: Comparison): {
+  label: string;
+  headline: string;
+  tone: 'good' | 'bad' | 'neutral' | 'warn';
+} {
+  if (
+    comparison.verdict === 'incomplete' ||
+    comparison.complete === false ||
+    !comparison.pairedTasks
+  ) {
+    return {
+      label: 'Incomplete',
+      headline:
+        comparison.incompleteReason ??
+        'Some planned repetitions or required judgments are missing.',
+      tone: 'warn',
+    };
+  }
+  if (Math.abs(comparison.passRateA - comparison.passRateB) < 1e-12) {
+    return {
+      label: 'Same pass rate',
+      headline: `A and B had the same pass rate in this test: ${percent(comparison.passRateA)}.`,
+      tone: 'neutral',
+    };
+  }
+  const higher = comparison.passRateB > comparison.passRateA ? 'B' : 'A';
+  const rates =
+    higher === 'B'
+      ? [comparison.passRateB, comparison.passRateA]
+      : [comparison.passRateA, comparison.passRateB];
+  return {
+    label: `${higher} scored higher`,
+    headline: `${higher} scored higher in this test: ${percent(rates[0])} vs ${percent(rates[1])}.`,
+    tone:
+      comparison.verdict === 'better' ? 'good' : comparison.verdict === 'worse' ? 'bad' : 'neutral',
+  };
+}
 
 export const RUN_STATUS: Record<RunStatus, string> = {
   queued: 'Queued',
