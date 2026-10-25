@@ -59,6 +59,8 @@ export const configurationSchema = z.object({
   model: z.string().min(1).max(160), instructions: z.string().min(1).max(16000), memoryEnabled: z.literal(false).default(false),
 }).strict();
 export type AgentConfiguration = z.infer<typeof configurationSchema>;
+export const defaultProvider = 'anthropic';
+export const defaultModel = 'claude-sonnet-4-6';
 export const slotOfferInstructions = 'For every send_message with intent offer_slots, slotIds must contain exactly the slots explicitly offered in text. Describe the date, time, and timezone of every listed slot. If you offer only the earliest slot, pass only that one slot ID, not every result from search_available_slots. For example, text offering only 2 PM must not include a 4 PM slot ID.';
 export function withAlignedSlotOffers(instructions: string): string {
   return instructions.includes(slotOfferInstructions) ? instructions : `${instructions}\n${slotOfferInstructions}`;

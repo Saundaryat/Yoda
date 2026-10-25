@@ -8,14 +8,14 @@ const api = process.env.EVAL_API_URL ?? 'http://127.0.0.1:3001/api';
 let experiment: any;
 for (let attempt = 0; attempt < 30; attempt++) {
   const experiments = await (await fetch(`${api}/experiments`)).json();
-  experiment = experiments.find((e: any) => e.snapshot.evidenceProvenance?.sourceExperimentId === 'b4df0b6e-35ff-4db2-a7ec-1de92db49f46'
-    && e.snapshot.graderVersion === 'clinic-deterministic-v4.2');
+  experiment = experiments.find((e: any) => e.snapshot.evidenceProvenance?.sourceExperimentId === '857ce98d-e957-4709-afd8-65f928828fb4'
+    && e.snapshot.graderVersion === 'clinic-deterministic-v4.5');
   if (experiment && ['completed', 'failed', 'cancelled'].includes(experiment.status)) break;
   await delay(1000);
 }
 assert.ok(experiment, 'Start npm run review to load the current saved real experiment.');
 const results = await (await fetch(`${api}/experiments/${experiment.id}/results`)).json();
-assert.deepEqual(results.configurations.map((c: any) => c.passed), [14, 13]);
+assert.deepEqual(results.configurations.map((c: any) => c.passed), [16, 18]);
 const detail = await (await fetch(`${api}/experiments/${experiment.id}`)).json();
 const local = '/Users/saundarya/Library/Caches/ms-playwright/chromium_headless_shell-1208/chrome-headless-shell-mac-arm64/chrome-headless-shell';
 const directory = resolve('output/demo'); mkdirSync(directory, { recursive: true });
@@ -39,23 +39,23 @@ try {
   await page.goto(process.env.EVAL_WEB_URL ?? 'http://127.0.0.1:5173');
   await page.locator('.experiment-item').filter({ hasText: experiment.id.slice(0, 8) }).click();
   await caption('Tracework: a working NestJS + Vue platform showing saved real Hermes runs. This walkthrough makes no model calls.', 6500);
-  await caption('Current v4.2 offline replay: A passes 14/16; B passes 13/16. Eight attempts hit provider rate limits; 16/20 task pairs are valid.', 7500);
+  await caption('Anthropic Sonnet 4.6, current v4.5 replay: A passes 16/18; B passes 18/20. Two startup errors leave 18/20 valid pairs.', 7500);
   await page.screenshot({ path: resolve(directory, 'comparison.png') });
   await page.getByText('Configuration differences', { exact: false }).click();
-  await caption('The saved A/B prompts differ in stale-slot recovery: hand off, or re-search and obtain fresh consent. New prompt fixes await fresh model validation.', 7000);
+  await caption('The saved A/B prompts differ in stale-slot recovery: hand off, or re-search and obtain fresh consent. Both include the shared reliable-workflow instructions.', 7000);
   await page.getByText('Configuration differences', { exact: false }).click();
   await page.getByRole('combobox', { name: 'Run filter', exact: true }).selectOption('failures');
-  await caption('Five graded failures remain, plus eight infrastructure errors. B has two hard failures. High diagnostic scores cannot override required failures.', 6500);
+  await caption('Four graded failures remain, plus two startup errors. B has one hard failure. High diagnostic scores cannot override required failures.', 6500);
   const failures = detail.runs.filter((run: any) => run.grade?.status === 'failed' || ['infra_error', 'agent_failed', 'ungradable'].includes(run.status));
-  const index = failures.findIndex((run: any) => run.runtime?.sourceRunId === 'ddcf2b90-6343-4ea7-8834-28674df139c6');
+  const index = failures.findIndex((run: any) => run.runtime?.sourceRunId === '1a04f3b8-a5d1-4493-8781-6880f410d0a5');
   assert.ok(index >= 0);
   const failed = page.getByRole('button', { name: 'Inspect run', exact: true }).nth(index);
   if (await failed.count()) {
     await failed.click();
-    await caption('A genuine B failure: the saved trace attempts confirmation with a slot ID instead of the appointment ID. CRM rejects delivery.', 6500);
+    await caption('A genuine B failure: the agent tries to book before explicit lead consent. CRM blocks it; later success does not erase the violation.', 6500);
     await page.getByRole('button', { name: 'Grades', exact: true }).click();
     await caption('Deterministic graders explain what failed and link to CRM and calendar evidence.', 5500);
-    const evidence = page.locator('.assertion').filter({ hasText: 'truthful confirmation' }).getByRole('button', { name: 'event-16 ↗', exact: true });
+    const evidence = page.locator('.assertion').filter({ hasText: 'explicit consent' }).getByRole('button', { name: 'event-5 ↗', exact: true });
     if (await evidence.count()) { await evidence.click(); await caption('Full tool arguments and results are retained—even rejected attempts.', 5500); }
     await page.screenshot({ path: resolve(directory, 'run-inspector.png') });
     await page.getByRole('button', { name: 'Close inspector', exact: true }).click();
@@ -74,6 +74,6 @@ try {
 }
 writeFileSync(resolve(directory, 'manifest.json'), JSON.stringify({ recordedAt: new Date().toISOString(), experimentId: experiment.id,
   sourceExperimentId: experiment.snapshot.evidenceProvenance.sourceExperimentId, sourceReportSha256: experiment.snapshot.evidenceProvenance.sourceReportSha256,
-  graderVersion: experiment.snapshot.graderVersion, actualUI: true, newInference: false, workflowRevisionValidated: false,
-  passes: [14, 13], validPerConfiguration: 16, infrastructureErrors: 8, narration: 'On-screen captions; saved real inference with v4.2 offline grades, no synthetic result data', video: 'tracework-demo.webm' }, null, 2));
+  graderVersion: experiment.snapshot.graderVersion, actualUI: true, newInference: false, workflowRevision: 'reliable-workflow-v1',
+  passes: [16, 18], validPerConfiguration: [18, 20], validPairs: 18, infrastructureErrors: 2, narration: 'On-screen captions; saved real inference with v4.5 offline grades, no synthetic result data', video: 'tracework-demo.webm' }, null, 2));
 console.log(`Demo saved: ${resolve(directory, 'tracework-demo.webm')}`);

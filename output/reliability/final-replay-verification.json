@@ -1,0 +1,54 @@
+{
+  "checkedAt": "2026-10-25T08:32:54.185836+00:00",
+  "graderVersion": "clinic-deterministic-v4.5",
+  "kind": "separate-cohort-offline-replay",
+  "newInference": false,
+  "gradedRuns": 112,
+  "cohorts": [
+    {
+      "experimentId": "857ce98d-e957-4709-afd8-65f928828fb4",
+      "sourceReportSha256": "cca0befdf95e9a9b91a97350e532a453aede3175c670ea850f1965e8909fa799",
+      "graded": 38,
+      "excluded": 2,
+      "sourceUnchanged": true,
+      "originalHardFailuresPreserved": true,
+      "assertionReferencesResolve": true
+    },
+    {
+      "experimentId": "7454dcc5-0a02-4998-af58-7163ba001d94",
+      "sourceReportSha256": "84a6ad77e00a157ba343423c2567bfb7634459b0925ac4c1bd95027e403803d0",
+      "graded": 4,
+      "excluded": 0,
+      "sourceUnchanged": true,
+      "originalHardFailuresPreserved": true,
+      "assertionReferencesResolve": true
+    },
+    {
+      "experimentId": "9439a442-2a8a-4332-bb93-d3cb959763d6",
+      "sourceReportSha256": "53068dc154f3e6939b8ecef35fe46b579f883d561b2dc06a38fd93fc234c8fe8",
+      "graded": 36,
+      "excluded": 4,
+      "sourceUnchanged": true,
+      "originalHardFailuresPreserved": true,
+      "assertionReferencesResolve": true
+    },
+    {
+      "experimentId": "b4df0b6e-35ff-4db2-a7ec-1de92db49f46",
+      "sourceReportSha256": "4de425ea7a78feeb9acb84ca76ce8b4321d87026ec4b729d3db7c6cf88917116",
+      "graded": 32,
+      "excluded": 8,
+      "sourceUnchanged": true,
+      "originalHardFailuresPreserved": true,
+      "assertionReferencesResolve": true
+    },
+    {
+      "experimentId": "e0755536-6344-4f45-9fca-a96cfde38b2e",
+      "sourceReportSha256": "0f72eed9950613ebd47009db724d78d1d5a6c16a61d1118c729acf5e6837e609",
+      "graded": 2,
+      "excluded": 0,
+      "sourceUnchanged": true,
+      "originalHardFailuresPreserved": true,
+      "assertionReferencesResolve": true
+    }
+  ]
+}

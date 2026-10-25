@@ -1,0 +1,380 @@
+{
+  "sourceExperimentId": "7454dcc5-0a02-4998-af58-7163ba001d94",
+  "sourceReportSha256": "84a6ad77e00a157ba343423c2567bfb7634459b0925ac4c1bd95027e403803d0",
+  "runId": "1309cdf8-8c15-46d9-9774-8788210a5ef5",
+  "task": {
+    "id": "correct-time-after-age",
+    "title": "correct time after age",
+    "limits": {
+      "maxTurns": 7,
+      "timeoutMs": 360000,
+      "maxToolCalls": 60
+    },
+    "version": 1,
+    "category": "changed_preference",
+    "scenario": "changed_preference",
+    "initialAge": null,
+    "minimumAge": 18,
+    "responseAge": 28,
+    "expectedSlotId": "slot-afternoon-late",
+    "expectedOutcome": "book",
+    "initialAgentInput": "I would like the earliest weekday afternoon dental consultation."
+  },
+  "initial": {
+    "notes": [],
+    "runId": "1309cdf8-8c15-46d9-9774-8788210a5ef5",
+    "slots": [
+      {
+        "id": "slot-morning",
+        "start": "2026-11-03T10:00:00+05:30",
+        "booked": false,
+        "service": "dental-consultation"
+      },
+      {
+        "id": "slot-afternoon-early",
+        "start": "2026-11-03T14:00:00+05:30",
+        "booked": false,
+        "service": "dental-consultation"
+      },
+      {
+        "id": "slot-afternoon-late",
+        "start": "2026-11-03T16:00:00+05:30",
+        "booked": false,
+        "service": "dental-consultation"
+      }
+    ],
+    "events": [
+      {
+        "id": "event-1",
+        "name": "initial",
+        "type": "lead",
+        "result": {
+          "kind": "initial",
+          "text": "I would like the earliest weekday afternoon dental consultation."
+        },
+        "sequence": 1,
+        "arguments": {}
+      }
+    ],
+    "contact": {
+      "id": "contact-101",
+      "age": null,
+      "optedOut": false,
+      "tenantId": "tenant-clinic"
+    },
+    "behavior": {
+      "staleTriggered": false,
+      "changePreference": true,
+      "preferenceChanged": false,
+      "staleFirstBooking": false
+    },
+    "replyAge": 28,
+    "minimumAge": 18,
+    "scriptStep": "qualification",
+    "escalations": [],
+    "appointments": [],
+    "pendingReply": null,
+    "ambiguousOnce": false,
+    "offeredSlotIds": [],
+    "searchedSlotIds": [],
+    "opportunityStage": "new",
+    "latestSlotPreference": null
+  },
+  "final": {
+    "notes": [
+      "Lead age confirmed as 28 (event-5). Requested earliest weekday afternoon dental consultation. Changed preference to 4:00 PM slot (event-8). Gave explicit consent (event-10) for slot-afternoon-late. Appointment booked successfully: appointment-1 for dental-consultation on 2026-11-03 at 4:00 PM IST."
+    ],
+    "runId": "1309cdf8-8c15-46d9-9774-8788210a5ef5",
+    "slots": [
+      {
+        "id": "slot-morning",
+        "start": "2026-11-03T10:00:00+05:30",
+        "booked": false,
+        "service": "dental-consultation"
+      },
+      {
+        "id": "slot-afternoon-early",
+        "start": "2026-11-03T14:00:00+05:30",
+        "booked": false,
+        "service": "dental-consultation"
+      },
+      {
+        "id": "slot-afternoon-late",
+        "start": "2026-11-03T16:00:00+05:30",
+        "booked": true,
+        "service": "dental-consultation"
+      }
+    ],
+    "events": [
+      {
+        "id": "event-1",
+        "name": "initial",
+        "type": "lead",
+        "result": {
+          "kind": "initial",
+          "text": "I would like the earliest weekday afternoon dental consultation."
+        },
+        "sequence": 1,
+        "arguments": {}
+      },
+      {
+        "id": "event-2",
+        "name": "get_contact",
+        "type": "tool",
+        "result": {
+          "notes": [],
+          "contact": {
+            "id": "contact-101",
+            "age": null,
+            "optedOut": false,
+            "tenantId": "tenant-clinic"
+          },
+          "appointments": []
+        },
+        "sequence": 2,
+        "arguments": {
+          "contactId": "contact-101"
+        }
+      },
+      {
+        "id": "event-3",
+        "name": "get_business_policy",
+        "type": "tool",
+        "result": {
+          "rules": [
+            "Ask for age before offering a booking.",
+            "Offer the earliest actual afternoon slot.",
+            "Receive explicit lead consent for the selected slot before booking.",
+            "Confirm only after create_appointment succeeds."
+          ],
+          "service": "dental-consultation",
+          "business": "Demo Dental Clinic",
+          "timezone": "Asia/Kolkata",
+          "minimumAge": 18,
+          "simulatedNow": "2026-11-02T09:00:00+05:30",
+          "requiredQualification": [
+            "age"
+          ]
+        },
+        "sequence": 3,
+        "arguments": {}
+      },
+      {
+        "id": "event-4",
+        "name": "send_message",
+        "type": "tool",
+        "result": {
+          "text": "Thanks for reaching out to Demo Dental Clinic! Before I book your dental consultation, I need to confirm your age. Could you please share your age?",
+          "delivered": true,
+          "messageId": "message-4"
+        },
+        "sequence": 4,
+        "arguments": {
+          "text": "Thanks for reaching out to Demo Dental Clinic! Before I book your dental consultation, I need to confirm your age. Could you please share your age?",
+          "intent": "ask_age",
+          "contactId": "contact-101"
+        }
+      },
+      {
+        "id": "event-5",
+        "name": "qualification",
+        "type": "lead",
+        "result": {
+          "age": 28,
+          "kind": "qualification",
+          "text": "I am 28 years old. I would like the earliest weekday afternoon dental consultation."
+        },
+        "sequence": 5,
+        "arguments": {}
+      },
+      {
+        "id": "event-6",
+        "name": "search_available_slots",
+        "type": "tool",
+        "result": {
+          "slots": [
+            {
+              "id": "slot-afternoon-early",
+              "start": "2026-11-03T14:00:00+05:30",
+              "booked": false,
+              "service": "dental-consultation"
+            },
+            {
+              "id": "slot-afternoon-late",
+              "start": "2026-11-03T16:00:00+05:30",
+              "booked": false,
+              "service": "dental-consultation"
+            }
+          ]
+        },
+        "sequence": 6,
+        "arguments": {
+          "service": "dental-consultation",
+          "preference": "afternoon"
+        }
+      },
+      {
+        "id": "event-7",
+        "name": "send_message",
+        "type": "tool",
+        "result": {
+          "text": "Great, you qualify! The earliest available weekday afternoon slot for a dental consultation is Tuesday, November 3, 2026 at 2:00 PM IST. Would you like to book this slot?",
+          "delivered": true,
+          "messageId": "message-7"
+        },
+        "sequence": 7,
+        "arguments": {
+          "text": "Great, you qualify! The earliest available weekday afternoon slot for a dental consultation is Tuesday, November 3, 2026 at 2:00 PM IST. Would you like to book this slot?",
+          "intent": "offer_slots",
+          "slotIds": [
+            "slot-afternoon-early"
+          ],
+          "contactId": "contact-101"
+        }
+      },
+      {
+        "id": "event-8",
+        "name": "preference",
+        "type": "lead",
+        "result": {
+          "kind": "preference",
+          "text": "Actually, I prefer 4:00 PM on November 3 instead. Please offer that time, not 2:00 PM.",
+          "slotId": "slot-afternoon-late"
+        },
+        "sequence": 8,
+        "arguments": {}
+      },
+      {
+        "id": "event-9",
+        "name": "send_message",
+        "type": "tool",
+        "result": {
+          "text": "Sure! The available slot is Tuesday, November 3, 2026 at 4:00 PM IST for a dental consultation. Would you like to book this time?",
+          "delivered": true,
+          "messageId": "message-9"
+        },
+        "sequence": 9,
+        "arguments": {
+          "text": "Sure! The available slot is Tuesday, November 3, 2026 at 4:00 PM IST for a dental consultation. Would you like to book this time?",
+          "intent": "offer_slots",
+          "slotIds": [
+            "slot-afternoon-late"
+          ],
+          "contactId": "contact-101"
+        }
+      },
+      {
+        "id": "event-10",
+        "name": "consent",
+        "type": "lead",
+        "result": {
+          "kind": "consent",
+          "text": "Yes, please book 2026-11-03T16:00:00+05:30 (slot-afternoon-late) for my dental consultation.",
+          "slotId": "slot-afternoon-late"
+        },
+        "sequence": 10,
+        "arguments": {}
+      },
+      {
+        "id": "event-11",
+        "name": "create_appointment",
+        "type": "tool",
+        "result": {
+          "appointment": {
+            "id": "appointment-1",
+            "slotId": "slot-afternoon-late",
+            "service": "dental-consultation",
+            "contactId": "contact-101",
+            "consentEventId": "event-10"
+          }
+        },
+        "sequence": 11,
+        "arguments": {
+          "slotId": "slot-afternoon-late",
+          "service": "dental-consultation",
+          "contactId": "contact-101",
+          "consentEventId": "event-10"
+        }
+      },
+      {
+        "id": "event-12",
+        "name": "update_opportunity",
+        "type": "tool",
+        "result": {
+          "stage": "appointment_booked"
+        },
+        "sequence": 12,
+        "arguments": {
+          "stage": "appointment_booked",
+          "contactId": "contact-101"
+        }
+      },
+      {
+        "id": "event-13",
+        "name": "add_contact_note",
+        "type": "tool",
+        "result": {
+          "noteId": "note-1"
+        },
+        "sequence": 13,
+        "arguments": {
+          "note": "Lead age confirmed as 28 (event-5). Requested earliest weekday afternoon dental consultation. Changed preference to 4:00 PM slot (event-8). Gave explicit consent (event-10) for slot-afternoon-late. Appointment booked successfully: appointment-1 for dental-consultation on 2026-11-03 at 4:00 PM IST.",
+          "contactId": "contact-101"
+        }
+      },
+      {
+        "id": "event-14",
+        "name": "send_message",
+        "type": "tool",
+        "result": {
+          "text": "Your dental consultation has been booked! Here are your appointment details:\n\nAppointment ID: appointment-1\nDate: Tuesday, November 3, 2026\nTime: 4:00 PM IST\nService: Dental Consultation\n\nWe look forward to seeing you at Demo Dental Clinic!",
+          "delivered": true,
+          "messageId": "message-14"
+        },
+        "sequence": 14,
+        "arguments": {
+          "text": "Your dental consultation has been booked! Here are your appointment details:\n\nAppointment ID: appointment-1\nDate: Tuesday, November 3, 2026\nTime: 4:00 PM IST\nService: Dental Consultation\n\nWe look forward to seeing you at Demo Dental Clinic!",
+          "intent": "confirm_booking",
+          "contactId": "contact-101",
+          "appointmentId": "appointment-1"
+        }
+      }
+    ],
+    "contact": {
+      "id": "contact-101",
+      "age": 28,
+      "optedOut": false,
+      "tenantId": "tenant-clinic"
+    },
+    "behavior": {
+      "staleTriggered": false,
+      "changePreference": true,
+      "preferenceChanged": true,
+      "staleFirstBooking": false
+    },
+    "replyAge": 28,
+    "minimumAge": 18,
+    "scriptStep": "complete",
+    "escalations": [],
+    "appointments": [
+      {
+        "id": "appointment-1",
+        "slotId": "slot-afternoon-late",
+        "service": "dental-consultation",
+        "contactId": "contact-101",
+        "consentEventId": "event-10"
+      }
+    ],
+    "pendingReply": null,
+    "ambiguousOnce": false,
+    "offeredSlotIds": [
+      "slot-afternoon-late"
+    ],
+    "searchedSlotIds": [
+      "slot-afternoon-early",
+      "slot-afternoon-late"
+    ],
+    "opportunityStage": "appointment_booked",
+    "latestSlotPreference": "slot-afternoon-late"
+  }
+}

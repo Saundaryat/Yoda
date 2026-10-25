@@ -21,13 +21,13 @@ test('read-only review imports real replay evidence idempotently and blocks exec
     assert.equal((await store.listExperiments()).length, 1);
     const runs = await store.runs(id);
     assert.equal(runs.length, 40);
-    assert.equal(runs.filter(run => run.grade?.status === 'passed').length, 27);
-    assert.equal(runs.filter(run => run.status === 'infra_error' && !run.grade).length, 8);
+    assert.equal(runs.filter(run => run.grade?.status === 'passed').length, 34);
+    assert.equal(runs.filter(run => run.status === 'infra_error' && !run.grade).length, 2);
     assert.equal((await store.experiment(id)).snapshot.evidenceProvenance.newInference, false);
     const results = await store.results(id);
-    assert.deepEqual(results.configurations.map(config => config.passed), [14, 13]);
-    const failed = runs.find(run => run.grade?.hardFailures.includes('truthful_confirmation'))!;
-    assert.ok((await store.events(failed.id)).some(event => event.event_id === 'event-16'));
+    assert.deepEqual(results.configurations.map(config => config.passed), [16, 18]);
+    const failed = runs.find(run => run.grade?.hardFailures.includes('explicit_consent'))!;
+    assert.ok((await store.events(failed.id)).some(event => event.event_id === 'event-5'));
     app = await createEvaluationApp({ store, readOnly: true, logger: false });
     await app.listen(0, '127.0.0.1');
     const base = `${await app.getUrl()}/api`;

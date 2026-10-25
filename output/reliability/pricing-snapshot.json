@@ -1,14 +1,14 @@
 {
   "checkedAt": "2026-10-25",
-  "source": "https://docs.github.com/en/copilot/get-started/plans",
-  "provider": "GitHub Copilot",
-  "plan": "Pro",
-  "monthlySubscriptionUsd": 10,
-  "baseAiCredits": 1000,
-  "scope": "Operating budget example only; actual account plan and experiment bill unknown.",
-  "planningAllocation": {
-    "experimentsPerMonth": 4,
-    "subscriptionAllocationUsdPerExperiment": 2.5,
-    "overagesExcluded": true
-  }
+  "provider": "Anthropic native API",
+  "model": "claude-sonnet-4-6",
+  "source": "https://platform.claude.com/docs/en/models/sonnet-4-6/overview",
+  "usdPerMillionTokens": {
+    "input": 3,
+    "output": 15,
+    "cacheWrite5m": 3.75,
+    "cacheWrite1h": 6,
+    "cacheRead": 0.3
+  },
+  "scope": "Published API rates; no claim about invoice, cache mix or exact counter accounting."
 }

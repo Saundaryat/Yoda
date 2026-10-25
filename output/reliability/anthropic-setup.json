@@ -1,0 +1,33 @@
+{
+  "checkedAt": "2026-10-25T07:55:31.975934+00:00",
+  "apiKeyValidatedByModelsEndpoint": true,
+  "credentialSource": "External dotenv; value never written to project or output",
+  "anthropicSdkVersion": "0.87.0",
+  "installationMethod": "Hermes PM sync_venv([anthropic], explicit=True)",
+  "runtimeCommit": "349e4f7e620ea1be6a8b5703d7152cf1e5ed9998",
+  "setupAttemptExperimentId": "94b05389-fc4a-4f6a-9885-d90752fd7693",
+  "setupAttemptCoverage": {
+    "infra_error": 7,
+    "cancelled": 33
+  },
+  "setupAttemptValid": 0,
+  "setupFailure": "Missing optional Anthropic SDK; cancelled before further runs",
+  "realDevelopmentPilot": {
+    "runId": "verification-2026-10-25T07-47-32.026Z-92997d5c",
+    "completedBooking": true,
+    "originalGrader": "clinic-deterministic-v4.2",
+    "originalScore": 98.33,
+    "offlineCorrectedGrader": "clinic-deterministic-v4.3",
+    "offlineCorrectedScore": 100
+  },
+  "newFullSuiteExperimentId": "857ce98d-e957-4709-afd8-65f928828fb4",
+  "fullSuiteCompleted": true,
+  "fullSuiteAttempted": 40,
+  "fullSuiteGraded": 38,
+  "fullSuiteStartupInfra": 2,
+  "fullSuiteHttp429": 0,
+  "startupFollowupExperimentId": "7454dcc5-0a02-4998-af58-7163ba001d94",
+  "startupFollowupCompleted": 4,
+  "startupFollowupInfra": 0,
+  "finalReplayGraderVersion": "clinic-deterministic-v4.5"
+}

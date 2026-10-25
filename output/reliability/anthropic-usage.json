@@ -1,0 +1,47 @@
+{
+  "checkedAt": "2026-10-25T08:32:54.185836+00:00",
+  "source": "native Anthropic saved exports",
+  "pricingSnapshot": "pricing-snapshot.json",
+  "cohorts": [
+    {
+      "experimentId": "857ce98d-e957-4709-afd8-65f928828fb4",
+      "turns": 65,
+      "numericUsageTurns": 65,
+      "sumReportedTurnCounters": {
+        "input_tokens": 1688694,
+        "output_tokens": 33085
+      },
+      "sumPerScenarioMaximumCounters": {
+        "input_tokens": 1029375,
+        "output_tokens": 21104
+      },
+      "illustrativeNoncachedUsd": {
+        "summedCounters": 5.5623569999999996,
+        "perScenarioMaxima": 3.404685
+      },
+      "actualBilledUsd": null,
+      "costStatus": "unknown",
+      "note": "Alternative unverified counter interpretations, not billing bounds. Cache/retry semantics and actual invoice unknown."
+    },
+    {
+      "experimentId": "7454dcc5-0a02-4998-af58-7163ba001d94",
+      "turns": 15,
+      "numericUsageTurns": 15,
+      "sumReportedTurnCounters": {
+        "input_tokens": 415997,
+        "output_tokens": 7275
+      },
+      "sumPerScenarioMaximumCounters": {
+        "input_tokens": 157565,
+        "output_tokens": 2638
+      },
+      "illustrativeNoncachedUsd": {
+        "summedCounters": 1.357116,
+        "perScenarioMaxima": 0.5122650000000001
+      },
+      "actualBilledUsd": null,
+      "costStatus": "unknown",
+      "note": "Alternative unverified counter interpretations, not billing bounds. Cache/retry semantics and actual invoice unknown."
+    }
+  ]
+}

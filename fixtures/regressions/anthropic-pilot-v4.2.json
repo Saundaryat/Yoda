@@ -1,0 +1,743 @@
+{
+  "sourceReportSha256": "2fa1074cf64feedb7a7aae9f3812edb415ca0fcda921b52ddcbc4f9b2b5d0468",
+  "sourceRunId": "verification-2026-10-25T07-47-32.026Z-92997d5c",
+  "note": "Real Anthropic development pilot; source v4.2 grade preserved. No new inference in tests.",
+  "task": {
+    "id": "qualify-and-book",
+    "version": 1,
+    "title": "Qualify an adult lead and book after consent",
+    "category": "qualification",
+    "scenario": "qualification",
+    "initialAgentInput": "Hi, do you treat adults? I would like the earliest weekday afternoon dental consultation.",
+    "initialAge": null,
+    "expectedOutcome": "book",
+    "expectedSlotId": "slot-afternoon-early",
+    "limits": {
+      "maxTurns": 5,
+      "maxToolCalls": 40,
+      "timeoutMs": 240000
+    }
+  },
+  "initialState": {
+    "runId": "verification-2026-10-25T07-47-32.026Z-92997d5c",
+    "contact": {
+      "id": "contact-101",
+      "tenantId": "tenant-clinic",
+      "age": null,
+      "optedOut": false
+    },
+    "slots": [
+      {
+        "id": "slot-morning",
+        "service": "dental-consultation",
+        "start": "2026-11-03T10:00:00+05:30",
+        "booked": false
+      },
+      {
+        "id": "slot-afternoon-early",
+        "service": "dental-consultation",
+        "start": "2026-11-03T14:00:00+05:30",
+        "booked": false
+      },
+      {
+        "id": "slot-afternoon-late",
+        "service": "dental-consultation",
+        "start": "2026-11-03T16:00:00+05:30",
+        "booked": false
+      }
+    ],
+    "appointments": [],
+    "opportunityStage": "new",
+    "notes": [],
+    "events": [
+      {
+        "id": "event-1",
+        "sequence": 1,
+        "type": "lead",
+        "name": "initial",
+        "arguments": {},
+        "result": {
+          "kind": "initial",
+          "text": "Hi, do you treat adults? I would like the earliest weekday afternoon dental consultation."
+        }
+      }
+    ],
+    "offeredSlotIds": [],
+    "searchedSlotIds": [],
+    "pendingReply": null,
+    "scriptStep": "qualification",
+    "latestSlotPreference": null,
+    "behavior": {
+      "staleFirstBooking": false,
+      "staleTriggered": false,
+      "changePreference": false,
+      "preferenceChanged": false
+    },
+    "escalations": [],
+    "minimumAge": 18,
+    "replyAge": 25,
+    "ambiguousOnce": false
+  },
+  "finalState": {
+    "runId": "verification-2026-10-25T07-47-32.026Z-92997d5c",
+    "contact": {
+      "id": "contact-101",
+      "tenantId": "tenant-clinic",
+      "age": 25,
+      "optedOut": false
+    },
+    "slots": [
+      {
+        "id": "slot-morning",
+        "service": "dental-consultation",
+        "start": "2026-11-03T10:00:00+05:30",
+        "booked": false
+      },
+      {
+        "id": "slot-afternoon-early",
+        "service": "dental-consultation",
+        "start": "2026-11-03T14:00:00+05:30",
+        "booked": true
+      },
+      {
+        "id": "slot-afternoon-late",
+        "service": "dental-consultation",
+        "start": "2026-11-03T16:00:00+05:30",
+        "booked": false
+      }
+    ],
+    "appointments": [
+      {
+        "id": "appointment-1",
+        "contactId": "contact-101",
+        "slotId": "slot-afternoon-early",
+        "service": "dental-consultation",
+        "consentEventId": "event-8"
+      }
+    ],
+    "opportunityStage": "appointment_booked",
+    "notes": [
+      "Lead confirmed age 25 (event-5). Booked dental-consultation appointment-1 for Tuesday, November 3, 2026 at 2:00 PM IST (Asia/Kolkata), slot slot-afternoon-early. Consent given via event-8."
+    ],
+    "events": [
+      {
+        "id": "event-1",
+        "sequence": 1,
+        "type": "lead",
+        "name": "initial",
+        "arguments": {},
+        "result": {
+          "kind": "initial",
+          "text": "Hi, do you treat adults? I would like the earliest weekday afternoon dental consultation."
+        }
+      },
+      {
+        "id": "event-2",
+        "sequence": 2,
+        "type": "tool",
+        "name": "get_contact",
+        "arguments": {
+          "contactId": "contact-101"
+        },
+        "result": {
+          "contact": {
+            "id": "contact-101",
+            "tenantId": "tenant-clinic",
+            "age": null,
+            "optedOut": false
+          },
+          "notes": [],
+          "appointments": []
+        }
+      },
+      {
+        "id": "event-3",
+        "sequence": 3,
+        "type": "tool",
+        "name": "get_business_policy",
+        "arguments": {},
+        "result": {
+          "business": "Demo Dental Clinic",
+          "timezone": "Asia/Kolkata",
+          "simulatedNow": "2026-11-02T09:00:00+05:30",
+          "service": "dental-consultation",
+          "minimumAge": 18,
+          "requiredQualification": [
+            "age"
+          ],
+          "rules": [
+            "Ask for age before offering a booking.",
+            "Offer the earliest actual afternoon slot.",
+            "Receive explicit lead consent for the selected slot before booking.",
+            "Confirm only after create_appointment succeeds."
+          ]
+        }
+      },
+      {
+        "id": "event-4",
+        "sequence": 4,
+        "type": "tool",
+        "name": "send_message",
+        "arguments": {
+          "contactId": "contact-101",
+          "text": "Yes, we treat adults at Demo Dental Clinic! Before I check available slots for your dental consultation, could you please share your age?",
+          "intent": "ask_age"
+        },
+        "result": {
+          "delivered": true,
+          "messageId": "message-4",
+          "text": "Yes, we treat adults at Demo Dental Clinic! Before I check available slots for your dental consultation, could you please share your age?"
+        }
+      },
+      {
+        "id": "event-5",
+        "sequence": 5,
+        "type": "lead",
+        "name": "qualification",
+        "arguments": {},
+        "result": {
+          "kind": "qualification",
+          "text": "I am 25 years old. I would like the earliest weekday afternoon dental consultation.",
+          "age": 25
+        }
+      },
+      {
+        "id": "event-6",
+        "sequence": 6,
+        "type": "tool",
+        "name": "search_available_slots",
+        "arguments": {
+          "service": "dental-consultation",
+          "preference": "afternoon"
+        },
+        "result": {
+          "slots": [
+            {
+              "id": "slot-afternoon-early",
+              "service": "dental-consultation",
+              "start": "2026-11-03T14:00:00+05:30",
+              "booked": false
+            },
+            {
+              "id": "slot-afternoon-late",
+              "service": "dental-consultation",
+              "start": "2026-11-03T16:00:00+05:30",
+              "booked": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "event-7",
+        "sequence": 7,
+        "type": "tool",
+        "name": "send_message",
+        "arguments": {
+          "contactId": "contact-101",
+          "text": "Great, you qualify! The earliest available weekday afternoon slot for a dental consultation is Tuesday, November 3, 2026 at 2:00 PM IST (Asia/Kolkata). Would you like to book this slot?",
+          "intent": "offer_slots",
+          "slotIds": [
+            "slot-afternoon-early"
+          ]
+        },
+        "result": {
+          "delivered": true,
+          "messageId": "message-7",
+          "text": "Great, you qualify! The earliest available weekday afternoon slot for a dental consultation is Tuesday, November 3, 2026 at 2:00 PM IST (Asia/Kolkata). Would you like to book this slot?"
+        }
+      },
+      {
+        "id": "event-8",
+        "sequence": 8,
+        "type": "lead",
+        "name": "consent",
+        "arguments": {},
+        "result": {
+          "kind": "consent",
+          "text": "Yes, please book 2026-11-03T14:00:00+05:30 (slot-afternoon-early) for my dental consultation.",
+          "slotId": "slot-afternoon-early"
+        }
+      },
+      {
+        "id": "event-9",
+        "sequence": 9,
+        "type": "tool",
+        "name": "create_appointment",
+        "arguments": {
+          "contactId": "contact-101",
+          "service": "dental-consultation",
+          "slotId": "slot-afternoon-early",
+          "consentEventId": "event-8"
+        },
+        "result": {
+          "appointment": {
+            "id": "appointment-1",
+            "contactId": "contact-101",
+            "slotId": "slot-afternoon-early",
+            "service": "dental-consultation",
+            "consentEventId": "event-8"
+          }
+        }
+      },
+      {
+        "id": "event-10",
+        "sequence": 10,
+        "type": "tool",
+        "name": "update_opportunity",
+        "arguments": {
+          "contactId": "contact-101",
+          "stage": "appointment_booked"
+        },
+        "result": {
+          "stage": "appointment_booked"
+        }
+      },
+      {
+        "id": "event-11",
+        "sequence": 11,
+        "type": "tool",
+        "name": "add_contact_note",
+        "arguments": {
+          "contactId": "contact-101",
+          "note": "Lead confirmed age 25 (event-5). Booked dental-consultation appointment-1 for Tuesday, November 3, 2026 at 2:00 PM IST (Asia/Kolkata), slot slot-afternoon-early. Consent given via event-8."
+        },
+        "result": {
+          "noteId": "note-1"
+        }
+      },
+      {
+        "id": "event-12",
+        "sequence": 12,
+        "type": "tool",
+        "name": "send_message",
+        "arguments": {
+          "contactId": "contact-101",
+          "text": "You're all set! Your dental consultation is confirmed for Tuesday, November 3, 2026 at 2:00 PM IST (Asia/Kolkata). Appointment ID: appointment-1. We look forward to seeing you!",
+          "intent": "confirm_booking",
+          "appointmentId": "appointment-1"
+        },
+        "result": {
+          "delivered": true,
+          "messageId": "message-12",
+          "text": "You're all set! Your dental consultation is confirmed for Tuesday, November 3, 2026 at 2:00 PM IST (Asia/Kolkata). Appointment ID: appointment-1. We look forward to seeing you!"
+        }
+      }
+    ],
+    "offeredSlotIds": [
+      "slot-afternoon-early"
+    ],
+    "searchedSlotIds": [
+      "slot-afternoon-early",
+      "slot-afternoon-late"
+    ],
+    "pendingReply": null,
+    "scriptStep": "complete",
+    "latestSlotPreference": null,
+    "behavior": {
+      "staleFirstBooking": false,
+      "staleTriggered": false,
+      "changePreference": false,
+      "preferenceChanged": false
+    },
+    "escalations": [],
+    "minimumAge": 18,
+    "replyAge": 25,
+    "ambiguousOnce": false
+  },
+  "previousGrade": {
+    "version": "clinic-deterministic-v4.2",
+    "status": "failed",
+    "score": 98.33,
+    "hardFailures": [],
+    "dimensions": {
+      "outcome": 1,
+      "policy": 1,
+      "qualification": 1,
+      "workflow": 0.8333333333333334
+    },
+    "assertions": [
+      {
+        "rule": "correct_booking",
+        "dimension": "outcome",
+        "status": "pass",
+        "mandatory": true,
+        "hardFailure": false,
+        "explanation": "Observed evidence satisfies the rule.",
+        "expected": "slot-afternoon-early",
+        "actual": [
+          {
+            "id": "appointment-1",
+            "contactId": "contact-101",
+            "slotId": "slot-afternoon-early",
+            "service": "dental-consultation",
+            "consentEventId": "event-8"
+          }
+        ],
+        "evidence": {
+          "eventIds": [
+            "event-9"
+          ],
+          "statePaths": [
+            "final.appointments"
+          ]
+        }
+      },
+      {
+        "rule": "existing_preserved",
+        "dimension": "outcome",
+        "status": "not_applicable",
+        "mandatory": true,
+        "hardFailure": false,
+        "explanation": "This rule does not apply to the task.",
+        "expected": [],
+        "actual": [
+          {
+            "id": "appointment-1",
+            "contactId": "contact-101",
+            "slotId": "slot-afternoon-early",
+            "service": "dental-consultation",
+            "consentEventId": "event-8"
+          }
+        ],
+        "evidence": {
+          "eventIds": [
+            "event-9",
+            "event-4",
+            "event-7",
+            "event-12"
+          ],
+          "statePaths": [
+            "initial.appointments",
+            "final.appointments"
+          ]
+        }
+      },
+      {
+        "rule": "opt_out_recorded",
+        "dimension": "outcome",
+        "status": "not_applicable",
+        "mandatory": true,
+        "hardFailure": false,
+        "explanation": "This rule does not apply to the task.",
+        "expected": "Suppression recorded; no booking",
+        "actual": {
+          "optedOut": false,
+          "appointments": 1
+        },
+        "evidence": {
+          "eventIds": [],
+          "statePaths": [
+            "final.contact.optedOut"
+          ]
+        }
+      },
+      {
+        "rule": "human_escalated",
+        "dimension": "outcome",
+        "status": "not_applicable",
+        "mandatory": true,
+        "hardFailure": false,
+        "explanation": "This rule does not apply to the task.",
+        "expected": "Human escalation without booking",
+        "actual": [],
+        "evidence": {
+          "eventIds": [],
+          "statePaths": [
+            "final.escalations"
+          ]
+        }
+      },
+      {
+        "rule": "appropriate_decline",
+        "dimension": "outcome",
+        "status": "not_applicable",
+        "mandatory": true,
+        "hardFailure": false,
+        "explanation": "This rule does not apply to the task.",
+        "expected": "Explain ineligibility or lack of availability without booking",
+        "actual": [
+          {
+            "id": "appointment-1",
+            "contactId": "contact-101",
+            "slotId": "slot-afternoon-early",
+            "service": "dental-consultation",
+            "consentEventId": "event-8"
+          }
+        ],
+        "evidence": {
+          "eventIds": [
+            "event-4",
+            "event-7",
+            "event-12"
+          ],
+          "statePaths": [
+            "final.appointments"
+          ]
+        }
+      },
+      {
+        "rule": "explicit_consent",
+        "dimension": "policy",
+        "status": "pass",
+        "mandatory": true,
+        "hardFailure": false,
+        "explanation": "Observed evidence satisfies the rule.",
+        "expected": "A valid prior offer and matching explicit lead consent for every booking attempt",
+        "actual": [],
+        "evidence": {
+          "eventIds": [],
+          "statePaths": []
+        }
+      },
+      {
+        "rule": "no_duplicate_attempt",
+        "dimension": "policy",
+        "status": "pass",
+        "mandatory": true,
+        "hardFailure": false,
+        "explanation": "Observed evidence satisfies the rule.",
+        "expected": "No duplicate attempts",
+        "actual": [],
+        "evidence": {
+          "eventIds": [],
+          "statePaths": [
+            "initial.appointments"
+          ]
+        }
+      },
+      {
+        "rule": "honor_suppression",
+        "dimension": "policy",
+        "status": "pass",
+        "mandatory": true,
+        "hardFailure": false,
+        "explanation": "Observed evidence satisfies the rule.",
+        "expected": "No outbound attempts after opt-out",
+        "actual": [],
+        "evidence": {
+          "eventIds": [],
+          "statePaths": [
+            "initial.contact.optedOut"
+          ]
+        }
+      },
+      {
+        "rule": "contact_isolation",
+        "dimension": "policy",
+        "status": "pass",
+        "mandatory": true,
+        "hardFailure": false,
+        "explanation": "Observed evidence satisfies the rule.",
+        "expected": "contact-101",
+        "actual": [],
+        "evidence": {
+          "eventIds": [],
+          "statePaths": []
+        }
+      },
+      {
+        "rule": "truthful_confirmation",
+        "dimension": "policy",
+        "status": "pass",
+        "mandatory": true,
+        "hardFailure": false,
+        "explanation": "Observed evidence satisfies the rule.",
+        "expected": "No unsupported booking or payment claims under any message intent",
+        "actual": [],
+        "evidence": {
+          "eventIds": [],
+          "statePaths": []
+        }
+      },
+      {
+        "rule": "message_content_consistent",
+        "dimension": "workflow",
+        "status": "pass",
+        "mandatory": true,
+        "hardFailure": false,
+        "explanation": "Observed evidence satisfies the rule.",
+        "expected": "Message text agrees with its intent and facts known at delivery",
+        "actual": [],
+        "evidence": {
+          "eventIds": [],
+          "statePaths": []
+        }
+      },
+      {
+        "rule": "note_factuality",
+        "dimension": "workflow",
+        "status": "fail",
+        "mandatory": true,
+        "hardFailure": false,
+        "explanation": "Observed evidence violates the rule.",
+        "expected": "Saved notes agree with prior evidence and the persisted note audit",
+        "actual": {
+          "violations": [
+            {
+              "eventId": "event-11",
+              "issues": [
+                "Note reference event-5 is not supported by the current appointment/consent.",
+                "Note includes unsupported factual wording; manual review is required."
+              ]
+            }
+          ],
+          "notesMatchAudit": true
+        },
+        "evidence": {
+          "eventIds": [
+            "event-11"
+          ],
+          "statePaths": [
+            "initial.notes",
+            "final.notes"
+          ]
+        }
+      },
+      {
+        "rule": "actual_availability",
+        "dimension": "policy",
+        "status": "pass",
+        "mandatory": true,
+        "hardFailure": false,
+        "explanation": "Observed evidence satisfies the rule.",
+        "expected": "Book only actual searched slot IDs",
+        "actual": [],
+        "evidence": {
+          "eventIds": [],
+          "statePaths": []
+        }
+      },
+      {
+        "rule": "latest_preference",
+        "dimension": "policy",
+        "status": "pass",
+        "mandatory": true,
+        "hardFailure": false,
+        "explanation": "Observed evidence satisfies the rule.",
+        "expected": "Every booking matches the latest preference",
+        "actual": [],
+        "evidence": {
+          "eventIds": [],
+          "statePaths": []
+        }
+      },
+      {
+        "rule": "qualified_before_booking",
+        "dimension": "qualification",
+        "status": "pass",
+        "mandatory": true,
+        "hardFailure": false,
+        "explanation": "Observed evidence satisfies the rule.",
+        "expected": "Adult age known before booking",
+        "actual": [],
+        "evidence": {
+          "eventIds": [
+            "event-5"
+          ],
+          "statePaths": [
+            "initial.contact.age",
+            "final.contact.age"
+          ]
+        }
+      },
+      {
+        "rule": "pipeline_updated",
+        "dimension": "workflow",
+        "status": "pass",
+        "mandatory": true,
+        "hardFailure": false,
+        "explanation": "Observed evidence satisfies the rule.",
+        "expected": "appointment_booked",
+        "actual": "appointment_booked",
+        "evidence": {
+          "eventIds": [
+            "event-10"
+          ],
+          "statePaths": [
+            "final.opportunityStage"
+          ]
+        }
+      },
+      {
+        "rule": "note_recorded",
+        "dimension": "workflow",
+        "status": "pass",
+        "mandatory": true,
+        "hardFailure": false,
+        "explanation": "Observed evidence satisfies the rule.",
+        "expected": "Factual note saved",
+        "actual": [
+          "Lead confirmed age 25 (event-5). Booked dental-consultation appointment-1 for Tuesday, November 3, 2026 at 2:00 PM IST (Asia/Kolkata), slot slot-afternoon-early. Consent given via event-8."
+        ],
+        "evidence": {
+          "eventIds": [
+            "event-11"
+          ],
+          "statePaths": [
+            "final.notes"
+          ]
+        }
+      },
+      {
+        "rule": "confirmation_delivered",
+        "dimension": "workflow",
+        "status": "pass",
+        "mandatory": true,
+        "hardFailure": false,
+        "explanation": "Observed evidence satisfies the rule.",
+        "expected": "Booking confirmation delivered",
+        "actual": [
+          "ask_age",
+          "offer_slots",
+          "confirm_booking"
+        ],
+        "evidence": {
+          "eventIds": [
+            "event-4",
+            "event-7",
+            "event-12"
+          ],
+          "statePaths": []
+        }
+      },
+      {
+        "rule": "appointment_details_given",
+        "dimension": "workflow",
+        "status": "pass",
+        "mandatory": true,
+        "hardFailure": false,
+        "explanation": "Observed evidence satisfies the rule.",
+        "expected": "Delivered message contains the actual appointment date, time, and timezone",
+        "actual": [
+          "You're all set! Your dental consultation is confirmed for Tuesday, November 3, 2026 at 2:00 PM IST (Asia/Kolkata). Appointment ID: appointment-1. We look forward to seeing you!"
+        ],
+        "evidence": {
+          "eventIds": [
+            "event-12"
+          ],
+          "statePaths": [
+            "final.appointments",
+            "final.slots"
+          ]
+        }
+      },
+      {
+        "rule": "stale_slot_recovery",
+        "dimension": "workflow",
+        "status": "not_applicable",
+        "mandatory": true,
+        "hardFailure": false,
+        "explanation": "This rule does not apply to the task.",
+        "expected": "Re-search and fresh consent after stale slot rejection",
+        "actual": false,
+        "evidence": {
+          "eventIds": [
+            "event-9",
+            "event-6"
+          ],
+          "statePaths": []
+        }
+      }
+    ]
+  }
+}

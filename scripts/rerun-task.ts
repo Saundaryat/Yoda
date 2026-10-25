@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { createEvaluationApp } from '../apps/api/app.ts';
@@ -11,8 +11,11 @@ import { graderVersion } from '../packages/eval-engine/graders.ts';
 // A real rerun. Historical task/configuration snapshots are inputs,
 // never edited; common instruction amendments are explicit in the new protocol.
 const [sourceArgument, selection, ...flags] = process.argv.slice(2);
-if (!sourceArgument || !selection || flags.some(flag => flag !== '--reliable-workflow')) throw new Error('Usage: node --import tsx scripts/rerun-task.ts <source-export.json> <task-id[,task-id...]|--full-suite> [--reliable-workflow]');
+if (!sourceArgument || !selection || flags.some(flag => flag !== '--reliable-workflow' && !flag.startsWith('--provider=') && !flag.startsWith('--model='))) throw new Error('Usage: node --import tsx scripts/rerun-task.ts <source-export.json> <task-id[,task-id...]|--full-suite> [--reliable-workflow] [--provider=... --model=...]');
 const reliableWorkflow = flags.includes('--reliable-workflow');
+const providerOverride = flags.find(flag => flag.startsWith('--provider='))?.slice('--provider='.length);
+const modelOverride = flags.find(flag => flag.startsWith('--model='))?.slice('--model='.length);
+assert.equal(Boolean(providerOverride), Boolean(modelOverride), 'Override provider and model together for both configurations');
 const fullSuite = selection === '--full-suite';
 const sourcePath = resolve(sourceArgument);
 const sourceBytes = readFileSync(sourcePath);
@@ -25,6 +28,15 @@ assert.ok(tasks.length && (fullSuite || requested.length === new Set(requested).
 const taskIds = tasks.map((task: any) => task.id);
 const kind = fullSuite ? 'real-hermes-full-suite-rerun' : 'real-hermes-targeted-rerun';
 const hash = (bytes: Buffer | string) => createHash('sha256').update(bytes).digest('hex');
+const hermesRoot = resolve(process.env.EVAL_HERMES_ROOT ?? 'hermes-agent');
+const runtimeFactsPath = resolve(hermesRoot, '.hermes-dev/installs', hash(hermesRoot).slice(0, 16), 'facts.json');
+const selectedEnvironment = existsSync(runtimeFactsPath) ? JSON.parse(readFileSync(runtimeFactsPath, 'utf8')).packages?.venv?.environment : undefined;
+const runtimePython = process.env.EVAL_HERMES_PYTHON ?? (selectedEnvironment ? resolve(selectedEnvironment, 'bin/python3') : undefined);
+const needsAnthropic = frozen.configurations.some((config: any) => (providerOverride ?? config.definition.provider) === 'anthropic');
+// Validate the optional native SDK before creating forty runs, rather than
+// discovering the same installation failure independently in every scenario.
+const anthropicSdkVersion = needsAnthropic && runtimePython ? execFileSync(runtimePython,
+  ['-c', 'import anthropic; print(anthropic.__version__)'], { encoding: 'utf8' }).trim() : null;
 const app = await createEvaluationApp({ logger: false });
 try {
   await app.listen(0, '127.0.0.1');
@@ -43,13 +55,15 @@ try {
     const alreadyAligned = original.definition.instructions.includes(slotOfferInstructions);
     const aligned = withAlignedSlotOffers(original.definition.instructions);
     const revised = reliableWorkflow && !aligned.includes(reliableWorkflowInstructions);
+    const rerouted = Boolean(providerOverride && (providerOverride !== original.definition.provider || modelOverride !== original.definition.model));
     const definition = { ...original.definition,
-      name: `${alreadyAligned ? original.definition.name : `${original.definition.name} · aligned offers v1`}${revised ? ` · ${reliableWorkflowRevision}` : ''}`,
+      provider: providerOverride ?? original.definition.provider, model: modelOverride ?? original.definition.model,
+      name: `${alreadyAligned ? original.definition.name : `${original.definition.name} · aligned offers v1`}${revised ? ` · ${reliableWorkflowRevision}` : ''}${rerouted ? ` · ${providerOverride}` : ''}`,
       instructions: reliableWorkflow ? withReliableWorkflow(aligned) : aligned };
     assert.equal(definition.instructions, `${aligned}${revised ? `\n${reliableWorkflowInstructions}` : ''}`,
       'Rerun must apply only the declared common amendments');
     const saved = await request('/configurations', definition);
-    if (alreadyAligned && !revised) assert.equal(saved.content_hash, original.content_hash, 'Unchanged configuration must retain its hash');
+    if (alreadyAligned && !revised && !rerouted) assert.equal(saved.content_hash, original.content_hash, 'Unchanged configuration must retain its hash');
     configurations.push(saved);
   }
   const experiment = await request('/experiments', { suiteId: suite.id, configurationIds: configurations.map(c => c.id), repetitions: 1, taskIds });
@@ -61,18 +75,20 @@ try {
     taskIds, repetitions: 1, plannedRuns: tasks.length * configurations.length, graderVersion,
     commonInstructionAmendment: slotOfferInstructions,
     workflowInstructionAmendment: reliableWorkflow ? { revision: reliableWorkflowRevision, instructions: reliableWorkflowInstructions } : null,
+    providerRoutingOverride: providerOverride ? { provider: providerOverride, model: modelOverride, appliedToBothConfigurations: true, poolWithSourceResults: false } : null,
+    runtimeDependencies: { anthropicSdkVersion, installation: anthropicSdkVersion ? 'Hermes PM declared anthropic extra' : null },
     configurations: configurations.map((config, index) => ({ ...config, sourceConfigurationId: frozen.configurations[index].id })),
     suiteHash: suite.content_hash, tasks,
     executionOrder: (await request(`/experiments/${experiment.id}`)).runs.map((run: any) => ({ runId: run.id, taskId: run.task_id, configurationId: run.configuration_id })),
     hermesCommit: execFileSync('git', ['-C', resolve(process.env.EVAL_HERMES_ROOT ?? 'hermes-agent'), 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
-    implementationHashes: Object.fromEntries(['apps/crm-mcp/crm.ts', 'apps/crm-mcp/server.ts', 'packages/contracts/tasks.ts', 'packages/eval-engine/content.ts', 'packages/eval-engine/graders.ts'].map(path => [path, hash(readFileSync(path))])),
+    implementationHashes: Object.fromEntries(['apps/crm-mcp/crm.ts', 'apps/crm-mcp/server.ts', 'packages/contracts/tasks.ts', 'packages/eval-engine/content.ts', 'packages/eval-engine/graders.ts', 'packages/hermes/runner.ts'].map(path => [path, hash(readFileSync(path))])),
     hypothesis: reliableWorkflow
       ? 'Both configurations should align offered slots and follow booking-evidence, suppression and CRM-delivery rules. A retains handoff after stale-slot rejection; B retains re-search/reconfirmation recovery. This is a new prompt revision, not an offline regrade.'
       : 'Both configurations should produce slot offers whose text and slotIds agree. A retains its deliberate handoff after a stale-slot rejection; B retains re-search/reconfirmation recovery.',
     primaryMetric: 'macro task success B-A', practicalThreshold: experiment.snapshot.practicalThreshold,
     analysisSeed: experiment.snapshot.analysisSeed, analysisVersion: experiment.snapshot.analysisVersion,
     bootstrapSamples: 10000,
-    limitations: [fullSuite ? 'Twenty handcrafted tasks share ten scenario families, with one repetition per configuration; this is limited suite-based evidence.' : `${tasks.length} tasks with one repetition per configuration are targeted regression checks, not a new full-suite performance estimate.`, 'Provider/model are inherited from the original snapshots; served metadata may remain unavailable.'],
+    limitations: [fullSuite ? 'Twenty handcrafted tasks share ten scenario families, with one repetition per configuration; this is limited suite-based evidence.' : `${tasks.length} tasks with one repetition per configuration are targeted regression checks, not a new full-suite performance estimate.`, providerOverride ? 'Provider/model are explicitly overridden for both configurations. Do not pool with source-provider results; served metadata may remain unavailable.' : 'Provider/model are inherited from the original snapshots; served metadata may remain unavailable.'],
   };
   writeFileSync(resolve(directory, 'protocol.json'), JSON.stringify(protocol, null, 2));
   await request(`/experiments/${experiment.id}/start`, {});

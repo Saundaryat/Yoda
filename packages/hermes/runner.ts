@@ -6,10 +6,11 @@ import { resolve, join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { deliverLead, loadState, saveState } from '../../apps/crm-mcp/crm.ts';
 import type { CrmState } from '../../apps/crm-mcp/crm.ts';
-import { loadSampleSuite, prepareScenario, referenceInstructions } from '../contracts/tasks.ts';
+import { defaultModel, defaultProvider, loadSampleSuite, prepareScenario, referenceInstructions } from '../contracts/tasks.ts';
 import type { TaskDefinition, AgentConfiguration } from '../contracts/tasks.ts';
 import { gradeRun } from '../eval-engine/graders.ts';
 import { providerFailure } from './provider-errors.ts';
+import { discoverReadyToolsets } from './readiness.ts';
 
 export interface ExecutionOptions {
   task?: TaskDefinition;
@@ -32,8 +33,8 @@ const logFile = join(directory, 'gateway.log');
 const reportFile = join(directory, 'report.json');
 const hermesRoot = resolve(process.env.EVAL_HERMES_ROOT ?? join(root, 'hermes-agent'));
 const hermesBin = process.env.EVAL_HERMES_BIN ?? join(hermesRoot, '.hermes/bin/hermes');
-const provider = options.configuration?.provider ?? process.env.EVAL_PROVIDER ?? 'copilot';
-const model = options.configuration?.model ?? process.env.EVAL_MODEL ?? 'gpt-4.1';
+const provider = options.configuration?.provider ?? process.env.EVAL_PROVIDER ?? defaultProvider;
+const model = options.configuration?.model ?? process.env.EVAL_MODEL ?? defaultModel;
 const key = randomBytes(32).toString('hex');
 mkdirSync(home, { recursive: true, mode: 0o700 });
 writeFileSync(logFile, '', { mode: 0o600 });
@@ -108,6 +109,7 @@ let fatal: string | undefined;
 let errorKind: 'infra_error' | 'agent_failed' | 'cancelled' | undefined;
 let capabilities: unknown;
 let toolsets: unknown;
+let toolsetReadinessAttempts = 0;
 const startedAt = new Date().toISOString();
 let allRequestsIdempotent = true;
 
@@ -169,7 +171,9 @@ try {
     catch { await delay(1000); }
   }
   if (!ready) throw new Error(`Gateway not ready; inspect ${logFile}`);
-  toolsets = await request('/v1/toolsets');
+  const discovery = await discoverReadyToolsets(request);
+  toolsets = discovery.toolsets;
+  toolsetReadinessAttempts = discovery.attempts;
   writeFileSync(join(directory, 'toolsets.json'), JSON.stringify(toolsets, null, 2));
   await options.onReady?.();
   console.log('Hermes API ready; beginning scripted lead conversation.');
@@ -252,7 +256,7 @@ try {
     schemaVersion: 1, runId, startedAt, completedAt: new Date().toISOString(),
     hermesCommit: commit, provider, requestedModel: model, sessionId,
     configuration: config, instructions, instructionsHash: createHash('sha256').update(instructions).digest('hex'),
-    capabilities, turns, lifecycleEvents, initialState, finalState, task, grade, runtimeWarnings, processGroupId: gateway.pid,
+    capabilities, turns, lifecycleEvents, initialState, finalState, task, grade, runtimeWarnings, toolsetReadinessAttempts, processGroupId: gateway.pid,
     verification: { idempotentCreation: allRequestsIdempotent && turns.length > 0, multiTurnSession: turns.length >= 2, freshHermesHome: home, passed: !fatal && grade.status === 'passed' },
     error: fatal ?? null, errorKind: errorKind ?? null,
     limitations: ['Single scripted scenario; structured lead intents; human text/payload consistency is manually inspected', 'Local cancellation has a separate real-runtime probe; not all timing races are covered', 'No live profile reset/reuse probe; each execution uses a new home/process', 'Token costs remain unknown until provider billing rates are verified', 'Actual served runtime model/provider fields may be empty; requested settings are not independent proof of the served model', 'Hermes toolset discovery may omit enabled dynamic MCP entries; successful audited calls prove this CRM connection'],

@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-10-25T07:33:37.375Z",
-  "unitTestsPassed": 138,
+  "checkedAt": "2026-10-25T08:36:13.941693+00:00",
+  "unitTestsPassed": 186,
   "apiChecksPassed": 9,
   "readOnlyBrowserChecksPassed": 2,
   "readOnlyMutationWalkthroughSkipped": 1,
@@ -10,7 +10,7 @@
   "freshSourceStartupPassed": true,
   "liveDraftLifecyclePassed": true,
   "video": {
-    "durationSeconds": 60.92,
+    "durationSeconds": 61.04,
     "width": 1440,
     "height": 1000,
     "decodedFramesSeconds": [
@@ -18,18 +18,43 @@
       30,
       55
     ],
-    "results": [
-      14,
-      13
+    "passes": [
+      16,
+      18
     ],
-    "graderVersion": "clinic-deterministic-v4.2"
+    "validPerConfiguration": [
+      18,
+      20
+    ],
+    "graderVersion": "clinic-deterministic-v4.5"
   },
-  "targetedWorkflowValidation": {
-    "experimentId": "a893ab39-e7f5-477f-b757-7fb5f0d49fa7",
-    "attempts": 6,
-    "valid": 0,
-    "allHttp429": true
+  "nativePrimary": {
+    "experimentId": "857ce98d-e957-4709-afd8-65f928828fb4",
+    "attempts": 40,
+    "graded": 38,
+    "validPairs": 18,
+    "passes": [
+      16,
+      18
+    ],
+    "hardFailures": [
+      0,
+      1
+    ],
+    "startupInfra": 2,
+    "http429": 0
   },
+  "startupFollowup": {
+    "experimentId": "7454dcc5-0a02-4998-af58-7163ba001d94",
+    "completed": 4,
+    "infrastructureErrors": 0,
+    "passes": [
+      1,
+      2
+    ],
+    "notPooledWithPrimary": true
+  },
+  "offlineReplayGradedRuns": 112,
   "secretPatternScanPassed": true,
-  "scope": "Builder-run local verification; no new successful provider behavior claimed."
+  "scope": "Builder-run local verification; real native Anthropic evidence plus explicit offline regrade, original exports preserved."
 }

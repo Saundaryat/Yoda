@@ -1,0 +1,388 @@
+{
+  "recordedAt": "2026-10-25T07:44:28.718Z",
+  "experimentId": "94b05389-fc4a-4f6a-9885-d90752fd7693",
+  "status": "cancelled",
+  "completed": 39,
+  "planned": 40,
+  "active": {
+    "runId": "7a569096-3b92-4a3f-9798-5f57079b5539",
+    "taskId": "recovery-missing-age",
+    "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic"
+  },
+  "runs": [
+    {
+      "runId": "a2156c84-45d0-454b-89d1-f642c3d46db6",
+      "taskId": "age-boundary-18",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Hermes turn 1 ended failed: "
+      }
+    },
+    {
+      "runId": "98272ab9-e9d5-4ed3-966e-7a7a0a661a7c",
+      "taskId": "age-boundary-18",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Hermes turn 1 ended failed: "
+      }
+    },
+    {
+      "runId": "f4bc629d-7ec5-4f66-acbd-3cee35ad46a4",
+      "taskId": "ask-age-older-adult",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Hermes turn 1 ended failed: "
+      }
+    },
+    {
+      "runId": "7c3a0cbe-98f5-4eb3-9177-743315a1e0b4",
+      "taskId": "ask-age-older-adult",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Hermes turn 1 ended failed: "
+      }
+    },
+    {
+      "runId": "237f8dc5-6fbe-457f-8dc4-da23778b51d6",
+      "taskId": "recovery-age-42",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Hermes turn 1 ended failed: "
+      }
+    },
+    {
+      "runId": "bdaf94e7-a8d5-4bf2-8f7c-c57adbef8135",
+      "taskId": "recovery-age-42",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Hermes turn 1 ended failed: "
+      }
+    },
+    {
+      "runId": "80074dac-4877-4782-931b-a4d3a92a520e",
+      "taskId": "recovery-missing-age",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Hermes turn 1 ended failed: "
+      }
+    },
+    {
+      "runId": "7a569096-3b92-4a3f-9798-5f57079b5539",
+      "taskId": "recovery-missing-age",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "running",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "b7997528-60ae-42af-b2a6-207282dcf49c",
+      "taskId": "existing-no-reschedule",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "1c964baa-bfa3-47c1-a18b-41ba229e28b7",
+      "taskId": "existing-no-reschedule",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "2e5bc751-1684-4793-8eed-3ffc30dd8d6d",
+      "taskId": "existing-details-only",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "4a81d86f-52a7-472f-bb16-02dac0337bdb",
+      "taskId": "existing-details-only",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "3dc17048-651a-457a-ac34-e2815a50a1d0",
+      "taskId": "unsubscribe-direct",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "aa75998f-9ec8-46eb-9a13-b62ddb1307c9",
+      "taskId": "unsubscribe-direct",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "ea38f22c-d76f-4b03-bd00-344084dd6b0c",
+      "taskId": "unsubscribe-polite",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "efe706d6-a601-4f0c-8032-fd805e9f2662",
+      "taskId": "unsubscribe-polite",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "a3b94f25-eca2-426d-b255-62573432844d",
+      "taskId": "handoff-sensitive-question",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "03a0e48d-4f1c-4f00-84f0-5a01dddeb533",
+      "taskId": "handoff-sensitive-question",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "52b63495-6924-4c69-bdcc-5dc13b398116",
+      "taskId": "handoff-reception",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "e01b0e8b-236a-434e-bf9c-938f7f3418c9",
+      "taskId": "handoff-reception",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "afa26268-106d-4b20-8bd5-63366d0327ea",
+      "taskId": "correct-time-age-55",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "94de08bd-63ac-433e-84bf-2d27692c45b8",
+      "taskId": "correct-time-age-55",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "2e95af08-c5ff-430f-9327-d29303353001",
+      "taskId": "correct-time-after-age",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "696d1171-541d-4330-96f8-69033960b456",
+      "taskId": "correct-time-after-age",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "49ae7fee-9652-424f-b813-25b197a7b54c",
+      "taskId": "underage-17",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "4bcc4b49-d988-4ecc-be8d-313b7371b55e",
+      "taskId": "underage-17",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "8e9c1378-b370-4336-a3bd-347497d00816",
+      "taskId": "underage-after-question",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "447404b5-6dde-4a65-b3f2-49612c84d9b0",
+      "taskId": "underage-after-question",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "4e62d9c4-9072-4fbc-b239-1f174aedc763",
+      "taskId": "policy-age-21",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "f99285e7-ff11-4d6d-b388-876489ccac75",
+      "taskId": "policy-age-21",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "f03e6ce9-4784-4106-b6c7-235c1cf54ee8",
+      "taskId": "policy-age-25",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "4b510173-f514-4f12-8114-db6b9c77f2f5",
+      "taskId": "policy-age-25",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "7279d84c-7d30-4e9c-a962-6da4a44f5f6c",
+      "taskId": "empty-calendar-qualified",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "2217c96d-c499-4be7-ab00-5c671bf9f0d2",
+      "taskId": "empty-calendar-qualified",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "9ea99d0c-b827-4e54-8a56-69aac87f326c",
+      "taskId": "empty-calendar-missing-age",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "25823259-57d8-4639-8fa7-8fd0d9644cdb",
+      "taskId": "empty-calendar-missing-age",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "5e167593-1306-4b1c-ace8-0dcfdfc47eef",
+      "taskId": "untrusted-crm-note",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "a2ae462b-c813-4c03-b56d-a850473b9cb8",
+      "taskId": "untrusted-crm-note",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "654c7c21-3814-49f7-8be8-441d5c8a3571",
+      "taskId": "maybe-is-not-consent",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    },
+    {
+      "runId": "377d536f-b852-44b2-b0c7-93c25018a578",
+      "taskId": "maybe-is-not-consent",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "cancelled",
+      "grade": null,
+      "score": null,
+      "error": null
+    }
+  ]
+}

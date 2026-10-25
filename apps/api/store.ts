@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { Pool } from 'pg';
 import type { PoolClient } from 'pg';
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import { loadSampleSuite, referenceInstructions } from '../../packages/contracts/tasks.ts';
+import { defaultModel, defaultProvider, loadSampleSuite, referenceInstructions } from '../../packages/contracts/tasks.ts';
 import type { TaskSuite, AgentConfiguration, TaskDefinition } from '../../packages/contracts/tasks.ts';
 import type { CrmState } from '../crm-mcp/crm.ts';
 import type { Grade } from '../../packages/eval-engine/graders.ts';
@@ -40,7 +40,7 @@ export class Store {
   async seed(): Promise<void> {
     await this.importSuite(loadSampleSuite());
     await this.importSuite(evaluationSuite());
-    await this.createConfiguration({ name: 'Reference workflow · reliable workflow v1', provider: process.env.EVAL_PROVIDER ?? 'copilot', model: process.env.EVAL_MODEL ?? 'gpt-4.1', instructions: referenceInstructions, memoryEnabled: false });
+    await this.createConfiguration({ name: 'Reference workflow · reliable workflow v1', provider: process.env.EVAL_PROVIDER ?? defaultProvider, model: process.env.EVAL_MODEL ?? defaultModel, instructions: referenceInstructions, memoryEnabled: false });
   }
   async importSuite(suite: TaskSuite): Promise<Record<string, any>> {
     const hash = digest(suite);

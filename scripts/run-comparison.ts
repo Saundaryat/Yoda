@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
-import { referenceInstructions } from '../packages/contracts/tasks.ts';
+import { defaultModel, defaultProvider, referenceInstructions } from '../packages/contracts/tasks.ts';
 
 const base = process.env.EVAL_API_URL ?? 'http://127.0.0.1:3001/api';
 async function request(path: string, body?: unknown) {
@@ -13,7 +13,7 @@ const suite = (await request('/task-suites')).find((s: any) => s.logical_id === 
 if (!suite) throw new Error('Evaluation suite not seeded. Restart the API.');
 const recovery = 'If a slot is rejected as unavailable, search again, offer an available alternative, obtain new consent, then retry.';
 if (!referenceInstructions.includes(recovery)) throw new Error('Expected recovery instruction not found');
-const common = { provider: process.env.EVAL_PROVIDER ?? 'copilot', model: process.env.EVAL_MODEL ?? 'gpt-4.1', memoryEnabled: false };
+const common = { provider: process.env.EVAL_PROVIDER ?? defaultProvider, model: process.env.EVAL_MODEL ?? defaultModel, memoryEnabled: false };
 const baseline = await request('/configurations', { ...common, name: 'A · Hand off after slot rejection', instructions: referenceInstructions.replace(recovery, 'If a slot is rejected as unavailable, escalate_to_human and stop. Do not search for or offer an alternative slot.') });
 const candidate = await request('/configurations', { ...common, name: 'B · Recover and reconfirm', instructions: referenceInstructions });
 const repetitions = Number(process.env.EVAL_REPETITIONS ?? 1);

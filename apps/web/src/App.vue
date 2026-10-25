@@ -10,7 +10,7 @@ const suites = ref<any[]>([]), configs = ref<any[]>([]), experiments = ref<any[]
 const selectedSuite = ref<any>(null), inspectedRun = ref(''), error = ref(''), notice = ref(''), loading = ref(true), busy = ref(false), live = ref(false);
 const dialog = ref<HTMLDialogElement>(), suiteId = ref(''), baselineId = ref(''), candidateId = ref(''), repetitions = ref(1);
 const runFilter = ref('all');
-const configForm = ref({ name: '', provider: 'copilot', model: 'gpt-4.1', instructions: '', memoryEnabled: false });
+const configForm = ref({ name: '', provider: 'anthropic', model: 'claude-sonnet-4-6', instructions: '', memoryEnabled: false });
 let stream: EventSource | undefined, poll: ReturnType<typeof setInterval> | undefined;
 const refreshing = new Set<string>();
 let refreshTimer: ReturnType<typeof setTimeout> | undefined;
@@ -98,7 +98,7 @@ onUnmounted(() => { stream?.close(); if (poll) clearInterval(poll); if (refreshT
       <div class="page">
         <div v-if="error" class="alert" role="alert">{{ error }}<button class="link" @click="error = ''; load()">Retry</button></div>
         <p v-if="notice" class="notice" role="status">{{ notice }} <button class="link" @click="notice = ''">Dismiss</button></p>
-        <p v-if="readOnly" class="notice" role="status">Read-only review · saved real inference with v4.2 offline grades · no model calls. New workflow instructions have not had fresh model validation.</p>
+        <p v-if="readOnly" class="notice" role="status">Read-only review · saved real inference with versioned grades · no model calls. Original exports and grading revisions are preserved.</p>
         <p v-if="loading" class="empty">Connecting to the evaluation backend…</p>
         <template v-else-if="section === 'experiments'">
           <header class="page-header"><div><p class="eyebrow">Measure what changed</p><h1>Experiments</h1><p class="subtitle">Compare agent behavior. Follow every result back to evidence.</p></div><button class="primary" :disabled="readOnly" @click="dialog?.showModal()">＋ New experiment</button></header>

@@ -4,10 +4,10 @@ import type { AuditEvent, CrmState } from '../../apps/crm-mcp/crm.ts';
 import type { TaskDefinition } from '../contracts/tasks.ts';
 import { toolSchemas } from '../../apps/crm-mcp/crm.ts';
 import type { ToolName } from '../../apps/crm-mcp/crm.ts';
-import { appointmentDetailsIssues, reviewMessage, reviewNote } from './content.ts';
+import { appointmentDetailsIssues, reviewMessage, reviewNote, statesCustomerAge } from './content.ts';
 import type { ContentContext } from './content.ts';
 
-export const graderVersion = 'clinic-deterministic-v4.2';
+export const graderVersion = 'clinic-deterministic-v4.5';
 export type Dimension = 'outcome' | 'policy' | 'qualification' | 'workflow';
 export interface AssertionResult {
   rule: string;
@@ -85,7 +85,7 @@ export function gradeRun(task: TaskDefinition, initial: CrmState | null, final: 
   const context: ContentContext = {
     age: before.contact.age, minimumAge: task.minimumAge ?? 18,
     appointments: structuredClone(before.appointments), slots: before.slots,
-    consentEventIds: [], optedOut: before.contact.optedOut, escalated: before.escalations.length > 0, emptyCalendar: false,
+    consentEventIds: [], qualificationEventIds: [], ageEvidenceEventIds: [], consentSlotIds: [], unavailableSlotIds: [], preferenceEvents: [], optedOut: before.contact.optedOut, escalated: before.escalations.length > 0, emptyCalendar: false,
   };
   const badMessages: { event: AuditEvent; issues: string[] }[] = [];
   const badNotes: { event: AuditEvent; issues: string[] }[] = [];
@@ -94,9 +94,10 @@ export function gradeRun(task: TaskDefinition, initial: CrmState | null, final: 
   // or lead reply cannot retroactively justify an earlier claim.
   for (const event of events) {
     if (event.type === 'lead') {
-      if (event.name === 'qualification') context.age = Number(event.result.age);
-      if (event.name === 'preference') context.consentEventIds = [];
-      if (event.name === 'consent') context.consentEventIds.push(event.id);
+      if (statesCustomerAge(String(event.result.text), context.age)) context.ageEvidenceEventIds!.push(event.id);
+      if (event.name === 'qualification') { context.age = Number(event.result.age); context.qualificationEventIds!.push(event.id); }
+      if (event.name === 'preference') { context.preferenceEvents!.push({ eventId: event.id, slotId: String(event.result.slotId) }); context.consentEventIds = []; context.consentSlotIds = []; }
+      if (event.name === 'consent') { context.consentEventIds.push(event.id); context.consentSlotIds!.push(String(event.result.slotId)); }
       if (event.name === 'opt_out') context.optedOut = true;
       continue;
     }
@@ -109,7 +110,9 @@ export function gradeRun(task: TaskDefinition, initial: CrmState | null, final: 
       const issues = reviewNote(String(event.arguments.note ?? ''), context);
       if (issues.length) badNotes.push({ event, issues });
     }
+    if (event.name === 'create_appointment' && event.result.error === 'SLOT_UNAVAILABLE_RESEARCH_AND_RECONFIRM') context.unavailableSlotIds!.push(String(event.arguments.slotId));
     if (event.result.error) continue;
+    if (event.name === 'get_contact' && (event.result.contact as { age?: number } | undefined)?.age === context.age) context.ageEvidenceEventIds!.push(event.id);
     if (event.name === 'create_appointment') context.appointments.push(event.result.appointment as CrmState['appointments'][number]);
     if (event.name === 'set_contact_opt_out') context.optedOut = true;
     if (event.name === 'escalate_to_human') context.escalated = true;

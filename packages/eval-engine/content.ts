@@ -8,6 +8,11 @@ export interface ContentContext {
   appointments: CrmState['appointments'];
   slots: CrmState['slots'];
   consentEventIds: string[];
+  qualificationEventIds?: string[];
+  ageEvidenceEventIds?: string[];
+  consentSlotIds?: string[];
+  unavailableSlotIds?: string[];
+  preferenceEvents?: { eventId: string; slotId: string }[];
   optedOut: boolean;
   escalated: boolean;
   emptyCalendar: boolean;
@@ -15,6 +20,7 @@ export interface ContentContext {
 export interface ContentReview { issues: string[]; unsupportedClaims: string[] }
 const normalize = (text: string) => text.normalize('NFKC').toLowerCase().replaceAll(/[’‘]/g, "'").replaceAll(/\s+/g, ' ').trim();
 const clauses = (text: string) => normalize(text).split(/[.!?;]\s+|\bbut\b/);
+const weekdays = /\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/g;
 
 function bookingClaim(text: string): boolean {
   return clauses(text).some(clause => {
@@ -39,7 +45,12 @@ function paymentClaim(text: string): boolean {
 export function asksForAge(text: string): boolean {
   const value = normalize(text);
   if (/\b(?:don't|do not|not|never|no need|need not)\b.{0,30}\b(?:age|old)\b/.test(value)) return false;
-  return /\bhow old are you\b|\bwhat(?:'s| is) your age\b|\b(?:may|can|could) (?:i|we) (?:please )?know your age\b|\b(?:please |can you |could you |would you )(?:please )?(?:share|tell|provide|confirm|let (?:me|us) know) (?:me |us )?your age\b/.test(value);
+  return /\bhow old are you\b|\bwhat(?:'s| is) your age\b|\b(?:may|can|could) (?:i|we) (?:please )?know your age\b|\b(?:please |can you |could you |would you )(?:please )?(?:share|tell|provide|confirm|let (?:me|us) know) (?:me |us )?your age\b|\b(?:(?:can|could|would) you (?:please )?|please )(?:share|tell(?: (?:me|us))?|let (?:me|us) know) how old you are\b/.test(value);
+}
+
+export function statesCustomerAge(text: string, age: number | null): boolean {
+  const stated = [...normalize(text).matchAll(/\bi(?: am|'m)\s+(\d{1,3})\b|\bmy age is\s+(\d{1,3})\b/g)];
+  return age !== null && stated.length > 0 && stated.every(match => Number(match[1] ?? match[2]) === age);
 }
 
 // Includes all stated dates/times, so appending a correct timestamp cannot hide
@@ -47,6 +58,8 @@ export function asksForAge(text: string): boolean {
 export function appointmentDetailsIssues(text: string, start: string, requireDetails = true): string[] {
   const value = normalize(text);
   const issues: string[] = [];
+  const weekday = new Intl.DateTimeFormat('en', { weekday: 'long', timeZone: 'UTC' }).format(new Date(`${start.slice(0, 10)}T00:00:00Z`)).toLowerCase();
+  if ([...value.matchAll(weekdays)].some(match => match[0] !== weekday)) issues.push('Stated weekday differs from the appointment date.');
   const month = new Intl.DateTimeFormat('en', { month: 'long', timeZone: 'UTC' }).format(new Date(`${start.slice(0, 10)}T00:00:00Z`)).toLowerCase();
   const day = Number(start.slice(8, 10));
   const hour = Number(start.slice(11, 13)), minute = Number(start.slice(14, 16));
@@ -60,7 +73,7 @@ export function appointmentDetailsIssues(text: string, start: string, requireDet
   // Strip offsets first; +05:30 describes a timezone, not an appointment time.
   for (const match of value.replaceAll(/[+-]\d{2}:\d{2}/g, '').matchAll(/(?:\b|t)(\d{2}):(\d{2})(?::\d{2})?(?!\s*[ap]\.?m)/g)) clocks.push(Number(match[1]) * 60 + Number(match[2]));
   if (clocks.some(time => time !== hour * 60 + minute)) issues.push('Stated time differs from the appointment.');
-  if (/\b(?:utc|gmt|pst|pdt|est|edt|cst|cdt|bst)\b|asia\/(?!kolkata\b)[a-z_]+|[+-](?!05:30)\d{2}:\d{2}/.test(value)) issues.push('Stated timezone differs from Asia/Kolkata.');
+  if (/\b(?:utc|gmt)\b(?!\s*\+05:30\b)|\b(?:pst|pdt|est|edt|cst|cdt|bst)\b|asia\/(?!kolkata\b)[a-z_]+|[+-](?!05:30)\d{2}:\d{2}/.test(value)) issues.push('Stated timezone differs from Asia/Kolkata.');
   if (requireDetails) {
     if (!dates.includes(start.slice(0, 10)) && !namedDates.length) issues.push('Appointment date is missing.');
     if (!clocks.includes(hour * 60 + minute)) issues.push('Appointment time is missing.');
@@ -107,7 +120,7 @@ function factualIssues(text: string, context: ContentContext): string[] {
   }
   if (/\b(?:underage|ineligible)\b/.test(value) && eligible) issues.push('Ineligibility claim contradicts the known age and policy.');
   const deniesConsent = /\b(?:never|not|didn't|hasn't|haven't)\s+(?:explicitly )?(?:consented|agreed|accepted)|\b(?:without|no)\s+(?:explicit |lead )?consent\b|\bconsent (?:(?:was|has|is|has been) )?(?:not|never)\b/.test(value);
-  const claimsConsent = /\bconsented\b|\bconsent (?:was |has been |is )?(?:received|obtained|given|confirmed)\b|\b(?:with|after|confirming|received|obtained|given|confirmed) (?:explicit |new |lead )*consent\b|\b(?:lead|customer|patient) (?:explicitly )?(?:agreed|accepted|confirmed)\b/.test(value);
+  const claimsConsent = /\bconsented\b|\bconsent (?:was |has been |is )?(?:received|obtained|given|confirmed)\b|\b(?:with|after|confirming|received|obtained|given|confirmed) (?:explicit |new |lead )*consent\b|\b(?:lead|customer|patient) (?:explicitly )?(?:agreed|accepted|confirmed(?!\s+(?:(?:their|his|her)\s+)?age\b))\b/.test(value);
   if (deniesConsent && context.consentEventIds.length) issues.push('Denial of consent contradicts prior lead consent.');
   if (claimsConsent && !deniesConsent && !context.consentEventIds.length) issues.push('Consent claim has no prior lead consent evidence.');
   if (/\b(?:opted out|unsubscribed|suppressed)\b/.test(value) && !context.optedOut) issues.push('Opt-out claim has no supporting event.');
@@ -144,16 +157,35 @@ export function reviewNote(note: string, context: ContentContext): string[] {
   const value = normalize(note), issues = factualIssues(note, context);
   if (bookingClaim(note) && !context.appointments.length) issues.push('Note claims a booking before any successful or existing appointment.');
   if (deniesBooking(note) && context.appointments.length) issues.push('Note denies an appointment that exists.');
-  const appointment = context.appointments.at(-1), slot = context.slots.find(s => s.id === appointment?.slotId);
-  if (slot) issues.push(...appointmentDetailsIssues(note, slot.start, false));
+  const appointment = context.appointments.at(-1), slot = context.slots.find(s => s.id === (appointment?.slotId ?? context.consentSlotIds?.at(-1)));
+  for (const part of clauses(note)) {
+    if (/\b(?:unavailable|no longer available|not available)\b/.test(part)) {
+      const rejected = context.slots.filter(s => context.unavailableSlotIds?.includes(s.id) && part.includes(s.id));
+      if (rejected.length !== 1) issues.push('Note unavailability claim has no matching prior rejected slot evidence.');
+      else issues.push(...appointmentDetailsIssues(part, rejected[0].start, false));
+    } else if (/\b(?:changed|corrected) preference\b/.test(part)) {
+      const preference = context.preferenceEvents?.find(event => part.includes(event.eventId));
+      const preferredSlot = context.slots.find(candidate => candidate.id === preference?.slotId);
+      if (!preferredSlot) issues.push('Note preference change has no matching prior lead preference evidence.');
+      else issues.push(...appointmentDetailsIssues(part, preferredSlot.start, false));
+    } else if (slot) issues.push(...appointmentDetailsIssues(part, slot.start, false));
+    else if ([...part.matchAll(weekdays)].length) issues.push('Note weekday has no supporting appointment or consented slot date.');
+  }
+  const ageEvidence = [...(context.qualificationEventIds ?? []), ...(context.ageEvidenceEventIds ?? [])];
   for (const match of value.matchAll(/\b(?:slot-[a-z0-9-]+|appointment-\d+|event-\d+)\b/g)) {
-    if (![...context.appointments.flatMap(a => [a.slotId, a.id]), ...context.consentEventIds].includes(match[0])) issues.push(`Note reference ${match[0]} is not supported by the current appointment/consent.`);
+    if (![...context.appointments.flatMap(a => [a.slotId, a.id]), ...(context.consentSlotIds ?? []), ...(context.unavailableSlotIds ?? []), ...context.consentEventIds, ...ageEvidence, ...(context.preferenceEvents ?? []).map(event => event.eventId)].includes(match[0])) issues.push(`Note reference ${match[0]} is not supported by prior appointment/lead evidence.`);
+  }
+  for (const match of value.matchAll(/\bage(?:d)?\s*(?:confirmed\s*)?(?:is|as|:)?\s*\(?\d{1,3}\)?\s*(?:via\s+)?\(?(event-\d+)\b/g)) {
+    if (!ageEvidence.includes(match[1])) issues.push('Note age reference does not identify prior customer-age evidence.');
+  }
+  for (const match of value.matchAll(/\bconsent(?:ed)?\b[^.!?;]{0,60}\b(event-\d+)\b/g)) {
+    if (!context.consentEventIds.includes(match[1])) issues.push('Note consent reference does not identify a valid prior consent event.');
   }
   if (!/\bage(?:d)?\s*(?:is|:)?\s*\d|\d\s*years? old\b|\badult\b|\bqualified\b|\bconsented\b|\bconsent (?:was )?(?:received|obtained|given|confirmed)\b|\bopted out\b|\bescalated\b/.test(value) && !bookingClaim(note)) issues.push('Note contains no verifiable clinic facts; manual review is required.');
   // Fail closed on claims outside this fixture's factual vocabulary. A correct
   // booking sentence must not launder an appended diagnosis, price or biography.
   // Unsupported prose requires review; it is not asserted to be factually false.
-  const supportedWords = new Set(('the a an and or is are was were has have been had with without no not never did didnot after before at on for of to from as in by via only now then this that it my your you i we us lead customer patient age aged years year old adult qualified qualification eligible ineligible underage explicit explicitly consent consented received obtained given confirmed confirming accepted agreed book booked booking appointment consultation dental service selected slot earliest weekday afternoon preference preferred requested actual successful successfully completed recorded saved minimum policy requirement requires older opted out unsubscribed suppressed escalated human handed off transferred new existing details id event time date timezone asia kolkata ist january february march april may june july august september october november december jan feb mar apr jun jul aug sep oct nov dec pm am st nd rd th').split(' '));
+  const supportedWords = new Set(('the a an and or is are was were has have been had with without no not never did didnot after before at on for of to from as in by via only now then this that it my your you i we us lead customer patient age aged years year old adult qualified qualification eligible ineligible underage explicit explicitly consent consented received obtained given confirmed confirming accepted agreed book booked booking appointment consultation dental service selected slot earliest weekday afternoon initial unavailable alternative attempt preference preferred requested changed corrected gave actual successful successfully completed recorded saved minimum policy requirement requires older opted out unsubscribed suppressed escalated human handed off transferred new existing details id event time date timezone asia kolkata ist monday tuesday wednesday thursday friday saturday sunday january february march april may june july august september october november december jan feb mar apr jun jul aug sep oct nov dec pm am st nd rd th').split(' '));
   const prose = value.replaceAll(/\b(?:slot-[a-z0-9-]+|appointment-\d+|event-\d+)\b|\b\d{4}-\d{2}-\d{2}(?:t\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2})?/g, ' ');
   if ([...prose.matchAll(/[a-z]+/g)].some(match => !supportedWords.has(match[0]))) issues.push('Note includes unsupported factual wording; manual review is required.');
   return [...new Set(issues)];

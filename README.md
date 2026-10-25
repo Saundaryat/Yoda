@@ -12,7 +12,7 @@ Prerequisites: **Node >=22.18, npm, and running Docker**. From a fresh checkout 
 npm run review
 ```
 
-Open **http://127.0.0.1:3001**. This installs locked dependencies, builds Vue, starts a separate review database on port 55434, and loads the saved real experiment with its v4.2 offline grades. The UI and API are read-only; no Hermes installation, provider credentials or model calls are needed. The evidence shows A 14/16 and B 13/16; eight provider errors are excluded. New workflow instructions are present in source but have not had fresh model validation. See [final results](docs/final-experiment.md) and [working-system video](output/demo/tracework-demo.webm).
+Open **http://127.0.0.1:3001**. This installs locked dependencies, builds Vue, starts a separate review database on port 55434, and loads the saved real native Anthropic primary experiment and separate startup follow-up with **v4.5 offline grades**. The UI/API are read-only; no Hermes installation, credentials or model calls are needed. Primary results are **A 16/18, B 18/20, 18/20 valid pairs**, with two startup errors and one B hard consent failure. The follow-up completed all four runs without infrastructure errors and remains separate. See [final results](docs/final-experiment.md) and [working-system video](output/demo/tracework-demo.webm).
 
 Override `PORT` or `EVAL_DB_PORT` if needed. Stop with Ctrl-C. To remove only the default review database afterward: `COMPOSE_PROJECT_NAME=tracework-review EVAL_DB_PORT=55434 docker compose down --volumes`. This deletes the disposable review copy, not the exported evidence.
 
@@ -26,7 +26,7 @@ npm run review
 
 ## Start live experiments
 
-Prerequisites: Node >=22.18, npm, running Docker, an installed Hermes checkout with MCP support, and usable provider credentials. The verified local setup requests Copilot / `gpt-4.1` using Hermes's existing credential resolution. Never commit provider secrets.
+Prerequisites: Node >=22.18, npm, running Docker, an installed Hermes checkout with MCP support, and usable provider credentials. New live configurations default to Anthropic / `claude-sonnet-4-6`. Provide `ANTHROPIC_API_KEY` in your environment or ignored local `.env`, or set `EVAL_SECRETS_FILE` to an existing dotenv file. Only its Anthropic key is loaded; unrelated database settings are not imported. Historical Copilot configurations retain their frozen routing. Never commit provider secrets.
 
 ```bash
 npm start
@@ -40,7 +40,9 @@ Verified Hermes commit: `349e4f7e620ea1be6a8b5703d7152cf1e5ed9998`. Place an ins
 | --- | --- |
 | `DATABASE_URL` | `postgresql://evals:evals-local-only@127.0.0.1:55432/evals` |
 | `PORT` | `3001`, loopback only |
-| `EVAL_PROVIDER`, `EVAL_MODEL` | `copilot`, `gpt-4.1` for CLI comparison creation |
+| `EVAL_PROVIDER`, `EVAL_MODEL` | `anthropic`, `claude-sonnet-4-6` for new live configurations |
+| `ANTHROPIC_API_KEY` | Your native Anthropic credential; never committed |
+| `EVAL_SECRETS_FILE` | Optional existing dotenv path; live startup reads only `ANTHROPIC_API_KEY` |
 | `EVAL_HERMES_ROOT` | `./hermes-agent` |
 | `EVAL_HERMES_BIN` | Optional installed Hermes executable |
 | `EVAL_HERMES_PYTHON` | Optional dependency interpreter |
@@ -82,7 +84,7 @@ node --env-file-if-exists=.env --import tsx scripts/rerun-task.ts output/experim
 
 This creates forty new scenarios with one repetition per configuration, reuses the corrected configuration content hashes unchanged, and freezes the task list, analysis seed, grader version, runtime pin and implementation hashes before inference. Progress and partial exports are checkpointed alongside the final export.
 
-To apply the subsequent `reliable-workflow-v1` correction for booking evidence, appointment IDs, opt-out silence and CRM reply delivery, add `--reliable-workflow`. It appends the same declared amendment to both configurations while preserving their recovery difference and records new hashes in the new experiment protocol. The [prepared revisions](output/configurations/reliable-workflow-v1.json) have synthetic regression coverage; fresh model execution is still needed to validate their effectiveness.
+To apply the subsequent `reliable-workflow-v1` correction for booking evidence, appointment IDs, opt-out silence and CRM reply delivery, add `--reliable-workflow`. Use `--provider=anthropic --model=claude-sonnet-4-6` together to create a separate provider-routed comparison; both arms receive the same routing and the protocol records it. Do not pool these observations with the source provider. `--reliable-workflow` appends the same declared amendment to both configurations while preserving their recovery difference and records new hashes in the new experiment protocol. The [prepared historical revisions](output/configurations/reliable-workflow-v1.json) retain their original routing; the final native Anthropic experiment separately freezes the provider override and real execution evidence. Genuine failures remain documented in the final report.
 
 ## Verify
 
@@ -116,7 +118,7 @@ Offline replay makes no model calls:
 npm run regrade -- output/experiments/<id>/report.json
 ```
 
-Use `--allow-new-version` only for an intentional grader change; original reports remain unchanged. Current grader v4.2 checks message content and factual notes against prior evidence. It retains v4.1's "Reply YES to confirm" support and corrects the reviewed valid offer/confirmation/note paraphrases. Regrades save source/implementation hashes, assertion changes and recomputed frozen analysis separately. Historical grades remain historical; offline regrading does not execute revised prompts. See the [current results](docs/final-experiment.md) and [message and note rules](docs/evaluation-methodology.md#message-and-note-checks-in-v4).
+Use `--allow-new-version` only for an intentional grader change; original reports remain unchanged. Current grader v4.5 checks message content and factual notes against prior evidence, including typed age, consent and preference references, rejected-slot history and weekday/timezone agreement. It retains earlier offer/confirmation paraphrase fixes and negative controls. Regrades save source/implementation hashes, assertion changes and recomputed frozen analysis separately. Historical grades remain historical; offline regrading does not execute revised prompts. See the [current results](docs/final-experiment.md) and [message and note rules](docs/evaluation-methodology.md#message-and-note-checks-in-v4).
 
 ## Architecture
 

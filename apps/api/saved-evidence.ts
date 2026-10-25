@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 import { gradeRun, graderVersion } from '../../packages/eval-engine/graders.ts';
 import { Store } from './store.ts';
 
-export const savedEvidenceDirectory = 'output/experiments/b4df0b6e-35ff-4db2-a7ec-1de92db49f46';
+export const savedEvidenceDirectory = 'output/experiments/857ce98d-e957-4709-afd8-65f928828fb4';
 // A terminal, independently identified review copy. Source files and their
 // recorded behavior stay unchanged; this never queues model execution.
 export async function loadSavedEvidence(store: Store, directory = resolve(savedEvidenceDirectory)): Promise<string> {
@@ -39,7 +39,7 @@ export async function loadSavedEvidence(store: Store, directory = resolve(savedE
       ...frozen, suite, configurations, graderVersion, executor: 'saved-evidence',
       evidenceProvenance: { kind: 'saved-real-inference-offline-regrade', sourceExperimentId: source.experiment.id,
         sourceReportSha256: hash, sourceCreatedAt: source.experiment.created_at, originalGraderVersion: frozen.graderVersion,
-        replayGraderVersion: graderVersion, newInference: false, workflowRevisionValidated: false },
+        replayGraderVersion: graderVersion, newInference: false, sourceWorkflowRevision: 'reliable-workflow-v1' },
     }]);
     for (const { run, events } of source.evidence) {
       const runId = randomUUID();

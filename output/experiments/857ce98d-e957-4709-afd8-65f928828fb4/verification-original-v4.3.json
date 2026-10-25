@@ -1,0 +1,18 @@
+{
+  "checkedAt": "2026-10-25T08:17:19.029Z",
+  "frozenImplementationHashesUnchanged": true,
+  "sourceReportSha256": "cca0befdf95e9a9b91a97350e532a453aede3175c670ea850f1965e8909fa799",
+  "all38GradesReproduced": true,
+  "analysisReproduced": true,
+  "uniquePlannedRuns": 40,
+  "evidenceReferencesResolve": true,
+  "runtimeDependencies": {
+    "anthropicSdkVersion": "0.87.0",
+    "installation": "Hermes PM declared anthropic extra"
+  },
+  "coverage": {
+    "completed": 36,
+    "infra_error": 2,
+    "agent_failed": 2
+  }
+}

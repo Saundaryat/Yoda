@@ -22,6 +22,7 @@ const env = { ...process.env, PORT: String(port), EVAL_DB_PORT: String(dbPort), 
   DATABASE_URL: `postgresql://evals:evals-local-only@127.0.0.1:${dbPort}/evals` };
 // Review never invokes Hermes; do not borrow installed runtime credentials.
 for (const key of Object.keys(env)) if (/^(?:OPENAI|ANTHROPIC|COPILOT|GITHUB|GH_|HERMES|EVAL_HERMES)/.test(key)) delete (env as Record<string, string | undefined>)[key];
+delete (env as Record<string, string | undefined>).EVAL_SECRETS_FILE;
 const logPath = resolve(directory, 'fresh-start.log');
 const log = openSync(logPath, 'w');
 let child = spawn('npm', ['run', 'review'], { cwd: directory, env, detached: true, stdio: ['ignore', log, log] });
@@ -46,16 +47,18 @@ try {
   const html = await (await fetch(base)).text(); assert.match(html, /Tracework/);
   const asset = html.match(/src="([^"]+\.js)"/)?.[1]; assert.ok(asset);
   assert.equal((await fetch(`${base}${asset}`)).status, 200);
-  const experiments = await (await fetch(`${base}/api/experiments`)).json(); assert.equal(experiments.length, 1);
-  const id = experiments[0].id;
+  const experiments = await (await fetch(`${base}/api/experiments`)).json(); assert.equal(experiments.length, 2);
+  const primary = experiments.find((experiment: any) => experiment.snapshot.evidenceProvenance?.sourceExperimentId === '857ce98d-e957-4709-afd8-65f928828fb4');
+  assert.ok(primary);
+  const id = primary.id;
   const results = await (await fetch(`${base}/api/experiments/${id}/results`)).json();
-  assert.deepEqual(results.configurations.map((config: any) => config.passed), [14, 13]);
-  assert.equal(results.comparison.validPairs, 16);
+  assert.deepEqual(results.configurations.map((config: any) => config.passed), [16, 18]);
+  assert.equal(results.comparison.validPairs, 18);
   assert.equal((await fetch(`${base}/api/experiments/${id}/start`, { method: 'POST' })).status, 403);
   const checks = spawnSync('npm', ['test'], { cwd: directory, env, encoding: 'utf8' });
   assert.equal(checks.status, 0, checks.stdout.slice(-1500));
   Object.assign(evidence, { passed: true, health, suiteCount: (await (await fetch(`${base}/api/task-suites`)).json()).length,
-    experimentId: id, runs: 40, validPairs: 16, passes: [14, 13], servedProductionAssets: true, writesBlocked: true,
+    experimentId: id, runs: 40, validPairs: 18, passes: [16, 18], servedProductionAssets: true, writesBlocked: true,
     freshUnitTestsPassed: true, startupLog: logPath });
   await stop();
   const liveLog = openSync(logPath, 'a');

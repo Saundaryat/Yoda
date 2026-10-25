@@ -1,0 +1,46 @@
+{
+  "recordedAt": "2026-10-25T08:24:04.686Z",
+  "experimentId": "7454dcc5-0a02-4998-af58-7163ba001d94",
+  "status": "completed",
+  "completed": 4,
+  "planned": 4,
+  "active": null,
+  "runs": [
+    {
+      "runId": "5148de3b-419f-4f37-a6c3-8f89c0749441",
+      "taskId": "recovery-missing-age",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "08711767-4a77-4371-a40c-f0066ee8fe72",
+      "taskId": "recovery-missing-age",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "completed",
+      "grade": "failed",
+      "score": 51.67,
+      "error": null
+    },
+    {
+      "runId": "1309cdf8-8c15-46d9-9774-8788210a5ef5",
+      "taskId": "correct-time-after-age",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "completed",
+      "grade": "failed",
+      "score": 98.33,
+      "error": null
+    },
+    {
+      "runId": "b410ac6c-70c9-448c-b8c7-4d0088b93036",
+      "taskId": "correct-time-after-age",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    }
+  ]
+}

@@ -1,12 +1,13 @@
 import { spawn, spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
+import { liveCredentials } from '../packages/hermes/credentials.ts';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const review = process.argv.includes('--review');
 const databaseOverride = process.env.DATABASE_URL;
 if (existsSync(resolve(root, '.env'))) process.loadEnvFile(resolve(root, '.env'));
-const env = { ...process.env };
+const env = liveCredentials(process.env, review);
 if (review) {
   env.EVAL_REVIEW_ONLY = '1';
   env.COMPOSE_PROJECT_NAME ??= 'tracework-review';

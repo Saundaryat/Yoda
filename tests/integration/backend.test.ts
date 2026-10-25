@@ -129,7 +129,7 @@ test('NestJS API, PostgreSQL persistence, worker lifecycle, and grader evidence'
         await request(`/experiments/${experiment.id}/start`, {});
         const completed = await untilTerminal(experiment.id);
         const run = completed.runs[0];
-        assert.equal(run.grade.version, 'clinic-deterministic-v4.2');
+        assert.equal(run.grade.version, 'clinic-deterministic-v4.5');
         assert.equal(run.grade.status, 'failed');
         assert.ok(run.grade.score < 100);
         const assertions = await request(`/runs/${run.id}/grades`);

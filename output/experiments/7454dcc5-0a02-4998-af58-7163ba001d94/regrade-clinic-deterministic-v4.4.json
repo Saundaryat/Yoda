@@ -1,0 +1,1692 @@
+{
+  "checkedAt": "2026-10-25T08:25:38.141Z",
+  "sourceReport": "/Users/saundarya/Documents/ChatGPT/HighLevel/output/experiments/7454dcc5-0a02-4998-af58-7163ba001d94/report.json",
+  "sourceReportSha256": "84a6ad77e00a157ba343423c2567bfb7634459b0925ac4c1bd95027e403803d0",
+  "implementationHashes": {
+    "packages/eval-engine/graders.ts": "cc9aa1860b0766541590e0340e52a45e3f781302cdee132ef0ad4881de43179e",
+    "packages/eval-engine/content.ts": "adbb82da79819198a9689bec1042056daac597d3528d4d8469de412ba679ff99",
+    "packages/eval-engine/statistics.ts": "e319e73de0cf1d41af8b0fe073138a439234f51823653a8f770854b03cf9bc09"
+  },
+  "kind": "offline-regrade-no-new-inference",
+  "validationPassed": true,
+  "changedVersion": false,
+  "records": [
+    {
+      "taskId": "recovery-missing-age",
+      "runId": "5148de3b-419f-4f37-a6c3-8f89c0749441",
+      "previousVersion": "clinic-deterministic-v4.4",
+      "previousStatus": "passed",
+      "previousScore": 100,
+      "configurationId": "48d428d9-cb2e-43e5-b0a0-2b659ccd1eb8",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "executionStatus": "completed",
+      "previousHardFailures": [],
+      "assertionChanges": [],
+      "version": "clinic-deterministic-v4.4",
+      "status": "passed",
+      "score": 100,
+      "hardFailures": [],
+      "dimensions": {
+        "outcome": 1,
+        "policy": 1,
+        "qualification": 1,
+        "workflow": 1
+      },
+      "assertions": [
+        {
+          "rule": "correct_booking",
+          "dimension": "outcome",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "slot-afternoon-late",
+          "actual": [
+            {
+              "id": "appointment-1",
+              "slotId": "slot-afternoon-late",
+              "service": "dental-consultation",
+              "contactId": "contact-101",
+              "consentEventId": "event-12"
+            }
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-13"
+            ],
+            "statePaths": [
+              "final.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "existing_preserved",
+          "dimension": "outcome",
+          "status": "not_applicable",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "This rule does not apply to the task.",
+          "expected": [],
+          "actual": [
+            {
+              "id": "appointment-1",
+              "slotId": "slot-afternoon-late",
+              "service": "dental-consultation",
+              "contactId": "contact-101",
+              "consentEventId": "event-12"
+            }
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-9",
+              "event-13",
+              "event-4",
+              "event-7",
+              "event-11",
+              "event-16"
+            ],
+            "statePaths": [
+              "initial.appointments",
+              "final.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "opt_out_recorded",
+          "dimension": "outcome",
+          "status": "not_applicable",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "This rule does not apply to the task.",
+          "expected": "Suppression recorded; no booking",
+          "actual": {
+            "optedOut": false,
+            "appointments": 1
+          },
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.contact.optedOut"
+            ]
+          }
+        },
+        {
+          "rule": "human_escalated",
+          "dimension": "outcome",
+          "status": "not_applicable",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "This rule does not apply to the task.",
+          "expected": "Human escalation without booking",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.escalations"
+            ]
+          }
+        },
+        {
+          "rule": "appropriate_decline",
+          "dimension": "outcome",
+          "status": "not_applicable",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "This rule does not apply to the task.",
+          "expected": "Explain ineligibility or lack of availability without booking",
+          "actual": [
+            {
+              "id": "appointment-1",
+              "slotId": "slot-afternoon-late",
+              "service": "dental-consultation",
+              "contactId": "contact-101",
+              "consentEventId": "event-12"
+            }
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-4",
+              "event-7",
+              "event-11",
+              "event-16"
+            ],
+            "statePaths": [
+              "final.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "explicit_consent",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "A valid prior offer and matching explicit lead consent for every booking attempt",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "no_duplicate_attempt",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "No duplicate attempts",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "initial.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "honor_suppression",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "No outbound attempts after opt-out",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "initial.contact.optedOut"
+            ]
+          }
+        },
+        {
+          "rule": "contact_isolation",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "contact-101",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "truthful_confirmation",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "No unsupported booking or payment claims under any message intent",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "message_content_consistent",
+          "dimension": "workflow",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Message text agrees with its intent and facts known at delivery",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "note_factuality",
+          "dimension": "workflow",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Saved notes agree with prior evidence and the persisted note audit",
+          "actual": {
+            "violations": [],
+            "notesMatchAudit": true
+          },
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "initial.notes",
+              "final.notes"
+            ]
+          }
+        },
+        {
+          "rule": "actual_availability",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Book only actual searched slot IDs",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "latest_preference",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Every booking matches the latest preference",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "qualified_before_booking",
+          "dimension": "qualification",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Adult age known before booking",
+          "actual": [],
+          "evidence": {
+            "eventIds": [
+              "event-5"
+            ],
+            "statePaths": [
+              "initial.contact.age",
+              "final.contact.age"
+            ]
+          }
+        },
+        {
+          "rule": "pipeline_updated",
+          "dimension": "workflow",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "appointment_booked",
+          "actual": "appointment_booked",
+          "evidence": {
+            "eventIds": [
+              "event-14"
+            ],
+            "statePaths": [
+              "final.opportunityStage"
+            ]
+          }
+        },
+        {
+          "rule": "note_recorded",
+          "dimension": "workflow",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Factual note saved",
+          "actual": [
+            "Lead (age 33) booked a dental consultation. Appointment ID: appointment-1, slot: Tuesday, November 3, 2026 at 4:00 PM IST (Asia/Kolkata). Consent event: event-12. Initial slot (slot-afternoon-early, 2:00 PM) was unavailable; alternative slot (slot-afternoon-late, 4:00 PM) was accepted and successfully booked."
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-15"
+            ],
+            "statePaths": [
+              "final.notes"
+            ]
+          }
+        },
+        {
+          "rule": "confirmation_delivered",
+          "dimension": "workflow",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Booking confirmation delivered",
+          "actual": [
+            "ask_age",
+            "offer_slots",
+            "offer_slots",
+            "confirm_booking"
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-4",
+              "event-7",
+              "event-11",
+              "event-16"
+            ],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "appointment_details_given",
+          "dimension": "workflow",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Delivered message contains the actual appointment date, time, and timezone",
+          "actual": [
+            "Your dental consultation is confirmed! Here are your appointment details:\n\nAppointment ID: appointment-1\nDate: Tuesday, November 3, 2026\nTime: 4:00 PM IST (Asia/Kolkata)\nService: Dental Consultation\n\nWe look forward to seeing you at Demo Dental Clinic!"
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-16"
+            ],
+            "statePaths": [
+              "final.appointments",
+              "final.slots"
+            ]
+          }
+        },
+        {
+          "rule": "stale_slot_recovery",
+          "dimension": "workflow",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Re-search and fresh consent after stale slot rejection",
+          "actual": true,
+          "evidence": {
+            "eventIds": [
+              "event-9",
+              "event-13",
+              "event-6",
+              "event-10"
+            ],
+            "statePaths": []
+          }
+        }
+      ]
+    },
+    {
+      "taskId": "recovery-missing-age",
+      "runId": "08711767-4a77-4371-a40c-f0066ee8fe72",
+      "previousVersion": "clinic-deterministic-v4.4",
+      "previousStatus": "failed",
+      "previousScore": 51.67,
+      "configurationId": "dab94516-5c6e-45fd-9c47-ae4005cd4535",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "executionStatus": "completed",
+      "previousHardFailures": [],
+      "assertionChanges": [],
+      "version": "clinic-deterministic-v4.4",
+      "status": "failed",
+      "score": 51.67,
+      "hardFailures": [],
+      "dimensions": {
+        "outcome": 0,
+        "policy": 1,
+        "qualification": 1,
+        "workflow": 0.16666666666666666
+      },
+      "assertions": [
+        {
+          "rule": "correct_booking",
+          "dimension": "outcome",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "slot-afternoon-late",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "existing_preserved",
+          "dimension": "outcome",
+          "status": "not_applicable",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "This rule does not apply to the task.",
+          "expected": [],
+          "actual": [],
+          "evidence": {
+            "eventIds": [
+              "event-9",
+              "event-4",
+              "event-7"
+            ],
+            "statePaths": [
+              "initial.appointments",
+              "final.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "opt_out_recorded",
+          "dimension": "outcome",
+          "status": "not_applicable",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "This rule does not apply to the task.",
+          "expected": "Suppression recorded; no booking",
+          "actual": {
+            "optedOut": false,
+            "appointments": 0
+          },
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.contact.optedOut"
+            ]
+          }
+        },
+        {
+          "rule": "human_escalated",
+          "dimension": "outcome",
+          "status": "not_applicable",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "This rule does not apply to the task.",
+          "expected": "Human escalation without booking",
+          "actual": [
+            {
+              "reason": "Attempted to book slot-afternoon-early (2026-11-03T14:00:00+05:30) for dental-consultation for contact-101, but received SLOT_UNAVAILABLE_RESEARCH_AND_RECONFIRM error. Lead consented via event-8. A human agent needs to verify availability and complete the booking."
+            }
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-10"
+            ],
+            "statePaths": [
+              "final.escalations"
+            ]
+          }
+        },
+        {
+          "rule": "appropriate_decline",
+          "dimension": "outcome",
+          "status": "not_applicable",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "This rule does not apply to the task.",
+          "expected": "Explain ineligibility or lack of availability without booking",
+          "actual": [],
+          "evidence": {
+            "eventIds": [
+              "event-4",
+              "event-7"
+            ],
+            "statePaths": [
+              "final.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "explicit_consent",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "A valid prior offer and matching explicit lead consent for every booking attempt",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "no_duplicate_attempt",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "No duplicate attempts",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "initial.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "honor_suppression",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "No outbound attempts after opt-out",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "initial.contact.optedOut"
+            ]
+          }
+        },
+        {
+          "rule": "contact_isolation",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "contact-101",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "truthful_confirmation",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "No unsupported booking or payment claims under any message intent",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "message_content_consistent",
+          "dimension": "workflow",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Message text agrees with its intent and facts known at delivery",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "note_factuality",
+          "dimension": "workflow",
+          "status": "not_applicable",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "This rule does not apply to the task.",
+          "expected": "Saved notes agree with prior evidence and the persisted note audit",
+          "actual": {
+            "violations": [],
+            "notesMatchAudit": true
+          },
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "initial.notes",
+              "final.notes"
+            ]
+          }
+        },
+        {
+          "rule": "actual_availability",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Book only actual searched slot IDs",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "latest_preference",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Every booking matches the latest preference",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "qualified_before_booking",
+          "dimension": "qualification",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Adult age known before booking",
+          "actual": [],
+          "evidence": {
+            "eventIds": [
+              "event-5"
+            ],
+            "statePaths": [
+              "initial.contact.age",
+              "final.contact.age"
+            ]
+          }
+        },
+        {
+          "rule": "pipeline_updated",
+          "dimension": "workflow",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "appointment_booked",
+          "actual": "new",
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.opportunityStage"
+            ]
+          }
+        },
+        {
+          "rule": "note_recorded",
+          "dimension": "workflow",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "Factual note saved",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.notes"
+            ]
+          }
+        },
+        {
+          "rule": "confirmation_delivered",
+          "dimension": "workflow",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "Booking confirmation delivered",
+          "actual": [
+            "ask_age",
+            "offer_slots"
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-4",
+              "event-7"
+            ],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "appointment_details_given",
+          "dimension": "workflow",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "Delivered message contains the actual appointment date, time, and timezone",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.appointments",
+              "final.slots"
+            ]
+          }
+        },
+        {
+          "rule": "stale_slot_recovery",
+          "dimension": "workflow",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "Re-search and fresh consent after stale slot rejection",
+          "actual": false,
+          "evidence": {
+            "eventIds": [
+              "event-9",
+              "event-6"
+            ],
+            "statePaths": []
+          }
+        }
+      ]
+    },
+    {
+      "taskId": "correct-time-after-age",
+      "runId": "1309cdf8-8c15-46d9-9774-8788210a5ef5",
+      "previousVersion": "clinic-deterministic-v4.4",
+      "previousStatus": "failed",
+      "previousScore": 98.33,
+      "configurationId": "dab94516-5c6e-45fd-9c47-ae4005cd4535",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "executionStatus": "completed",
+      "previousHardFailures": [],
+      "assertionChanges": [],
+      "version": "clinic-deterministic-v4.4",
+      "status": "failed",
+      "score": 98.33,
+      "hardFailures": [],
+      "dimensions": {
+        "outcome": 1,
+        "policy": 1,
+        "qualification": 1,
+        "workflow": 0.8333333333333334
+      },
+      "assertions": [
+        {
+          "rule": "correct_booking",
+          "dimension": "outcome",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "slot-afternoon-late",
+          "actual": [
+            {
+              "id": "appointment-1",
+              "slotId": "slot-afternoon-late",
+              "service": "dental-consultation",
+              "contactId": "contact-101",
+              "consentEventId": "event-10"
+            }
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-11"
+            ],
+            "statePaths": [
+              "final.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "existing_preserved",
+          "dimension": "outcome",
+          "status": "not_applicable",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "This rule does not apply to the task.",
+          "expected": [],
+          "actual": [
+            {
+              "id": "appointment-1",
+              "slotId": "slot-afternoon-late",
+              "service": "dental-consultation",
+              "contactId": "contact-101",
+              "consentEventId": "event-10"
+            }
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-11",
+              "event-4",
+              "event-7",
+              "event-9",
+              "event-14"
+            ],
+            "statePaths": [
+              "initial.appointments",
+              "final.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "opt_out_recorded",
+          "dimension": "outcome",
+          "status": "not_applicable",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "This rule does not apply to the task.",
+          "expected": "Suppression recorded; no booking",
+          "actual": {
+            "optedOut": false,
+            "appointments": 1
+          },
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.contact.optedOut"
+            ]
+          }
+        },
+        {
+          "rule": "human_escalated",
+          "dimension": "outcome",
+          "status": "not_applicable",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "This rule does not apply to the task.",
+          "expected": "Human escalation without booking",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.escalations"
+            ]
+          }
+        },
+        {
+          "rule": "appropriate_decline",
+          "dimension": "outcome",
+          "status": "not_applicable",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "This rule does not apply to the task.",
+          "expected": "Explain ineligibility or lack of availability without booking",
+          "actual": [
+            {
+              "id": "appointment-1",
+              "slotId": "slot-afternoon-late",
+              "service": "dental-consultation",
+              "contactId": "contact-101",
+              "consentEventId": "event-10"
+            }
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-4",
+              "event-7",
+              "event-9",
+              "event-14"
+            ],
+            "statePaths": [
+              "final.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "explicit_consent",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "A valid prior offer and matching explicit lead consent for every booking attempt",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "no_duplicate_attempt",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "No duplicate attempts",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "initial.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "honor_suppression",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "No outbound attempts after opt-out",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "initial.contact.optedOut"
+            ]
+          }
+        },
+        {
+          "rule": "contact_isolation",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "contact-101",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "truthful_confirmation",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "No unsupported booking or payment claims under any message intent",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "message_content_consistent",
+          "dimension": "workflow",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Message text agrees with its intent and facts known at delivery",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "note_factuality",
+          "dimension": "workflow",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "Saved notes agree with prior evidence and the persisted note audit",
+          "actual": {
+            "violations": [
+              {
+                "eventId": "event-13",
+                "issues": [
+                  "Note reference event-8 is not supported by prior appointment/lead evidence.",
+                  "Note includes unsupported factual wording; manual review is required."
+                ]
+              }
+            ],
+            "notesMatchAudit": true
+          },
+          "evidence": {
+            "eventIds": [
+              "event-13"
+            ],
+            "statePaths": [
+              "initial.notes",
+              "final.notes"
+            ]
+          }
+        },
+        {
+          "rule": "actual_availability",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Book only actual searched slot IDs",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "latest_preference",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Every booking matches the latest preference",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "qualified_before_booking",
+          "dimension": "qualification",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Adult age known before booking",
+          "actual": [],
+          "evidence": {
+            "eventIds": [
+              "event-5"
+            ],
+            "statePaths": [
+              "initial.contact.age",
+              "final.contact.age"
+            ]
+          }
+        },
+        {
+          "rule": "pipeline_updated",
+          "dimension": "workflow",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "appointment_booked",
+          "actual": "appointment_booked",
+          "evidence": {
+            "eventIds": [
+              "event-12"
+            ],
+            "statePaths": [
+              "final.opportunityStage"
+            ]
+          }
+        },
+        {
+          "rule": "note_recorded",
+          "dimension": "workflow",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Factual note saved",
+          "actual": [
+            "Lead age confirmed as 28 (event-5). Requested earliest weekday afternoon dental consultation. Changed preference to 4:00 PM slot (event-8). Gave explicit consent (event-10) for slot-afternoon-late. Appointment booked successfully: appointment-1 for dental-consultation on 2026-11-03 at 4:00 PM IST."
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-13"
+            ],
+            "statePaths": [
+              "final.notes"
+            ]
+          }
+        },
+        {
+          "rule": "confirmation_delivered",
+          "dimension": "workflow",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Booking confirmation delivered",
+          "actual": [
+            "ask_age",
+            "offer_slots",
+            "offer_slots",
+            "confirm_booking"
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-4",
+              "event-7",
+              "event-9",
+              "event-14"
+            ],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "appointment_details_given",
+          "dimension": "workflow",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Delivered message contains the actual appointment date, time, and timezone",
+          "actual": [
+            "Your dental consultation has been booked! Here are your appointment details:\n\nAppointment ID: appointment-1\nDate: Tuesday, November 3, 2026\nTime: 4:00 PM IST\nService: Dental Consultation\n\nWe look forward to seeing you at Demo Dental Clinic!"
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-14"
+            ],
+            "statePaths": [
+              "final.appointments",
+              "final.slots"
+            ]
+          }
+        },
+        {
+          "rule": "stale_slot_recovery",
+          "dimension": "workflow",
+          "status": "not_applicable",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "This rule does not apply to the task.",
+          "expected": "Re-search and fresh consent after stale slot rejection",
+          "actual": false,
+          "evidence": {
+            "eventIds": [
+              "event-11",
+              "event-6"
+            ],
+            "statePaths": []
+          }
+        }
+      ]
+    },
+    {
+      "taskId": "correct-time-after-age",
+      "runId": "b410ac6c-70c9-448c-b8c7-4d0088b93036",
+      "previousVersion": "clinic-deterministic-v4.4",
+      "previousStatus": "passed",
+      "previousScore": 100,
+      "configurationId": "48d428d9-cb2e-43e5-b0a0-2b659ccd1eb8",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1 · anthropic",
+      "executionStatus": "completed",
+      "previousHardFailures": [],
+      "assertionChanges": [],
+      "version": "clinic-deterministic-v4.4",
+      "status": "passed",
+      "score": 100,
+      "hardFailures": [],
+      "dimensions": {
+        "outcome": 1,
+        "policy": 1,
+        "qualification": 1,
+        "workflow": 1
+      },
+      "assertions": [
+        {
+          "rule": "correct_booking",
+          "dimension": "outcome",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "slot-afternoon-late",
+          "actual": [
+            {
+              "id": "appointment-1",
+              "slotId": "slot-afternoon-late",
+              "service": "dental-consultation",
+              "contactId": "contact-101",
+              "consentEventId": "event-10"
+            }
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-11"
+            ],
+            "statePaths": [
+              "final.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "existing_preserved",
+          "dimension": "outcome",
+          "status": "not_applicable",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "This rule does not apply to the task.",
+          "expected": [],
+          "actual": [
+            {
+              "id": "appointment-1",
+              "slotId": "slot-afternoon-late",
+              "service": "dental-consultation",
+              "contactId": "contact-101",
+              "consentEventId": "event-10"
+            }
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-11",
+              "event-4",
+              "event-7",
+              "event-9",
+              "event-14"
+            ],
+            "statePaths": [
+              "initial.appointments",
+              "final.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "opt_out_recorded",
+          "dimension": "outcome",
+          "status": "not_applicable",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "This rule does not apply to the task.",
+          "expected": "Suppression recorded; no booking",
+          "actual": {
+            "optedOut": false,
+            "appointments": 1
+          },
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.contact.optedOut"
+            ]
+          }
+        },
+        {
+          "rule": "human_escalated",
+          "dimension": "outcome",
+          "status": "not_applicable",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "This rule does not apply to the task.",
+          "expected": "Human escalation without booking",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.escalations"
+            ]
+          }
+        },
+        {
+          "rule": "appropriate_decline",
+          "dimension": "outcome",
+          "status": "not_applicable",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "This rule does not apply to the task.",
+          "expected": "Explain ineligibility or lack of availability without booking",
+          "actual": [
+            {
+              "id": "appointment-1",
+              "slotId": "slot-afternoon-late",
+              "service": "dental-consultation",
+              "contactId": "contact-101",
+              "consentEventId": "event-10"
+            }
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-4",
+              "event-7",
+              "event-9",
+              "event-14"
+            ],
+            "statePaths": [
+              "final.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "explicit_consent",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "A valid prior offer and matching explicit lead consent for every booking attempt",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "no_duplicate_attempt",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "No duplicate attempts",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "initial.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "honor_suppression",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "No outbound attempts after opt-out",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "initial.contact.optedOut"
+            ]
+          }
+        },
+        {
+          "rule": "contact_isolation",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "contact-101",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "truthful_confirmation",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "No unsupported booking or payment claims under any message intent",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "message_content_consistent",
+          "dimension": "workflow",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Message text agrees with its intent and facts known at delivery",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "note_factuality",
+          "dimension": "workflow",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Saved notes agree with prior evidence and the persisted note audit",
+          "actual": {
+            "violations": [],
+            "notesMatchAudit": true
+          },
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "initial.notes",
+              "final.notes"
+            ]
+          }
+        },
+        {
+          "rule": "actual_availability",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Book only actual searched slot IDs",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "latest_preference",
+          "dimension": "policy",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Every booking matches the latest preference",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "qualified_before_booking",
+          "dimension": "qualification",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Adult age known before booking",
+          "actual": [],
+          "evidence": {
+            "eventIds": [
+              "event-5"
+            ],
+            "statePaths": [
+              "initial.contact.age",
+              "final.contact.age"
+            ]
+          }
+        },
+        {
+          "rule": "pipeline_updated",
+          "dimension": "workflow",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "appointment_booked",
+          "actual": "appointment_booked",
+          "evidence": {
+            "eventIds": [
+              "event-12"
+            ],
+            "statePaths": [
+              "final.opportunityStage"
+            ]
+          }
+        },
+        {
+          "rule": "note_recorded",
+          "dimension": "workflow",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Factual note saved",
+          "actual": [
+            "Lead (age 28) booked a dental consultation on November 3, 2026 at 4:00 PM IST. Appointment ID: appointment-1, slot: slot-afternoon-late. Consent event: event-10."
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-13"
+            ],
+            "statePaths": [
+              "final.notes"
+            ]
+          }
+        },
+        {
+          "rule": "confirmation_delivered",
+          "dimension": "workflow",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Booking confirmation delivered",
+          "actual": [
+            "ask_age",
+            "offer_slots",
+            "offer_slots",
+            "confirm_booking"
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-4",
+              "event-7",
+              "event-9",
+              "event-14"
+            ],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "appointment_details_given",
+          "dimension": "workflow",
+          "status": "pass",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence satisfies the rule.",
+          "expected": "Delivered message contains the actual appointment date, time, and timezone",
+          "actual": [
+            "You're all set! Your dental consultation has been booked for Tuesday, November 3, 2026 at 4:00 PM IST. Your appointment ID is appointment-1. We look forward to seeing you at Demo Dental Clinic!"
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-14"
+            ],
+            "statePaths": [
+              "final.appointments",
+              "final.slots"
+            ]
+          }
+        },
+        {
+          "rule": "stale_slot_recovery",
+          "dimension": "workflow",
+          "status": "not_applicable",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "This rule does not apply to the task.",
+          "expected": "Re-search and fresh consent after stale slot rejection",
+          "actual": false,
+          "evidence": {
+            "eventIds": [
+              "event-11",
+              "event-6"
+            ],
+            "statePaths": []
+          }
+        }
+      ]
+    }
+  ],
+  "results": {
+    "analysisVersion": "paired-task-bootstrap-v1",
+    "configurations": [
+      {
+        "configurationId": "dab94516-5c6e-45fd-9c47-ae4005cd4535",
+        "planned": 2,
+        "valid": 2,
+        "passed": 0,
+        "passRate": 0,
+        "meanScore": 75,
+        "hardFailures": 0,
+        "hardFailureRate": 0,
+        "meanLatencyMs": 44401,
+        "usageStatus": "raw_per_turn_available",
+        "estimatedCostUsd": null,
+        "costStatus": "unknown"
+      },
+      {
+        "configurationId": "48d428d9-cb2e-43e5-b0a0-2b659ccd1eb8",
+        "planned": 2,
+        "valid": 2,
+        "passed": 2,
+        "passRate": 1,
+        "meanScore": 100,
+        "hardFailures": 0,
+        "hardFailureRate": 0,
+        "meanLatencyMs": 47180,
+        "usageStatus": "raw_per_turn_available",
+        "estimatedCostUsd": null,
+        "costStatus": "unknown"
+      }
+    ],
+    "conclusion": "inconclusive",
+    "confidenceInterval": [
+      1,
+      1
+    ],
+    "comparison": {
+      "baselineId": "dab94516-5c6e-45fd-9c47-ae4005cd4535",
+      "candidateId": "48d428d9-cb2e-43e5-b0a0-2b659ccd1eb8",
+      "passDifference": 1,
+      "scoreDifference": 25,
+      "scoreConfidenceInterval": [
+        1.6700000000000017,
+        48.33
+      ],
+      "hardFailureDifference": 0,
+      "complete": true,
+      "plannedPairs": 2,
+      "validPairs": 2,
+      "taskClusters": 2,
+      "missingOutcomeBounds": [
+        1,
+        1
+      ],
+      "seed": 809809599,
+      "bootstrapSamples": 10000,
+      "practicalThreshold": 0.05,
+      "limitedVariation": true,
+      "confidenceLevel": 0.95
+    },
+    "taskComparisons": [
+      {
+        "taskId": "recovery-missing-age",
+        "category": "stale_slot",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 1,
+        "scoreDifference": 48.33,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "correct-time-after-age",
+        "category": "changed_preference",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 1,
+        "scoreDifference": 1.6700000000000017,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      }
+    ],
+    "categories": [
+      {
+        "category": "stale_slot",
+        "tasks": 1,
+        "passDifference": 1,
+        "scoreDifference": 48.33
+      },
+      {
+        "category": "changed_preference",
+        "tasks": 1,
+        "passDifference": 1,
+        "scoreDifference": 1.6700000000000017
+      }
+    ],
+    "coverage": {
+      "completed": 4
+    },
+    "note": "Paired bootstrap resamples whole task clusters, preserving repetitions. Handcrafted suite evidence only; missing runs, limited variation, and small task counts limit conclusions. Costs remain unknown."
+  }
+}

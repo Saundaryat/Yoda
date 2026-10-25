@@ -1,6 +1,6 @@
 # Known limits and assumptions
 
-Status: local end-to-end platform, comparison analysis and deterministic v4.2 graders. The corrected twenty-case experiment attempted forty scenarios but has sixteen valid task pairs because of rate limits. Its separate v4.2 replay clears four false-positive-only grades and retains five failures. The new workflow revision has synthetic coverage; its six real validation attempts were all HTTP 429, so no valid fresh model result is available. Credential-free read-only review and live application startup/draft cancellation were verified in a fresh source copy. See the [final report](final-experiment.md) and [submission guide](../SUBMISSION.md). Historical [milestone 1 findings](milestone-1-verification.md) remain unchanged.
+Status: local end-to-end platform with deterministic v4.5 grading. The new native Anthropic forty-scenario experiment has 38 graded runs and 18/20 valid primary pairs: A 16/18, B 18/20, one B hard consent failure, and both agents stopping after an ambiguous reply. Two startup failures are retained; a separate readiness fix and four-run matched follow-up completed without infrastructure errors. Primary and follow-up counts remain separate. Credential-free review, normal startup/draft cancellation and package integrity are verified. See the [final report](final-experiment.md) and [submission guide](../SUBMISSION.md). Historical reports remain unchanged.
 
 ## Runtime and integration
 
@@ -42,14 +42,14 @@ Status: local end-to-end platform, comparison analysis and deterministic v4.2 gr
 
 ## Operations and submission
 
-- Local startup requires Docker and initial provider credentials; one-command startup applies after those prerequisites.
+- Local read-only review requires Node/npm and Docker. New live inference additionally requires an installed Hermes runtime and provider credentials.
 - Model calls may leave the local machine through the configured provider. Seed only synthetic contact data.
 - Provider prices and token accounting vary. Costs are estimates using dated rates and recorded actual runtime usage; absent usage is not zero cost.
 - The initial worker is a single-process durable queue, with no distributed execution, team permissions, or hosted-service guarantees.
 - Real cancellation observes a model-selected CRM action before stopping execution. Host-crash verification kills its own host after real gateway readiness and before inference, independently of provider quota. Both verify group removal; the unit guardian test also covers descendant teardown. These validate local POSIX behavior, not Windows, remote hosts, kernel failure, or every timing race. Restart never silently retries interrupted work.
 - Suite import supports ten explicit scenario templates with constrained parameters, not arbitrary user-authored tool environments or workflows. Twenty evaluation cases share those templates; they are not twenty independent business domains.
 - Evidence and assertion payload validation are automatic; general natural-language privacy leakage and human text/structured-intent consistency still require review.
-- Current grader v4.2 checks message/intent agreement, conflicting appointment details, premature booking/payment claims and evidence-backed note facts. It retains "Reply YES to confirm" support and corrects the reviewed offer/confirmation/note paraphrases. The driver validates age requests and slot offers before queuing replies. Checks remain bounded English/ISO rules; unfamiliar note vocabulary requires manual review and unusual valid wording may still false-fail. Historical grades remain unchanged; explicit versioned replay is required for new grader claims.
+- Current grader v4.5 checks message/intent agreement, conflicting appointment details, premature booking/payment claims and evidence-backed note facts. It retains offer/confirmation paraphrase fixes and validates typed prior age/consent/preference evidence, historical rejected slots and weekday/timezone claims. The driver validates age requests and slot offers before queuing replies. Checks remain bounded English/ISO rules; unfamiliar note vocabulary requires manual review and unusual valid wording may still false-fail. Historical grades remain unchanged; explicit versioned replay is required for new grader claims.
 - Replayable SSE, polling fallback, and paired-task confidence comparisons are implemented. `npm start` orchestrates the host app; Compose packages PostgreSQL only. An installed Hermes runtime and configured provider are prerequisites, not provisioned from a clean machine automatically.
 - Configuration UI edits instructions/provider/model only. Skills, toolsets, generation settings, arbitrary workflow code, and memory=true are unsupported. Memory is fixed false in the validated contract.
 - The video and final report must use actual experiment results. Clearly label replayed traces, synthetic mutants, development runs, and saved demo experiments.
