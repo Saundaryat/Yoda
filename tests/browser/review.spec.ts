@@ -1,0 +1,36 @@
+import { expect, test } from '@playwright/test';
+
+test('evaluator review shows current replay grades, genuine failure evidence and no execution controls', async ({ page }) => {
+  const health = await (await page.request.get('/api/health')).json();
+  test.skip(!health.readOnly, 'This walkthrough verifies npm run review.');
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/');
+  await expect(page.getByRole('status')).toContainText('Read-only review');
+  await expect(page.getByRole('button', { name: '＋ New experiment', exact: true })).toBeDisabled();
+  await expect(page.locator('.scorecard').first()).toContainText('87.5%');
+  await expect(page.locator('.scorecard').nth(1)).toContainText('81.3%');
+  await expect(page.locator('.verdict')).toContainText('16 / 20 pairs');
+  await page.screenshot({ path: 'output/screenshots/experiments.png', fullPage: true });
+  const experiments = await (await page.request.get('/api/experiments')).json();
+  const detail = await (await page.request.get(`/api/experiments/${experiments[0].id}`)).json();
+  const index = detail.runs.findIndex((run: any) => run.runtime?.sourceRunId === 'ddcf2b90-6343-4ea7-8834-28674df139c6');
+  expect(index).toBeGreaterThanOrEqual(0);
+  await page.getByRole('button', { name: 'Inspect run', exact: true }).nth(index).click();
+  await page.getByRole('button', { name: 'Grades', exact: true }).click();
+  const assertion = page.locator('.assertion').filter({ hasText: 'truthful confirmation' });
+  await expect(assertion).toContainText('Hard failure');
+  await assertion.getByRole('button', { name: 'event-16 ↗', exact: true }).click();
+  await expect(page.locator('.audit.highlighted')).toContainText('FALSE_BOOKING_CONFIRMATION');
+  await page.screenshot({ path: 'output/screenshots/evidence.png', fullPage: true });
+  await page.getByRole('button', { name: 'Close inspector', exact: true }).click();
+  await page.getByRole('button', { name: 'Task suites', exact: true }).click();
+  await page.getByRole('button', { name: /20 frozen cases/ }).click();
+  await expect(page.locator('.task-card')).toHaveCount(20);
+  await page.screenshot({ path: 'output/screenshots/task-suites.png', fullPage: true });
+  await page.getByRole('button', { name: 'Methodology', exact: true }).click();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({ path: 'output/screenshots/mobile.png', fullPage: true });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
+  expect(errors).toEqual([]);
+});

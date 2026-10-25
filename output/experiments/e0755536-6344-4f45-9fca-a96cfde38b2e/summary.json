@@ -1,0 +1,231 @@
+{
+  "experimentId": "e0755536-6344-4f45-9fca-a96cfde38b2e",
+  "sourceExperimentId": "9439a442-2a8a-4332-bb93-d3cb959763d6",
+  "taskId": "recovery-missing-age",
+  "status": "completed",
+  "graderVersion": "clinic-deterministic-v4.1",
+  "kind": "real-hermes-targeted-rerun",
+  "runs": [
+    {
+      "runId": "5afc484d-918c-4b99-a136-70508a086fdf",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "failed",
+      "score": 51.67,
+      "error": null,
+      "failedRules": [
+        {
+          "rule": "correct_booking",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "pipeline_updated",
+          "actual": "new",
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.opportunityStage"
+            ]
+          }
+        },
+        {
+          "rule": "note_recorded",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.notes"
+            ]
+          }
+        },
+        {
+          "rule": "confirmation_delivered",
+          "actual": [
+            "ask_age",
+            "offer_slots"
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-4",
+              "event-7",
+              "event-10"
+            ],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "appointment_details_given",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.appointments",
+              "final.slots"
+            ]
+          }
+        },
+        {
+          "rule": "stale_slot_recovery",
+          "actual": false,
+          "evidence": {
+            "eventIds": [
+              "event-9",
+              "event-6"
+            ],
+            "statePaths": []
+          }
+        }
+      ],
+      "offers": [
+        {
+          "eventId": "event-7",
+          "text": "The earliest available weekday afternoon dental consultation is on Tuesday, 3rd November 2026 at 2:00 PM (Asia/Kolkata). Would you like to book this slot?",
+          "slotIds": [
+            "slot-afternoon-early"
+          ],
+          "result": {
+            "text": "The earliest available weekday afternoon dental consultation is on Tuesday, 3rd November 2026 at 2:00 PM (Asia/Kolkata). Would you like to book this slot?",
+            "delivered": true,
+            "messageId": "message-7"
+          }
+        }
+      ],
+      "appointments": []
+    },
+    {
+      "runId": "550cb99c-cc94-4009-bdad-9c2ace0990dc",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [
+        {
+          "eventId": "event-7",
+          "text": "The earliest available weekday afternoon dental consultation is on Tuesday, November 3, 2026 at 2:00 PM (Asia/Kolkata timezone). Would you like to book this appointment?",
+          "slotIds": [
+            "slot-afternoon-early"
+          ],
+          "result": {
+            "text": "The earliest available weekday afternoon dental consultation is on Tuesday, November 3, 2026 at 2:00 PM (Asia/Kolkata timezone). Would you like to book this appointment?",
+            "delivered": true,
+            "messageId": "message-7"
+          }
+        },
+        {
+          "eventId": "event-11",
+          "text": "The 2:00 PM slot is no longer available. The next available weekday afternoon appointment is on Tuesday, November 3, 2026 at 4:00 PM (Asia/Kolkata timezone). Would you like to book this appointment?",
+          "slotIds": [
+            "slot-afternoon-late"
+          ],
+          "result": {
+            "text": "The 2:00 PM slot is no longer available. The next available weekday afternoon appointment is on Tuesday, November 3, 2026 at 4:00 PM (Asia/Kolkata timezone). Would you like to book this appointment?",
+            "delivered": true,
+            "messageId": "message-11"
+          }
+        }
+      ],
+      "appointments": [
+        {
+          "id": "appointment-1",
+          "slotId": "slot-afternoon-late",
+          "service": "dental-consultation",
+          "contactId": "contact-101",
+          "consentEventId": "event-12"
+        }
+      ]
+    }
+  ],
+  "results": {
+    "experimentId": "e0755536-6344-4f45-9fca-a96cfde38b2e",
+    "analysisVersion": "paired-task-bootstrap-v1",
+    "configurations": [
+      {
+        "configurationId": "2a218b22-8c6f-46a9-9434-15d04e5a377d",
+        "planned": 1,
+        "valid": 1,
+        "passed": 0,
+        "passRate": 0,
+        "meanScore": 51.67,
+        "hardFailures": 0,
+        "hardFailureRate": 0,
+        "meanLatencyMs": 45567,
+        "usageStatus": "raw_per_turn_available",
+        "estimatedCostUsd": null,
+        "costStatus": "unknown"
+      },
+      {
+        "configurationId": "6a8b00fb-759c-49da-89ac-39eb43c4c89f",
+        "planned": 1,
+        "valid": 1,
+        "passed": 1,
+        "passRate": 1,
+        "meanScore": 100,
+        "hardFailures": 0,
+        "hardFailureRate": 0,
+        "meanLatencyMs": 75786,
+        "usageStatus": "raw_per_turn_available",
+        "estimatedCostUsd": null,
+        "costStatus": "unknown"
+      }
+    ],
+    "conclusion": "inconclusive",
+    "confidenceInterval": null,
+    "comparison": {
+      "baselineId": "2a218b22-8c6f-46a9-9434-15d04e5a377d",
+      "candidateId": "6a8b00fb-759c-49da-89ac-39eb43c4c89f",
+      "passDifference": 1,
+      "scoreDifference": 48.33,
+      "scoreConfidenceInterval": null,
+      "hardFailureDifference": 0,
+      "complete": true,
+      "plannedPairs": 1,
+      "validPairs": 1,
+      "taskClusters": 1,
+      "missingOutcomeBounds": [
+        1,
+        1
+      ],
+      "seed": 1340995836,
+      "bootstrapSamples": 10000,
+      "practicalThreshold": 0.05,
+      "limitedVariation": true,
+      "confidenceLevel": 0.95
+    },
+    "taskComparisons": [
+      {
+        "taskId": "recovery-missing-age",
+        "category": "stale_slot",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 1,
+        "scoreDifference": 48.33,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      }
+    ],
+    "categories": [
+      {
+        "category": "stale_slot",
+        "tasks": 1,
+        "passDifference": 1,
+        "scoreDifference": 48.33
+      }
+    ],
+    "coverage": {
+      "completed": 2
+    },
+    "note": "Paired bootstrap resamples whole task clusters, preserving repetitions. Handcrafted suite evidence only; missing runs, limited variation, and small task counts limit conclusions. Costs remain unknown."
+  },
+  "limitations": [
+    "One task with one repetition per configuration is a targeted regression check, not a new full-suite performance estimate.",
+    "Provider/model are inherited from the original snapshots; served metadata may remain unavailable."
+  ]
+}

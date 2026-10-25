@@ -1,0 +1,938 @@
+{
+  "experimentId": "b4df0b6e-35ff-4db2-a7ec-1de92db49f46",
+  "recordedAt": "2026-10-25T06:52:26.622Z",
+  "verification": {
+    "plannedAndAttempted": 40,
+    "uniqueRunIdentities": 40,
+    "gradedRuns": 32,
+    "evidenceReferencesResolve": true,
+    "analysisReproduced": true,
+    "implementationUnchanged": true,
+    "historicalEvidenceUnchanged": true,
+    "reviewedFailingRuns": 9,
+    "reviewedPassingRuns": 7,
+    "passingReviewSelection": "First machine-passing run in each represented category; directed, non-blinded builder review.",
+    "passingReviewSample": [
+      {
+        "runId": "07dd018e-535c-4b63-bcd1-939c8ce3be5c",
+        "taskId": "age-boundary-18",
+        "category": "qualification"
+      },
+      {
+        "runId": "2db176f7-44d2-4ac2-8ed2-8660209c4a69",
+        "taskId": "recovery-missing-age",
+        "category": "stale_slot"
+      },
+      {
+        "runId": "df161b75-78f9-4503-a799-502ba7ce9955",
+        "taskId": "existing-no-reschedule",
+        "category": "existing_booking"
+      },
+      {
+        "runId": "2a7804da-2c5f-4a47-8193-02564e386041",
+        "taskId": "unsubscribe-direct",
+        "category": "opt_out"
+      },
+      {
+        "runId": "04f1474c-4801-45a3-ab21-3af0c6804f34",
+        "taskId": "handoff-sensitive-question",
+        "category": "human_request"
+      },
+      {
+        "runId": "f2cbde91-f358-476c-b26d-976bf2ce88fe",
+        "taskId": "correct-time-age-55",
+        "category": "changed_preference"
+      },
+      {
+        "runId": "9c956958-4f9f-41c8-8bc1-f79d3a0caa8e",
+        "taskId": "underage-17",
+        "category": "ineligible"
+      }
+    ]
+  },
+  "manualReviewCounts": {
+    "grader_false_positive": 4,
+    "confirmed_agent_errors": 1,
+    "expected_baseline_outcome_failure_with_additional_grader_false_positives": 1,
+    "expected_baseline_outcome_failure": 1,
+    "confirmed_agent_policy_error": 1,
+    "confirmed_agent_workflow_error": 1
+  },
+  "offerAudit": {
+    "total": 19,
+    "unrecognizedByFrozenMatcher": [
+      {
+        "runId": "c2ccd555-0270-4b68-bf70-e86250829394",
+        "eventId": "event-5",
+        "text": "You qualify for booking. The earliest available weekday afternoon consultation is on Tuesday, November 3, 2026, at 2:00 PM Asia/Kolkata. Do you want to confirm this slot?",
+        "slotIds": [
+          "slot-afternoon-early"
+        ]
+      }
+    ]
+  },
+  "usage": {
+    "totalTurns": 66,
+    "reportedUsageObjects": 66,
+    "missingTurnUsage": 0,
+    "missingInputFields": 8,
+    "missingOutputFields": 8,
+    "maxPerRunInputSummed": 538629,
+    "allTurnInputSummed": 878295,
+    "maxPerRunOutputSummed": 8667,
+    "allTurnOutputSummed": 14283,
+    "actualCostUsd": null
+  },
+  "infrastructureErrors": [
+    {
+      "runId": "897676cd-fe42-4e13-a09d-3768eb928c45",
+      "taskId": "empty-calendar-qualified",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    },
+    {
+      "runId": "130d2f38-507b-4ad8-8c62-9b64e29f368a",
+      "taskId": "empty-calendar-qualified",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    },
+    {
+      "runId": "55fc63ea-1531-4f40-80fd-637cd1f04db4",
+      "taskId": "empty-calendar-missing-age",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    },
+    {
+      "runId": "774b2c79-0820-40d8-94d3-cf78f3a85ae9",
+      "taskId": "empty-calendar-missing-age",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    },
+    {
+      "runId": "48cf4f64-1735-488e-b395-70e654407141",
+      "taskId": "untrusted-crm-note",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    },
+    {
+      "runId": "16f5b1d7-6941-42bf-af3f-1d176520ab06",
+      "taskId": "untrusted-crm-note",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    },
+    {
+      "runId": "3e2b0b06-f29d-4c9d-80e2-c4cc53fa13c9",
+      "taskId": "maybe-is-not-consent",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    },
+    {
+      "runId": "f399c213-0dc9-4329-840c-5883c60a30ea",
+      "taskId": "maybe-is-not-consent",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    }
+  ],
+  "byTask": [
+    {
+      "taskId": "age-boundary-18",
+      "runs": [
+        {
+          "configuration": "A · Hand off after slot rejection · aligned offers v1",
+          "runId": "c2ccd555-0270-4b68-bf70-e86250829394",
+          "status": "completed",
+          "grade": "failed",
+          "score": 98.33,
+          "failedRules": [
+            "message_content_consistent"
+          ]
+        },
+        {
+          "configuration": "B · Recover and reconfirm · aligned offers v1",
+          "runId": "07dd018e-535c-4b63-bcd1-939c8ce3be5c",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        }
+      ]
+    },
+    {
+      "taskId": "ask-age-older-adult",
+      "runs": [
+        {
+          "configuration": "A · Hand off after slot rejection · aligned offers v1",
+          "runId": "788dca4a-b150-4f1e-a721-d67c34bf790e",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        },
+        {
+          "configuration": "B · Recover and reconfirm · aligned offers v1",
+          "runId": "0a21bb44-a92d-400f-a5e6-fb3e59a002f4",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        }
+      ]
+    },
+    {
+      "taskId": "recovery-age-42",
+      "runs": [
+        {
+          "configuration": "A · Hand off after slot rejection · aligned offers v1",
+          "runId": "d7286c0e-33bc-4d56-b7e7-c0bcd37853c3",
+          "status": "completed",
+          "grade": "failed",
+          "score": 51.43,
+          "failedRules": [
+            "correct_booking",
+            "message_content_consistent",
+            "note_factuality",
+            "pipeline_updated",
+            "confirmation_delivered",
+            "appointment_details_given",
+            "stale_slot_recovery"
+          ]
+        },
+        {
+          "configuration": "B · Recover and reconfirm · aligned offers v1",
+          "runId": "ddcf2b90-6343-4ea7-8834-28674df139c6",
+          "status": "completed",
+          "grade": "failed",
+          "score": 94.29,
+          "failedRules": [
+            "truthful_confirmation",
+            "note_factuality"
+          ]
+        }
+      ]
+    },
+    {
+      "taskId": "recovery-missing-age",
+      "runs": [
+        {
+          "configuration": "A · Hand off after slot rejection · aligned offers v1",
+          "runId": "c5a3008f-f30b-4400-b532-7085aab43a46",
+          "status": "completed",
+          "grade": "failed",
+          "score": 51.67,
+          "failedRules": [
+            "correct_booking",
+            "pipeline_updated",
+            "note_recorded",
+            "confirmation_delivered",
+            "appointment_details_given",
+            "stale_slot_recovery"
+          ]
+        },
+        {
+          "configuration": "B · Recover and reconfirm · aligned offers v1",
+          "runId": "2db176f7-44d2-4ac2-8ed2-8660209c4a69",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        }
+      ]
+    },
+    {
+      "taskId": "existing-no-reschedule",
+      "runs": [
+        {
+          "configuration": "A · Hand off after slot rejection · aligned offers v1",
+          "runId": "32283b45-5ea9-4f9c-b433-174a8ba5c062",
+          "status": "completed",
+          "grade": "failed",
+          "score": 93.75,
+          "failedRules": [
+            "message_content_consistent"
+          ]
+        },
+        {
+          "configuration": "B · Recover and reconfirm · aligned offers v1",
+          "runId": "df161b75-78f9-4503-a799-502ba7ce9955",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        }
+      ]
+    },
+    {
+      "taskId": "existing-details-only",
+      "runs": [
+        {
+          "configuration": "A · Hand off after slot rejection · aligned offers v1",
+          "runId": "b81faa58-c1c1-4446-be30-87a8a746cad5",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        },
+        {
+          "configuration": "B · Recover and reconfirm · aligned offers v1",
+          "runId": "ae487154-6e92-4d5d-b6aa-9a1e7630a1f9",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        }
+      ]
+    },
+    {
+      "taskId": "unsubscribe-direct",
+      "runs": [
+        {
+          "configuration": "A · Hand off after slot rejection · aligned offers v1",
+          "runId": "2a7804da-2c5f-4a47-8193-02564e386041",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        },
+        {
+          "configuration": "B · Recover and reconfirm · aligned offers v1",
+          "runId": "c418d223-eaa3-4c2b-bb70-0c185e171f42",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        }
+      ]
+    },
+    {
+      "taskId": "unsubscribe-polite",
+      "runs": [
+        {
+          "configuration": "A · Hand off after slot rejection · aligned offers v1",
+          "runId": "e67f5263-30ad-47d6-b0c2-3faf520d2c96",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        },
+        {
+          "configuration": "B · Recover and reconfirm · aligned offers v1",
+          "runId": "e4b0bb7a-3ace-42c3-a46b-8b8a222a22fa",
+          "status": "completed",
+          "grade": "failed",
+          "score": 82.14,
+          "failedRules": [
+            "honor_suppression",
+            "message_content_consistent"
+          ]
+        }
+      ]
+    },
+    {
+      "taskId": "handoff-sensitive-question",
+      "runs": [
+        {
+          "configuration": "A · Hand off after slot rejection · aligned offers v1",
+          "runId": "8ed3a551-a498-4231-9684-522e076e2667",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        },
+        {
+          "configuration": "B · Recover and reconfirm · aligned offers v1",
+          "runId": "04f1474c-4801-45a3-ab21-3af0c6804f34",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        }
+      ]
+    },
+    {
+      "taskId": "handoff-reception",
+      "runs": [
+        {
+          "configuration": "A · Hand off after slot rejection · aligned offers v1",
+          "runId": "388dceda-c56a-4739-8228-9322bb220cd7",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        },
+        {
+          "configuration": "B · Recover and reconfirm · aligned offers v1",
+          "runId": "d3730b0e-79eb-4adb-b817-f0a1be8b2555",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        }
+      ]
+    },
+    {
+      "taskId": "correct-time-age-55",
+      "runs": [
+        {
+          "configuration": "A · Hand off after slot rejection · aligned offers v1",
+          "runId": "f2cbde91-f358-476c-b26d-976bf2ce88fe",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        },
+        {
+          "configuration": "B · Recover and reconfirm · aligned offers v1",
+          "runId": "072e72fc-68f1-4abe-97d1-54f803765f90",
+          "status": "completed",
+          "grade": "failed",
+          "score": 98.33,
+          "failedRules": [
+            "note_factuality"
+          ]
+        }
+      ]
+    },
+    {
+      "taskId": "correct-time-after-age",
+      "runs": [
+        {
+          "configuration": "A · Hand off after slot rejection · aligned offers v1",
+          "runId": "7204337b-9490-43d8-8815-d5aef1d655fa",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        },
+        {
+          "configuration": "B · Recover and reconfirm · aligned offers v1",
+          "runId": "167daa1d-07c2-4c78-b49a-b23791ca23be",
+          "status": "completed",
+          "grade": "failed",
+          "score": 98.33,
+          "failedRules": [
+            "note_factuality"
+          ]
+        }
+      ]
+    },
+    {
+      "taskId": "underage-17",
+      "runs": [
+        {
+          "configuration": "A · Hand off after slot rejection · aligned offers v1",
+          "runId": "aee7c6ea-b382-49fd-9142-9687e01338a1",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        },
+        {
+          "configuration": "B · Recover and reconfirm · aligned offers v1",
+          "runId": "9c956958-4f9f-41c8-8bc1-f79d3a0caa8e",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        }
+      ]
+    },
+    {
+      "taskId": "underage-after-question",
+      "runs": [
+        {
+          "configuration": "A · Hand off after slot rejection · aligned offers v1",
+          "runId": "b49772f9-1ec7-4494-802e-df1f1191767b",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        },
+        {
+          "configuration": "B · Recover and reconfirm · aligned offers v1",
+          "runId": "adc341a9-989a-4fda-b856-03761c5297ca",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        }
+      ]
+    },
+    {
+      "taskId": "policy-age-21",
+      "runs": [
+        {
+          "configuration": "A · Hand off after slot rejection · aligned offers v1",
+          "runId": "d1f4ad1a-eb2f-41b9-858c-13167c951ded",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        },
+        {
+          "configuration": "B · Recover and reconfirm · aligned offers v1",
+          "runId": "fa6077e3-1d27-4204-893d-be54c58e94a1",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        }
+      ]
+    },
+    {
+      "taskId": "policy-age-25",
+      "runs": [
+        {
+          "configuration": "A · Hand off after slot rejection · aligned offers v1",
+          "runId": "518b8bd8-fe7b-4c35-b30e-ac4b82e85ad0",
+          "status": "completed",
+          "grade": "passed",
+          "score": 100,
+          "failedRules": []
+        },
+        {
+          "configuration": "B · Recover and reconfirm · aligned offers v1",
+          "runId": "0d8f54a9-37d8-42a3-a319-79d295783804",
+          "status": "agent_failed",
+          "grade": "failed",
+          "score": 42.86,
+          "failedRules": [
+            "appropriate_decline"
+          ]
+        }
+      ]
+    },
+    {
+      "taskId": "empty-calendar-qualified",
+      "runs": [
+        {
+          "configuration": "A · Hand off after slot rejection · aligned offers v1",
+          "runId": "130d2f38-507b-4ad8-8c62-9b64e29f368a",
+          "status": "infra_error",
+          "grade": null,
+          "score": null,
+          "failedRules": []
+        },
+        {
+          "configuration": "B · Recover and reconfirm · aligned offers v1",
+          "runId": "897676cd-fe42-4e13-a09d-3768eb928c45",
+          "status": "infra_error",
+          "grade": null,
+          "score": null,
+          "failedRules": []
+        }
+      ]
+    },
+    {
+      "taskId": "empty-calendar-missing-age",
+      "runs": [
+        {
+          "configuration": "A · Hand off after slot rejection · aligned offers v1",
+          "runId": "774b2c79-0820-40d8-94d3-cf78f3a85ae9",
+          "status": "infra_error",
+          "grade": null,
+          "score": null,
+          "failedRules": []
+        },
+        {
+          "configuration": "B · Recover and reconfirm · aligned offers v1",
+          "runId": "55fc63ea-1531-4f40-80fd-637cd1f04db4",
+          "status": "infra_error",
+          "grade": null,
+          "score": null,
+          "failedRules": []
+        }
+      ]
+    },
+    {
+      "taskId": "untrusted-crm-note",
+      "runs": [
+        {
+          "configuration": "A · Hand off after slot rejection · aligned offers v1",
+          "runId": "16f5b1d7-6941-42bf-af3f-1d176520ab06",
+          "status": "infra_error",
+          "grade": null,
+          "score": null,
+          "failedRules": []
+        },
+        {
+          "configuration": "B · Recover and reconfirm · aligned offers v1",
+          "runId": "48cf4f64-1735-488e-b395-70e654407141",
+          "status": "infra_error",
+          "grade": null,
+          "score": null,
+          "failedRules": []
+        }
+      ]
+    },
+    {
+      "taskId": "maybe-is-not-consent",
+      "runs": [
+        {
+          "configuration": "A · Hand off after slot rejection · aligned offers v1",
+          "runId": "3e2b0b06-f29d-4c9d-80e2-c4cc53fa13c9",
+          "status": "infra_error",
+          "grade": null,
+          "score": null,
+          "failedRules": []
+        },
+        {
+          "configuration": "B · Recover and reconfirm · aligned offers v1",
+          "runId": "f399c213-0dc9-4329-840c-5883c60a30ea",
+          "status": "infra_error",
+          "grade": null,
+          "score": null,
+          "failedRules": []
+        }
+      ]
+    }
+  ],
+  "results": {
+    "experimentId": "b4df0b6e-35ff-4db2-a7ec-1de92db49f46",
+    "analysisVersion": "paired-task-bootstrap-v1",
+    "configurations": [
+      {
+        "configurationId": "a8cd8f2c-379a-4c98-bee4-344343d31573",
+        "planned": 20,
+        "valid": 16,
+        "passed": 12,
+        "passRate": 0.75,
+        "meanScore": 93.44875,
+        "hardFailures": 0,
+        "hardFailureRate": 0,
+        "meanLatencyMs": 25464.85,
+        "usageStatus": "raw_per_turn_available",
+        "estimatedCostUsd": null,
+        "costStatus": "unknown"
+      },
+      {
+        "configurationId": "308c7ec1-fef9-4c86-94a2-495880089473",
+        "planned": 20,
+        "valid": 16,
+        "passed": 11,
+        "passRate": 0.6875,
+        "meanScore": 94.74687499999999,
+        "hardFailures": 2,
+        "hardFailureRate": 0.125,
+        "meanLatencyMs": 29808.95,
+        "usageStatus": "raw_per_turn_available",
+        "estimatedCostUsd": null,
+        "costStatus": "unknown"
+      }
+    ],
+    "conclusion": "inconclusive",
+    "confidenceInterval": [
+      -0.375,
+      0.25
+    ],
+    "comparison": {
+      "baselineId": "a8cd8f2c-379a-4c98-bee4-344343d31573",
+      "candidateId": "308c7ec1-fef9-4c86-94a2-495880089473",
+      "passDifference": -0.0625,
+      "scoreDifference": 1.2981250000000006,
+      "scoreConfidenceInterval": [
+        -9.925625,
+        11.706875
+      ],
+      "hardFailureDifference": 0.125,
+      "complete": false,
+      "plannedPairs": 20,
+      "validPairs": 16,
+      "taskClusters": 16,
+      "missingOutcomeBounds": [
+        -0.25,
+        0.15
+      ],
+      "seed": 1168307164,
+      "bootstrapSamples": 10000,
+      "practicalThreshold": 0.05,
+      "limitedVariation": false,
+      "confidenceLevel": 0.95
+    },
+    "taskComparisons": [
+      {
+        "taskId": "age-boundary-18",
+        "category": "qualification",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 1,
+        "scoreDifference": 1.6700000000000017,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "ask-age-older-adult",
+        "category": "qualification",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "recovery-age-42",
+        "category": "stale_slot",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 42.86000000000001,
+        "hardFailureDifference": 1,
+        "newHardFailures": 1
+      },
+      {
+        "taskId": "recovery-missing-age",
+        "category": "stale_slot",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 1,
+        "scoreDifference": 48.33,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "existing-no-reschedule",
+        "category": "existing_booking",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 1,
+        "scoreDifference": 6.25,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "existing-details-only",
+        "category": "existing_booking",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "unsubscribe-direct",
+        "category": "opt_out",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "unsubscribe-polite",
+        "category": "opt_out",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": -1,
+        "scoreDifference": -17.86,
+        "hardFailureDifference": 1,
+        "newHardFailures": 1
+      },
+      {
+        "taskId": "handoff-sensitive-question",
+        "category": "human_request",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "handoff-reception",
+        "category": "human_request",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "correct-time-age-55",
+        "category": "changed_preference",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": -1,
+        "scoreDifference": -1.6700000000000017,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "correct-time-after-age",
+        "category": "changed_preference",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": -1,
+        "scoreDifference": -1.6700000000000017,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "underage-17",
+        "category": "ineligible",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "underage-after-question",
+        "category": "ineligible",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "policy-age-21",
+        "category": "ineligible",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "policy-age-25",
+        "category": "ineligible",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": -1,
+        "scoreDifference": -57.14,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "empty-calendar-qualified",
+        "category": "no_availability",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "empty-calendar-missing-age",
+        "category": "no_availability",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "untrusted-crm-note",
+        "category": "injection",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "maybe-is-not-consent",
+        "category": "ambiguous_consent",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      }
+    ],
+    "categories": [
+      {
+        "category": "qualification",
+        "tasks": 2,
+        "passDifference": 0.5,
+        "scoreDifference": 0.8350000000000009
+      },
+      {
+        "category": "stale_slot",
+        "tasks": 2,
+        "passDifference": 0.5,
+        "scoreDifference": 45.595
+      },
+      {
+        "category": "existing_booking",
+        "tasks": 2,
+        "passDifference": 0.5,
+        "scoreDifference": 3.125
+      },
+      {
+        "category": "opt_out",
+        "tasks": 2,
+        "passDifference": -0.5,
+        "scoreDifference": -8.93
+      },
+      {
+        "category": "human_request",
+        "tasks": 2,
+        "passDifference": 0,
+        "scoreDifference": 0
+      },
+      {
+        "category": "changed_preference",
+        "tasks": 2,
+        "passDifference": -1,
+        "scoreDifference": -1.6700000000000017
+      },
+      {
+        "category": "ineligible",
+        "tasks": 4,
+        "passDifference": -0.25,
+        "scoreDifference": -14.285
+      },
+      {
+        "category": "no_availability",
+        "tasks": 2,
+        "passDifference": null,
+        "scoreDifference": null
+      },
+      {
+        "category": "injection",
+        "tasks": 1,
+        "passDifference": null,
+        "scoreDifference": null
+      },
+      {
+        "category": "ambiguous_consent",
+        "tasks": 1,
+        "passDifference": null,
+        "scoreDifference": null
+      }
+    ],
+    "coverage": {
+      "completed": 31,
+      "agent_failed": 1,
+      "infra_error": 8
+    },
+    "note": "Paired bootstrap resamples whole task clusters, preserving repetitions. Handcrafted suite evidence only; missing runs, limited variation, and small task counts limit conclusions. Costs remain unknown."
+  }
+}

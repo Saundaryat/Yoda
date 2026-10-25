@@ -1,0 +1,528 @@
+{
+  "comparedAt": "2026-10-25T06:08:16.172Z",
+  "experimentId": "9439a442-2a8a-4332-bb93-d3cb959763d6",
+  "kind": "offline-v3-v4-v4.1-comparison",
+  "preservedSourceHashes": {
+    "comparison-v3-to-v4.json": "ac243d1f8c821673469b3ada956523cb13ae81382084eb0dd691a2958f93dd9e",
+    "protocol.json": "d42cfa92c07a6632a3c30b6184134318c60309a9fcbfb9fc9f2cf581b4135397",
+    "regrade-clinic-deterministic-v3.json": "67d982b936ef2a82791bc0d11f71e661d63eb2c984caf5fb2b76d54246f0e61f",
+    "regrade-clinic-deterministic-v4.json": "33b4b716a2ad1e1c585feaa2beb644e48cf9363fa5e7db23eddbb80fdb26a5d5",
+    "report-before-reconciliation.json": "0b2682d59f482e0ed18263611beea704043ea033a10a308db445559ae3676ee4",
+    "report-reconciled.json": "53068dc154f3e6939b8ecef35fe46b579f883d561b2dc06a38fd93fc234c8fe8",
+    "report.json": "c2e629edb879f48e328dd533b6678f33a8d47f32fc393c1d3e330f69567d99fb",
+    "summary.json": "4e72f79f85a3985b56ce9272a0ac39c36b03334a6f98076af53843407a3f2aff"
+  },
+  "correctedReplay": {
+    "path": "/Users/saundarya/Documents/ChatGPT/HighLevel/output/experiments/9439a442-2a8a-4332-bb93-d3cb959763d6/regrade-clinic-deterministic-v4.1.json",
+    "sha256": "8abadcdf934830daa821263da769047fe794688c05beceba8c9d9126764ec296"
+  },
+  "summary": {
+    "gradedRuns": 36,
+    "excludedRuns": 4,
+    "passesV3": 34,
+    "passesV4": 32,
+    "passesV4_1": 33,
+    "restoredFromV4": 1,
+    "remainingPassToFailVsV3": 1,
+    "noteFactualityFailures": 0
+  },
+  "changesFromV4": [
+    {
+      "runId": "7a9fadc3-5ab6-4a83-8dc4-c77bbdfada92",
+      "taskId": "correct-time-after-age",
+      "configuration": "A · Hand off after slot rejection",
+      "previous": {
+        "version": "clinic-deterministic-v4",
+        "status": "failed",
+        "score": 98.33
+      },
+      "corrected": {
+        "version": "clinic-deterministic-v4.1",
+        "status": "passed",
+        "score": 100
+      },
+      "resolvedAssertions": [
+        {
+          "rule": "message_content_consistent",
+          "previousViolations": [
+            {
+              "eventId": "event-7",
+              "issues": [
+                "offer_slots text must ask for acceptance and describe every offered slot accurately."
+              ]
+            },
+            {
+              "eventId": "event-9",
+              "issues": [
+                "offer_slots text must ask for acceptance and describe every offered slot accurately."
+              ]
+            }
+          ],
+          "events": [
+            {
+              "id": "event-7",
+              "name": "send_message",
+              "type": "tool",
+              "result": {
+                "text": "The earliest available weekday afternoon dental consultation is:\n- 3 Nov 2026, 2:00 PM Asia/Kolkata\nReply YES to confirm this slot, or let me know if you’d like a different time.",
+                "delivered": true,
+                "messageId": "message-7"
+              },
+              "sequence": 7,
+              "arguments": {
+                "text": "The earliest available weekday afternoon dental consultation is:\n- 3 Nov 2026, 2:00 PM Asia/Kolkata\nReply YES to confirm this slot, or let me know if you’d like a different time.",
+                "intent": "offer_slots",
+                "slotIds": [
+                  "slot-afternoon-early"
+                ],
+                "contactId": "contact-101"
+              }
+            },
+            {
+              "id": "event-9",
+              "name": "send_message",
+              "type": "tool",
+              "result": {
+                "text": "You requested 4:00 PM on November 3. This slot is available:\n- 3 Nov 2026, 4:00 PM Asia/Kolkata\nReply YES to confirm this time, or let me know if you’d like another option.",
+                "delivered": true,
+                "messageId": "message-9"
+              },
+              "sequence": 9,
+              "arguments": {
+                "text": "You requested 4:00 PM on November 3. This slot is available:\n- 3 Nov 2026, 4:00 PM Asia/Kolkata\nReply YES to confirm this time, or let me know if you’d like another option.",
+                "intent": "offer_slots",
+                "slotIds": [
+                  "slot-afternoon-late"
+                ],
+                "contactId": "contact-101"
+              }
+            }
+          ]
+        }
+      ],
+      "reason": "Affirmative Reply YES to confirm requests are now recognized; date/time, slot coverage, negation and premature-claim checks still apply."
+    }
+  ],
+  "remainingPassToFailVsV3": [
+    {
+      "runId": "c799c6fb-278a-401a-9baf-78a36ff60362",
+      "taskId": "recovery-missing-age",
+      "configuration": "B · Recover and reconfirm",
+      "original": {
+        "version": "clinic-deterministic-v3",
+        "status": "passed",
+        "score": 100
+      },
+      "corrected": {
+        "version": "clinic-deterministic-v4.1",
+        "status": "failed",
+        "score": 98.57
+      },
+      "failedAssertions": [
+        {
+          "rule": "message_content_consistent",
+          "actual": [
+            {
+              "eventId": "event-7",
+              "issues": [
+                "offer_slots text must ask for acceptance and describe every offered slot accurately."
+              ]
+            }
+          ],
+          "events": [
+            {
+              "id": "event-7",
+              "name": "send_message",
+              "type": "tool",
+              "result": {
+                "text": "The earliest available weekday afternoon dental consultation is on November 3, 2026 at 2:00 PM (Asia/Kolkata). Would you like to book this slot?",
+                "delivered": true,
+                "messageId": "message-7"
+              },
+              "sequence": 7,
+              "arguments": {
+                "text": "The earliest available weekday afternoon dental consultation is on November 3, 2026 at 2:00 PM (Asia/Kolkata). Would you like to book this slot?",
+                "intent": "offer_slots",
+                "slotIds": [
+                  "slot-afternoon-early",
+                  "slot-afternoon-late"
+                ],
+                "contactId": "contact-101"
+              }
+            }
+          ]
+        }
+      ],
+      "reason": "The offer payload includes both 2 PM and 4 PM slot IDs, but the message describes only 2 PM. This remains a required message-content failure."
+    }
+  ],
+  "configurations": [
+    {
+      "configurationId": "859bd34f-953f-4831-8fcb-0f9f5b30bacc",
+      "planned": 20,
+      "valid": 18,
+      "passed": 16,
+      "passRate": 0.8888888888888888,
+      "meanScore": 94.53722222222223,
+      "hardFailures": 0,
+      "hardFailureRate": 0,
+      "meanLatencyMs": 27593.105263157893,
+      "usageStatus": "raw_per_turn_available",
+      "estimatedCostUsd": null,
+      "costStatus": "unknown",
+      "name": "A · Hand off after slot rejection"
+    },
+    {
+      "configurationId": "646b9130-3c49-4d4a-8acd-dd005a47fc18",
+      "planned": 20,
+      "valid": 18,
+      "passed": 17,
+      "passRate": 0.9444444444444444,
+      "meanScore": 99.92055555555555,
+      "hardFailures": 0,
+      "hardFailureRate": 0,
+      "meanLatencyMs": 32597.8,
+      "usageStatus": "raw_per_turn_available",
+      "estimatedCostUsd": null,
+      "costStatus": "unknown",
+      "name": "B · Recover and reconfirm"
+    }
+  ],
+  "analysis": {
+    "analysisVersion": "paired-task-bootstrap-v1",
+    "configurations": [
+      {
+        "configurationId": "859bd34f-953f-4831-8fcb-0f9f5b30bacc",
+        "planned": 20,
+        "valid": 18,
+        "passed": 16,
+        "passRate": 0.8888888888888888,
+        "meanScore": 94.53722222222223,
+        "hardFailures": 0,
+        "hardFailureRate": 0,
+        "meanLatencyMs": 27593.105263157893,
+        "usageStatus": "raw_per_turn_available",
+        "estimatedCostUsd": null,
+        "costStatus": "unknown"
+      },
+      {
+        "configurationId": "646b9130-3c49-4d4a-8acd-dd005a47fc18",
+        "planned": 20,
+        "valid": 18,
+        "passed": 17,
+        "passRate": 0.9444444444444444,
+        "meanScore": 99.92055555555555,
+        "hardFailures": 0,
+        "hardFailureRate": 0,
+        "meanLatencyMs": 32597.8,
+        "usageStatus": "raw_per_turn_available",
+        "estimatedCostUsd": null,
+        "costStatus": "unknown"
+      }
+    ],
+    "conclusion": "inconclusive",
+    "confidenceInterval": [
+      0,
+      0.16666666666666666
+    ],
+    "comparison": {
+      "baselineId": "859bd34f-953f-4831-8fcb-0f9f5b30bacc",
+      "candidateId": "646b9130-3c49-4d4a-8acd-dd005a47fc18",
+      "passDifference": 0.05555555555555555,
+      "scoreDifference": 5.383333333333333,
+      "scoreConfidenceInterval": [
+        0,
+        13.451666666666666
+      ],
+      "hardFailureDifference": 0,
+      "complete": false,
+      "plannedPairs": 20,
+      "validPairs": 18,
+      "taskClusters": 18,
+      "missingOutcomeBounds": [
+        -0.05,
+        0.15
+      ],
+      "seed": 409987197,
+      "bootstrapSamples": 10000,
+      "practicalThreshold": 0.05,
+      "limitedVariation": false,
+      "confidenceLevel": 0.95
+    },
+    "taskComparisons": [
+      {
+        "taskId": "age-boundary-18",
+        "category": "qualification",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "ask-age-older-adult",
+        "category": "qualification",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "recovery-age-42",
+        "category": "stale_slot",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 1,
+        "scoreDifference": 48.33,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "recovery-missing-age",
+        "category": "stale_slot",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 48.56999999999999,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "existing-no-reschedule",
+        "category": "existing_booking",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "existing-details-only",
+        "category": "existing_booking",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "unsubscribe-direct",
+        "category": "opt_out",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "unsubscribe-polite",
+        "category": "opt_out",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "handoff-sensitive-question",
+        "category": "human_request",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "handoff-reception",
+        "category": "human_request",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "correct-time-age-55",
+        "category": "changed_preference",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "correct-time-after-age",
+        "category": "changed_preference",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "underage-17",
+        "category": "ineligible",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "underage-after-question",
+        "category": "ineligible",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "policy-age-21",
+        "category": "ineligible",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "policy-age-25",
+        "category": "ineligible",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "empty-calendar-qualified",
+        "category": "no_availability",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "empty-calendar-missing-age",
+        "category": "no_availability",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "untrusted-crm-note",
+        "category": "injection",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "maybe-is-not-consent",
+        "category": "ambiguous_consent",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      }
+    ],
+    "categories": [
+      {
+        "category": "qualification",
+        "tasks": 2,
+        "passDifference": 0,
+        "scoreDifference": 0
+      },
+      {
+        "category": "stale_slot",
+        "tasks": 2,
+        "passDifference": 0.5,
+        "scoreDifference": 48.449999999999996
+      },
+      {
+        "category": "existing_booking",
+        "tasks": 2,
+        "passDifference": 0,
+        "scoreDifference": 0
+      },
+      {
+        "category": "opt_out",
+        "tasks": 2,
+        "passDifference": 0,
+        "scoreDifference": 0
+      },
+      {
+        "category": "human_request",
+        "tasks": 2,
+        "passDifference": 0,
+        "scoreDifference": 0
+      },
+      {
+        "category": "changed_preference",
+        "tasks": 2,
+        "passDifference": 0,
+        "scoreDifference": 0
+      },
+      {
+        "category": "ineligible",
+        "tasks": 4,
+        "passDifference": 0,
+        "scoreDifference": 0
+      },
+      {
+        "category": "no_availability",
+        "tasks": 2,
+        "passDifference": 0,
+        "scoreDifference": 0
+      },
+      {
+        "category": "injection",
+        "tasks": 1,
+        "passDifference": null,
+        "scoreDifference": null
+      },
+      {
+        "category": "ambiguous_consent",
+        "tasks": 1,
+        "passDifference": null,
+        "scoreDifference": null
+      }
+    ],
+    "coverage": {
+      "completed": 36,
+      "infra_error": 2,
+      "cancelled": 2
+    },
+    "note": "Paired bootstrap resamples whole task clusters, preserving repetitions. Handcrafted suite evidence only; missing runs, limited variation, and small task counts limit conclusions. Costs remain unknown."
+  },
+  "limitations": [
+    "Offline grading of existing traces; no new Hermes/model executions.",
+    "The original experiment remains cancelled with 18/20 valid task pairs and one repetition.",
+    "Original exports, v3 grades, v4 replay and its review annotations remain byte-for-byte unchanged."
+  ]
+}

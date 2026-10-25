@@ -1,0 +1,35 @@
+{
+  "checkedAt": "2026-10-25T07:33:37.375Z",
+  "unitTestsPassed": 138,
+  "apiChecksPassed": 9,
+  "readOnlyBrowserChecksPassed": 2,
+  "readOnlyMutationWalkthroughSkipped": 1,
+  "typecheckPassed": true,
+  "webTypecheckPassed": true,
+  "productionBuildPassed": true,
+  "freshSourceStartupPassed": true,
+  "liveDraftLifecyclePassed": true,
+  "video": {
+    "durationSeconds": 60.92,
+    "width": 1440,
+    "height": 1000,
+    "decodedFramesSeconds": [
+      5,
+      30,
+      55
+    ],
+    "results": [
+      14,
+      13
+    ],
+    "graderVersion": "clinic-deterministic-v4.2"
+  },
+  "targetedWorkflowValidation": {
+    "experimentId": "a893ab39-e7f5-477f-b757-7fb5f0d49fa7",
+    "attempts": 6,
+    "valid": 0,
+    "allHttp429": true
+  },
+  "secretPatternScanPassed": true,
+  "scope": "Builder-run local verification; no new successful provider behavior claimed."
+}

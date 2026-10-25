@@ -1,0 +1,1854 @@
+{
+  "schemaVersion": 1,
+  "runId": "verification-2026-10-20T19-31-55.687Z-38c43b2f",
+  "startedAt": "2026-10-20T19:31:55.693Z",
+  "completedAt": "2026-10-20T19:32:34.139Z",
+  "hermesCommit": "349e4f7e620ea1be6a8b5703d7152cf1e5ed9998",
+  "provider": "copilot",
+  "requestedModel": "gpt-4.1",
+  "sessionId": "eval-8e7039d4-5948-4f82-b2ea-a7d9b1c31465",
+  "configuration": {
+    "model": {
+      "default": "gpt-4.1",
+      "provider": "copilot"
+    },
+    "fallback_providers": [],
+    "agent": {
+      "max_turns": 14,
+      "run_budget_seconds": 120,
+      "gateway_timeout": 150
+    },
+    "platform_toolsets": {
+      "api_server": [
+        "mcp-eval-crm"
+      ],
+      "cli": [
+        "mcp-eval-crm"
+      ]
+    },
+    "memory": {
+      "memory_enabled": false,
+      "user_profile_enabled": false
+    },
+    "auxiliary": {
+      "title_generation": {
+        "enabled": false
+      },
+      "background_review": {
+        "enabled": false
+      }
+    },
+    "curator": {
+      "enabled": false
+    },
+    "telemetry": {
+      "shared_metrics": {
+        "enabled": false,
+        "send": false,
+        "offer_version": 2
+      }
+    },
+    "mcp_servers": {
+      "eval-crm": {
+        "command": "/opt/homebrew/Cellar/node@22/22.23.2_1/bin/node",
+        "args": [
+          "--experimental-strip-types",
+          "/Users/saundarya/Documents/ChatGPT/HighLevel/apps/crm-mcp/server.ts"
+        ],
+        "env": {
+          "CRM_STATE_FILE": "/Users/saundarya/Documents/ChatGPT/HighLevel/.eval-runtime/verification-2026-10-20T19-31-55.687Z-38c43b2f/crm-state.json"
+        },
+        "supports_parallel_tool_calls": false,
+        "tools": {
+          "resources": false,
+          "prompts": false
+        },
+        "trust": "full"
+      }
+    }
+  },
+  "instructions": "You are the appointment setter for Demo Dental Clinic. The current contact is contact-101.\nUse only the eval-crm tools. Read the business policy and contact before acting.\nQualify the lead, search actual slots, offer the earliest weekday afternoon slot, and obtain explicit consent before booking.\nCommunicate with the lead through send_message with the correct structured intent. To ask age use ask_age; to propose a slot use offer_slots with slotIds; to confirm use confirm_booking with appointmentId.\nAfter asking a question or offering slots, stop this turn and wait for the next USER message. A tool result saying delivered is not a lead reply or consent.\nThe next USER message includes the actual lead reply and its event ID. Use the consent lead event ID for create_appointment.\nAfter a successful appointment, update the opportunity to appointment_booked, add a factual note, and send confirmation containing the actual appointment date/time and timezone.\nDo not claim success after a rejected tool call. Do not invent contact facts, availability, or consent. Do not ask the lead for permission to use internal tools.",
+  "instructionsHash": "d37d431b26d419d74b50b6309edcc4bfec2e1df067dca5e0022c88ad2f0db97c",
+  "capabilities": {
+    "object": "hermes.api_server.capabilities",
+    "platform": "hermes-agent",
+    "model": "hermes-agent",
+    "auth": {
+      "type": "bearer",
+      "required": true
+    },
+    "runtime": {
+      "mode": "server_agent",
+      "tool_execution": "server",
+      "split_runtime": false,
+      "description": "The API server creates a server-side Hermes AIAgent; tools execute on the API-server host unless a future explicit split-runtime mode is enabled."
+    },
+    "features": {
+      "chat_completions": true,
+      "chat_completions_streaming": true,
+      "responses_api": true,
+      "responses_streaming": true,
+      "run_submission": true,
+      "runs_idempotency": {
+        "supported": true,
+        "durable": true,
+        "retention_seconds": 86400
+      },
+      "run_status": true,
+      "run_events_sse": true,
+      "run_stop": true,
+      "run_steer": true,
+      "run_approval_response": true,
+      "tool_progress_events": true,
+      "approval_events": true,
+      "session_resources": true,
+      "model_options": true,
+      "session_chat": true,
+      "session_chat_streaming": true,
+      "session_fork": true,
+      "session_model_lock": true,
+      "reasoning_streaming": true,
+      "admin_config_rw": false,
+      "jobs_admin": false,
+      "memory_write_api": false,
+      "skills_api": true,
+      "audio_api": false,
+      "realtime_voice": false,
+      "session_continuity_header": "X-Hermes-Session-Id",
+      "session_key_header": "X-Hermes-Session-Key",
+      "run_unknown_resolution": true,
+      "cors": false,
+      "browser_extension_control": {
+        "enabled": false,
+        "protocol_version": 1,
+        "capabilities": [
+          "browser_back",
+          "browser_click",
+          "browser_navigate",
+          "browser_press",
+          "browser_screenshot",
+          "browser_scroll",
+          "browser_snapshot",
+          "browser_tab_activate",
+          "browser_tabs",
+          "browser_type",
+          "controller.noop"
+        ],
+        "artifact_capabilities": [
+          "browser_artifact_download",
+          "browser_artifact_upload"
+        ],
+        "developer_capabilities": [
+          "browser_cdp",
+          "browser_evaluate"
+        ],
+        "developer_mode": false,
+        "artifact_transport": {
+          "upload": {
+            "method": "POST",
+            "path": "/v1/artifacts/upload"
+          },
+          "download": {
+            "method": "GET",
+            "path": "/v1/artifacts/download/{artifact_id}"
+          },
+          "max_bytes": 10485760,
+          "ttl_seconds": 300,
+          "allowed_mime_types": [
+            "application/json",
+            "application/pdf",
+            "image/gif",
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "text/plain"
+          ]
+        },
+        "real_browser_actions": true,
+        "transports": {
+          "local_vps": "websocket-subprotocol-ticket",
+          "cloud": "authenticated-gateway-rpc"
+        }
+      }
+    },
+    "endpoints": {
+      "health": {
+        "method": "GET",
+        "path": "/health"
+      },
+      "health_detailed": {
+        "method": "GET",
+        "path": "/health/detailed"
+      },
+      "models": {
+        "method": "GET",
+        "path": "/v1/models"
+      },
+      "model_options": {
+        "method": "GET",
+        "path": "/api/model/options"
+      },
+      "chat_completions": {
+        "method": "POST",
+        "path": "/v1/chat/completions"
+      },
+      "responses": {
+        "method": "POST",
+        "path": "/v1/responses"
+      },
+      "runs": {
+        "method": "POST",
+        "path": "/v1/runs"
+      },
+      "run_status": {
+        "method": "GET",
+        "path": "/v1/runs/{run_id}"
+      },
+      "run_events": {
+        "method": "GET",
+        "path": "/v1/runs/{run_id}/events"
+      },
+      "run_approval": {
+        "method": "POST",
+        "path": "/v1/runs/{run_id}/approval"
+      },
+      "run_steer": {
+        "method": "POST",
+        "path": "/v1/runs/{run_id}/steer"
+      },
+      "run_unknown_resolution": {
+        "method": "POST",
+        "path": "/v1/runs/{run_id}/resolve-unknown"
+      },
+      "run_stop": {
+        "method": "POST",
+        "path": "/v1/runs/{run_id}/stop"
+      },
+      "skills": {
+        "method": "GET",
+        "path": "/v1/skills"
+      },
+      "toolsets": {
+        "method": "GET",
+        "path": "/v1/toolsets"
+      },
+      "sessions": {
+        "method": "GET",
+        "path": "/api/sessions"
+      },
+      "session_create": {
+        "method": "POST",
+        "path": "/api/sessions"
+      },
+      "session": {
+        "method": "GET",
+        "path": "/api/sessions/{session_id}"
+      },
+      "session_update": {
+        "method": "PATCH",
+        "path": "/api/sessions/{session_id}"
+      },
+      "session_delete": {
+        "method": "DELETE",
+        "path": "/api/sessions/{session_id}"
+      },
+      "session_messages": {
+        "method": "GET",
+        "path": "/api/sessions/{session_id}/messages"
+      },
+      "session_fork": {
+        "method": "POST",
+        "path": "/api/sessions/{session_id}/fork"
+      },
+      "session_chat": {
+        "method": "POST",
+        "path": "/api/sessions/{session_id}/chat"
+      },
+      "session_chat_stream": {
+        "method": "POST",
+        "path": "/api/sessions/{session_id}/chat/stream"
+      },
+      "session_model_lock": {
+        "method": "POST",
+        "path": "/api/sessions/{session_id}/model"
+      },
+      "browser_control_register": {
+        "method": "POST",
+        "path": "/v1/browser-control/register"
+      },
+      "browser_control_ws": {
+        "method": "GET",
+        "path": "/v1/browser-control/ws"
+      },
+      "artifact_upload": {
+        "method": "POST",
+        "path": "/v1/artifacts/upload"
+      },
+      "artifact_download": {
+        "method": "GET",
+        "path": "/v1/artifacts/download/{artifact_id}"
+      }
+    }
+  },
+  "turns": [
+    {
+      "turn": 1,
+      "input": "Lead event event-1: Hi, I would like to book a dental consultation. Do you treat adults? I prefer the earliest weekday afternoon appointment.",
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "durationMs": 11619,
+      "status": {
+        "object": "hermes.run",
+        "model": "gpt-4.1",
+        "runtime": {
+          "provider": "",
+          "model": "",
+          "route_source": "raw_request",
+          "requested": {
+            "provider": "copilot",
+            "model": "gpt-4.1"
+          }
+        },
+        "created_at": 1792524718.342025,
+        "pending_controls": [],
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "status": "completed",
+        "session_id": "eval-8e7039d4-5948-4f82-b2ea-a7d9b1c31465",
+        "admission_id": "a826ed5477b94b8f94fadd4206c75e57",
+        "execution_generation": 1,
+        "output": "Thank you for your interest in booking a dental consultation. May I know your age to confirm eligibility?",
+        "usage": {
+          "input_tokens": 12690,
+          "output_tokens": 217,
+          "total_tokens": 12907
+        }
+      }
+    },
+    {
+      "turn": 2,
+      "input": "Lead event event-5 (qualification): I am 25 years old. I would like the earliest weekday afternoon dental consultation.",
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "durationMs": 11117,
+      "status": {
+        "object": "hermes.run",
+        "model": "gpt-4.1",
+        "runtime": {
+          "provider": "",
+          "model": "",
+          "route_source": "raw_request",
+          "requested": {
+            "provider": "copilot",
+            "model": "gpt-4.1"
+          }
+        },
+        "created_at": 1792524729.9742122,
+        "pending_controls": [],
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "status": "completed",
+        "session_id": "eval-8e7039d4-5948-4f82-b2ea-a7d9b1c31465",
+        "admission_id": "9132be4ca3ee429a971998496fb2f530",
+        "execution_generation": 2,
+        "output": "The earliest available weekday afternoon dental consultation is on Tuesday, November 3rd at 2:00 PM. Would you like to book this slot?",
+        "usage": {
+          "input_tokens": 20367,
+          "output_tokens": 274,
+          "total_tokens": 20641
+        }
+      }
+    },
+    {
+      "turn": 3,
+      "input": "Lead event event-8 (consent): Yes, please book 2026-11-03T14:00:00+05:30 (slot-afternoon-early) for my dental consultation.",
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "durationMs": 12627,
+      "status": {
+        "object": "hermes.run",
+        "model": "gpt-4.1",
+        "runtime": {
+          "provider": "",
+          "model": "",
+          "route_source": "raw_request",
+          "requested": {
+            "provider": "copilot",
+            "model": "gpt-4.1"
+          }
+        },
+        "created_at": 1792524741.108588,
+        "pending_controls": [],
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "status": "completed",
+        "session_id": "eval-8e7039d4-5948-4f82-b2ea-a7d9b1c31465",
+        "admission_id": "dc6195d47159428a8ee8fd51c6a5eb43",
+        "execution_generation": 3,
+        "output": "Your dental consultation is confirmed for Tuesday, November 3rd at 2:00 PM (Asia/Kolkata timezone). We look forward to seeing you at Demo Dental Clinic!",
+        "usage": {
+          "input_tokens": 31194,
+          "output_tokens": 426,
+          "total_tokens": 31620
+        }
+      }
+    }
+  ],
+  "lifecycleEvents": [
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "tool.started",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524723.289671,
+        "tool": "mcp__eval_crm__get_business_policy",
+        "preview": "",
+        "tool_call_id": "call_PeHfyPsFBm6dYmVag1lj0Br2",
+        "seq": 0
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "tool.completed",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524723.295085,
+        "tool": "mcp__eval_crm__get_business_policy",
+        "duration": 0,
+        "error": false,
+        "tool_call_id": "call_PeHfyPsFBm6dYmVag1lj0Br2",
+        "preview": "",
+        "seq": 1
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "tool.started",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524723.2959979,
+        "tool": "mcp__eval_crm__get_contact",
+        "preview": "",
+        "tool_call_id": "call_7aa5d5e57774",
+        "seq": 2
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "tool.completed",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524723.298102,
+        "tool": "mcp__eval_crm__get_contact",
+        "duration": 0,
+        "error": false,
+        "tool_call_id": "call_7aa5d5e57774",
+        "preview": "",
+        "seq": 3
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "tool.started",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524727.6739662,
+        "tool": "mcp__eval_crm__send_message",
+        "preview": "Thank you for your interest in booking a dental consultation. May I know your age to confirm eligibility?",
+        "tool_call_id": "call_OvljJ4HgAVVFMbvOkUDRTRT1",
+        "seq": 4
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "tool.completed",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524727.679424,
+        "tool": "mcp__eval_crm__send_message",
+        "duration": 0,
+        "error": false,
+        "tool_call_id": "call_OvljJ4HgAVVFMbvOkUDRTRT1",
+        "preview": "",
+        "seq": 5
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.4442592,
+        "delta": "\n\nThank",
+        "seq": 6
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.44541,
+        "delta": " you",
+        "seq": 7
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.445963,
+        "delta": " for",
+        "seq": 8
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.446473,
+        "delta": " your",
+        "seq": 9
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.446985,
+        "delta": " interest",
+        "seq": 10
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.447586,
+        "delta": " in",
+        "seq": 11
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.4486148,
+        "delta": " booking",
+        "seq": 12
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.449646,
+        "delta": " a",
+        "seq": 13
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.466835,
+        "delta": " dental",
+        "seq": 14
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.467615,
+        "delta": " consultation",
+        "seq": 15
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.46813,
+        "delta": ".",
+        "seq": 16
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.468523,
+        "delta": " May",
+        "seq": 17
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.513002,
+        "delta": " I",
+        "seq": 18
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.5142632,
+        "delta": " know",
+        "seq": 19
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.515167,
+        "delta": " your",
+        "seq": 20
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.515838,
+        "delta": " age",
+        "seq": 21
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.516494,
+        "delta": " to",
+        "seq": 22
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.517432,
+        "delta": " confirm",
+        "seq": 23
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.517974,
+        "delta": " eligibility",
+        "seq": 24
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.524792,
+        "delta": "?",
+        "seq": 25
+      }
+    },
+    {
+      "externalRunId": "run_6bd0b1c7a94b40938149141fccd42af2",
+      "data": {
+        "event": "run.completed",
+        "run_id": "run_6bd0b1c7a94b40938149141fccd42af2",
+        "timestamp": 1792524729.5868459,
+        "output": "Thank you for your interest in booking a dental consultation. May I know your age to confirm eligibility?",
+        "usage": {
+          "input_tokens": 12690,
+          "output_tokens": 217,
+          "total_tokens": 12907
+        },
+        "runtime": {
+          "provider": "",
+          "model": "",
+          "route_source": "raw_request",
+          "requested": {
+            "provider": "copilot",
+            "model": "gpt-4.1"
+          }
+        },
+        "completed": true,
+        "partial": false,
+        "interrupted": false,
+        "seq": 26
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "tool.started",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524736.675013,
+        "tool": "mcp__eval_crm__search_available_slots",
+        "preview": "",
+        "tool_call_id": "call_z3PhITrIsqKANy7iuwuCv6Mp",
+        "seq": 0
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "tool.completed",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524736.681813,
+        "tool": "mcp__eval_crm__search_available_slots",
+        "duration": 0,
+        "error": false,
+        "tool_call_id": "call_z3PhITrIsqKANy7iuwuCv6Mp",
+        "preview": "",
+        "seq": 1
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "tool.started",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524738.9964008,
+        "tool": "mcp__eval_crm__send_message",
+        "preview": "The earliest available weekday afternoon dental consultation is on Tuesday, November 3rd at 2:00 PM. Would you like to book this slot?",
+        "tool_call_id": "call_CJro85ax06MQLrQuUuC2Cc5N",
+        "seq": 2
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "tool.completed",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524739.0024261,
+        "tool": "mcp__eval_crm__send_message",
+        "duration": 0,
+        "error": false,
+        "tool_call_id": "call_CJro85ax06MQLrQuUuC2Cc5N",
+        "preview": "",
+        "seq": 3
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.736968,
+        "delta": "\n\nThe",
+        "seq": 4
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.766695,
+        "delta": " earliest",
+        "seq": 5
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.767482,
+        "delta": " available",
+        "seq": 6
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.767978,
+        "delta": " weekday",
+        "seq": 7
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.7690492,
+        "delta": " afternoon",
+        "seq": 8
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.769701,
+        "delta": " dental",
+        "seq": 9
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.795629,
+        "delta": " consultation",
+        "seq": 10
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.796981,
+        "delta": " is",
+        "seq": 11
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.7977998,
+        "delta": " on",
+        "seq": 12
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.798435,
+        "delta": " Tuesday",
+        "seq": 13
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.800155,
+        "delta": ",",
+        "seq": 14
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.800666,
+        "delta": " November",
+        "seq": 15
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.9221199,
+        "delta": " ",
+        "seq": 16
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.922892,
+        "delta": "3",
+        "seq": 17
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.923448,
+        "delta": "rd",
+        "seq": 18
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.924051,
+        "delta": " at",
+        "seq": 19
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.9247282,
+        "delta": " ",
+        "seq": 20
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.92518,
+        "delta": "2",
+        "seq": 21
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.9720562,
+        "delta": ":",
+        "seq": 22
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.972506,
+        "delta": "00",
+        "seq": 23
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.972747,
+        "delta": " PM",
+        "seq": 24
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.9730098,
+        "delta": ".",
+        "seq": 25
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.973273,
+        "delta": " Would",
+        "seq": 26
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.9735382,
+        "delta": " you",
+        "seq": 27
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.97376,
+        "delta": " like",
+        "seq": 28
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.97391,
+        "delta": " to",
+        "seq": 29
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.974159,
+        "delta": " book",
+        "seq": 30
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.974334,
+        "delta": " this",
+        "seq": 31
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.974582,
+        "delta": " slot",
+        "seq": 32
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524740.974708,
+        "delta": "?",
+        "seq": 33
+      }
+    },
+    {
+      "externalRunId": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+      "data": {
+        "event": "run.completed",
+        "run_id": "run_a9c7b187a99d4112b8b6d0fdcffff334",
+        "timestamp": 1792524741.04109,
+        "output": "The earliest available weekday afternoon dental consultation is on Tuesday, November 3rd at 2:00 PM. Would you like to book this slot?",
+        "usage": {
+          "input_tokens": 20367,
+          "output_tokens": 274,
+          "total_tokens": 20641
+        },
+        "runtime": {
+          "provider": "",
+          "model": "",
+          "route_source": "raw_request",
+          "requested": {
+            "provider": "copilot",
+            "model": "gpt-4.1"
+          }
+        },
+        "completed": true,
+        "partial": false,
+        "interrupted": false,
+        "seq": 34
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "tool.started",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524744.978772,
+        "tool": "mcp__eval_crm__create_appointment",
+        "preview": "",
+        "tool_call_id": "call_zdyIkGFVxHXq5KMrg12kggWQ",
+        "seq": 0
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "tool.completed",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524744.984662,
+        "tool": "mcp__eval_crm__create_appointment",
+        "duration": 0,
+        "error": false,
+        "tool_call_id": "call_zdyIkGFVxHXq5KMrg12kggWQ",
+        "preview": "",
+        "seq": 1
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "tool.started",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524747.6120708,
+        "tool": "mcp__eval_crm__add_contact_note",
+        "preview": "",
+        "tool_call_id": "call_wFtvw0slVVymekMvPM0D2ekX",
+        "seq": 2
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "tool.completed",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524747.6245341,
+        "tool": "mcp__eval_crm__add_contact_note",
+        "duration": 0,
+        "error": false,
+        "tool_call_id": "call_wFtvw0slVVymekMvPM0D2ekX",
+        "preview": "",
+        "seq": 3
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "tool.started",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524749.631059,
+        "tool": "mcp__eval_crm__update_opportunity",
+        "preview": "",
+        "tool_call_id": "call_1kRtfk7KOv1p1lkbj2T7D3a7",
+        "seq": 4
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "tool.completed",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524749.634985,
+        "tool": "mcp__eval_crm__update_opportunity",
+        "duration": 0,
+        "error": false,
+        "tool_call_id": "call_1kRtfk7KOv1p1lkbj2T7D3a7",
+        "preview": "",
+        "seq": 5
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "tool.started",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524751.999464,
+        "tool": "mcp__eval_crm__send_message",
+        "preview": "Your dental consultation is confirmed for Tuesday, November 3rd at 2:00 PM (Asia/Kolkata timezone). We look forward to seeing you at Demo Dental Clinic!",
+        "tool_call_id": "call_03KWhQL1FsVWhsNdC16U3D0O",
+        "seq": 6
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "tool.completed",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524752.0025148,
+        "tool": "mcp__eval_crm__send_message",
+        "duration": 0,
+        "error": false,
+        "tool_call_id": "call_03KWhQL1FsVWhsNdC16U3D0O",
+        "preview": "",
+        "seq": 7
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.5118542,
+        "delta": "\n\nYour",
+        "seq": 8
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.536133,
+        "delta": " dental",
+        "seq": 9
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.537397,
+        "delta": " consultation",
+        "seq": 10
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.538322,
+        "delta": " is",
+        "seq": 11
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.5390599,
+        "delta": " confirmed",
+        "seq": 12
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.539691,
+        "delta": " for",
+        "seq": 13
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.540297,
+        "delta": " Tuesday",
+        "seq": 14
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.540815,
+        "delta": ",",
+        "seq": 15
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.580501,
+        "delta": " November",
+        "seq": 16
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.581584,
+        "delta": " ",
+        "seq": 17
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.582386,
+        "delta": "3",
+        "seq": 18
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.58289,
+        "delta": "rd",
+        "seq": 19
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.58354,
+        "delta": " at",
+        "seq": 20
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.5960572,
+        "delta": " ",
+        "seq": 21
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.5973089,
+        "delta": "2",
+        "seq": 22
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.684931,
+        "delta": ":",
+        "seq": 23
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.685363,
+        "delta": "00",
+        "seq": 24
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.685602,
+        "delta": " PM",
+        "seq": 25
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.685932,
+        "delta": " (",
+        "seq": 26
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.686153,
+        "delta": "Asia",
+        "seq": 27
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.686358,
+        "delta": "/K",
+        "seq": 28
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.68655,
+        "delta": "olk",
+        "seq": 29
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.686829,
+        "delta": "ata",
+        "seq": 30
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.687086,
+        "delta": " timezone",
+        "seq": 31
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.6872451,
+        "delta": ").",
+        "seq": 32
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.687496,
+        "delta": " We",
+        "seq": 33
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.687724,
+        "delta": " look",
+        "seq": 34
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.687982,
+        "delta": " forward",
+        "seq": 35
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.688169,
+        "delta": " to",
+        "seq": 36
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.688394,
+        "delta": " seeing",
+        "seq": 37
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.6886442,
+        "delta": " you",
+        "seq": 38
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.688834,
+        "delta": " at",
+        "seq": 39
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.689091,
+        "delta": " Demo",
+        "seq": 40
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.689281,
+        "delta": " Dental",
+        "seq": 41
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.689447,
+        "delta": " Clinic",
+        "seq": 42
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "message.delta",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.689667,
+        "delta": "!",
+        "seq": 43
+      }
+    },
+    {
+      "externalRunId": "run_3cb73ed3c9374f06815543c01bd22eae",
+      "data": {
+        "event": "run.completed",
+        "run_id": "run_3cb73ed3c9374f06815543c01bd22eae",
+        "timestamp": 1792524753.7140648,
+        "output": "Your dental consultation is confirmed for Tuesday, November 3rd at 2:00 PM (Asia/Kolkata timezone). We look forward to seeing you at Demo Dental Clinic!",
+        "usage": {
+          "input_tokens": 31194,
+          "output_tokens": 426,
+          "total_tokens": 31620
+        },
+        "runtime": {
+          "provider": "",
+          "model": "",
+          "route_source": "raw_request",
+          "requested": {
+            "provider": "copilot",
+            "model": "gpt-4.1"
+          }
+        },
+        "completed": true,
+        "partial": false,
+        "interrupted": false,
+        "seq": 44
+      }
+    }
+  ],
+  "finalState": {
+    "runId": "verification-2026-10-20T19-31-55.687Z-38c43b2f",
+    "contact": {
+      "id": "contact-101",
+      "tenantId": "tenant-clinic",
+      "age": 25,
+      "optedOut": false
+    },
+    "slots": [
+      {
+        "id": "slot-morning",
+        "service": "dental-consultation",
+        "start": "2026-11-03T10:00:00+05:30",
+        "booked": false
+      },
+      {
+        "id": "slot-afternoon-early",
+        "service": "dental-consultation",
+        "start": "2026-11-03T14:00:00+05:30",
+        "booked": true
+      },
+      {
+        "id": "slot-afternoon-late",
+        "service": "dental-consultation",
+        "start": "2026-11-03T16:00:00+05:30",
+        "booked": false
+      }
+    ],
+    "appointments": [
+      {
+        "id": "appointment-1",
+        "contactId": "contact-101",
+        "slotId": "slot-afternoon-early",
+        "service": "dental-consultation",
+        "consentEventId": "event-8"
+      }
+    ],
+    "opportunityStage": "appointment_booked",
+    "notes": [
+      "Appointment booked for 2026-11-03T14:00:00+05:30, Asia/Kolkata, slot-afternoon-early. Lead qualified as adult, age 25."
+    ],
+    "events": [
+      {
+        "id": "event-1",
+        "sequence": 1,
+        "type": "lead",
+        "name": "initial",
+        "arguments": {},
+        "result": {
+          "kind": "initial",
+          "text": "Hi, I would like to book a dental consultation. Do you treat adults? I prefer the earliest weekday afternoon appointment."
+        }
+      },
+      {
+        "id": "event-2",
+        "sequence": 2,
+        "type": "tool",
+        "name": "get_business_policy",
+        "arguments": {},
+        "result": {
+          "business": "Demo Dental Clinic",
+          "timezone": "Asia/Kolkata",
+          "simulatedNow": "2026-11-02T09:00:00+05:30",
+          "service": "dental-consultation",
+          "minimumAge": 18,
+          "requiredQualification": [
+            "age"
+          ],
+          "rules": [
+            "Ask for age before offering a booking.",
+            "Offer the earliest actual afternoon slot.",
+            "Receive explicit lead consent for the selected slot before booking.",
+            "Confirm only after create_appointment succeeds."
+          ]
+        }
+      },
+      {
+        "id": "event-3",
+        "sequence": 3,
+        "type": "tool",
+        "name": "get_contact",
+        "arguments": {
+          "contactId": "contact-101"
+        },
+        "result": {
+          "contact": {
+            "id": "contact-101",
+            "tenantId": "tenant-clinic",
+            "age": null,
+            "optedOut": false
+          },
+          "appointments": []
+        }
+      },
+      {
+        "id": "event-4",
+        "sequence": 4,
+        "type": "tool",
+        "name": "send_message",
+        "arguments": {
+          "contactId": "contact-101",
+          "text": "Thank you for your interest in booking a dental consultation. May I know your age to confirm eligibility?",
+          "intent": "ask_age"
+        },
+        "result": {
+          "delivered": true,
+          "messageId": "message-4",
+          "text": "Thank you for your interest in booking a dental consultation. May I know your age to confirm eligibility?"
+        }
+      },
+      {
+        "id": "event-5",
+        "sequence": 5,
+        "type": "lead",
+        "name": "qualification",
+        "arguments": {},
+        "result": {
+          "kind": "qualification",
+          "text": "I am 25 years old. I would like the earliest weekday afternoon dental consultation.",
+          "age": 25
+        }
+      },
+      {
+        "id": "event-6",
+        "sequence": 6,
+        "type": "tool",
+        "name": "search_available_slots",
+        "arguments": {
+          "service": "dental-consultation",
+          "preference": "afternoon"
+        },
+        "result": {
+          "slots": [
+            {
+              "id": "slot-afternoon-early",
+              "service": "dental-consultation",
+              "start": "2026-11-03T14:00:00+05:30",
+              "booked": false
+            },
+            {
+              "id": "slot-afternoon-late",
+              "service": "dental-consultation",
+              "start": "2026-11-03T16:00:00+05:30",
+              "booked": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "event-7",
+        "sequence": 7,
+        "type": "tool",
+        "name": "send_message",
+        "arguments": {
+          "contactId": "contact-101",
+          "text": "The earliest available weekday afternoon dental consultation is on Tuesday, November 3rd at 2:00 PM. Would you like to book this slot?",
+          "intent": "offer_slots",
+          "slotIds": [
+            "slot-afternoon-early"
+          ]
+        },
+        "result": {
+          "delivered": true,
+          "messageId": "message-7",
+          "text": "The earliest available weekday afternoon dental consultation is on Tuesday, November 3rd at 2:00 PM. Would you like to book this slot?"
+        }
+      },
+      {
+        "id": "event-8",
+        "sequence": 8,
+        "type": "lead",
+        "name": "consent",
+        "arguments": {},
+        "result": {
+          "kind": "consent",
+          "text": "Yes, please book 2026-11-03T14:00:00+05:30 (slot-afternoon-early) for my dental consultation.",
+          "slotId": "slot-afternoon-early"
+        }
+      },
+      {
+        "id": "event-9",
+        "sequence": 9,
+        "type": "tool",
+        "name": "create_appointment",
+        "arguments": {
+          "contactId": "contact-101",
+          "service": "dental-consultation",
+          "slotId": "slot-afternoon-early",
+          "consentEventId": "event-8"
+        },
+        "result": {
+          "appointment": {
+            "id": "appointment-1",
+            "contactId": "contact-101",
+            "slotId": "slot-afternoon-early",
+            "service": "dental-consultation",
+            "consentEventId": "event-8"
+          }
+        }
+      },
+      {
+        "id": "event-10",
+        "sequence": 10,
+        "type": "tool",
+        "name": "add_contact_note",
+        "arguments": {
+          "contactId": "contact-101",
+          "note": "Appointment booked for 2026-11-03T14:00:00+05:30, Asia/Kolkata, slot-afternoon-early. Lead qualified as adult, age 25."
+        },
+        "result": {
+          "noteId": "note-1"
+        }
+      },
+      {
+        "id": "event-11",
+        "sequence": 11,
+        "type": "tool",
+        "name": "update_opportunity",
+        "arguments": {
+          "contactId": "contact-101",
+          "stage": "appointment_booked"
+        },
+        "result": {
+          "stage": "appointment_booked"
+        }
+      },
+      {
+        "id": "event-12",
+        "sequence": 12,
+        "type": "tool",
+        "name": "send_message",
+        "arguments": {
+          "contactId": "contact-101",
+          "text": "Your dental consultation is confirmed for Tuesday, November 3rd at 2:00 PM (Asia/Kolkata timezone). We look forward to seeing you at Demo Dental Clinic!",
+          "intent": "confirm_booking",
+          "appointmentId": "appointment-1"
+        },
+        "result": {
+          "delivered": true,
+          "messageId": "message-12",
+          "text": "Your dental consultation is confirmed for Tuesday, November 3rd at 2:00 PM (Asia/Kolkata timezone). We look forward to seeing you at Demo Dental Clinic!"
+        }
+      }
+    ],
+    "offeredSlotIds": [
+      "slot-afternoon-early"
+    ],
+    "searchedSlotIds": [
+      "slot-afternoon-early",
+      "slot-afternoon-late"
+    ],
+    "pendingReply": null,
+    "scriptStep": "complete"
+  },
+  "grade": {
+    "passed": true,
+    "checks": {
+      "qualified": true,
+      "exactlyOneCorrectBooking": true,
+      "consentBeforeBooking": true,
+      "opportunityUpdated": true,
+      "noteRecorded": true,
+      "confirmationDelivered": true,
+      "noRejectedCrmActions": true,
+      "threeLeadTurns": true
+    }
+  },
+  "runtimeWarnings": {
+    "hermesRejectedMalformedToolCalls": 5,
+    "copilotTokenExchangeDegraded": true
+  },
+  "verification": {
+    "idempotentCreation": true,
+    "multiTurnSession": true,
+    "freshHermesHome": "/Users/saundarya/Documents/ChatGPT/HighLevel/.eval-runtime/verification-2026-10-20T19-31-55.687Z-38c43b2f/home",
+    "passed": true
+  },
+  "error": null,
+  "limitations": [
+    "Single scripted scenario; structured lead intents; human text/payload consistency is manually inspected",
+    "No cancellation-during-inference probe yet",
+    "No live profile reset/reuse probe; each execution uses a new home/process",
+    "Token costs remain unknown until provider billing rates are verified",
+    "Actual served runtime model/provider fields may be empty; requested settings are not independent proof of the served model",
+    "Hermes toolset discovery may omit enabled dynamic MCP entries; successful audited calls prove this CRM connection"
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "recordedAt": "2026-10-25T07:27:38.060Z",
+  "experimentId": "a893ab39-e7f5-477f-b757-7fb5f0d49fa7",
+  "status": "failed",
+  "completed": 6,
+  "planned": 6,
+  "active": null,
+  "runs": [
+    {
+      "runId": "d0d706e8-b8eb-4280-ad39-4da78d8c2062",
+      "taskId": "recovery-age-42",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    },
+    {
+      "runId": "9af22846-d73b-445b-8f97-613be5aaed67",
+      "taskId": "recovery-age-42",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    },
+    {
+      "runId": "5be3567b-3971-4d53-8ba4-42210b6d78fb",
+      "taskId": "unsubscribe-polite",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    },
+    {
+      "runId": "81fec247-0c55-49c5-a517-613f969884a7",
+      "taskId": "unsubscribe-polite",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    },
+    {
+      "runId": "213c5aae-0609-4e59-93e2-386c87b516e4",
+      "taskId": "policy-age-25",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    },
+    {
+      "runId": "cc84dc4b-b391-43e1-9be2-fabacdd4cb6a",
+      "taskId": "policy-age-25",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    }
+  ]
+}

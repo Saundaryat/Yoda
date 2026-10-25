@@ -1,0 +1,10 @@
+{
+  "checkedAt": "2026-10-21T17:08:52.573Z",
+  "runId": "crash-probe-67801e45-ecfc-4d2d-b70f-605b0f5068dc",
+  "gatewayReady": true,
+  "observedModelAction": false,
+  "probeScope": "Host death after real gateway readiness/toolset discovery, before inference; real mid-action cancellation is verified separately",
+  "cleanupMs": 1759,
+  "processGroupGone": true,
+  "auditPreserved": true
+}

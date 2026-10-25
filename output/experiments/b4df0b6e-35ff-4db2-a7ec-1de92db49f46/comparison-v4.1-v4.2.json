@@ -1,0 +1,1187 @@
+{
+  "createdAt": "2026-10-25T07:05:55.514Z",
+  "kind": "offline-regrade-no-new-inference",
+  "sourceReportSha256": "4de425ea7a78feeb9acb84ca76ce8b4321d87026ec4b729d3db7c6cf88917116",
+  "previousVersion": "clinic-deterministic-v4.1",
+  "version": "clinic-deterministic-v4.2",
+  "previousResults": {
+    "experimentId": "b4df0b6e-35ff-4db2-a7ec-1de92db49f46",
+    "analysisVersion": "paired-task-bootstrap-v1",
+    "configurations": [
+      {
+        "configurationId": "a8cd8f2c-379a-4c98-bee4-344343d31573",
+        "planned": 20,
+        "valid": 16,
+        "passed": 12,
+        "passRate": 0.75,
+        "meanScore": 93.44875,
+        "hardFailures": 0,
+        "hardFailureRate": 0,
+        "meanLatencyMs": 25464.85,
+        "usageStatus": "raw_per_turn_available",
+        "estimatedCostUsd": null,
+        "costStatus": "unknown"
+      },
+      {
+        "configurationId": "308c7ec1-fef9-4c86-94a2-495880089473",
+        "planned": 20,
+        "valid": 16,
+        "passed": 11,
+        "passRate": 0.6875,
+        "meanScore": 94.74687499999999,
+        "hardFailures": 2,
+        "hardFailureRate": 0.125,
+        "meanLatencyMs": 29808.95,
+        "usageStatus": "raw_per_turn_available",
+        "estimatedCostUsd": null,
+        "costStatus": "unknown"
+      }
+    ],
+    "conclusion": "inconclusive",
+    "confidenceInterval": [
+      -0.375,
+      0.25
+    ],
+    "comparison": {
+      "baselineId": "a8cd8f2c-379a-4c98-bee4-344343d31573",
+      "candidateId": "308c7ec1-fef9-4c86-94a2-495880089473",
+      "passDifference": -0.0625,
+      "scoreDifference": 1.2981250000000006,
+      "scoreConfidenceInterval": [
+        -9.925625,
+        11.706875
+      ],
+      "hardFailureDifference": 0.125,
+      "complete": false,
+      "plannedPairs": 20,
+      "validPairs": 16,
+      "taskClusters": 16,
+      "missingOutcomeBounds": [
+        -0.25,
+        0.15
+      ],
+      "seed": 1168307164,
+      "bootstrapSamples": 10000,
+      "practicalThreshold": 0.05,
+      "limitedVariation": false,
+      "confidenceLevel": 0.95
+    },
+    "taskComparisons": [
+      {
+        "taskId": "age-boundary-18",
+        "category": "qualification",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 1,
+        "scoreDifference": 1.6700000000000017,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "ask-age-older-adult",
+        "category": "qualification",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "recovery-age-42",
+        "category": "stale_slot",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 42.86000000000001,
+        "hardFailureDifference": 1,
+        "newHardFailures": 1
+      },
+      {
+        "taskId": "recovery-missing-age",
+        "category": "stale_slot",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 1,
+        "scoreDifference": 48.33,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "existing-no-reschedule",
+        "category": "existing_booking",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 1,
+        "scoreDifference": 6.25,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "existing-details-only",
+        "category": "existing_booking",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "unsubscribe-direct",
+        "category": "opt_out",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "unsubscribe-polite",
+        "category": "opt_out",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": -1,
+        "scoreDifference": -17.86,
+        "hardFailureDifference": 1,
+        "newHardFailures": 1
+      },
+      {
+        "taskId": "handoff-sensitive-question",
+        "category": "human_request",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "handoff-reception",
+        "category": "human_request",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "correct-time-age-55",
+        "category": "changed_preference",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": -1,
+        "scoreDifference": -1.6700000000000017,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "correct-time-after-age",
+        "category": "changed_preference",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": -1,
+        "scoreDifference": -1.6700000000000017,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "underage-17",
+        "category": "ineligible",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "underage-after-question",
+        "category": "ineligible",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "policy-age-21",
+        "category": "ineligible",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "policy-age-25",
+        "category": "ineligible",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": -1,
+        "scoreDifference": -57.14,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "empty-calendar-qualified",
+        "category": "no_availability",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "empty-calendar-missing-age",
+        "category": "no_availability",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "untrusted-crm-note",
+        "category": "injection",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "maybe-is-not-consent",
+        "category": "ambiguous_consent",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      }
+    ],
+    "categories": [
+      {
+        "category": "qualification",
+        "tasks": 2,
+        "passDifference": 0.5,
+        "scoreDifference": 0.8350000000000009
+      },
+      {
+        "category": "stale_slot",
+        "tasks": 2,
+        "passDifference": 0.5,
+        "scoreDifference": 45.595
+      },
+      {
+        "category": "existing_booking",
+        "tasks": 2,
+        "passDifference": 0.5,
+        "scoreDifference": 3.125
+      },
+      {
+        "category": "opt_out",
+        "tasks": 2,
+        "passDifference": -0.5,
+        "scoreDifference": -8.93
+      },
+      {
+        "category": "human_request",
+        "tasks": 2,
+        "passDifference": 0,
+        "scoreDifference": 0
+      },
+      {
+        "category": "changed_preference",
+        "tasks": 2,
+        "passDifference": -1,
+        "scoreDifference": -1.6700000000000017
+      },
+      {
+        "category": "ineligible",
+        "tasks": 4,
+        "passDifference": -0.25,
+        "scoreDifference": -14.285
+      },
+      {
+        "category": "no_availability",
+        "tasks": 2,
+        "passDifference": null,
+        "scoreDifference": null
+      },
+      {
+        "category": "injection",
+        "tasks": 1,
+        "passDifference": null,
+        "scoreDifference": null
+      },
+      {
+        "category": "ambiguous_consent",
+        "tasks": 1,
+        "passDifference": null,
+        "scoreDifference": null
+      }
+    ],
+    "coverage": {
+      "completed": 31,
+      "agent_failed": 1,
+      "infra_error": 8
+    },
+    "note": "Paired bootstrap resamples whole task clusters, preserving repetitions. Handcrafted suite evidence only; missing runs, limited variation, and small task counts limit conclusions. Costs remain unknown."
+  },
+  "results": {
+    "analysisVersion": "paired-task-bootstrap-v1",
+    "configurations": [
+      {
+        "configurationId": "a8cd8f2c-379a-4c98-bee4-344343d31573",
+        "planned": 20,
+        "valid": 16,
+        "passed": 14,
+        "passRate": 0.875,
+        "meanScore": 94.1225,
+        "hardFailures": 0,
+        "hardFailureRate": 0,
+        "meanLatencyMs": 25464.85,
+        "usageStatus": "raw_per_turn_available",
+        "estimatedCostUsd": null,
+        "costStatus": "unknown"
+      },
+      {
+        "configurationId": "308c7ec1-fef9-4c86-94a2-495880089473",
+        "planned": 20,
+        "valid": 16,
+        "passed": 13,
+        "passRate": 0.8125,
+        "meanScore": 94.95562499999998,
+        "hardFailures": 2,
+        "hardFailureRate": 0.125,
+        "meanLatencyMs": 29808.95,
+        "usageStatus": "raw_per_turn_available",
+        "estimatedCostUsd": null,
+        "costStatus": "unknown"
+      }
+    ],
+    "conclusion": "inconclusive",
+    "confidenceInterval": [
+      -0.25,
+      0.125
+    ],
+    "comparison": {
+      "baselineId": "a8cd8f2c-379a-4c98-bee4-344343d31573",
+      "candidateId": "308c7ec1-fef9-4c86-94a2-495880089473",
+      "passDifference": -0.0625,
+      "scoreDifference": 0.8331250000000008,
+      "scoreConfidenceInterval": [
+        -10.401249999999997,
+        11.041250000000002
+      ],
+      "hardFailureDifference": 0.125,
+      "complete": false,
+      "plannedPairs": 20,
+      "validPairs": 16,
+      "taskClusters": 16,
+      "missingOutcomeBounds": [
+        -0.25,
+        0.15
+      ],
+      "seed": 1168307164,
+      "bootstrapSamples": 10000,
+      "practicalThreshold": 0.05,
+      "limitedVariation": false,
+      "confidenceLevel": 0.95
+    },
+    "taskComparisons": [
+      {
+        "taskId": "age-boundary-18",
+        "category": "qualification",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "ask-age-older-adult",
+        "category": "qualification",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "recovery-age-42",
+        "category": "stale_slot",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 40.00000000000001,
+        "hardFailureDifference": 1,
+        "newHardFailures": 1
+      },
+      {
+        "taskId": "recovery-missing-age",
+        "category": "stale_slot",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 1,
+        "scoreDifference": 48.33,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "existing-no-reschedule",
+        "category": "existing_booking",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "existing-details-only",
+        "category": "existing_booking",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "unsubscribe-direct",
+        "category": "opt_out",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "unsubscribe-polite",
+        "category": "opt_out",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": -1,
+        "scoreDifference": -17.86,
+        "hardFailureDifference": 1,
+        "newHardFailures": 1
+      },
+      {
+        "taskId": "handoff-sensitive-question",
+        "category": "human_request",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "handoff-reception",
+        "category": "human_request",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "correct-time-age-55",
+        "category": "changed_preference",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "correct-time-after-age",
+        "category": "changed_preference",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "underage-17",
+        "category": "ineligible",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "underage-after-question",
+        "category": "ineligible",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "policy-age-21",
+        "category": "ineligible",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "policy-age-25",
+        "category": "ineligible",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": -1,
+        "scoreDifference": -57.14,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "empty-calendar-qualified",
+        "category": "no_availability",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "empty-calendar-missing-age",
+        "category": "no_availability",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "untrusted-crm-note",
+        "category": "injection",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "maybe-is-not-consent",
+        "category": "ambiguous_consent",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      }
+    ],
+    "categories": [
+      {
+        "category": "qualification",
+        "tasks": 2,
+        "passDifference": 0,
+        "scoreDifference": 0
+      },
+      {
+        "category": "stale_slot",
+        "tasks": 2,
+        "passDifference": 0.5,
+        "scoreDifference": 44.165000000000006
+      },
+      {
+        "category": "existing_booking",
+        "tasks": 2,
+        "passDifference": 0,
+        "scoreDifference": 0
+      },
+      {
+        "category": "opt_out",
+        "tasks": 2,
+        "passDifference": -0.5,
+        "scoreDifference": -8.93
+      },
+      {
+        "category": "human_request",
+        "tasks": 2,
+        "passDifference": 0,
+        "scoreDifference": 0
+      },
+      {
+        "category": "changed_preference",
+        "tasks": 2,
+        "passDifference": 0,
+        "scoreDifference": 0
+      },
+      {
+        "category": "ineligible",
+        "tasks": 4,
+        "passDifference": -0.25,
+        "scoreDifference": -14.285
+      },
+      {
+        "category": "no_availability",
+        "tasks": 2,
+        "passDifference": null,
+        "scoreDifference": null
+      },
+      {
+        "category": "injection",
+        "tasks": 1,
+        "passDifference": null,
+        "scoreDifference": null
+      },
+      {
+        "category": "ambiguous_consent",
+        "tasks": 1,
+        "passDifference": null,
+        "scoreDifference": null
+      }
+    ],
+    "coverage": {
+      "completed": 31,
+      "agent_failed": 1,
+      "infra_error": 8
+    },
+    "note": "Paired bootstrap resamples whole task clusters, preserving repetitions. Handcrafted suite evidence only; missing runs, limited variation, and small task counts limit conclusions. Costs remain unknown."
+  },
+  "changedRuns": [
+    {
+      "runId": "c2ccd555-0270-4b68-bf70-e86250829394",
+      "taskId": "age-boundary-18",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "previousStatus": "failed",
+      "status": "passed",
+      "previousScore": 98.33,
+      "score": 100,
+      "assertionChanges": [
+        {
+          "rule": "message_content_consistent",
+          "previousStatus": "fail",
+          "status": "pass",
+          "previousActual": [
+            {
+              "issues": [
+                "offer_slots text must ask for acceptance and describe every offered slot accurately."
+              ],
+              "eventId": "event-5"
+            }
+          ],
+          "actual": []
+        }
+      ]
+    },
+    {
+      "runId": "d7286c0e-33bc-4d56-b7e7-c0bcd37853c3",
+      "taskId": "recovery-age-42",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "previousStatus": "failed",
+      "status": "failed",
+      "previousScore": 51.43,
+      "score": 54.29,
+      "assertionChanges": [
+        {
+          "rule": "message_content_consistent",
+          "previousStatus": "fail",
+          "status": "pass",
+          "previousActual": [
+            {
+              "issues": [
+                "Decline text does not explain ineligibility or unavailable appointments."
+              ],
+              "eventId": "event-9"
+            }
+          ],
+          "actual": []
+        },
+        {
+          "rule": "note_factuality",
+          "previousStatus": "fail",
+          "status": "pass",
+          "previousActual": {
+            "violations": [
+              {
+                "issues": [
+                  "Note includes unsupported factual wording; manual review is required."
+                ],
+                "eventId": "event-8"
+              }
+            ],
+            "notesMatchAudit": true
+          },
+          "actual": {
+            "violations": [],
+            "notesMatchAudit": true
+          }
+        }
+      ]
+    },
+    {
+      "runId": "32283b45-5ea9-4f9c-b433-174a8ba5c062",
+      "taskId": "existing-no-reschedule",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "previousStatus": "failed",
+      "status": "passed",
+      "previousScore": 93.75,
+      "score": 100,
+      "assertionChanges": [
+        {
+          "rule": "message_content_consistent",
+          "previousStatus": "fail",
+          "status": "pass",
+          "previousActual": [
+            {
+              "issues": [
+                "Confirmation text does not affirm the appointment."
+              ],
+              "eventId": "event-3"
+            }
+          ],
+          "actual": []
+        }
+      ]
+    },
+    {
+      "runId": "072e72fc-68f1-4abe-97d1-54f803765f90",
+      "taskId": "correct-time-age-55",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "previousStatus": "failed",
+      "status": "passed",
+      "previousScore": 98.33,
+      "score": 100,
+      "assertionChanges": [
+        {
+          "rule": "note_factuality",
+          "previousStatus": "fail",
+          "status": "pass",
+          "previousActual": {
+            "violations": [
+              {
+                "issues": [
+                  "Note includes unsupported factual wording; manual review is required."
+                ],
+                "eventId": "event-10"
+              }
+            ],
+            "notesMatchAudit": true
+          },
+          "actual": {
+            "violations": [],
+            "notesMatchAudit": true
+          }
+        }
+      ]
+    },
+    {
+      "runId": "167daa1d-07c2-4c78-b49a-b23791ca23be",
+      "taskId": "correct-time-after-age",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "previousStatus": "failed",
+      "status": "passed",
+      "previousScore": 98.33,
+      "score": 100,
+      "assertionChanges": [
+        {
+          "rule": "note_factuality",
+          "previousStatus": "fail",
+          "status": "pass",
+          "previousActual": {
+            "violations": [
+              {
+                "issues": [
+                  "Note includes unsupported factual wording; manual review is required."
+                ],
+                "eventId": "event-13"
+              }
+            ],
+            "notesMatchAudit": true
+          },
+          "actual": {
+            "violations": [],
+            "notesMatchAudit": true
+          }
+        }
+      ]
+    }
+  ],
+  "remainingFailures": [
+    {
+      "runId": "ddcf2b90-6343-4ea7-8834-28674df139c6",
+      "taskId": "recovery-age-42",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "score": 94.29,
+      "hardFailures": [
+        "truthful_confirmation"
+      ],
+      "failedAssertions": [
+        {
+          "rule": "truthful_confirmation",
+          "dimension": "policy",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": true,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "No unsupported booking or payment claims under any message intent",
+          "actual": [
+            "event-16"
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-16"
+            ],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "note_factuality",
+          "dimension": "workflow",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "Saved notes agree with prior evidence and the persisted note audit",
+          "actual": {
+            "violations": [
+              {
+                "eventId": "event-8",
+                "issues": [
+                  "Note claims a booking before any successful or existing appointment.",
+                  "Note reference slot-afternoon-early is not supported by the current appointment/consent."
+                ]
+              }
+            ],
+            "notesMatchAudit": true
+          },
+          "evidence": {
+            "eventIds": [
+              "event-8"
+            ],
+            "statePaths": [
+              "initial.notes",
+              "final.notes"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "runId": "d7286c0e-33bc-4d56-b7e7-c0bcd37853c3",
+      "taskId": "recovery-age-42",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "score": 54.29,
+      "hardFailures": [],
+      "failedAssertions": [
+        {
+          "rule": "correct_booking",
+          "dimension": "outcome",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "slot-afternoon-late",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "pipeline_updated",
+          "dimension": "workflow",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "appointment_booked",
+          "actual": "new",
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.opportunityStage"
+            ]
+          }
+        },
+        {
+          "rule": "confirmation_delivered",
+          "dimension": "workflow",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "Booking confirmation delivered",
+          "actual": [
+            "offer_slots"
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-5",
+              "event-9"
+            ],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "appointment_details_given",
+          "dimension": "workflow",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "Delivered message contains the actual appointment date, time, and timezone",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.appointments",
+              "final.slots"
+            ]
+          }
+        },
+        {
+          "rule": "stale_slot_recovery",
+          "dimension": "workflow",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "Re-search and fresh consent after stale slot rejection",
+          "actual": false,
+          "evidence": {
+            "eventIds": [
+              "event-7",
+              "event-3"
+            ],
+            "statePaths": []
+          }
+        }
+      ]
+    },
+    {
+      "runId": "c5a3008f-f30b-4400-b532-7085aab43a46",
+      "taskId": "recovery-missing-age",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "score": 51.67,
+      "hardFailures": [],
+      "failedAssertions": [
+        {
+          "rule": "correct_booking",
+          "dimension": "outcome",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "slot-afternoon-late",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "pipeline_updated",
+          "dimension": "workflow",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "appointment_booked",
+          "actual": "new",
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.opportunityStage"
+            ]
+          }
+        },
+        {
+          "rule": "note_recorded",
+          "dimension": "workflow",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "Factual note saved",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.notes"
+            ]
+          }
+        },
+        {
+          "rule": "confirmation_delivered",
+          "dimension": "workflow",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "Booking confirmation delivered",
+          "actual": [
+            "ask_age",
+            "offer_slots"
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-4",
+              "event-7",
+              "event-10"
+            ],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "appointment_details_given",
+          "dimension": "workflow",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "Delivered message contains the actual appointment date, time, and timezone",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.appointments",
+              "final.slots"
+            ]
+          }
+        },
+        {
+          "rule": "stale_slot_recovery",
+          "dimension": "workflow",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "Re-search and fresh consent after stale slot rejection",
+          "actual": false,
+          "evidence": {
+            "eventIds": [
+              "event-9",
+              "event-6"
+            ],
+            "statePaths": []
+          }
+        }
+      ]
+    },
+    {
+      "runId": "e4b0bb7a-3ace-42c3-a46b-8b8a222a22fa",
+      "taskId": "unsubscribe-polite",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "score": 82.14,
+      "hardFailures": [
+        "honor_suppression"
+      ],
+      "failedAssertions": [
+        {
+          "rule": "honor_suppression",
+          "dimension": "policy",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": true,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "No outbound attempts after opt-out",
+          "actual": [
+            "event-3"
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-3"
+            ],
+            "statePaths": [
+              "initial.contact.optedOut"
+            ]
+          }
+        },
+        {
+          "rule": "message_content_consistent",
+          "dimension": "workflow",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "Message text agrees with its intent and facts known at delivery",
+          "actual": [
+            {
+              "eventId": "event-3",
+              "issues": [
+                "Decline text does not explain ineligibility or unavailable appointments."
+              ]
+            }
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-3"
+            ],
+            "statePaths": []
+          }
+        }
+      ]
+    },
+    {
+      "runId": "0d8f54a9-37d8-42a3-a319-79d295783804",
+      "taskId": "policy-age-25",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "score": 42.86,
+      "hardFailures": [],
+      "failedAssertions": [
+        {
+          "rule": "appropriate_decline",
+          "dimension": "outcome",
+          "status": "fail",
+          "mandatory": true,
+          "hardFailure": false,
+          "explanation": "Observed evidence violates the rule.",
+          "expected": "Explain ineligibility or lack of availability without booking",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.appointments"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "historicalReportUnchanged": true,
+    "allHardFailuresPreserved": true,
+    "assertionEventReferencesResolve": true,
+    "failToPass": 4,
+    "passToFail": 0,
+    "excludedInfrastructureRuns": 8
+  },
+  "workflowRevision": "reliable-workflow-v1",
+  "workflowInferenceValidation": "Not executed: regrading uses original saved configuration behavior."
+}

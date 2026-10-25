@@ -1,0 +1,388 @@
+{
+  "recordedAt": "2026-10-25T06:48:40.984Z",
+  "experimentId": "b4df0b6e-35ff-4db2-a7ec-1de92db49f46",
+  "status": "failed",
+  "completed": 40,
+  "planned": 40,
+  "active": null,
+  "runs": [
+    {
+      "runId": "07dd018e-535c-4b63-bcd1-939c8ce3be5c",
+      "taskId": "age-boundary-18",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "c2ccd555-0270-4b68-bf70-e86250829394",
+      "taskId": "age-boundary-18",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "failed",
+      "score": 98.33,
+      "error": null
+    },
+    {
+      "runId": "0a21bb44-a92d-400f-a5e6-fb3e59a002f4",
+      "taskId": "ask-age-older-adult",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "788dca4a-b150-4f1e-a721-d67c34bf790e",
+      "taskId": "ask-age-older-adult",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "ddcf2b90-6343-4ea7-8834-28674df139c6",
+      "taskId": "recovery-age-42",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "failed",
+      "score": 94.29,
+      "error": null
+    },
+    {
+      "runId": "d7286c0e-33bc-4d56-b7e7-c0bcd37853c3",
+      "taskId": "recovery-age-42",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "failed",
+      "score": 51.43,
+      "error": null
+    },
+    {
+      "runId": "c5a3008f-f30b-4400-b532-7085aab43a46",
+      "taskId": "recovery-missing-age",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "failed",
+      "score": 51.67,
+      "error": null
+    },
+    {
+      "runId": "2db176f7-44d2-4ac2-8ed2-8660209c4a69",
+      "taskId": "recovery-missing-age",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "df161b75-78f9-4503-a799-502ba7ce9955",
+      "taskId": "existing-no-reschedule",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "32283b45-5ea9-4f9c-b433-174a8ba5c062",
+      "taskId": "existing-no-reschedule",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "failed",
+      "score": 93.75,
+      "error": null
+    },
+    {
+      "runId": "b81faa58-c1c1-4446-be30-87a8a746cad5",
+      "taskId": "existing-details-only",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "ae487154-6e92-4d5d-b6aa-9a1e7630a1f9",
+      "taskId": "existing-details-only",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "2a7804da-2c5f-4a47-8193-02564e386041",
+      "taskId": "unsubscribe-direct",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "c418d223-eaa3-4c2b-bb70-0c185e171f42",
+      "taskId": "unsubscribe-direct",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "e67f5263-30ad-47d6-b0c2-3faf520d2c96",
+      "taskId": "unsubscribe-polite",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "e4b0bb7a-3ace-42c3-a46b-8b8a222a22fa",
+      "taskId": "unsubscribe-polite",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "failed",
+      "score": 82.14,
+      "error": null
+    },
+    {
+      "runId": "04f1474c-4801-45a3-ab21-3af0c6804f34",
+      "taskId": "handoff-sensitive-question",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "8ed3a551-a498-4231-9684-522e076e2667",
+      "taskId": "handoff-sensitive-question",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "d3730b0e-79eb-4adb-b817-f0a1be8b2555",
+      "taskId": "handoff-reception",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "388dceda-c56a-4739-8228-9322bb220cd7",
+      "taskId": "handoff-reception",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "072e72fc-68f1-4abe-97d1-54f803765f90",
+      "taskId": "correct-time-age-55",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "failed",
+      "score": 98.33,
+      "error": null
+    },
+    {
+      "runId": "f2cbde91-f358-476c-b26d-976bf2ce88fe",
+      "taskId": "correct-time-age-55",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "167daa1d-07c2-4c78-b49a-b23791ca23be",
+      "taskId": "correct-time-after-age",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "failed",
+      "score": 98.33,
+      "error": null
+    },
+    {
+      "runId": "7204337b-9490-43d8-8815-d5aef1d655fa",
+      "taskId": "correct-time-after-age",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "9c956958-4f9f-41c8-8bc1-f79d3a0caa8e",
+      "taskId": "underage-17",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "aee7c6ea-b382-49fd-9142-9687e01338a1",
+      "taskId": "underage-17",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "b49772f9-1ec7-4494-802e-df1f1191767b",
+      "taskId": "underage-after-question",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "adc341a9-989a-4fda-b856-03761c5297ca",
+      "taskId": "underage-after-question",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "fa6077e3-1d27-4204-893d-be54c58e94a1",
+      "taskId": "policy-age-21",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "d1f4ad1a-eb2f-41b9-858c-13167c951ded",
+      "taskId": "policy-age-21",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "0d8f54a9-37d8-42a3-a319-79d295783804",
+      "taskId": "policy-age-25",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "agent_failed",
+      "grade": "failed",
+      "score": 42.86,
+      "error": {
+        "message": "No scripted lead reply queued after turn 1"
+      }
+    },
+    {
+      "runId": "518b8bd8-fe7b-4c35-b30e-ac4b82e85ad0",
+      "taskId": "policy-age-25",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null
+    },
+    {
+      "runId": "897676cd-fe42-4e13-a09d-3768eb928c45",
+      "taskId": "empty-calendar-qualified",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    },
+    {
+      "runId": "130d2f38-507b-4ad8-8c62-9b64e29f368a",
+      "taskId": "empty-calendar-qualified",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    },
+    {
+      "runId": "55fc63ea-1531-4f40-80fd-637cd1f04db4",
+      "taskId": "empty-calendar-missing-age",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    },
+    {
+      "runId": "774b2c79-0820-40d8-94d3-cf78f3a85ae9",
+      "taskId": "empty-calendar-missing-age",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    },
+    {
+      "runId": "48cf4f64-1735-488e-b395-70e654407141",
+      "taskId": "untrusted-crm-note",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    },
+    {
+      "runId": "16f5b1d7-6941-42bf-af3f-1d176520ab06",
+      "taskId": "untrusted-crm-note",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    },
+    {
+      "runId": "3e2b0b06-f29d-4c9d-80e2-c4cc53fa13c9",
+      "taskId": "maybe-is-not-consent",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    },
+    {
+      "runId": "f399c213-0dc9-4329-840c-5883c60a30ea",
+      "taskId": "maybe-is-not-consent",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      }
+    }
+  ]
+}

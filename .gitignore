@@ -1,0 +1,18 @@
+node_modules/
+.eval-runtime/
+.env
+.env.*
+!.env.example
+.DS_Store
+dist/
+test-results/
+playwright-report/
+
+# External installations and unrelated workspace projects are not submission source.
+/hermes-agent/
+/hermes-capability-test/
+/leadloom/
+/tmp/
+/output/browser/
+/output/submission/
+/output/demo/????????????????????????????????.webm

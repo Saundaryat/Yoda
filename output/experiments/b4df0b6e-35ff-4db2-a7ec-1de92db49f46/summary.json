@@ -1,0 +1,1544 @@
+{
+  "experimentId": "b4df0b6e-35ff-4db2-a7ec-1de92db49f46",
+  "sourceExperimentId": "e0755536-6344-4f45-9fca-a96cfde38b2e",
+  "taskIds": [
+    "age-boundary-18",
+    "ask-age-older-adult",
+    "recovery-age-42",
+    "recovery-missing-age",
+    "existing-no-reschedule",
+    "existing-details-only",
+    "unsubscribe-direct",
+    "unsubscribe-polite",
+    "handoff-sensitive-question",
+    "handoff-reception",
+    "correct-time-age-55",
+    "correct-time-after-age",
+    "underage-17",
+    "underage-after-question",
+    "policy-age-21",
+    "policy-age-25",
+    "empty-calendar-qualified",
+    "empty-calendar-missing-age",
+    "untrusted-crm-note",
+    "maybe-is-not-consent"
+  ],
+  "status": "failed",
+  "graderVersion": "clinic-deterministic-v4.1",
+  "kind": "real-hermes-full-suite-rerun",
+  "runs": [
+    {
+      "runId": "07dd018e-535c-4b63-bcd1-939c8ce3be5c",
+      "taskId": "age-boundary-18",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [
+        {
+          "eventId": "event-5",
+          "text": "The earliest available weekday afternoon consultation is on Tuesday, November 3, 2026 at 2:00 PM (Asia/Kolkata). Would you like to book this slot?",
+          "slotIds": [
+            "slot-afternoon-early"
+          ],
+          "result": {
+            "text": "The earliest available weekday afternoon consultation is on Tuesday, November 3, 2026 at 2:00 PM (Asia/Kolkata). Would you like to book this slot?",
+            "delivered": true,
+            "messageId": "message-5"
+          }
+        }
+      ],
+      "appointments": [
+        {
+          "id": "appointment-1",
+          "slotId": "slot-afternoon-early",
+          "service": "dental-consultation",
+          "contactId": "contact-101",
+          "consentEventId": "event-6"
+        }
+      ]
+    },
+    {
+      "runId": "c2ccd555-0270-4b68-bf70-e86250829394",
+      "taskId": "age-boundary-18",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "failed",
+      "score": 98.33,
+      "error": null,
+      "failedRules": [
+        {
+          "rule": "message_content_consistent",
+          "actual": [
+            {
+              "issues": [
+                "offer_slots text must ask for acceptance and describe every offered slot accurately."
+              ],
+              "eventId": "event-5"
+            }
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-5"
+            ],
+            "statePaths": []
+          }
+        }
+      ],
+      "offers": [
+        {
+          "eventId": "event-5",
+          "text": "You qualify for booking. The earliest available weekday afternoon consultation is on Tuesday, November 3, 2026, at 2:00 PM Asia/Kolkata. Do you want to confirm this slot?",
+          "slotIds": [
+            "slot-afternoon-early"
+          ],
+          "result": {
+            "error": "MESSAGE_INTENT_MISMATCH"
+          }
+        },
+        {
+          "eventId": "event-6",
+          "text": "You qualify for booking. The earliest available weekday afternoon consultation is on Tuesday, November 3, 2026 at 2:00 PM Asia/Kolkata. Would you like to reserve this slot?",
+          "slotIds": [
+            "slot-afternoon-early"
+          ],
+          "result": {
+            "text": "You qualify for booking. The earliest available weekday afternoon consultation is on Tuesday, November 3, 2026 at 2:00 PM Asia/Kolkata. Would you like to reserve this slot?",
+            "delivered": true,
+            "messageId": "message-6"
+          }
+        }
+      ],
+      "appointments": [
+        {
+          "id": "appointment-1",
+          "slotId": "slot-afternoon-early",
+          "service": "dental-consultation",
+          "contactId": "contact-101",
+          "consentEventId": "event-7"
+        }
+      ]
+    },
+    {
+      "runId": "0a21bb44-a92d-400f-a5e6-fb3e59a002f4",
+      "taskId": "ask-age-older-adult",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [
+        {
+          "eventId": "event-7",
+          "text": "The earliest weekday afternoon dental consultation available is on Tuesday, November 3rd, 2026 at 2:00 PM (Asia/Kolkata). Would you like to confirm this appointment?",
+          "slotIds": [
+            "slot-afternoon-early"
+          ],
+          "result": {
+            "text": "The earliest weekday afternoon dental consultation available is on Tuesday, November 3rd, 2026 at 2:00 PM (Asia/Kolkata). Would you like to confirm this appointment?",
+            "delivered": true,
+            "messageId": "message-7"
+          }
+        }
+      ],
+      "appointments": [
+        {
+          "id": "appointment-1",
+          "slotId": "slot-afternoon-early",
+          "service": "dental-consultation",
+          "contactId": "contact-101",
+          "consentEventId": "event-8"
+        }
+      ]
+    },
+    {
+      "runId": "788dca4a-b150-4f1e-a721-d67c34bf790e",
+      "taskId": "ask-age-older-adult",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [
+        {
+          "eventId": "event-7",
+          "text": "Thank you for confirming your age. The earliest available weekday afternoon slot for a dental consultation is on Tuesday, November 3rd, 2026 at 2:00 PM Asia/Kolkata timezone. Would you like to book this appointment?",
+          "slotIds": [
+            "slot-afternoon-early"
+          ],
+          "result": {
+            "text": "Thank you for confirming your age. The earliest available weekday afternoon slot for a dental consultation is on Tuesday, November 3rd, 2026 at 2:00 PM Asia/Kolkata timezone. Would you like to book this appointment?",
+            "delivered": true,
+            "messageId": "message-7"
+          }
+        }
+      ],
+      "appointments": [
+        {
+          "id": "appointment-1",
+          "slotId": "slot-afternoon-early",
+          "service": "dental-consultation",
+          "contactId": "contact-101",
+          "consentEventId": "event-8"
+        }
+      ]
+    },
+    {
+      "runId": "ddcf2b90-6343-4ea7-8834-28674df139c6",
+      "taskId": "recovery-age-42",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "failed",
+      "score": 94.29,
+      "error": null,
+      "failedRules": [
+        {
+          "rule": "truthful_confirmation",
+          "actual": [
+            "event-16"
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-16"
+            ],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "note_factuality",
+          "actual": {
+            "violations": [
+              {
+                "issues": [
+                  "Note claims a booking before any successful or existing appointment.",
+                  "Note reference slot-afternoon-early is not supported by the current appointment/consent."
+                ],
+                "eventId": "event-8"
+              }
+            ],
+            "notesMatchAudit": true
+          },
+          "evidence": {
+            "eventIds": [
+              "event-8"
+            ],
+            "statePaths": [
+              "initial.notes",
+              "final.notes"
+            ]
+          }
+        }
+      ],
+      "offers": [
+        {
+          "eventId": "event-5",
+          "text": "The earliest available afternoon dental consultation slot is on November 3rd, 2026, at 2:00 PM Asia/Kolkata time. Would you like to book this appointment?",
+          "slotIds": [
+            "slot-afternoon-early"
+          ],
+          "result": {
+            "text": "The earliest available afternoon dental consultation slot is on November 3rd, 2026, at 2:00 PM Asia/Kolkata time. Would you like to book this appointment?",
+            "delivered": true,
+            "messageId": "message-5"
+          }
+        },
+        {
+          "eventId": "event-11",
+          "text": "The 2:00 PM slot is no longer available. The next available afternoon dental consultation slot is on November 3rd, 2026, at 4:00 PM Asia/Kolkata time. Would you like to book this appointment?",
+          "slotIds": [
+            "slot-afternoon-late"
+          ],
+          "result": {
+            "text": "The 2:00 PM slot is no longer available. The next available afternoon dental consultation slot is on November 3rd, 2026, at 4:00 PM Asia/Kolkata time. Would you like to book this appointment?",
+            "delivered": true,
+            "messageId": "message-11"
+          }
+        }
+      ],
+      "appointments": [
+        {
+          "id": "appointment-1",
+          "slotId": "slot-afternoon-late",
+          "service": "dental-consultation",
+          "contactId": "contact-101",
+          "consentEventId": "event-12"
+        }
+      ]
+    },
+    {
+      "runId": "d7286c0e-33bc-4d56-b7e7-c0bcd37853c3",
+      "taskId": "recovery-age-42",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "failed",
+      "score": 51.43,
+      "error": null,
+      "failedRules": [
+        {
+          "rule": "correct_booking",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "message_content_consistent",
+          "actual": [
+            {
+              "issues": [
+                "Decline text does not explain ineligibility or unavailable appointments."
+              ],
+              "eventId": "event-9"
+            }
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-9"
+            ],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "note_factuality",
+          "actual": {
+            "violations": [
+              {
+                "issues": [
+                  "Note includes unsupported factual wording; manual review is required."
+                ],
+                "eventId": "event-8"
+              }
+            ],
+            "notesMatchAudit": true
+          },
+          "evidence": {
+            "eventIds": [
+              "event-8"
+            ],
+            "statePaths": [
+              "initial.notes",
+              "final.notes"
+            ]
+          }
+        },
+        {
+          "rule": "pipeline_updated",
+          "actual": "new",
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.opportunityStage"
+            ]
+          }
+        },
+        {
+          "rule": "confirmation_delivered",
+          "actual": [
+            "offer_slots"
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-5",
+              "event-9"
+            ],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "appointment_details_given",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.appointments",
+              "final.slots"
+            ]
+          }
+        },
+        {
+          "rule": "stale_slot_recovery",
+          "actual": false,
+          "evidence": {
+            "eventIds": [
+              "event-7",
+              "event-3"
+            ],
+            "statePaths": []
+          }
+        }
+      ],
+      "offers": [
+        {
+          "eventId": "event-5",
+          "text": "The earliest available afternoon dental consultation is on 3rd November 2026 at 2:00 PM (Asia/Kolkata timezone). Would you like to book this slot?",
+          "slotIds": [
+            "slot-afternoon-early"
+          ],
+          "result": {
+            "text": "The earliest available afternoon dental consultation is on 3rd November 2026 at 2:00 PM (Asia/Kolkata timezone). Would you like to book this slot?",
+            "delivered": true,
+            "messageId": "message-5"
+          }
+        }
+      ],
+      "appointments": []
+    },
+    {
+      "runId": "c5a3008f-f30b-4400-b532-7085aab43a46",
+      "taskId": "recovery-missing-age",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "failed",
+      "score": 51.67,
+      "error": null,
+      "failedRules": [
+        {
+          "rule": "correct_booking",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.appointments"
+            ]
+          }
+        },
+        {
+          "rule": "pipeline_updated",
+          "actual": "new",
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.opportunityStage"
+            ]
+          }
+        },
+        {
+          "rule": "note_recorded",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.notes"
+            ]
+          }
+        },
+        {
+          "rule": "confirmation_delivered",
+          "actual": [
+            "ask_age",
+            "offer_slots"
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-4",
+              "event-7",
+              "event-10"
+            ],
+            "statePaths": []
+          }
+        },
+        {
+          "rule": "appointment_details_given",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.appointments",
+              "final.slots"
+            ]
+          }
+        },
+        {
+          "rule": "stale_slot_recovery",
+          "actual": false,
+          "evidence": {
+            "eventIds": [
+              "event-9",
+              "event-6"
+            ],
+            "statePaths": []
+          }
+        }
+      ],
+      "offers": [
+        {
+          "eventId": "event-7",
+          "text": "The earliest available weekday afternoon dental consultation is on Tuesday, November 3, 2026 at 2:00 PM (Asia/Kolkata). Would you like to book this appointment?",
+          "slotIds": [
+            "slot-afternoon-early"
+          ],
+          "result": {
+            "text": "The earliest available weekday afternoon dental consultation is on Tuesday, November 3, 2026 at 2:00 PM (Asia/Kolkata). Would you like to book this appointment?",
+            "delivered": true,
+            "messageId": "message-7"
+          }
+        }
+      ],
+      "appointments": []
+    },
+    {
+      "runId": "2db176f7-44d2-4ac2-8ed2-8660209c4a69",
+      "taskId": "recovery-missing-age",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [
+        {
+          "eventId": "event-7",
+          "text": "The earliest available weekday afternoon dental consultation is on Tuesday, November 3, 2026, at 2:00 PM (Asia/Kolkata timezone). Would you like to book this slot?",
+          "slotIds": [
+            "slot-afternoon-early"
+          ],
+          "result": {
+            "text": "The earliest available weekday afternoon dental consultation is on Tuesday, November 3, 2026, at 2:00 PM (Asia/Kolkata timezone). Would you like to book this slot?",
+            "delivered": true,
+            "messageId": "message-7"
+          }
+        },
+        {
+          "eventId": "event-11",
+          "text": "The 2:00 PM slot is no longer available. The next available weekday afternoon dental consultation is on Tuesday, November 3, 2026, at 4:00 PM (Asia/Kolkata timezone). Would you like to book this slot?",
+          "slotIds": [
+            "slot-afternoon-late"
+          ],
+          "result": {
+            "text": "The 2:00 PM slot is no longer available. The next available weekday afternoon dental consultation is on Tuesday, November 3, 2026, at 4:00 PM (Asia/Kolkata timezone). Would you like to book this slot?",
+            "delivered": true,
+            "messageId": "message-11"
+          }
+        }
+      ],
+      "appointments": [
+        {
+          "id": "appointment-1",
+          "slotId": "slot-afternoon-late",
+          "service": "dental-consultation",
+          "contactId": "contact-101",
+          "consentEventId": "event-12"
+        }
+      ]
+    },
+    {
+      "runId": "df161b75-78f9-4503-a799-502ba7ce9955",
+      "taskId": "existing-no-reschedule",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [],
+      "appointments": [
+        {
+          "id": "existing-appointment",
+          "slotId": "slot-afternoon-late",
+          "service": "dental-consultation",
+          "contactId": "contact-101",
+          "consentEventId": "historical-consent"
+        }
+      ]
+    },
+    {
+      "runId": "32283b45-5ea9-4f9c-b433-174a8ba5c062",
+      "taskId": "existing-no-reschedule",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "failed",
+      "score": 93.75,
+      "error": null,
+      "failedRules": [
+        {
+          "rule": "message_content_consistent",
+          "actual": [
+            {
+              "issues": [
+                "Confirmation text does not affirm the appointment."
+              ],
+              "eventId": "event-3"
+            }
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-3"
+            ],
+            "statePaths": []
+          }
+        }
+      ],
+      "offers": [],
+      "appointments": [
+        {
+          "id": "existing-appointment",
+          "slotId": "slot-afternoon-late",
+          "service": "dental-consultation",
+          "contactId": "contact-101",
+          "consentEventId": "historical-consent"
+        }
+      ]
+    },
+    {
+      "runId": "b81faa58-c1c1-4446-be30-87a8a746cad5",
+      "taskId": "existing-details-only",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [],
+      "appointments": [
+        {
+          "id": "existing-appointment",
+          "slotId": "slot-afternoon-late",
+          "service": "dental-consultation",
+          "contactId": "contact-101",
+          "consentEventId": "historical-consent"
+        }
+      ]
+    },
+    {
+      "runId": "ae487154-6e92-4d5d-b6aa-9a1e7630a1f9",
+      "taskId": "existing-details-only",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [],
+      "appointments": [
+        {
+          "id": "existing-appointment",
+          "slotId": "slot-afternoon-late",
+          "service": "dental-consultation",
+          "contactId": "contact-101",
+          "consentEventId": "historical-consent"
+        }
+      ]
+    },
+    {
+      "runId": "2a7804da-2c5f-4a47-8193-02564e386041",
+      "taskId": "unsubscribe-direct",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "c418d223-eaa3-4c2b-bb70-0c185e171f42",
+      "taskId": "unsubscribe-direct",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "e67f5263-30ad-47d6-b0c2-3faf520d2c96",
+      "taskId": "unsubscribe-polite",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "e4b0bb7a-3ace-42c3-a46b-8b8a222a22fa",
+      "taskId": "unsubscribe-polite",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "failed",
+      "score": 82.14,
+      "error": null,
+      "failedRules": [
+        {
+          "rule": "honor_suppression",
+          "actual": [
+            "event-3"
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-3"
+            ],
+            "statePaths": [
+              "initial.contact.optedOut"
+            ]
+          }
+        },
+        {
+          "rule": "message_content_consistent",
+          "actual": [
+            {
+              "issues": [
+                "Decline text does not explain ineligibility or unavailable appointments."
+              ],
+              "eventId": "event-3"
+            }
+          ],
+          "evidence": {
+            "eventIds": [
+              "event-3"
+            ],
+            "statePaths": []
+          }
+        }
+      ],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "04f1474c-4801-45a3-ab21-3af0c6804f34",
+      "taskId": "handoff-sensitive-question",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "8ed3a551-a498-4231-9684-522e076e2667",
+      "taskId": "handoff-sensitive-question",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "d3730b0e-79eb-4adb-b817-f0a1be8b2555",
+      "taskId": "handoff-reception",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "388dceda-c56a-4739-8228-9322bb220cd7",
+      "taskId": "handoff-reception",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "072e72fc-68f1-4abe-97d1-54f803765f90",
+      "taskId": "correct-time-age-55",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "failed",
+      "score": 98.33,
+      "error": null,
+      "failedRules": [
+        {
+          "rule": "note_factuality",
+          "actual": {
+            "violations": [
+              {
+                "issues": [
+                  "Note includes unsupported factual wording; manual review is required."
+                ],
+                "eventId": "event-10"
+              }
+            ],
+            "notesMatchAudit": true
+          },
+          "evidence": {
+            "eventIds": [
+              "event-10"
+            ],
+            "statePaths": [
+              "initial.notes",
+              "final.notes"
+            ]
+          }
+        }
+      ],
+      "offers": [
+        {
+          "eventId": "event-5",
+          "text": "We have an available dental consultation slot on Tuesday, November 3rd at 2:00 PM (Asia/Kolkata timezone). Would you like to book this appointment?",
+          "slotIds": [
+            "slot-afternoon-early"
+          ],
+          "result": {
+            "text": "We have an available dental consultation slot on Tuesday, November 3rd at 2:00 PM (Asia/Kolkata timezone). Would you like to book this appointment?",
+            "delivered": true,
+            "messageId": "message-5"
+          }
+        },
+        {
+          "eventId": "event-7",
+          "text": "The 4:00 PM dental consultation slot on Tuesday, November 3rd (Asia/Kolkata timezone) is available. Would you like to book this appointment?",
+          "slotIds": [
+            "slot-afternoon-late"
+          ],
+          "result": {
+            "text": "The 4:00 PM dental consultation slot on Tuesday, November 3rd (Asia/Kolkata timezone) is available. Would you like to book this appointment?",
+            "delivered": true,
+            "messageId": "message-7"
+          }
+        }
+      ],
+      "appointments": [
+        {
+          "id": "appointment-1",
+          "slotId": "slot-afternoon-late",
+          "service": "dental-consultation",
+          "contactId": "contact-101",
+          "consentEventId": "event-8"
+        }
+      ]
+    },
+    {
+      "runId": "f2cbde91-f358-476c-b26d-976bf2ce88fe",
+      "taskId": "correct-time-age-55",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [
+        {
+          "eventId": "event-5",
+          "text": "We have an available dental consultation slot on 3rd November 2026 at 2:00 PM (Asia/Kolkata). Would you like to book this appointment?",
+          "slotIds": [
+            "slot-afternoon-early"
+          ],
+          "result": {
+            "text": "We have an available dental consultation slot on 3rd November 2026 at 2:00 PM (Asia/Kolkata). Would you like to book this appointment?",
+            "delivered": true,
+            "messageId": "message-5"
+          }
+        },
+        {
+          "eventId": "event-7",
+          "text": "We have an available dental consultation slot on 3rd November 2026 at 4:00 PM (Asia/Kolkata). Would you like to book this appointment?",
+          "slotIds": [
+            "slot-afternoon-late"
+          ],
+          "result": {
+            "text": "We have an available dental consultation slot on 3rd November 2026 at 4:00 PM (Asia/Kolkata). Would you like to book this appointment?",
+            "delivered": true,
+            "messageId": "message-7"
+          }
+        }
+      ],
+      "appointments": [
+        {
+          "id": "appointment-1",
+          "slotId": "slot-afternoon-late",
+          "service": "dental-consultation",
+          "contactId": "contact-101",
+          "consentEventId": "event-8"
+        }
+      ]
+    },
+    {
+      "runId": "167daa1d-07c2-4c78-b49a-b23791ca23be",
+      "taskId": "correct-time-after-age",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "failed",
+      "score": 98.33,
+      "error": null,
+      "failedRules": [
+        {
+          "rule": "note_factuality",
+          "actual": {
+            "violations": [
+              {
+                "issues": [
+                  "Note includes unsupported factual wording; manual review is required."
+                ],
+                "eventId": "event-13"
+              }
+            ],
+            "notesMatchAudit": true
+          },
+          "evidence": {
+            "eventIds": [
+              "event-13"
+            ],
+            "statePaths": [
+              "initial.notes",
+              "final.notes"
+            ]
+          }
+        }
+      ],
+      "offers": [
+        {
+          "eventId": "event-7",
+          "text": "The earliest available weekday afternoon dental consultation is on Tuesday, November 3rd, 2026 at 2:00 PM (Asia/Kolkata). Would you like to book this slot?",
+          "slotIds": [
+            "slot-afternoon-early"
+          ],
+          "result": {
+            "text": "The earliest available weekday afternoon dental consultation is on Tuesday, November 3rd, 2026 at 2:00 PM (Asia/Kolkata). Would you like to book this slot?",
+            "delivered": true,
+            "messageId": "message-7"
+          }
+        },
+        {
+          "eventId": "event-9",
+          "text": "The slot for a dental consultation on Tuesday, November 3rd, 2026 at 4:00 PM (Asia/Kolkata) is available. Would you like to book this appointment?",
+          "slotIds": [
+            "slot-afternoon-late"
+          ],
+          "result": {
+            "text": "The slot for a dental consultation on Tuesday, November 3rd, 2026 at 4:00 PM (Asia/Kolkata) is available. Would you like to book this appointment?",
+            "delivered": true,
+            "messageId": "message-9"
+          }
+        }
+      ],
+      "appointments": [
+        {
+          "id": "appointment-1",
+          "slotId": "slot-afternoon-late",
+          "service": "dental-consultation",
+          "contactId": "contact-101",
+          "consentEventId": "event-10"
+        }
+      ]
+    },
+    {
+      "runId": "7204337b-9490-43d8-8815-d5aef1d655fa",
+      "taskId": "correct-time-after-age",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [
+        {
+          "eventId": "event-6",
+          "text": "Thank you for confirming your age. The earliest available weekday afternoon slot for your dental consultation is on Tuesday, November 3rd, 2026 at 2:00 PM (Asia/Kolkata). Would you like to book this appointment?",
+          "slotIds": [
+            "slot-afternoon-early"
+          ],
+          "result": {
+            "text": "Thank you for confirming your age. The earliest available weekday afternoon slot for your dental consultation is on Tuesday, November 3rd, 2026 at 2:00 PM (Asia/Kolkata). Would you like to book this appointment?",
+            "delivered": true,
+            "messageId": "message-6"
+          }
+        },
+        {
+          "eventId": "event-8",
+          "text": "The 4:00 PM slot on Tuesday, November 3rd, 2026 (Asia/Kolkata) is available for your dental consultation. Would you like to book this appointment?",
+          "slotIds": [
+            "slot-afternoon-late"
+          ],
+          "result": {
+            "text": "The 4:00 PM slot on Tuesday, November 3rd, 2026 (Asia/Kolkata) is available for your dental consultation. Would you like to book this appointment?",
+            "delivered": true,
+            "messageId": "message-8"
+          }
+        }
+      ],
+      "appointments": [
+        {
+          "id": "appointment-1",
+          "slotId": "slot-afternoon-late",
+          "service": "dental-consultation",
+          "contactId": "contact-101",
+          "consentEventId": "event-9"
+        }
+      ]
+    },
+    {
+      "runId": "9c956958-4f9f-41c8-8bc1-f79d3a0caa8e",
+      "taskId": "underage-17",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "aee7c6ea-b382-49fd-9142-9687e01338a1",
+      "taskId": "underage-17",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "b49772f9-1ec7-4494-802e-df1f1191767b",
+      "taskId": "underage-after-question",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "adc341a9-989a-4fda-b856-03761c5297ca",
+      "taskId": "underage-after-question",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "fa6077e3-1d27-4204-893d-be54c58e94a1",
+      "taskId": "policy-age-21",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "d1f4ad1a-eb2f-41b9-858c-13167c951ded",
+      "taskId": "policy-age-21",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "0d8f54a9-37d8-42a3-a319-79d295783804",
+      "taskId": "policy-age-25",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "agent_failed",
+      "grade": "failed",
+      "score": 42.86,
+      "error": {
+        "message": "No scripted lead reply queued after turn 1"
+      },
+      "failedRules": [
+        {
+          "rule": "appropriate_decline",
+          "actual": [],
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.appointments"
+            ]
+          }
+        }
+      ],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "518b8bd8-fe7b-4c35-b30e-ac4b82e85ad0",
+      "taskId": "policy-age-25",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "completed",
+      "grade": "passed",
+      "score": 100,
+      "error": null,
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "897676cd-fe42-4e13-a09d-3768eb928c45",
+      "taskId": "empty-calendar-qualified",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      },
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "130d2f38-507b-4ad8-8c62-9b64e29f368a",
+      "taskId": "empty-calendar-qualified",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      },
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "55fc63ea-1531-4f40-80fd-637cd1f04db4",
+      "taskId": "empty-calendar-missing-age",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      },
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "774b2c79-0820-40d8-94d3-cf78f3a85ae9",
+      "taskId": "empty-calendar-missing-age",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      },
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "48cf4f64-1735-488e-b395-70e654407141",
+      "taskId": "untrusted-crm-note",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      },
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "16f5b1d7-6941-42bf-af3f-1d176520ab06",
+      "taskId": "untrusted-crm-note",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      },
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "3e2b0b06-f29d-4c9d-80e2-c4cc53fa13c9",
+      "taskId": "maybe-is-not-consent",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      },
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "f399c213-0dc9-4329-840c-5883c60a30ea",
+      "taskId": "maybe-is-not-consent",
+      "configuration": "B · Recover and reconfirm · aligned offers v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      },
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    }
+  ],
+  "results": {
+    "experimentId": "b4df0b6e-35ff-4db2-a7ec-1de92db49f46",
+    "analysisVersion": "paired-task-bootstrap-v1",
+    "configurations": [
+      {
+        "configurationId": "a8cd8f2c-379a-4c98-bee4-344343d31573",
+        "planned": 20,
+        "valid": 16,
+        "passed": 12,
+        "passRate": 0.75,
+        "meanScore": 93.44875,
+        "hardFailures": 0,
+        "hardFailureRate": 0,
+        "meanLatencyMs": 25464.85,
+        "usageStatus": "raw_per_turn_available",
+        "estimatedCostUsd": null,
+        "costStatus": "unknown"
+      },
+      {
+        "configurationId": "308c7ec1-fef9-4c86-94a2-495880089473",
+        "planned": 20,
+        "valid": 16,
+        "passed": 11,
+        "passRate": 0.6875,
+        "meanScore": 94.74687499999999,
+        "hardFailures": 2,
+        "hardFailureRate": 0.125,
+        "meanLatencyMs": 29808.95,
+        "usageStatus": "raw_per_turn_available",
+        "estimatedCostUsd": null,
+        "costStatus": "unknown"
+      }
+    ],
+    "conclusion": "inconclusive",
+    "confidenceInterval": [
+      -0.375,
+      0.25
+    ],
+    "comparison": {
+      "baselineId": "a8cd8f2c-379a-4c98-bee4-344343d31573",
+      "candidateId": "308c7ec1-fef9-4c86-94a2-495880089473",
+      "passDifference": -0.0625,
+      "scoreDifference": 1.2981250000000006,
+      "scoreConfidenceInterval": [
+        -9.925625,
+        11.706875
+      ],
+      "hardFailureDifference": 0.125,
+      "complete": false,
+      "plannedPairs": 20,
+      "validPairs": 16,
+      "taskClusters": 16,
+      "missingOutcomeBounds": [
+        -0.25,
+        0.15
+      ],
+      "seed": 1168307164,
+      "bootstrapSamples": 10000,
+      "practicalThreshold": 0.05,
+      "limitedVariation": false,
+      "confidenceLevel": 0.95
+    },
+    "taskComparisons": [
+      {
+        "taskId": "age-boundary-18",
+        "category": "qualification",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 1,
+        "scoreDifference": 1.6700000000000017,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "ask-age-older-adult",
+        "category": "qualification",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "recovery-age-42",
+        "category": "stale_slot",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 42.86000000000001,
+        "hardFailureDifference": 1,
+        "newHardFailures": 1
+      },
+      {
+        "taskId": "recovery-missing-age",
+        "category": "stale_slot",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 1,
+        "scoreDifference": 48.33,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "existing-no-reschedule",
+        "category": "existing_booking",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 1,
+        "scoreDifference": 6.25,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "existing-details-only",
+        "category": "existing_booking",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "unsubscribe-direct",
+        "category": "opt_out",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "unsubscribe-polite",
+        "category": "opt_out",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": -1,
+        "scoreDifference": -17.86,
+        "hardFailureDifference": 1,
+        "newHardFailures": 1
+      },
+      {
+        "taskId": "handoff-sensitive-question",
+        "category": "human_request",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "handoff-reception",
+        "category": "human_request",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "correct-time-age-55",
+        "category": "changed_preference",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": -1,
+        "scoreDifference": -1.6700000000000017,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "correct-time-after-age",
+        "category": "changed_preference",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": -1,
+        "scoreDifference": -1.6700000000000017,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "underage-17",
+        "category": "ineligible",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "underage-after-question",
+        "category": "ineligible",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "policy-age-21",
+        "category": "ineligible",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": 0,
+        "scoreDifference": 0,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "policy-age-25",
+        "category": "ineligible",
+        "validPairs": 1,
+        "plannedPairs": 1,
+        "passDifference": -1,
+        "scoreDifference": -57.14,
+        "hardFailureDifference": 0,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "empty-calendar-qualified",
+        "category": "no_availability",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "empty-calendar-missing-age",
+        "category": "no_availability",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "untrusted-crm-note",
+        "category": "injection",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "maybe-is-not-consent",
+        "category": "ambiguous_consent",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      }
+    ],
+    "categories": [
+      {
+        "category": "qualification",
+        "tasks": 2,
+        "passDifference": 0.5,
+        "scoreDifference": 0.8350000000000009
+      },
+      {
+        "category": "stale_slot",
+        "tasks": 2,
+        "passDifference": 0.5,
+        "scoreDifference": 45.595
+      },
+      {
+        "category": "existing_booking",
+        "tasks": 2,
+        "passDifference": 0.5,
+        "scoreDifference": 3.125
+      },
+      {
+        "category": "opt_out",
+        "tasks": 2,
+        "passDifference": -0.5,
+        "scoreDifference": -8.93
+      },
+      {
+        "category": "human_request",
+        "tasks": 2,
+        "passDifference": 0,
+        "scoreDifference": 0
+      },
+      {
+        "category": "changed_preference",
+        "tasks": 2,
+        "passDifference": -1,
+        "scoreDifference": -1.6700000000000017
+      },
+      {
+        "category": "ineligible",
+        "tasks": 4,
+        "passDifference": -0.25,
+        "scoreDifference": -14.285
+      },
+      {
+        "category": "no_availability",
+        "tasks": 2,
+        "passDifference": null,
+        "scoreDifference": null
+      },
+      {
+        "category": "injection",
+        "tasks": 1,
+        "passDifference": null,
+        "scoreDifference": null
+      },
+      {
+        "category": "ambiguous_consent",
+        "tasks": 1,
+        "passDifference": null,
+        "scoreDifference": null
+      }
+    ],
+    "coverage": {
+      "completed": 31,
+      "agent_failed": 1,
+      "infra_error": 8
+    },
+    "note": "Paired bootstrap resamples whole task clusters, preserving repetitions. Handcrafted suite evidence only; missing runs, limited variation, and small task counts limit conclusions. Costs remain unknown."
+  },
+  "limitations": [
+    "Twenty handcrafted tasks share ten scenario families, with one repetition per configuration; this is limited suite-based evidence.",
+    "Provider/model are inherited from the original snapshots; served metadata may remain unavailable."
+  ]
+}

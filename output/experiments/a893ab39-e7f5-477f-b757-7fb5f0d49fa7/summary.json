@@ -1,0 +1,215 @@
+{
+  "experimentId": "a893ab39-e7f5-477f-b757-7fb5f0d49fa7",
+  "sourceExperimentId": "b4df0b6e-35ff-4db2-a7ec-1de92db49f46",
+  "taskIds": [
+    "recovery-age-42",
+    "unsubscribe-polite",
+    "policy-age-25"
+  ],
+  "status": "failed",
+  "graderVersion": "clinic-deterministic-v4.2",
+  "kind": "real-hermes-targeted-rerun",
+  "runs": [
+    {
+      "runId": "d0d706e8-b8eb-4280-ad39-4da78d8c2062",
+      "taskId": "recovery-age-42",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      },
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "9af22846-d73b-445b-8f97-613be5aaed67",
+      "taskId": "recovery-age-42",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      },
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "5be3567b-3971-4d53-8ba4-42210b6d78fb",
+      "taskId": "unsubscribe-polite",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      },
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "81fec247-0c55-49c5-a517-613f969884a7",
+      "taskId": "unsubscribe-polite",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      },
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "213c5aae-0609-4e59-93e2-386c87b516e4",
+      "taskId": "policy-age-25",
+      "configuration": "A · Hand off after slot rejection · aligned offers v1 · reliable-workflow-v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      },
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    },
+    {
+      "runId": "cc84dc4b-b391-43e1-9be2-fabacdd4cb6a",
+      "taskId": "policy-age-25",
+      "configuration": "B · Recover and reconfirm · aligned offers v1 · reliable-workflow-v1",
+      "status": "infra_error",
+      "grade": null,
+      "score": null,
+      "error": {
+        "message": "Provider rate limited (HTTP 429); not an agent behavior failure"
+      },
+      "failedRules": [],
+      "offers": [],
+      "appointments": []
+    }
+  ],
+  "results": {
+    "experimentId": "a893ab39-e7f5-477f-b757-7fb5f0d49fa7",
+    "analysisVersion": "paired-task-bootstrap-v1",
+    "configurations": [
+      {
+        "configurationId": "5c9c477a-5a37-4cf3-8837-a55eb4eb2992",
+        "planned": 3,
+        "valid": 0,
+        "passed": 0,
+        "passRate": null,
+        "meanScore": null,
+        "hardFailures": 0,
+        "hardFailureRate": null,
+        "meanLatencyMs": 4606,
+        "usageStatus": "raw_per_turn_available",
+        "estimatedCostUsd": null,
+        "costStatus": "unknown"
+      },
+      {
+        "configurationId": "1c0e9e80-cb0f-4d90-9bb0-10275d182e51",
+        "planned": 3,
+        "valid": 0,
+        "passed": 0,
+        "passRate": null,
+        "meanScore": null,
+        "hardFailures": 0,
+        "hardFailureRate": null,
+        "meanLatencyMs": 3390,
+        "usageStatus": "raw_per_turn_available",
+        "estimatedCostUsd": null,
+        "costStatus": "unknown"
+      }
+    ],
+    "conclusion": "inconclusive",
+    "confidenceInterval": null,
+    "comparison": {
+      "baselineId": "5c9c477a-5a37-4cf3-8837-a55eb4eb2992",
+      "candidateId": "1c0e9e80-cb0f-4d90-9bb0-10275d182e51",
+      "passDifference": null,
+      "scoreDifference": null,
+      "scoreConfidenceInterval": null,
+      "hardFailureDifference": null,
+      "complete": false,
+      "plannedPairs": 3,
+      "validPairs": 0,
+      "taskClusters": 0,
+      "missingOutcomeBounds": [
+        -1,
+        1
+      ],
+      "seed": 347449393,
+      "bootstrapSamples": 10000,
+      "practicalThreshold": 0.05,
+      "limitedVariation": false,
+      "confidenceLevel": 0.95
+    },
+    "taskComparisons": [
+      {
+        "taskId": "recovery-age-42",
+        "category": "stale_slot",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "unsubscribe-polite",
+        "category": "opt_out",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      },
+      {
+        "taskId": "policy-age-25",
+        "category": "ineligible",
+        "validPairs": 0,
+        "plannedPairs": 1,
+        "passDifference": null,
+        "scoreDifference": null,
+        "hardFailureDifference": null,
+        "newHardFailures": 0
+      }
+    ],
+    "categories": [
+      {
+        "category": "stale_slot",
+        "tasks": 1,
+        "passDifference": null,
+        "scoreDifference": null
+      },
+      {
+        "category": "opt_out",
+        "tasks": 1,
+        "passDifference": null,
+        "scoreDifference": null
+      },
+      {
+        "category": "ineligible",
+        "tasks": 1,
+        "passDifference": null,
+        "scoreDifference": null
+      }
+    ],
+    "coverage": {
+      "infra_error": 6
+    },
+    "note": "Paired bootstrap resamples whole task clusters, preserving repetitions. Handcrafted suite evidence only; missing runs, limited variation, and small task counts limit conclusions. Costs remain unknown."
+  },
+  "limitations": [
+    "3 tasks with one repetition per configuration are targeted regression checks, not a new full-suite performance estimate.",
+    "Provider/model are inherited from the original snapshots; served metadata may remain unavailable."
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-10-25",
+  "source": "https://docs.github.com/en/copilot/get-started/plans",
+  "provider": "GitHub Copilot",
+  "plan": "Pro",
+  "monthlySubscriptionUsd": 10,
+  "baseAiCredits": 1000,
+  "scope": "Operating budget example only; actual account plan and experiment bill unknown.",
+  "planningAllocation": {
+    "experimentsPerMonth": 4,
+    "subscriptionAllocationUsdPerExperiment": 2.5,
+    "overagesExcluded": true
+  }
+}

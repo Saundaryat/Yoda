@@ -1,0 +1,87 @@
+{
+  "experimentId": "b4df0b6e-35ff-4db2-a7ec-1de92db49f46",
+  "reviewMethod": "Directed non-blinded builder review of every graded failure; annotations do not alter machine grades.",
+  "reviews": {
+    "c2ccd555-0270-4b68-bf70-e86250829394": {
+      "assessment": "grader_false_positive",
+      "evidenceEventIds": [
+        "event-5"
+      ],
+      "reason": "The single early slot ID matches the stated 2 PM date/time/timezone, and “Do you want to confirm this slot?” explicitly requests acceptance. The bounded request matcher rejects that valid phrase. The run later books and confirms correctly.",
+      "machineGradeUnchanged": true
+    },
+    "ddcf2b90-6343-4ea7-8834-28674df139c6": {
+      "assessment": "confirmed_agent_errors",
+      "evidenceEventIds": [
+        "event-8",
+        "event-9",
+        "event-13",
+        "event-16"
+      ],
+      "reason": "event-8 records “Appointment booked” before the initial create_appointment at event-9, which fails stale-slot validation. A later alternative booking succeeds at event-13, but event-16 uses slot-afternoon-late as appointmentId and is rejected as FALSE_BOOKING_CONFIRMATION. Both the premature note and wrong confirmation reference are genuine errors.",
+      "machineGradeUnchanged": true
+    },
+    "d7286c0e-33bc-4d56-b7e7-c0bcd37853c3": {
+      "assessment": "expected_baseline_outcome_failure_with_additional_grader_false_positives",
+      "evidenceEventIds": [
+        "event-7",
+        "event-8",
+        "event-9"
+      ],
+      "reason": "No booking/recovery occurs after the stale-slot rejection, consistent with A’s deliberately inferior handoff workflow. The factual note says the lead consented to book, not that booking succeeded; “book” is outside the note vocabulary and is conservatively rejected. The selected-slot decline text truthfully says “no longer available,” which the decline matcher misses. Its decline_booking call is also rejected because the calendar still contains an available alternative.",
+      "machineGradeUnchanged": true
+    },
+    "c5a3008f-f30b-4400-b532-7085aab43a46": {
+      "assessment": "expected_baseline_outcome_failure",
+      "evidenceEventIds": [
+        "event-9"
+      ],
+      "reason": "A follows its deliberate handoff-after-rejection instruction and never creates a replacement appointment. Message-content checking passes; required booking, pipeline, note, final confirmation/details and stale-slot recovery checks fail because the task expects a completed booking.",
+      "machineGradeUnchanged": true
+    },
+    "32283b45-5ea9-4f9c-b433-174a8ba5c062": {
+      "assessment": "grader_false_positive",
+      "evidenceEventIds": [
+        "event-3"
+      ],
+      "reason": "The message accurately identifies the existing appointment date/time/timezone and says “You already have a booked appointment” and “Your existing booking remains in place.” The bounded affirmative-confirmation matcher misses this valid word order. No appointment was changed or duplicated.",
+      "machineGradeUnchanged": true
+    },
+    "e4b0bb7a-3ace-42c3-a46b-8b8a222a22fa": {
+      "assessment": "confirmed_agent_policy_error",
+      "evidenceEventIds": [
+        "event-1",
+        "event-2",
+        "event-3"
+      ],
+      "reason": "After the lead explicitly opts out and set_contact_opt_out succeeds, B attempts to send an acknowledgement (“You have been removed from our contact list…”), using decline_booking intent. CRM rejects it as OPTED_OUT. The attempted outbound message violates the explicit no-acknowledgement suppression rule even though delivery is prevented. The additional decline-intent mismatch is secondary.",
+      "machineGradeUnchanged": true
+    },
+    "072e72fc-68f1-4abe-97d1-54f803765f90": {
+      "assessment": "grader_false_positive",
+      "evidenceEventIds": [
+        "event-8",
+        "event-10"
+      ],
+      "reason": "The note accurately records the lead consent to the 4 PM alternative and references the actual slot and consent event. It says “consented to book,” not an unsupported success claim. The conservative note vocabulary rejects the ordinary word “book.” Booking and confirmation complete correctly; all other required assertions pass.",
+      "machineGradeUnchanged": true
+    },
+    "167daa1d-07c2-4c78-b49a-b23791ca23be": {
+      "assessment": "grader_false_positive",
+      "evidenceEventIds": [
+        "event-10",
+        "event-13"
+      ],
+      "reason": "The note accurately records the successfully booked 4 PM slot and valid lead consent event-10. The note vocabulary rejects the connective “via.” No incorrect age, consent, slot, date, time or appointment claim was found; all other assertions pass.",
+      "machineGradeUnchanged": true
+    },
+    "0d8f54a9-37d8-42a3-a319-79d295783804": {
+      "assessment": "confirmed_agent_workflow_error",
+      "evidenceEventIds": [
+        "event-2"
+      ],
+      "reason": "The runtime returns a factually correct minimum-age decline as ordinary assistant output after get_business_policy, but never invokes the required send_message/decline_booking CRM delivery tool. The lead driver receives no delivered decline or next reply, so execution ends agent_failed. No provider-rate-limit evidence appears in this run’s gateway log.",
+      "machineGradeUnchanged": true
+    }
+  }
+}

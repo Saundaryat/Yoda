@@ -1,0 +1,12 @@
+{
+  "frozenAt": "2026-10-21T16:44:43.624Z",
+  "experimentId": "9439a442-2a8a-4332-bb93-d3cb959763d6",
+  "baselineId": "859bd34f-953f-4831-8fcb-0f9f5b30bacc",
+  "candidateId": "646b9130-3c49-4d4a-8acd-dd005a47fc18",
+  "hypothesis": "Recovery instructions improve stale-slot task outcomes; other categories are controls.",
+  "primaryMetric": "macro task success B-A",
+  "repetitions": 1,
+  "suiteHash": "c090bfd396d1be655f0b62620a8c25432e6a1c26241b6347628cdd5a31afcce7",
+  "taskCount": 20,
+  "note": "Twenty cases share ten scenario families. One repetition is a budget-limited first experiment, not a reliability guarantee."
+}

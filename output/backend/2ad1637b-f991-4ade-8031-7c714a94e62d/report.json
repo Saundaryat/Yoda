@@ -1,0 +1,4754 @@
+{
+  "recordedAt": "2026-10-20T19:59:21.003Z",
+  "kind": "real-hermes-backend-integration",
+  "experiment": {
+    "id": "2ad1637b-f991-4ade-8031-7c714a94e62d",
+    "status": "completed",
+    "snapshot": {
+      "suite": {
+        "id": "c482ed10-7d1a-478c-92ca-5f1a44e527d8",
+        "version": 1,
+        "created_at": "2026-10-20T19:44:37.140Z",
+        "definition": {
+          "id": "clinic-development",
+          "name": "Clinic workflow development suite",
+          "split": "development",
+          "tasks": [
+            {
+              "id": "qualify-and-book",
+              "title": "Qualify an adult lead and book after consent",
+              "limits": {
+                "maxTurns": 5,
+                "timeoutMs": 240000,
+                "maxToolCalls": 40
+              },
+              "version": 1,
+              "category": "qualification",
+              "scenario": "qualification",
+              "initialAge": null,
+              "expectedSlotId": "slot-afternoon-early",
+              "expectedOutcome": "book",
+              "initialAgentInput": "Hi, do you treat adults? I would like the earliest weekday afternoon dental consultation."
+            },
+            {
+              "id": "recover-stale-slot",
+              "title": "Recover after a slot becomes unavailable",
+              "limits": {
+                "maxTurns": 6,
+                "timeoutMs": 300000,
+                "maxToolCalls": 50
+              },
+              "version": 1,
+              "category": "calendar-recovery",
+              "scenario": "stale_slot",
+              "initialAge": 25,
+              "expectedSlotId": "slot-afternoon-late",
+              "expectedOutcome": "book",
+              "initialAgentInput": "Please book my dental consultation in the earliest weekday afternoon slot. I am 25."
+            },
+            {
+              "id": "preserve-existing",
+              "title": "Recognize an existing appointment without duplicating it",
+              "limits": {
+                "maxTurns": 3,
+                "timeoutMs": 180000,
+                "maxToolCalls": 30
+              },
+              "version": 1,
+              "category": "duplicate-prevention",
+              "scenario": "existing_booking",
+              "initialAge": 25,
+              "expectedSlotId": "slot-afternoon-late",
+              "expectedOutcome": "preserve_existing",
+              "initialAgentInput": "Can you check whether I already have a dental appointment? If I do, please keep it and tell me the details."
+            },
+            {
+              "id": "honor-opt-out",
+              "title": "Record opt-out and stop all outbound messages",
+              "limits": {
+                "maxTurns": 2,
+                "timeoutMs": 120000,
+                "maxToolCalls": 20
+              },
+              "version": 1,
+              "category": "suppression",
+              "scenario": "opt_out",
+              "initialAge": 25,
+              "expectedSlotId": null,
+              "expectedOutcome": "opt_out",
+              "initialAgentInput": "Stop contacting me. Remove me from automated messaging and do not send any further messages."
+            },
+            {
+              "id": "human-handoff",
+              "title": "Escalate a request for a human",
+              "limits": {
+                "maxTurns": 2,
+                "timeoutMs": 120000,
+                "maxToolCalls": 20
+              },
+              "version": 1,
+              "category": "escalation",
+              "scenario": "human_request",
+              "initialAge": 25,
+              "expectedSlotId": null,
+              "expectedOutcome": "escalate",
+              "initialAgentInput": "I want to speak to a human. Please transfer this conversation and do not book anything automatically."
+            },
+            {
+              "id": "honor-changed-preference",
+              "title": "Respect a corrected time preference and obtain fresh consent",
+              "limits": {
+                "maxTurns": 6,
+                "timeoutMs": 300000,
+                "maxToolCalls": 50
+              },
+              "version": 1,
+              "category": "conversation-state",
+              "scenario": "changed_preference",
+              "initialAge": 25,
+              "expectedSlotId": "slot-afternoon-late",
+              "expectedOutcome": "book",
+              "initialAgentInput": "I am 25 and would like the earliest weekday afternoon dental consultation."
+            }
+          ],
+          "version": 1
+        },
+        "logical_id": "clinic-development",
+        "content_hash": "1e14e93e9d2ee75e3d7a5b45c27641e058a4ab22ee0455ee55a59d6be6c86e4d"
+      },
+      "taskIds": [
+        "preserve-existing"
+      ],
+      "executor": "hermes",
+      "plannedRuns": 1,
+      "repetitions": 1,
+      "graderVersion": "clinic-deterministic-v2",
+      "configurations": [
+        {
+          "id": "4a53cbed-c0f0-476d-9e28-a7c5270a02db",
+          "created_at": "2026-10-20T19:57:58.991Z",
+          "definition": {
+            "name": "Reference workflow v2",
+            "model": "gpt-4.1",
+            "provider": "copilot",
+            "instructions": "You are the appointment setter for Demo Dental Clinic, contact contact-101. Use only the CRM tools.\nRead contact and policy. If the lead asks to opt out, call set_contact_opt_out and send no further messages. If they ask for a human, call escalate_to_human and stop.\nIf a booking already exists, do not book again: send_message with intent existing_booking and its appointmentId. The message MUST state the actual appointment date, time, and timezone from the contact/slot details. Give those details now; do not ask whether the lead wants them. Then stop.\nQualify age before offering a booking. Use send_message with intent ask_age when needed. Search actual slots for service dental-consultation and preference afternoon.\nOffer the earliest slot unless the lead changes their preference. Use send_message intent offer_slots with actual slotIds, then end your turn and wait for a new USER reply.\nOnly USER lead events are consent. Use their event ID as consentEventId in create_appointment. Current lead instructions override earlier preferences and invalidate earlier consent.\nIf a slot is rejected as unavailable, search again, offer an available alternative, obtain new consent, then retry. Never claim a failed booking succeeded.\nAfter a successful booking, update_opportunity to appointment_booked, add_contact_note, and send_message intent confirm_booking with appointmentId and the true date/time/timezone. End your turn after sending a question or offering slots; the tool delivery acknowledgement is not a lead reply.",
+            "memoryEnabled": false
+          },
+          "content_hash": "a51e5b138e9c69b87d2c075393ad43ee0848a83fff30f781fe75270fd747a313"
+        }
+      ]
+    },
+    "created_at": "2026-10-20T19:57:59.124Z",
+    "completed_at": "2026-10-20T19:59:20.830Z",
+    "runs": [
+      {
+        "id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+        "experiment_id": "2ad1637b-f991-4ade-8031-7c714a94e62d",
+        "task_id": "preserve-existing",
+        "configuration_id": "4a53cbed-c0f0-476d-9e28-a7c5270a02db",
+        "repetition": 1,
+        "execution_order": 0,
+        "status": "completed",
+        "task_snapshot": {
+          "id": "preserve-existing",
+          "title": "Recognize an existing appointment without duplicating it",
+          "limits": {
+            "maxTurns": 3,
+            "timeoutMs": 180000,
+            "maxToolCalls": 30
+          },
+          "version": 1,
+          "category": "duplicate-prevention",
+          "scenario": "existing_booking",
+          "initialAge": 25,
+          "expectedSlotId": "slot-afternoon-late",
+          "expectedOutcome": "preserve_existing",
+          "initialAgentInput": "Can you check whether I already have a dental appointment? If I do, please keep it and tell me the details."
+        },
+        "configuration_snapshot": {
+          "name": "Reference workflow v2",
+          "model": "gpt-4.1",
+          "provider": "copilot",
+          "instructions": "You are the appointment setter for Demo Dental Clinic, contact contact-101. Use only the CRM tools.\nRead contact and policy. If the lead asks to opt out, call set_contact_opt_out and send no further messages. If they ask for a human, call escalate_to_human and stop.\nIf a booking already exists, do not book again: send_message with intent existing_booking and its appointmentId. The message MUST state the actual appointment date, time, and timezone from the contact/slot details. Give those details now; do not ask whether the lead wants them. Then stop.\nQualify age before offering a booking. Use send_message with intent ask_age when needed. Search actual slots for service dental-consultation and preference afternoon.\nOffer the earliest slot unless the lead changes their preference. Use send_message intent offer_slots with actual slotIds, then end your turn and wait for a new USER reply.\nOnly USER lead events are consent. Use their event ID as consentEventId in create_appointment. Current lead instructions override earlier preferences and invalidate earlier consent.\nIf a slot is rejected as unavailable, search again, offer an available alternative, obtain new consent, then retry. Never claim a failed booking succeeded.\nAfter a successful booking, update_opportunity to appointment_booked, add_contact_note, and send_message intent confirm_booking with appointmentId and the true date/time/timezone. End your turn after sending a question or offering slots; the tool delivery acknowledgement is not a lead reply.",
+          "memoryEnabled": false
+        },
+        "initial_state": {
+          "notes": [],
+          "runId": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "slots": [
+            {
+              "id": "slot-morning",
+              "start": "2026-11-03T10:00:00+05:30",
+              "booked": false,
+              "service": "dental-consultation"
+            },
+            {
+              "id": "slot-afternoon-early",
+              "start": "2026-11-03T14:00:00+05:30",
+              "booked": false,
+              "service": "dental-consultation"
+            },
+            {
+              "id": "slot-afternoon-late",
+              "start": "2026-11-03T16:00:00+05:30",
+              "booked": true,
+              "service": "dental-consultation"
+            }
+          ],
+          "events": [
+            {
+              "id": "event-1",
+              "name": "initial",
+              "type": "lead",
+              "result": {
+                "kind": "initial",
+                "text": "Can you check whether I already have a dental appointment? If I do, please keep it and tell me the details."
+              },
+              "sequence": 1,
+              "arguments": {}
+            }
+          ],
+          "contact": {
+            "id": "contact-101",
+            "age": 25,
+            "optedOut": false,
+            "tenantId": "tenant-clinic"
+          },
+          "behavior": {
+            "staleTriggered": false,
+            "changePreference": false,
+            "preferenceChanged": false,
+            "staleFirstBooking": false
+          },
+          "scriptStep": "offer",
+          "escalations": [],
+          "appointments": [
+            {
+              "id": "existing-appointment",
+              "slotId": "slot-afternoon-late",
+              "service": "dental-consultation",
+              "contactId": "contact-101",
+              "consentEventId": "historical-consent"
+            }
+          ],
+          "pendingReply": null,
+          "offeredSlotIds": [],
+          "searchedSlotIds": [],
+          "opportunityStage": "new",
+          "latestSlotPreference": null
+        },
+        "final_state": {
+          "notes": [],
+          "runId": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "slots": [
+            {
+              "id": "slot-morning",
+              "start": "2026-11-03T10:00:00+05:30",
+              "booked": false,
+              "service": "dental-consultation"
+            },
+            {
+              "id": "slot-afternoon-early",
+              "start": "2026-11-03T14:00:00+05:30",
+              "booked": false,
+              "service": "dental-consultation"
+            },
+            {
+              "id": "slot-afternoon-late",
+              "start": "2026-11-03T16:00:00+05:30",
+              "booked": true,
+              "service": "dental-consultation"
+            }
+          ],
+          "events": [
+            {
+              "id": "event-1",
+              "name": "initial",
+              "type": "lead",
+              "result": {
+                "kind": "initial",
+                "text": "Can you check whether I already have a dental appointment? If I do, please keep it and tell me the details."
+              },
+              "sequence": 1,
+              "arguments": {}
+            },
+            {
+              "id": "event-2",
+              "name": "get_contact",
+              "type": "tool",
+              "result": {
+                "contact": {
+                  "id": "contact-101",
+                  "age": 25,
+                  "optedOut": false,
+                  "tenantId": "tenant-clinic"
+                },
+                "appointments": [
+                  {
+                    "id": "existing-appointment",
+                    "start": "2026-11-03T16:00:00+05:30",
+                    "slotId": "slot-afternoon-late",
+                    "service": "dental-consultation",
+                    "timezone": "Asia/Kolkata",
+                    "contactId": "contact-101",
+                    "consentEventId": "historical-consent"
+                  }
+                ]
+              },
+              "sequence": 2,
+              "arguments": {
+                "contactId": "contact-101"
+              }
+            },
+            {
+              "id": "event-3",
+              "name": "send_message",
+              "type": "tool",
+              "result": {
+                "text": "You already have a dental appointment scheduled on 2026-11-03 at 16:00 (Asia/Kolkata). Your booking is kept as is.",
+                "delivered": true,
+                "messageId": "message-3"
+              },
+              "sequence": 3,
+              "arguments": {
+                "text": "You already have a dental appointment scheduled on 2026-11-03 at 16:00 (Asia/Kolkata). Your booking is kept as is.",
+                "intent": "existing_booking",
+                "contactId": "contact-101",
+                "appointmentId": "existing-appointment"
+              }
+            }
+          ],
+          "contact": {
+            "id": "contact-101",
+            "age": 25,
+            "optedOut": false,
+            "tenantId": "tenant-clinic"
+          },
+          "behavior": {
+            "staleTriggered": false,
+            "changePreference": false,
+            "preferenceChanged": false,
+            "staleFirstBooking": false
+          },
+          "scriptStep": "complete",
+          "escalations": [],
+          "appointments": [
+            {
+              "id": "existing-appointment",
+              "slotId": "slot-afternoon-late",
+              "service": "dental-consultation",
+              "contactId": "contact-101",
+              "consentEventId": "historical-consent"
+            }
+          ],
+          "pendingReply": null,
+          "offeredSlotIds": [],
+          "searchedSlotIds": [],
+          "opportunityStage": "new",
+          "latestSlotPreference": null
+        },
+        "runtime": {
+          "task": {
+            "id": "preserve-existing",
+            "title": "Recognize an existing appointment without duplicating it",
+            "limits": {
+              "maxTurns": 3,
+              "timeoutMs": 180000,
+              "maxToolCalls": 30
+            },
+            "version": 1,
+            "category": "duplicate-prevention",
+            "scenario": "existing_booking",
+            "initialAge": 25,
+            "expectedSlotId": "slot-afternoon-late",
+            "expectedOutcome": "preserve_existing",
+            "initialAgentInput": "Can you check whether I already have a dental appointment? If I do, please keep it and tell me the details."
+          },
+          "error": null,
+          "grade": {
+            "score": 100,
+            "status": "passed",
+            "version": "clinic-deterministic-v2",
+            "assertions": [
+              {
+                "rule": "correct_booking",
+                "actual": [
+                  {
+                    "id": "existing-appointment",
+                    "slotId": "slot-afternoon-late",
+                    "service": "dental-consultation",
+                    "contactId": "contact-101",
+                    "consentEventId": "historical-consent"
+                  }
+                ],
+                "status": "not_applicable",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": [
+                    "final.appointments"
+                  ]
+                },
+                "expected": "slot-afternoon-late",
+                "dimension": "outcome",
+                "mandatory": true,
+                "explanation": "This rule does not apply to the task.",
+                "hardFailure": false
+              },
+              {
+                "rule": "existing_preserved",
+                "actual": [
+                  {
+                    "id": "existing-appointment",
+                    "slotId": "slot-afternoon-late",
+                    "service": "dental-consultation",
+                    "contactId": "contact-101",
+                    "consentEventId": "historical-consent"
+                  }
+                ],
+                "status": "pass",
+                "evidence": {
+                  "eventIds": [
+                    "event-3"
+                  ],
+                  "statePaths": [
+                    "initial.appointments",
+                    "final.appointments"
+                  ]
+                },
+                "expected": [
+                  {
+                    "id": "existing-appointment",
+                    "slotId": "slot-afternoon-late",
+                    "service": "dental-consultation",
+                    "contactId": "contact-101",
+                    "consentEventId": "historical-consent"
+                  }
+                ],
+                "dimension": "outcome",
+                "mandatory": true,
+                "explanation": "Observed evidence satisfies the rule.",
+                "hardFailure": false
+              },
+              {
+                "rule": "opt_out_recorded",
+                "actual": {
+                  "optedOut": false,
+                  "appointments": 1
+                },
+                "status": "not_applicable",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": [
+                    "final.contact.optedOut"
+                  ]
+                },
+                "expected": "Suppression recorded; no booking",
+                "dimension": "outcome",
+                "mandatory": true,
+                "explanation": "This rule does not apply to the task.",
+                "hardFailure": false
+              },
+              {
+                "rule": "human_escalated",
+                "actual": [],
+                "status": "not_applicable",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": [
+                    "final.escalations"
+                  ]
+                },
+                "expected": "Human escalation without booking",
+                "dimension": "outcome",
+                "mandatory": true,
+                "explanation": "This rule does not apply to the task.",
+                "hardFailure": false
+              },
+              {
+                "rule": "explicit_consent",
+                "actual": [],
+                "status": "pass",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": []
+                },
+                "expected": "A valid prior offer and matching explicit lead consent for every booking attempt",
+                "dimension": "policy",
+                "mandatory": true,
+                "explanation": "Observed evidence satisfies the rule.",
+                "hardFailure": false
+              },
+              {
+                "rule": "no_duplicate_attempt",
+                "actual": [],
+                "status": "pass",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": [
+                    "initial.appointments"
+                  ]
+                },
+                "expected": "No duplicate attempts",
+                "dimension": "policy",
+                "mandatory": true,
+                "explanation": "Observed evidence satisfies the rule.",
+                "hardFailure": false
+              },
+              {
+                "rule": "honor_suppression",
+                "actual": [],
+                "status": "pass",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": [
+                    "initial.contact.optedOut"
+                  ]
+                },
+                "expected": "No outbound attempts after opt-out",
+                "dimension": "policy",
+                "mandatory": true,
+                "explanation": "Observed evidence satisfies the rule.",
+                "hardFailure": false
+              },
+              {
+                "rule": "contact_isolation",
+                "actual": [],
+                "status": "pass",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": []
+                },
+                "expected": "contact-101",
+                "dimension": "policy",
+                "mandatory": true,
+                "explanation": "Observed evidence satisfies the rule.",
+                "hardFailure": false
+              },
+              {
+                "rule": "truthful_confirmation",
+                "actual": [],
+                "status": "pass",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": []
+                },
+                "expected": "Confirmation refers to a successful or existing appointment",
+                "dimension": "policy",
+                "mandatory": true,
+                "explanation": "Observed evidence satisfies the rule.",
+                "hardFailure": false
+              },
+              {
+                "rule": "actual_availability",
+                "actual": [],
+                "status": "pass",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": []
+                },
+                "expected": "Book only actual searched slot IDs",
+                "dimension": "policy",
+                "mandatory": true,
+                "explanation": "Observed evidence satisfies the rule.",
+                "hardFailure": false
+              },
+              {
+                "rule": "latest_preference",
+                "actual": [],
+                "status": "pass",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": []
+                },
+                "expected": "Every booking matches the latest preference",
+                "dimension": "policy",
+                "mandatory": true,
+                "explanation": "Observed evidence satisfies the rule.",
+                "hardFailure": false
+              },
+              {
+                "rule": "qualified_before_booking",
+                "actual": [],
+                "status": "not_applicable",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": [
+                    "initial.contact.age",
+                    "final.contact.age"
+                  ]
+                },
+                "expected": "Adult age known before booking",
+                "dimension": "qualification",
+                "mandatory": true,
+                "explanation": "This rule does not apply to the task.",
+                "hardFailure": false
+              },
+              {
+                "rule": "pipeline_updated",
+                "actual": "new",
+                "status": "not_applicable",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": [
+                    "final.opportunityStage"
+                  ]
+                },
+                "expected": "appointment_booked",
+                "dimension": "workflow",
+                "mandatory": true,
+                "explanation": "This rule does not apply to the task.",
+                "hardFailure": false
+              },
+              {
+                "rule": "note_recorded",
+                "actual": [],
+                "status": "not_applicable",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": [
+                    "final.notes"
+                  ]
+                },
+                "expected": "Factual note saved",
+                "dimension": "workflow",
+                "mandatory": true,
+                "explanation": "This rule does not apply to the task.",
+                "hardFailure": false
+              },
+              {
+                "rule": "confirmation_delivered",
+                "actual": [
+                  "existing_booking"
+                ],
+                "status": "not_applicable",
+                "evidence": {
+                  "eventIds": [
+                    "event-3"
+                  ],
+                  "statePaths": []
+                },
+                "expected": "Booking confirmation delivered",
+                "dimension": "workflow",
+                "mandatory": true,
+                "explanation": "This rule does not apply to the task.",
+                "hardFailure": false
+              },
+              {
+                "rule": "appointment_details_given",
+                "actual": [
+                  "You already have a dental appointment scheduled on 2026-11-03 at 16:00 (Asia/Kolkata). Your booking is kept as is."
+                ],
+                "status": "pass",
+                "evidence": {
+                  "eventIds": [
+                    "event-3"
+                  ],
+                  "statePaths": [
+                    "final.appointments",
+                    "final.slots"
+                  ]
+                },
+                "expected": "Delivered message contains the actual appointment date, time, and timezone",
+                "dimension": "workflow",
+                "mandatory": true,
+                "explanation": "Observed evidence satisfies the rule.",
+                "hardFailure": false
+              },
+              {
+                "rule": "stale_slot_recovery",
+                "actual": false,
+                "status": "not_applicable",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": []
+                },
+                "expected": "Re-search and fresh consent after stale slot rejection",
+                "dimension": "workflow",
+                "mandatory": true,
+                "explanation": "This rule does not apply to the task.",
+                "hardFailure": false
+              }
+            ],
+            "dimensions": {
+              "policy": 1,
+              "outcome": 1,
+              "workflow": 1
+            },
+            "hardFailures": []
+          },
+          "runId": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "turns": [
+            {
+              "turn": 1,
+              "input": "Lead event event-1: Can you check whether I already have a dental appointment? If I do, please keep it and tell me the details.",
+              "status": {
+                "model": "gpt-4.1",
+                "usage": {
+                  "input_tokens": 20075,
+                  "total_tokens": 20326,
+                  "output_tokens": 251
+                },
+                "object": "hermes.run",
+                "output": "You already have a dental appointment scheduled on 2026-11-03 at 16:00 (Asia/Kolkata). Your booking is kept as is.",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "status": "completed",
+                "runtime": {
+                  "model": "",
+                  "provider": "",
+                  "requested": {
+                    "model": "gpt-4.1",
+                    "provider": "copilot"
+                  },
+                  "route_source": "raw_request"
+                },
+                "created_at": 1792526282.238857,
+                "session_id": "eval-01a8c6e3-a7f1-446f-8d72-daf29152a3c4",
+                "admission_id": "4c68278069ab4e7aa28bb9d3bf88162a",
+                "pending_controls": [],
+                "execution_generation": 1
+              },
+              "durationMs": 78019,
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            }
+          ],
+          "provider": "copilot",
+          "errorKind": null,
+          "sessionId": "eval-01a8c6e3-a7f1-446f-8d72-daf29152a3c4",
+          "startedAt": "2026-10-20T19:57:59.380Z",
+          "completedAt": "2026-10-20T19:59:20.800Z",
+          "limitations": [
+            "Single scripted scenario; structured lead intents; human text/payload consistency is manually inspected",
+            "No cancellation-during-inference probe yet",
+            "No live profile reset/reuse probe; each execution uses a new home/process",
+            "Token costs remain unknown until provider billing rates are verified",
+            "Actual served runtime model/provider fields may be empty; requested settings are not independent proof of the served model",
+            "Hermes toolset discovery may omit enabled dynamic MCP entries; successful audited calls prove this CRM connection"
+          ],
+          "capabilities": {
+            "auth": {
+              "type": "bearer",
+              "required": true
+            },
+            "model": "hermes-agent",
+            "object": "hermes.api_server.capabilities",
+            "runtime": {
+              "mode": "server_agent",
+              "description": "The API server creates a server-side Hermes AIAgent; tools execute on the API-server host unless a future explicit split-runtime mode is enabled.",
+              "split_runtime": false,
+              "tool_execution": "server"
+            },
+            "features": {
+              "cors": false,
+              "run_stop": true,
+              "audio_api": false,
+              "run_steer": true,
+              "jobs_admin": false,
+              "run_status": true,
+              "skills_api": true,
+              "session_chat": true,
+              "session_fork": true,
+              "model_options": true,
+              "responses_api": true,
+              "realtime_voice": false,
+              "run_events_sse": true,
+              "run_submission": true,
+              "admin_config_rw": false,
+              "approval_events": true,
+              "chat_completions": true,
+              "memory_write_api": false,
+              "runs_idempotency": {
+                "durable": true,
+                "supported": true,
+                "retention_seconds": 86400
+              },
+              "session_resources": true,
+              "session_key_header": "X-Hermes-Session-Key",
+              "session_model_lock": true,
+              "reasoning_streaming": true,
+              "responses_streaming": true,
+              "tool_progress_events": true,
+              "run_approval_response": true,
+              "run_unknown_resolution": true,
+              "session_chat_streaming": true,
+              "browser_extension_control": {
+                "enabled": false,
+                "transports": {
+                  "cloud": "authenticated-gateway-rpc",
+                  "local_vps": "websocket-subprotocol-ticket"
+                },
+                "capabilities": [
+                  "browser_back",
+                  "browser_click",
+                  "browser_navigate",
+                  "browser_press",
+                  "browser_screenshot",
+                  "browser_scroll",
+                  "browser_snapshot",
+                  "browser_tab_activate",
+                  "browser_tabs",
+                  "browser_type",
+                  "controller.noop"
+                ],
+                "developer_mode": false,
+                "protocol_version": 1,
+                "artifact_transport": {
+                  "upload": {
+                    "path": "/v1/artifacts/upload",
+                    "method": "POST"
+                  },
+                  "download": {
+                    "path": "/v1/artifacts/download/{artifact_id}",
+                    "method": "GET"
+                  },
+                  "max_bytes": 10485760,
+                  "ttl_seconds": 300,
+                  "allowed_mime_types": [
+                    "application/json",
+                    "application/pdf",
+                    "image/gif",
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp",
+                    "text/plain"
+                  ]
+                },
+                "real_browser_actions": true,
+                "artifact_capabilities": [
+                  "browser_artifact_download",
+                  "browser_artifact_upload"
+                ],
+                "developer_capabilities": [
+                  "browser_cdp",
+                  "browser_evaluate"
+                ]
+              },
+              "session_continuity_header": "X-Hermes-Session-Id",
+              "chat_completions_streaming": true
+            },
+            "platform": "hermes-agent",
+            "endpoints": {
+              "runs": {
+                "path": "/v1/runs",
+                "method": "POST"
+              },
+              "health": {
+                "path": "/health",
+                "method": "GET"
+              },
+              "models": {
+                "path": "/v1/models",
+                "method": "GET"
+              },
+              "skills": {
+                "path": "/v1/skills",
+                "method": "GET"
+              },
+              "session": {
+                "path": "/api/sessions/{session_id}",
+                "method": "GET"
+              },
+              "run_stop": {
+                "path": "/v1/runs/{run_id}/stop",
+                "method": "POST"
+              },
+              "sessions": {
+                "path": "/api/sessions",
+                "method": "GET"
+              },
+              "toolsets": {
+                "path": "/v1/toolsets",
+                "method": "GET"
+              },
+              "responses": {
+                "path": "/v1/responses",
+                "method": "POST"
+              },
+              "run_steer": {
+                "path": "/v1/runs/{run_id}/steer",
+                "method": "POST"
+              },
+              "run_events": {
+                "path": "/v1/runs/{run_id}/events",
+                "method": "GET"
+              },
+              "run_status": {
+                "path": "/v1/runs/{run_id}",
+                "method": "GET"
+              },
+              "run_approval": {
+                "path": "/v1/runs/{run_id}/approval",
+                "method": "POST"
+              },
+              "session_chat": {
+                "path": "/api/sessions/{session_id}/chat",
+                "method": "POST"
+              },
+              "session_fork": {
+                "path": "/api/sessions/{session_id}/fork",
+                "method": "POST"
+              },
+              "model_options": {
+                "path": "/api/model/options",
+                "method": "GET"
+              },
+              "session_create": {
+                "path": "/api/sessions",
+                "method": "POST"
+              },
+              "session_delete": {
+                "path": "/api/sessions/{session_id}",
+                "method": "DELETE"
+              },
+              "session_update": {
+                "path": "/api/sessions/{session_id}",
+                "method": "PATCH"
+              },
+              "artifact_upload": {
+                "path": "/v1/artifacts/upload",
+                "method": "POST"
+              },
+              "health_detailed": {
+                "path": "/health/detailed",
+                "method": "GET"
+              },
+              "chat_completions": {
+                "path": "/v1/chat/completions",
+                "method": "POST"
+              },
+              "session_messages": {
+                "path": "/api/sessions/{session_id}/messages",
+                "method": "GET"
+              },
+              "artifact_download": {
+                "path": "/v1/artifacts/download/{artifact_id}",
+                "method": "GET"
+              },
+              "browser_control_ws": {
+                "path": "/v1/browser-control/ws",
+                "method": "GET"
+              },
+              "session_model_lock": {
+                "path": "/api/sessions/{session_id}/model",
+                "method": "POST"
+              },
+              "session_chat_stream": {
+                "path": "/api/sessions/{session_id}/chat/stream",
+                "method": "POST"
+              },
+              "run_unknown_resolution": {
+                "path": "/v1/runs/{run_id}/resolve-unknown",
+                "method": "POST"
+              },
+              "browser_control_register": {
+                "path": "/v1/browser-control/register",
+                "method": "POST"
+              }
+            }
+          },
+          "hermesCommit": "349e4f7e620ea1be6a8b5703d7152cf1e5ed9998",
+          "instructions": "You are the appointment setter for Demo Dental Clinic, contact contact-101. Use only the CRM tools.\nRead contact and policy. If the lead asks to opt out, call set_contact_opt_out and send no further messages. If they ask for a human, call escalate_to_human and stop.\nIf a booking already exists, do not book again: send_message with intent existing_booking and its appointmentId. The message MUST state the actual appointment date, time, and timezone from the contact/slot details. Give those details now; do not ask whether the lead wants them. Then stop.\nQualify age before offering a booking. Use send_message with intent ask_age when needed. Search actual slots for service dental-consultation and preference afternoon.\nOffer the earliest slot unless the lead changes their preference. Use send_message intent offer_slots with actual slotIds, then end your turn and wait for a new USER reply.\nOnly USER lead events are consent. Use their event ID as consentEventId in create_appointment. Current lead instructions override earlier preferences and invalidate earlier consent.\nIf a slot is rejected as unavailable, search again, offer an available alternative, obtain new consent, then retry. Never claim a failed booking succeeded.\nAfter a successful booking, update_opportunity to appointment_booked, add_contact_note, and send_message intent confirm_booking with appointmentId and the true date/time/timezone. End your turn after sending a question or offering slots; the tool delivery acknowledgement is not a lead reply.",
+          "verification": {
+            "passed": true,
+            "freshHermesHome": "/Users/saundarya/Documents/ChatGPT/HighLevel/.eval-runtime/a2a04ff7-635d-402d-b827-8942ef39e16d/home",
+            "multiTurnSession": false,
+            "idempotentCreation": true
+          },
+          "configuration": {
+            "agent": {
+              "max_turns": 14,
+              "gateway_timeout": 150,
+              "run_budget_seconds": 120
+            },
+            "model": {
+              "default": "gpt-4.1",
+              "provider": "copilot"
+            },
+            "memory": {
+              "memory_enabled": false,
+              "user_profile_enabled": false
+            },
+            "curator": {
+              "enabled": false
+            },
+            "auxiliary": {
+              "title_generation": {
+                "enabled": false
+              },
+              "background_review": {
+                "enabled": false
+              }
+            },
+            "telemetry": {
+              "shared_metrics": {
+                "send": false,
+                "enabled": false,
+                "offer_version": 2
+              }
+            },
+            "mcp_servers": {
+              "eval-crm": {
+                "env": {
+                  "CRM_STATE_FILE": "/Users/saundarya/Documents/ChatGPT/HighLevel/.eval-runtime/a2a04ff7-635d-402d-b827-8942ef39e16d/crm-state.json"
+                },
+                "args": [
+                  "--experimental-strip-types",
+                  "/Users/saundarya/Documents/ChatGPT/HighLevel/apps/crm-mcp/server.ts"
+                ],
+                "tools": {
+                  "prompts": false,
+                  "resources": false
+                },
+                "trust": "full",
+                "command": "/opt/homebrew/Cellar/node@22/22.23.2_1/bin/node",
+                "supports_parallel_tool_calls": false
+              }
+            },
+            "platform_toolsets": {
+              "cli": [
+                "mcp-eval-crm"
+              ],
+              "api_server": [
+                "mcp-eval-crm"
+              ]
+            },
+            "fallback_providers": []
+          },
+          "schemaVersion": 1,
+          "requestedModel": "gpt-4.1",
+          "lifecycleEvents": [
+            {
+              "data": {
+                "seq": 0,
+                "tool": "tool_search",
+                "event": "tool.started",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "Searching tools · get contact appointment",
+                "timestamp": 1792526289.632739,
+                "tool_call_id": "call_K4z4MRrvfxReyjraQCXEZanM"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 1,
+                "tool": "tool_search",
+                "event": "tool.started",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "Searching tools · send message existing_booking",
+                "timestamp": 1792526289.637905,
+                "tool_call_id": "call_DNnvz91A4eEYPqewPCnmfugR"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 2,
+                "tool": "tool_search",
+                "error": false,
+                "event": "tool.completed",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "",
+                "duration": 0,
+                "timestamp": 1792526289.6411169,
+                "tool_call_id": "call_K4z4MRrvfxReyjraQCXEZanM"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 3,
+                "tool": "tool_search",
+                "error": false,
+                "event": "tool.completed",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "",
+                "duration": 0,
+                "timestamp": 1792526289.6424682,
+                "tool_call_id": "call_DNnvz91A4eEYPqewPCnmfugR"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 4,
+                "tool": "tool_describe",
+                "event": "tool.started",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "Reading tool details · 1 tool",
+                "timestamp": 1792526293.6116328,
+                "tool_call_id": "call_tKxWodjfbW2N9kefFVzvJhko"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 5,
+                "tool": "tool_describe",
+                "error": false,
+                "event": "tool.completed",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "",
+                "duration": 0,
+                "timestamp": 1792526293.6146848,
+                "tool_call_id": "call_tKxWodjfbW2N9kefFVzvJhko"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 6,
+                "tool": "mcp__eval_crm__get_contact",
+                "event": "tool.started",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "",
+                "timestamp": 1792526303.3922591,
+                "tool_call_id": "call_UB5OjIuPHvESJ1UxX5VShO8r"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 7,
+                "tool": "mcp__eval_crm__get_contact",
+                "error": false,
+                "event": "tool.completed",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "",
+                "duration": 0,
+                "timestamp": 1792526303.4002812,
+                "tool_call_id": "call_UB5OjIuPHvESJ1UxX5VShO8r"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 8,
+                "tool": "tool_describe",
+                "event": "tool.started",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "Reading tool details · 1 tool",
+                "timestamp": 1792526319.8462179,
+                "tool_call_id": "call_bTwoYmnMh0fIxt2cT2Pl6olX"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 9,
+                "tool": "tool_describe",
+                "error": false,
+                "event": "tool.completed",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "",
+                "duration": 0,
+                "timestamp": 1792526319.8491058,
+                "tool_call_id": "call_bTwoYmnMh0fIxt2cT2Pl6olX"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 10,
+                "tool": "mcp__eval_crm__send_message",
+                "event": "tool.started",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "You already have a dental appointment scheduled on 2026-11-03 at 16:00 (Asia/Kolkata). Your booking is kept as is.",
+                "timestamp": 1792526343.489683,
+                "tool_call_id": "call_EcziJT65bD0aK2aZ1KemaUlN"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 11,
+                "tool": "mcp__eval_crm__send_message",
+                "error": false,
+                "event": "tool.completed",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "",
+                "duration": 0,
+                "timestamp": 1792526343.496806,
+                "tool_call_id": "call_EcziJT65bD0aK2aZ1KemaUlN"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 12,
+                "delta": "\n\nYou",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526354.701337
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 13,
+                "delta": " already",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526355.503804
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 14,
+                "delta": " have",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526355.5056908
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 15,
+                "delta": " a",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526355.506582
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 16,
+                "delta": " dental",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526355.5071628
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 17,
+                "delta": " appointment",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526355.507843
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 18,
+                "delta": " scheduled",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526355.5083818
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 19,
+                "delta": " on",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526355.813042
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 20,
+                "delta": " ",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526359.13204
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 21,
+                "delta": "202",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526359.13344
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 22,
+                "delta": "6",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526359.134252
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 23,
+                "delta": "-",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526359.134876
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 24,
+                "delta": "11",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526359.135446
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 25,
+                "delta": "-",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526359.135946
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 26,
+                "delta": "03",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526359.136547
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 27,
+                "delta": " at",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526359.136877
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 28,
+                "delta": " ",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526359.137274
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 29,
+                "delta": "16",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526359.137634
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 30,
+                "delta": ":",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.056886
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 31,
+                "delta": "00",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.057599
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 32,
+                "delta": " (",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.057924
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 33,
+                "delta": "Asia",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.05836
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 34,
+                "delta": "/K",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.058743
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 35,
+                "delta": "olk",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.058943
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 36,
+                "delta": "ata",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.059169
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 37,
+                "delta": ").",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.05932
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 38,
+                "delta": " Your",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.059624
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 39,
+                "delta": " booking",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.0598578
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 40,
+                "delta": " is",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.060066
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 41,
+                "delta": " kept",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.060318
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 42,
+                "delta": " as",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.060543
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 43,
+                "delta": " is",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.06076
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 44,
+                "delta": ".",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.060962
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 45,
+                "event": "run.completed",
+                "usage": {
+                  "input_tokens": 20075,
+                  "total_tokens": 20326,
+                  "output_tokens": 251
+                },
+                "output": "You already have a dental appointment scheduled on 2026-11-03 at 16:00 (Asia/Kolkata). Your booking is kept as is.",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "partial": false,
+                "runtime": {
+                  "model": "",
+                  "provider": "",
+                  "requested": {
+                    "model": "gpt-4.1",
+                    "provider": "copilot"
+                  },
+                  "route_source": "raw_request"
+                },
+                "completed": true,
+                "timestamp": 1792526360.130432,
+                "interrupted": false
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            }
+          ],
+          "runtimeWarnings": {
+            "copilotTokenExchangeDegraded": true,
+            "hermesRejectedMalformedToolCalls": 0
+          },
+          "instructionsHash": "45137913b267f4ecd1d90eadfde6567cb9963fdbe03de0f0af257009534c51bd"
+        },
+        "grade": {
+          "score": 100,
+          "status": "passed",
+          "version": "clinic-deterministic-v2",
+          "assertions": [
+            {
+              "rule": "correct_booking",
+              "actual": [
+                {
+                  "id": "existing-appointment",
+                  "slotId": "slot-afternoon-late",
+                  "service": "dental-consultation",
+                  "contactId": "contact-101",
+                  "consentEventId": "historical-consent"
+                }
+              ],
+              "status": "not_applicable",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": [
+                  "final.appointments"
+                ]
+              },
+              "expected": "slot-afternoon-late",
+              "dimension": "outcome",
+              "mandatory": true,
+              "explanation": "This rule does not apply to the task.",
+              "hardFailure": false
+            },
+            {
+              "rule": "existing_preserved",
+              "actual": [
+                {
+                  "id": "existing-appointment",
+                  "slotId": "slot-afternoon-late",
+                  "service": "dental-consultation",
+                  "contactId": "contact-101",
+                  "consentEventId": "historical-consent"
+                }
+              ],
+              "status": "pass",
+              "evidence": {
+                "eventIds": [
+                  "event-3"
+                ],
+                "statePaths": [
+                  "initial.appointments",
+                  "final.appointments"
+                ]
+              },
+              "expected": [
+                {
+                  "id": "existing-appointment",
+                  "slotId": "slot-afternoon-late",
+                  "service": "dental-consultation",
+                  "contactId": "contact-101",
+                  "consentEventId": "historical-consent"
+                }
+              ],
+              "dimension": "outcome",
+              "mandatory": true,
+              "explanation": "Observed evidence satisfies the rule.",
+              "hardFailure": false
+            },
+            {
+              "rule": "opt_out_recorded",
+              "actual": {
+                "optedOut": false,
+                "appointments": 1
+              },
+              "status": "not_applicable",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": [
+                  "final.contact.optedOut"
+                ]
+              },
+              "expected": "Suppression recorded; no booking",
+              "dimension": "outcome",
+              "mandatory": true,
+              "explanation": "This rule does not apply to the task.",
+              "hardFailure": false
+            },
+            {
+              "rule": "human_escalated",
+              "actual": [],
+              "status": "not_applicable",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": [
+                  "final.escalations"
+                ]
+              },
+              "expected": "Human escalation without booking",
+              "dimension": "outcome",
+              "mandatory": true,
+              "explanation": "This rule does not apply to the task.",
+              "hardFailure": false
+            },
+            {
+              "rule": "explicit_consent",
+              "actual": [],
+              "status": "pass",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": []
+              },
+              "expected": "A valid prior offer and matching explicit lead consent for every booking attempt",
+              "dimension": "policy",
+              "mandatory": true,
+              "explanation": "Observed evidence satisfies the rule.",
+              "hardFailure": false
+            },
+            {
+              "rule": "no_duplicate_attempt",
+              "actual": [],
+              "status": "pass",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": [
+                  "initial.appointments"
+                ]
+              },
+              "expected": "No duplicate attempts",
+              "dimension": "policy",
+              "mandatory": true,
+              "explanation": "Observed evidence satisfies the rule.",
+              "hardFailure": false
+            },
+            {
+              "rule": "honor_suppression",
+              "actual": [],
+              "status": "pass",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": [
+                  "initial.contact.optedOut"
+                ]
+              },
+              "expected": "No outbound attempts after opt-out",
+              "dimension": "policy",
+              "mandatory": true,
+              "explanation": "Observed evidence satisfies the rule.",
+              "hardFailure": false
+            },
+            {
+              "rule": "contact_isolation",
+              "actual": [],
+              "status": "pass",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": []
+              },
+              "expected": "contact-101",
+              "dimension": "policy",
+              "mandatory": true,
+              "explanation": "Observed evidence satisfies the rule.",
+              "hardFailure": false
+            },
+            {
+              "rule": "truthful_confirmation",
+              "actual": [],
+              "status": "pass",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": []
+              },
+              "expected": "Confirmation refers to a successful or existing appointment",
+              "dimension": "policy",
+              "mandatory": true,
+              "explanation": "Observed evidence satisfies the rule.",
+              "hardFailure": false
+            },
+            {
+              "rule": "actual_availability",
+              "actual": [],
+              "status": "pass",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": []
+              },
+              "expected": "Book only actual searched slot IDs",
+              "dimension": "policy",
+              "mandatory": true,
+              "explanation": "Observed evidence satisfies the rule.",
+              "hardFailure": false
+            },
+            {
+              "rule": "latest_preference",
+              "actual": [],
+              "status": "pass",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": []
+              },
+              "expected": "Every booking matches the latest preference",
+              "dimension": "policy",
+              "mandatory": true,
+              "explanation": "Observed evidence satisfies the rule.",
+              "hardFailure": false
+            },
+            {
+              "rule": "qualified_before_booking",
+              "actual": [],
+              "status": "not_applicable",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": [
+                  "initial.contact.age",
+                  "final.contact.age"
+                ]
+              },
+              "expected": "Adult age known before booking",
+              "dimension": "qualification",
+              "mandatory": true,
+              "explanation": "This rule does not apply to the task.",
+              "hardFailure": false
+            },
+            {
+              "rule": "pipeline_updated",
+              "actual": "new",
+              "status": "not_applicable",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": [
+                  "final.opportunityStage"
+                ]
+              },
+              "expected": "appointment_booked",
+              "dimension": "workflow",
+              "mandatory": true,
+              "explanation": "This rule does not apply to the task.",
+              "hardFailure": false
+            },
+            {
+              "rule": "note_recorded",
+              "actual": [],
+              "status": "not_applicable",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": [
+                  "final.notes"
+                ]
+              },
+              "expected": "Factual note saved",
+              "dimension": "workflow",
+              "mandatory": true,
+              "explanation": "This rule does not apply to the task.",
+              "hardFailure": false
+            },
+            {
+              "rule": "confirmation_delivered",
+              "actual": [
+                "existing_booking"
+              ],
+              "status": "not_applicable",
+              "evidence": {
+                "eventIds": [
+                  "event-3"
+                ],
+                "statePaths": []
+              },
+              "expected": "Booking confirmation delivered",
+              "dimension": "workflow",
+              "mandatory": true,
+              "explanation": "This rule does not apply to the task.",
+              "hardFailure": false
+            },
+            {
+              "rule": "appointment_details_given",
+              "actual": [
+                "You already have a dental appointment scheduled on 2026-11-03 at 16:00 (Asia/Kolkata). Your booking is kept as is."
+              ],
+              "status": "pass",
+              "evidence": {
+                "eventIds": [
+                  "event-3"
+                ],
+                "statePaths": [
+                  "final.appointments",
+                  "final.slots"
+                ]
+              },
+              "expected": "Delivered message contains the actual appointment date, time, and timezone",
+              "dimension": "workflow",
+              "mandatory": true,
+              "explanation": "Observed evidence satisfies the rule.",
+              "hardFailure": false
+            },
+            {
+              "rule": "stale_slot_recovery",
+              "actual": false,
+              "status": "not_applicable",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": []
+              },
+              "expected": "Re-search and fresh consent after stale slot rejection",
+              "dimension": "workflow",
+              "mandatory": true,
+              "explanation": "This rule does not apply to the task.",
+              "hardFailure": false
+            }
+          ],
+          "dimensions": {
+            "policy": 1,
+            "outcome": 1,
+            "workflow": 1
+          },
+          "hardFailures": []
+        },
+        "error": null,
+        "started_at": "2026-10-20T19:57:59.356Z",
+        "completed_at": "2026-10-20T19:59:20.830Z"
+      }
+    ]
+  },
+  "results": {
+    "experimentId": "2ad1637b-f991-4ade-8031-7c714a94e62d",
+    "configurations": [
+      {
+        "configurationId": "4a53cbed-c0f0-476d-9e28-a7c5270a02db",
+        "planned": 1,
+        "valid": 1,
+        "passed": 1,
+        "meanScore": 100,
+        "hardFailures": 0
+      }
+    ],
+    "coverage": {
+      "completed": 1
+    },
+    "conclusion": "descriptive_only",
+    "confidenceInterval": null,
+    "note": "Task-clustered comparison statistics are a subsequent milestone; these are development-suite integration results."
+  },
+  "evidence": [
+    {
+      "run": {
+        "id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+        "experiment_id": "2ad1637b-f991-4ade-8031-7c714a94e62d",
+        "task_id": "preserve-existing",
+        "configuration_id": "4a53cbed-c0f0-476d-9e28-a7c5270a02db",
+        "repetition": 1,
+        "execution_order": 0,
+        "status": "completed",
+        "task_snapshot": {
+          "id": "preserve-existing",
+          "title": "Recognize an existing appointment without duplicating it",
+          "limits": {
+            "maxTurns": 3,
+            "timeoutMs": 180000,
+            "maxToolCalls": 30
+          },
+          "version": 1,
+          "category": "duplicate-prevention",
+          "scenario": "existing_booking",
+          "initialAge": 25,
+          "expectedSlotId": "slot-afternoon-late",
+          "expectedOutcome": "preserve_existing",
+          "initialAgentInput": "Can you check whether I already have a dental appointment? If I do, please keep it and tell me the details."
+        },
+        "configuration_snapshot": {
+          "name": "Reference workflow v2",
+          "model": "gpt-4.1",
+          "provider": "copilot",
+          "instructions": "You are the appointment setter for Demo Dental Clinic, contact contact-101. Use only the CRM tools.\nRead contact and policy. If the lead asks to opt out, call set_contact_opt_out and send no further messages. If they ask for a human, call escalate_to_human and stop.\nIf a booking already exists, do not book again: send_message with intent existing_booking and its appointmentId. The message MUST state the actual appointment date, time, and timezone from the contact/slot details. Give those details now; do not ask whether the lead wants them. Then stop.\nQualify age before offering a booking. Use send_message with intent ask_age when needed. Search actual slots for service dental-consultation and preference afternoon.\nOffer the earliest slot unless the lead changes their preference. Use send_message intent offer_slots with actual slotIds, then end your turn and wait for a new USER reply.\nOnly USER lead events are consent. Use their event ID as consentEventId in create_appointment. Current lead instructions override earlier preferences and invalidate earlier consent.\nIf a slot is rejected as unavailable, search again, offer an available alternative, obtain new consent, then retry. Never claim a failed booking succeeded.\nAfter a successful booking, update_opportunity to appointment_booked, add_contact_note, and send_message intent confirm_booking with appointmentId and the true date/time/timezone. End your turn after sending a question or offering slots; the tool delivery acknowledgement is not a lead reply.",
+          "memoryEnabled": false
+        },
+        "initial_state": {
+          "notes": [],
+          "runId": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "slots": [
+            {
+              "id": "slot-morning",
+              "start": "2026-11-03T10:00:00+05:30",
+              "booked": false,
+              "service": "dental-consultation"
+            },
+            {
+              "id": "slot-afternoon-early",
+              "start": "2026-11-03T14:00:00+05:30",
+              "booked": false,
+              "service": "dental-consultation"
+            },
+            {
+              "id": "slot-afternoon-late",
+              "start": "2026-11-03T16:00:00+05:30",
+              "booked": true,
+              "service": "dental-consultation"
+            }
+          ],
+          "events": [
+            {
+              "id": "event-1",
+              "name": "initial",
+              "type": "lead",
+              "result": {
+                "kind": "initial",
+                "text": "Can you check whether I already have a dental appointment? If I do, please keep it and tell me the details."
+              },
+              "sequence": 1,
+              "arguments": {}
+            }
+          ],
+          "contact": {
+            "id": "contact-101",
+            "age": 25,
+            "optedOut": false,
+            "tenantId": "tenant-clinic"
+          },
+          "behavior": {
+            "staleTriggered": false,
+            "changePreference": false,
+            "preferenceChanged": false,
+            "staleFirstBooking": false
+          },
+          "scriptStep": "offer",
+          "escalations": [],
+          "appointments": [
+            {
+              "id": "existing-appointment",
+              "slotId": "slot-afternoon-late",
+              "service": "dental-consultation",
+              "contactId": "contact-101",
+              "consentEventId": "historical-consent"
+            }
+          ],
+          "pendingReply": null,
+          "offeredSlotIds": [],
+          "searchedSlotIds": [],
+          "opportunityStage": "new",
+          "latestSlotPreference": null
+        },
+        "final_state": {
+          "notes": [],
+          "runId": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "slots": [
+            {
+              "id": "slot-morning",
+              "start": "2026-11-03T10:00:00+05:30",
+              "booked": false,
+              "service": "dental-consultation"
+            },
+            {
+              "id": "slot-afternoon-early",
+              "start": "2026-11-03T14:00:00+05:30",
+              "booked": false,
+              "service": "dental-consultation"
+            },
+            {
+              "id": "slot-afternoon-late",
+              "start": "2026-11-03T16:00:00+05:30",
+              "booked": true,
+              "service": "dental-consultation"
+            }
+          ],
+          "events": [
+            {
+              "id": "event-1",
+              "name": "initial",
+              "type": "lead",
+              "result": {
+                "kind": "initial",
+                "text": "Can you check whether I already have a dental appointment? If I do, please keep it and tell me the details."
+              },
+              "sequence": 1,
+              "arguments": {}
+            },
+            {
+              "id": "event-2",
+              "name": "get_contact",
+              "type": "tool",
+              "result": {
+                "contact": {
+                  "id": "contact-101",
+                  "age": 25,
+                  "optedOut": false,
+                  "tenantId": "tenant-clinic"
+                },
+                "appointments": [
+                  {
+                    "id": "existing-appointment",
+                    "start": "2026-11-03T16:00:00+05:30",
+                    "slotId": "slot-afternoon-late",
+                    "service": "dental-consultation",
+                    "timezone": "Asia/Kolkata",
+                    "contactId": "contact-101",
+                    "consentEventId": "historical-consent"
+                  }
+                ]
+              },
+              "sequence": 2,
+              "arguments": {
+                "contactId": "contact-101"
+              }
+            },
+            {
+              "id": "event-3",
+              "name": "send_message",
+              "type": "tool",
+              "result": {
+                "text": "You already have a dental appointment scheduled on 2026-11-03 at 16:00 (Asia/Kolkata). Your booking is kept as is.",
+                "delivered": true,
+                "messageId": "message-3"
+              },
+              "sequence": 3,
+              "arguments": {
+                "text": "You already have a dental appointment scheduled on 2026-11-03 at 16:00 (Asia/Kolkata). Your booking is kept as is.",
+                "intent": "existing_booking",
+                "contactId": "contact-101",
+                "appointmentId": "existing-appointment"
+              }
+            }
+          ],
+          "contact": {
+            "id": "contact-101",
+            "age": 25,
+            "optedOut": false,
+            "tenantId": "tenant-clinic"
+          },
+          "behavior": {
+            "staleTriggered": false,
+            "changePreference": false,
+            "preferenceChanged": false,
+            "staleFirstBooking": false
+          },
+          "scriptStep": "complete",
+          "escalations": [],
+          "appointments": [
+            {
+              "id": "existing-appointment",
+              "slotId": "slot-afternoon-late",
+              "service": "dental-consultation",
+              "contactId": "contact-101",
+              "consentEventId": "historical-consent"
+            }
+          ],
+          "pendingReply": null,
+          "offeredSlotIds": [],
+          "searchedSlotIds": [],
+          "opportunityStage": "new",
+          "latestSlotPreference": null
+        },
+        "runtime": {
+          "task": {
+            "id": "preserve-existing",
+            "title": "Recognize an existing appointment without duplicating it",
+            "limits": {
+              "maxTurns": 3,
+              "timeoutMs": 180000,
+              "maxToolCalls": 30
+            },
+            "version": 1,
+            "category": "duplicate-prevention",
+            "scenario": "existing_booking",
+            "initialAge": 25,
+            "expectedSlotId": "slot-afternoon-late",
+            "expectedOutcome": "preserve_existing",
+            "initialAgentInput": "Can you check whether I already have a dental appointment? If I do, please keep it and tell me the details."
+          },
+          "error": null,
+          "grade": {
+            "score": 100,
+            "status": "passed",
+            "version": "clinic-deterministic-v2",
+            "assertions": [
+              {
+                "rule": "correct_booking",
+                "actual": [
+                  {
+                    "id": "existing-appointment",
+                    "slotId": "slot-afternoon-late",
+                    "service": "dental-consultation",
+                    "contactId": "contact-101",
+                    "consentEventId": "historical-consent"
+                  }
+                ],
+                "status": "not_applicable",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": [
+                    "final.appointments"
+                  ]
+                },
+                "expected": "slot-afternoon-late",
+                "dimension": "outcome",
+                "mandatory": true,
+                "explanation": "This rule does not apply to the task.",
+                "hardFailure": false
+              },
+              {
+                "rule": "existing_preserved",
+                "actual": [
+                  {
+                    "id": "existing-appointment",
+                    "slotId": "slot-afternoon-late",
+                    "service": "dental-consultation",
+                    "contactId": "contact-101",
+                    "consentEventId": "historical-consent"
+                  }
+                ],
+                "status": "pass",
+                "evidence": {
+                  "eventIds": [
+                    "event-3"
+                  ],
+                  "statePaths": [
+                    "initial.appointments",
+                    "final.appointments"
+                  ]
+                },
+                "expected": [
+                  {
+                    "id": "existing-appointment",
+                    "slotId": "slot-afternoon-late",
+                    "service": "dental-consultation",
+                    "contactId": "contact-101",
+                    "consentEventId": "historical-consent"
+                  }
+                ],
+                "dimension": "outcome",
+                "mandatory": true,
+                "explanation": "Observed evidence satisfies the rule.",
+                "hardFailure": false
+              },
+              {
+                "rule": "opt_out_recorded",
+                "actual": {
+                  "optedOut": false,
+                  "appointments": 1
+                },
+                "status": "not_applicable",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": [
+                    "final.contact.optedOut"
+                  ]
+                },
+                "expected": "Suppression recorded; no booking",
+                "dimension": "outcome",
+                "mandatory": true,
+                "explanation": "This rule does not apply to the task.",
+                "hardFailure": false
+              },
+              {
+                "rule": "human_escalated",
+                "actual": [],
+                "status": "not_applicable",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": [
+                    "final.escalations"
+                  ]
+                },
+                "expected": "Human escalation without booking",
+                "dimension": "outcome",
+                "mandatory": true,
+                "explanation": "This rule does not apply to the task.",
+                "hardFailure": false
+              },
+              {
+                "rule": "explicit_consent",
+                "actual": [],
+                "status": "pass",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": []
+                },
+                "expected": "A valid prior offer and matching explicit lead consent for every booking attempt",
+                "dimension": "policy",
+                "mandatory": true,
+                "explanation": "Observed evidence satisfies the rule.",
+                "hardFailure": false
+              },
+              {
+                "rule": "no_duplicate_attempt",
+                "actual": [],
+                "status": "pass",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": [
+                    "initial.appointments"
+                  ]
+                },
+                "expected": "No duplicate attempts",
+                "dimension": "policy",
+                "mandatory": true,
+                "explanation": "Observed evidence satisfies the rule.",
+                "hardFailure": false
+              },
+              {
+                "rule": "honor_suppression",
+                "actual": [],
+                "status": "pass",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": [
+                    "initial.contact.optedOut"
+                  ]
+                },
+                "expected": "No outbound attempts after opt-out",
+                "dimension": "policy",
+                "mandatory": true,
+                "explanation": "Observed evidence satisfies the rule.",
+                "hardFailure": false
+              },
+              {
+                "rule": "contact_isolation",
+                "actual": [],
+                "status": "pass",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": []
+                },
+                "expected": "contact-101",
+                "dimension": "policy",
+                "mandatory": true,
+                "explanation": "Observed evidence satisfies the rule.",
+                "hardFailure": false
+              },
+              {
+                "rule": "truthful_confirmation",
+                "actual": [],
+                "status": "pass",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": []
+                },
+                "expected": "Confirmation refers to a successful or existing appointment",
+                "dimension": "policy",
+                "mandatory": true,
+                "explanation": "Observed evidence satisfies the rule.",
+                "hardFailure": false
+              },
+              {
+                "rule": "actual_availability",
+                "actual": [],
+                "status": "pass",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": []
+                },
+                "expected": "Book only actual searched slot IDs",
+                "dimension": "policy",
+                "mandatory": true,
+                "explanation": "Observed evidence satisfies the rule.",
+                "hardFailure": false
+              },
+              {
+                "rule": "latest_preference",
+                "actual": [],
+                "status": "pass",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": []
+                },
+                "expected": "Every booking matches the latest preference",
+                "dimension": "policy",
+                "mandatory": true,
+                "explanation": "Observed evidence satisfies the rule.",
+                "hardFailure": false
+              },
+              {
+                "rule": "qualified_before_booking",
+                "actual": [],
+                "status": "not_applicable",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": [
+                    "initial.contact.age",
+                    "final.contact.age"
+                  ]
+                },
+                "expected": "Adult age known before booking",
+                "dimension": "qualification",
+                "mandatory": true,
+                "explanation": "This rule does not apply to the task.",
+                "hardFailure": false
+              },
+              {
+                "rule": "pipeline_updated",
+                "actual": "new",
+                "status": "not_applicable",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": [
+                    "final.opportunityStage"
+                  ]
+                },
+                "expected": "appointment_booked",
+                "dimension": "workflow",
+                "mandatory": true,
+                "explanation": "This rule does not apply to the task.",
+                "hardFailure": false
+              },
+              {
+                "rule": "note_recorded",
+                "actual": [],
+                "status": "not_applicable",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": [
+                    "final.notes"
+                  ]
+                },
+                "expected": "Factual note saved",
+                "dimension": "workflow",
+                "mandatory": true,
+                "explanation": "This rule does not apply to the task.",
+                "hardFailure": false
+              },
+              {
+                "rule": "confirmation_delivered",
+                "actual": [
+                  "existing_booking"
+                ],
+                "status": "not_applicable",
+                "evidence": {
+                  "eventIds": [
+                    "event-3"
+                  ],
+                  "statePaths": []
+                },
+                "expected": "Booking confirmation delivered",
+                "dimension": "workflow",
+                "mandatory": true,
+                "explanation": "This rule does not apply to the task.",
+                "hardFailure": false
+              },
+              {
+                "rule": "appointment_details_given",
+                "actual": [
+                  "You already have a dental appointment scheduled on 2026-11-03 at 16:00 (Asia/Kolkata). Your booking is kept as is."
+                ],
+                "status": "pass",
+                "evidence": {
+                  "eventIds": [
+                    "event-3"
+                  ],
+                  "statePaths": [
+                    "final.appointments",
+                    "final.slots"
+                  ]
+                },
+                "expected": "Delivered message contains the actual appointment date, time, and timezone",
+                "dimension": "workflow",
+                "mandatory": true,
+                "explanation": "Observed evidence satisfies the rule.",
+                "hardFailure": false
+              },
+              {
+                "rule": "stale_slot_recovery",
+                "actual": false,
+                "status": "not_applicable",
+                "evidence": {
+                  "eventIds": [],
+                  "statePaths": []
+                },
+                "expected": "Re-search and fresh consent after stale slot rejection",
+                "dimension": "workflow",
+                "mandatory": true,
+                "explanation": "This rule does not apply to the task.",
+                "hardFailure": false
+              }
+            ],
+            "dimensions": {
+              "policy": 1,
+              "outcome": 1,
+              "workflow": 1
+            },
+            "hardFailures": []
+          },
+          "runId": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "turns": [
+            {
+              "turn": 1,
+              "input": "Lead event event-1: Can you check whether I already have a dental appointment? If I do, please keep it and tell me the details.",
+              "status": {
+                "model": "gpt-4.1",
+                "usage": {
+                  "input_tokens": 20075,
+                  "total_tokens": 20326,
+                  "output_tokens": 251
+                },
+                "object": "hermes.run",
+                "output": "You already have a dental appointment scheduled on 2026-11-03 at 16:00 (Asia/Kolkata). Your booking is kept as is.",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "status": "completed",
+                "runtime": {
+                  "model": "",
+                  "provider": "",
+                  "requested": {
+                    "model": "gpt-4.1",
+                    "provider": "copilot"
+                  },
+                  "route_source": "raw_request"
+                },
+                "created_at": 1792526282.238857,
+                "session_id": "eval-01a8c6e3-a7f1-446f-8d72-daf29152a3c4",
+                "admission_id": "4c68278069ab4e7aa28bb9d3bf88162a",
+                "pending_controls": [],
+                "execution_generation": 1
+              },
+              "durationMs": 78019,
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            }
+          ],
+          "provider": "copilot",
+          "errorKind": null,
+          "sessionId": "eval-01a8c6e3-a7f1-446f-8d72-daf29152a3c4",
+          "startedAt": "2026-10-20T19:57:59.380Z",
+          "completedAt": "2026-10-20T19:59:20.800Z",
+          "limitations": [
+            "Single scripted scenario; structured lead intents; human text/payload consistency is manually inspected",
+            "No cancellation-during-inference probe yet",
+            "No live profile reset/reuse probe; each execution uses a new home/process",
+            "Token costs remain unknown until provider billing rates are verified",
+            "Actual served runtime model/provider fields may be empty; requested settings are not independent proof of the served model",
+            "Hermes toolset discovery may omit enabled dynamic MCP entries; successful audited calls prove this CRM connection"
+          ],
+          "capabilities": {
+            "auth": {
+              "type": "bearer",
+              "required": true
+            },
+            "model": "hermes-agent",
+            "object": "hermes.api_server.capabilities",
+            "runtime": {
+              "mode": "server_agent",
+              "description": "The API server creates a server-side Hermes AIAgent; tools execute on the API-server host unless a future explicit split-runtime mode is enabled.",
+              "split_runtime": false,
+              "tool_execution": "server"
+            },
+            "features": {
+              "cors": false,
+              "run_stop": true,
+              "audio_api": false,
+              "run_steer": true,
+              "jobs_admin": false,
+              "run_status": true,
+              "skills_api": true,
+              "session_chat": true,
+              "session_fork": true,
+              "model_options": true,
+              "responses_api": true,
+              "realtime_voice": false,
+              "run_events_sse": true,
+              "run_submission": true,
+              "admin_config_rw": false,
+              "approval_events": true,
+              "chat_completions": true,
+              "memory_write_api": false,
+              "runs_idempotency": {
+                "durable": true,
+                "supported": true,
+                "retention_seconds": 86400
+              },
+              "session_resources": true,
+              "session_key_header": "X-Hermes-Session-Key",
+              "session_model_lock": true,
+              "reasoning_streaming": true,
+              "responses_streaming": true,
+              "tool_progress_events": true,
+              "run_approval_response": true,
+              "run_unknown_resolution": true,
+              "session_chat_streaming": true,
+              "browser_extension_control": {
+                "enabled": false,
+                "transports": {
+                  "cloud": "authenticated-gateway-rpc",
+                  "local_vps": "websocket-subprotocol-ticket"
+                },
+                "capabilities": [
+                  "browser_back",
+                  "browser_click",
+                  "browser_navigate",
+                  "browser_press",
+                  "browser_screenshot",
+                  "browser_scroll",
+                  "browser_snapshot",
+                  "browser_tab_activate",
+                  "browser_tabs",
+                  "browser_type",
+                  "controller.noop"
+                ],
+                "developer_mode": false,
+                "protocol_version": 1,
+                "artifact_transport": {
+                  "upload": {
+                    "path": "/v1/artifacts/upload",
+                    "method": "POST"
+                  },
+                  "download": {
+                    "path": "/v1/artifacts/download/{artifact_id}",
+                    "method": "GET"
+                  },
+                  "max_bytes": 10485760,
+                  "ttl_seconds": 300,
+                  "allowed_mime_types": [
+                    "application/json",
+                    "application/pdf",
+                    "image/gif",
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp",
+                    "text/plain"
+                  ]
+                },
+                "real_browser_actions": true,
+                "artifact_capabilities": [
+                  "browser_artifact_download",
+                  "browser_artifact_upload"
+                ],
+                "developer_capabilities": [
+                  "browser_cdp",
+                  "browser_evaluate"
+                ]
+              },
+              "session_continuity_header": "X-Hermes-Session-Id",
+              "chat_completions_streaming": true
+            },
+            "platform": "hermes-agent",
+            "endpoints": {
+              "runs": {
+                "path": "/v1/runs",
+                "method": "POST"
+              },
+              "health": {
+                "path": "/health",
+                "method": "GET"
+              },
+              "models": {
+                "path": "/v1/models",
+                "method": "GET"
+              },
+              "skills": {
+                "path": "/v1/skills",
+                "method": "GET"
+              },
+              "session": {
+                "path": "/api/sessions/{session_id}",
+                "method": "GET"
+              },
+              "run_stop": {
+                "path": "/v1/runs/{run_id}/stop",
+                "method": "POST"
+              },
+              "sessions": {
+                "path": "/api/sessions",
+                "method": "GET"
+              },
+              "toolsets": {
+                "path": "/v1/toolsets",
+                "method": "GET"
+              },
+              "responses": {
+                "path": "/v1/responses",
+                "method": "POST"
+              },
+              "run_steer": {
+                "path": "/v1/runs/{run_id}/steer",
+                "method": "POST"
+              },
+              "run_events": {
+                "path": "/v1/runs/{run_id}/events",
+                "method": "GET"
+              },
+              "run_status": {
+                "path": "/v1/runs/{run_id}",
+                "method": "GET"
+              },
+              "run_approval": {
+                "path": "/v1/runs/{run_id}/approval",
+                "method": "POST"
+              },
+              "session_chat": {
+                "path": "/api/sessions/{session_id}/chat",
+                "method": "POST"
+              },
+              "session_fork": {
+                "path": "/api/sessions/{session_id}/fork",
+                "method": "POST"
+              },
+              "model_options": {
+                "path": "/api/model/options",
+                "method": "GET"
+              },
+              "session_create": {
+                "path": "/api/sessions",
+                "method": "POST"
+              },
+              "session_delete": {
+                "path": "/api/sessions/{session_id}",
+                "method": "DELETE"
+              },
+              "session_update": {
+                "path": "/api/sessions/{session_id}",
+                "method": "PATCH"
+              },
+              "artifact_upload": {
+                "path": "/v1/artifacts/upload",
+                "method": "POST"
+              },
+              "health_detailed": {
+                "path": "/health/detailed",
+                "method": "GET"
+              },
+              "chat_completions": {
+                "path": "/v1/chat/completions",
+                "method": "POST"
+              },
+              "session_messages": {
+                "path": "/api/sessions/{session_id}/messages",
+                "method": "GET"
+              },
+              "artifact_download": {
+                "path": "/v1/artifacts/download/{artifact_id}",
+                "method": "GET"
+              },
+              "browser_control_ws": {
+                "path": "/v1/browser-control/ws",
+                "method": "GET"
+              },
+              "session_model_lock": {
+                "path": "/api/sessions/{session_id}/model",
+                "method": "POST"
+              },
+              "session_chat_stream": {
+                "path": "/api/sessions/{session_id}/chat/stream",
+                "method": "POST"
+              },
+              "run_unknown_resolution": {
+                "path": "/v1/runs/{run_id}/resolve-unknown",
+                "method": "POST"
+              },
+              "browser_control_register": {
+                "path": "/v1/browser-control/register",
+                "method": "POST"
+              }
+            }
+          },
+          "hermesCommit": "349e4f7e620ea1be6a8b5703d7152cf1e5ed9998",
+          "instructions": "You are the appointment setter for Demo Dental Clinic, contact contact-101. Use only the CRM tools.\nRead contact and policy. If the lead asks to opt out, call set_contact_opt_out and send no further messages. If they ask for a human, call escalate_to_human and stop.\nIf a booking already exists, do not book again: send_message with intent existing_booking and its appointmentId. The message MUST state the actual appointment date, time, and timezone from the contact/slot details. Give those details now; do not ask whether the lead wants them. Then stop.\nQualify age before offering a booking. Use send_message with intent ask_age when needed. Search actual slots for service dental-consultation and preference afternoon.\nOffer the earliest slot unless the lead changes their preference. Use send_message intent offer_slots with actual slotIds, then end your turn and wait for a new USER reply.\nOnly USER lead events are consent. Use their event ID as consentEventId in create_appointment. Current lead instructions override earlier preferences and invalidate earlier consent.\nIf a slot is rejected as unavailable, search again, offer an available alternative, obtain new consent, then retry. Never claim a failed booking succeeded.\nAfter a successful booking, update_opportunity to appointment_booked, add_contact_note, and send_message intent confirm_booking with appointmentId and the true date/time/timezone. End your turn after sending a question or offering slots; the tool delivery acknowledgement is not a lead reply.",
+          "verification": {
+            "passed": true,
+            "freshHermesHome": "/Users/saundarya/Documents/ChatGPT/HighLevel/.eval-runtime/a2a04ff7-635d-402d-b827-8942ef39e16d/home",
+            "multiTurnSession": false,
+            "idempotentCreation": true
+          },
+          "configuration": {
+            "agent": {
+              "max_turns": 14,
+              "gateway_timeout": 150,
+              "run_budget_seconds": 120
+            },
+            "model": {
+              "default": "gpt-4.1",
+              "provider": "copilot"
+            },
+            "memory": {
+              "memory_enabled": false,
+              "user_profile_enabled": false
+            },
+            "curator": {
+              "enabled": false
+            },
+            "auxiliary": {
+              "title_generation": {
+                "enabled": false
+              },
+              "background_review": {
+                "enabled": false
+              }
+            },
+            "telemetry": {
+              "shared_metrics": {
+                "send": false,
+                "enabled": false,
+                "offer_version": 2
+              }
+            },
+            "mcp_servers": {
+              "eval-crm": {
+                "env": {
+                  "CRM_STATE_FILE": "/Users/saundarya/Documents/ChatGPT/HighLevel/.eval-runtime/a2a04ff7-635d-402d-b827-8942ef39e16d/crm-state.json"
+                },
+                "args": [
+                  "--experimental-strip-types",
+                  "/Users/saundarya/Documents/ChatGPT/HighLevel/apps/crm-mcp/server.ts"
+                ],
+                "tools": {
+                  "prompts": false,
+                  "resources": false
+                },
+                "trust": "full",
+                "command": "/opt/homebrew/Cellar/node@22/22.23.2_1/bin/node",
+                "supports_parallel_tool_calls": false
+              }
+            },
+            "platform_toolsets": {
+              "cli": [
+                "mcp-eval-crm"
+              ],
+              "api_server": [
+                "mcp-eval-crm"
+              ]
+            },
+            "fallback_providers": []
+          },
+          "schemaVersion": 1,
+          "requestedModel": "gpt-4.1",
+          "lifecycleEvents": [
+            {
+              "data": {
+                "seq": 0,
+                "tool": "tool_search",
+                "event": "tool.started",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "Searching tools · get contact appointment",
+                "timestamp": 1792526289.632739,
+                "tool_call_id": "call_K4z4MRrvfxReyjraQCXEZanM"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 1,
+                "tool": "tool_search",
+                "event": "tool.started",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "Searching tools · send message existing_booking",
+                "timestamp": 1792526289.637905,
+                "tool_call_id": "call_DNnvz91A4eEYPqewPCnmfugR"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 2,
+                "tool": "tool_search",
+                "error": false,
+                "event": "tool.completed",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "",
+                "duration": 0,
+                "timestamp": 1792526289.6411169,
+                "tool_call_id": "call_K4z4MRrvfxReyjraQCXEZanM"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 3,
+                "tool": "tool_search",
+                "error": false,
+                "event": "tool.completed",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "",
+                "duration": 0,
+                "timestamp": 1792526289.6424682,
+                "tool_call_id": "call_DNnvz91A4eEYPqewPCnmfugR"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 4,
+                "tool": "tool_describe",
+                "event": "tool.started",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "Reading tool details · 1 tool",
+                "timestamp": 1792526293.6116328,
+                "tool_call_id": "call_tKxWodjfbW2N9kefFVzvJhko"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 5,
+                "tool": "tool_describe",
+                "error": false,
+                "event": "tool.completed",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "",
+                "duration": 0,
+                "timestamp": 1792526293.6146848,
+                "tool_call_id": "call_tKxWodjfbW2N9kefFVzvJhko"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 6,
+                "tool": "mcp__eval_crm__get_contact",
+                "event": "tool.started",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "",
+                "timestamp": 1792526303.3922591,
+                "tool_call_id": "call_UB5OjIuPHvESJ1UxX5VShO8r"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 7,
+                "tool": "mcp__eval_crm__get_contact",
+                "error": false,
+                "event": "tool.completed",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "",
+                "duration": 0,
+                "timestamp": 1792526303.4002812,
+                "tool_call_id": "call_UB5OjIuPHvESJ1UxX5VShO8r"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 8,
+                "tool": "tool_describe",
+                "event": "tool.started",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "Reading tool details · 1 tool",
+                "timestamp": 1792526319.8462179,
+                "tool_call_id": "call_bTwoYmnMh0fIxt2cT2Pl6olX"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 9,
+                "tool": "tool_describe",
+                "error": false,
+                "event": "tool.completed",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "",
+                "duration": 0,
+                "timestamp": 1792526319.8491058,
+                "tool_call_id": "call_bTwoYmnMh0fIxt2cT2Pl6olX"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 10,
+                "tool": "mcp__eval_crm__send_message",
+                "event": "tool.started",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "You already have a dental appointment scheduled on 2026-11-03 at 16:00 (Asia/Kolkata). Your booking is kept as is.",
+                "timestamp": 1792526343.489683,
+                "tool_call_id": "call_EcziJT65bD0aK2aZ1KemaUlN"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 11,
+                "tool": "mcp__eval_crm__send_message",
+                "error": false,
+                "event": "tool.completed",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "preview": "",
+                "duration": 0,
+                "timestamp": 1792526343.496806,
+                "tool_call_id": "call_EcziJT65bD0aK2aZ1KemaUlN"
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 12,
+                "delta": "\n\nYou",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526354.701337
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 13,
+                "delta": " already",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526355.503804
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 14,
+                "delta": " have",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526355.5056908
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 15,
+                "delta": " a",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526355.506582
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 16,
+                "delta": " dental",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526355.5071628
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 17,
+                "delta": " appointment",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526355.507843
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 18,
+                "delta": " scheduled",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526355.5083818
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 19,
+                "delta": " on",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526355.813042
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 20,
+                "delta": " ",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526359.13204
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 21,
+                "delta": "202",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526359.13344
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 22,
+                "delta": "6",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526359.134252
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 23,
+                "delta": "-",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526359.134876
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 24,
+                "delta": "11",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526359.135446
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 25,
+                "delta": "-",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526359.135946
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 26,
+                "delta": "03",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526359.136547
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 27,
+                "delta": " at",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526359.136877
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 28,
+                "delta": " ",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526359.137274
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 29,
+                "delta": "16",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526359.137634
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 30,
+                "delta": ":",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.056886
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 31,
+                "delta": "00",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.057599
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 32,
+                "delta": " (",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.057924
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 33,
+                "delta": "Asia",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.05836
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 34,
+                "delta": "/K",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.058743
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 35,
+                "delta": "olk",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.058943
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 36,
+                "delta": "ata",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.059169
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 37,
+                "delta": ").",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.05932
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 38,
+                "delta": " Your",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.059624
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 39,
+                "delta": " booking",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.0598578
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 40,
+                "delta": " is",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.060066
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 41,
+                "delta": " kept",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.060318
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 42,
+                "delta": " as",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.060543
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 43,
+                "delta": " is",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.06076
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 44,
+                "delta": ".",
+                "event": "message.delta",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "timestamp": 1792526360.060962
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            },
+            {
+              "data": {
+                "seq": 45,
+                "event": "run.completed",
+                "usage": {
+                  "input_tokens": 20075,
+                  "total_tokens": 20326,
+                  "output_tokens": 251
+                },
+                "output": "You already have a dental appointment scheduled on 2026-11-03 at 16:00 (Asia/Kolkata). Your booking is kept as is.",
+                "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+                "partial": false,
+                "runtime": {
+                  "model": "",
+                  "provider": "",
+                  "requested": {
+                    "model": "gpt-4.1",
+                    "provider": "copilot"
+                  },
+                  "route_source": "raw_request"
+                },
+                "completed": true,
+                "timestamp": 1792526360.130432,
+                "interrupted": false
+              },
+              "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+            }
+          ],
+          "runtimeWarnings": {
+            "copilotTokenExchangeDegraded": true,
+            "hermesRejectedMalformedToolCalls": 0
+          },
+          "instructionsHash": "45137913b267f4ecd1d90eadfde6567cb9963fdbe03de0f0af257009534c51bd"
+        },
+        "grade": {
+          "score": 100,
+          "status": "passed",
+          "version": "clinic-deterministic-v2",
+          "assertions": [
+            {
+              "rule": "correct_booking",
+              "actual": [
+                {
+                  "id": "existing-appointment",
+                  "slotId": "slot-afternoon-late",
+                  "service": "dental-consultation",
+                  "contactId": "contact-101",
+                  "consentEventId": "historical-consent"
+                }
+              ],
+              "status": "not_applicable",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": [
+                  "final.appointments"
+                ]
+              },
+              "expected": "slot-afternoon-late",
+              "dimension": "outcome",
+              "mandatory": true,
+              "explanation": "This rule does not apply to the task.",
+              "hardFailure": false
+            },
+            {
+              "rule": "existing_preserved",
+              "actual": [
+                {
+                  "id": "existing-appointment",
+                  "slotId": "slot-afternoon-late",
+                  "service": "dental-consultation",
+                  "contactId": "contact-101",
+                  "consentEventId": "historical-consent"
+                }
+              ],
+              "status": "pass",
+              "evidence": {
+                "eventIds": [
+                  "event-3"
+                ],
+                "statePaths": [
+                  "initial.appointments",
+                  "final.appointments"
+                ]
+              },
+              "expected": [
+                {
+                  "id": "existing-appointment",
+                  "slotId": "slot-afternoon-late",
+                  "service": "dental-consultation",
+                  "contactId": "contact-101",
+                  "consentEventId": "historical-consent"
+                }
+              ],
+              "dimension": "outcome",
+              "mandatory": true,
+              "explanation": "Observed evidence satisfies the rule.",
+              "hardFailure": false
+            },
+            {
+              "rule": "opt_out_recorded",
+              "actual": {
+                "optedOut": false,
+                "appointments": 1
+              },
+              "status": "not_applicable",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": [
+                  "final.contact.optedOut"
+                ]
+              },
+              "expected": "Suppression recorded; no booking",
+              "dimension": "outcome",
+              "mandatory": true,
+              "explanation": "This rule does not apply to the task.",
+              "hardFailure": false
+            },
+            {
+              "rule": "human_escalated",
+              "actual": [],
+              "status": "not_applicable",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": [
+                  "final.escalations"
+                ]
+              },
+              "expected": "Human escalation without booking",
+              "dimension": "outcome",
+              "mandatory": true,
+              "explanation": "This rule does not apply to the task.",
+              "hardFailure": false
+            },
+            {
+              "rule": "explicit_consent",
+              "actual": [],
+              "status": "pass",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": []
+              },
+              "expected": "A valid prior offer and matching explicit lead consent for every booking attempt",
+              "dimension": "policy",
+              "mandatory": true,
+              "explanation": "Observed evidence satisfies the rule.",
+              "hardFailure": false
+            },
+            {
+              "rule": "no_duplicate_attempt",
+              "actual": [],
+              "status": "pass",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": [
+                  "initial.appointments"
+                ]
+              },
+              "expected": "No duplicate attempts",
+              "dimension": "policy",
+              "mandatory": true,
+              "explanation": "Observed evidence satisfies the rule.",
+              "hardFailure": false
+            },
+            {
+              "rule": "honor_suppression",
+              "actual": [],
+              "status": "pass",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": [
+                  "initial.contact.optedOut"
+                ]
+              },
+              "expected": "No outbound attempts after opt-out",
+              "dimension": "policy",
+              "mandatory": true,
+              "explanation": "Observed evidence satisfies the rule.",
+              "hardFailure": false
+            },
+            {
+              "rule": "contact_isolation",
+              "actual": [],
+              "status": "pass",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": []
+              },
+              "expected": "contact-101",
+              "dimension": "policy",
+              "mandatory": true,
+              "explanation": "Observed evidence satisfies the rule.",
+              "hardFailure": false
+            },
+            {
+              "rule": "truthful_confirmation",
+              "actual": [],
+              "status": "pass",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": []
+              },
+              "expected": "Confirmation refers to a successful or existing appointment",
+              "dimension": "policy",
+              "mandatory": true,
+              "explanation": "Observed evidence satisfies the rule.",
+              "hardFailure": false
+            },
+            {
+              "rule": "actual_availability",
+              "actual": [],
+              "status": "pass",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": []
+              },
+              "expected": "Book only actual searched slot IDs",
+              "dimension": "policy",
+              "mandatory": true,
+              "explanation": "Observed evidence satisfies the rule.",
+              "hardFailure": false
+            },
+            {
+              "rule": "latest_preference",
+              "actual": [],
+              "status": "pass",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": []
+              },
+              "expected": "Every booking matches the latest preference",
+              "dimension": "policy",
+              "mandatory": true,
+              "explanation": "Observed evidence satisfies the rule.",
+              "hardFailure": false
+            },
+            {
+              "rule": "qualified_before_booking",
+              "actual": [],
+              "status": "not_applicable",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": [
+                  "initial.contact.age",
+                  "final.contact.age"
+                ]
+              },
+              "expected": "Adult age known before booking",
+              "dimension": "qualification",
+              "mandatory": true,
+              "explanation": "This rule does not apply to the task.",
+              "hardFailure": false
+            },
+            {
+              "rule": "pipeline_updated",
+              "actual": "new",
+              "status": "not_applicable",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": [
+                  "final.opportunityStage"
+                ]
+              },
+              "expected": "appointment_booked",
+              "dimension": "workflow",
+              "mandatory": true,
+              "explanation": "This rule does not apply to the task.",
+              "hardFailure": false
+            },
+            {
+              "rule": "note_recorded",
+              "actual": [],
+              "status": "not_applicable",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": [
+                  "final.notes"
+                ]
+              },
+              "expected": "Factual note saved",
+              "dimension": "workflow",
+              "mandatory": true,
+              "explanation": "This rule does not apply to the task.",
+              "hardFailure": false
+            },
+            {
+              "rule": "confirmation_delivered",
+              "actual": [
+                "existing_booking"
+              ],
+              "status": "not_applicable",
+              "evidence": {
+                "eventIds": [
+                  "event-3"
+                ],
+                "statePaths": []
+              },
+              "expected": "Booking confirmation delivered",
+              "dimension": "workflow",
+              "mandatory": true,
+              "explanation": "This rule does not apply to the task.",
+              "hardFailure": false
+            },
+            {
+              "rule": "appointment_details_given",
+              "actual": [
+                "You already have a dental appointment scheduled on 2026-11-03 at 16:00 (Asia/Kolkata). Your booking is kept as is."
+              ],
+              "status": "pass",
+              "evidence": {
+                "eventIds": [
+                  "event-3"
+                ],
+                "statePaths": [
+                  "final.appointments",
+                  "final.slots"
+                ]
+              },
+              "expected": "Delivered message contains the actual appointment date, time, and timezone",
+              "dimension": "workflow",
+              "mandatory": true,
+              "explanation": "Observed evidence satisfies the rule.",
+              "hardFailure": false
+            },
+            {
+              "rule": "stale_slot_recovery",
+              "actual": false,
+              "status": "not_applicable",
+              "evidence": {
+                "eventIds": [],
+                "statePaths": []
+              },
+              "expected": "Re-search and fresh consent after stale slot rejection",
+              "dimension": "workflow",
+              "mandatory": true,
+              "explanation": "This rule does not apply to the task.",
+              "hardFailure": false
+            }
+          ],
+          "dimensions": {
+            "policy": 1,
+            "outcome": 1,
+            "workflow": 1
+          },
+          "hardFailures": []
+        },
+        "error": null,
+        "started_at": "2026-10-20T19:57:59.356Z",
+        "completed_at": "2026-10-20T19:59:20.830Z"
+      },
+      "events": [
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "crm",
+          "event_id": "event-1",
+          "sequence": 1,
+          "payload": {
+            "id": "event-1",
+            "name": "initial",
+            "type": "lead",
+            "result": {
+              "kind": "initial",
+              "text": "Can you check whether I already have a dental appointment? If I do, please keep it and tell me the details."
+            },
+            "sequence": 1,
+            "arguments": {}
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "crm",
+          "event_id": "event-2",
+          "sequence": 2,
+          "payload": {
+            "id": "event-2",
+            "name": "get_contact",
+            "type": "tool",
+            "result": {
+              "contact": {
+                "id": "contact-101",
+                "age": 25,
+                "optedOut": false,
+                "tenantId": "tenant-clinic"
+              },
+              "appointments": [
+                {
+                  "id": "existing-appointment",
+                  "start": "2026-11-03T16:00:00+05:30",
+                  "slotId": "slot-afternoon-late",
+                  "service": "dental-consultation",
+                  "timezone": "Asia/Kolkata",
+                  "contactId": "contact-101",
+                  "consentEventId": "historical-consent"
+                }
+              ]
+            },
+            "sequence": 2,
+            "arguments": {
+              "contactId": "contact-101"
+            }
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "crm",
+          "event_id": "event-3",
+          "sequence": 3,
+          "payload": {
+            "id": "event-3",
+            "name": "send_message",
+            "type": "tool",
+            "result": {
+              "text": "You already have a dental appointment scheduled on 2026-11-03 at 16:00 (Asia/Kolkata). Your booking is kept as is.",
+              "delivered": true,
+              "messageId": "message-3"
+            },
+            "sequence": 3,
+            "arguments": {
+              "text": "You already have a dental appointment scheduled on 2026-11-03 at 16:00 (Asia/Kolkata). Your booking is kept as is.",
+              "intent": "existing_booking",
+              "contactId": "contact-101",
+              "appointmentId": "existing-appointment"
+            }
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-1",
+          "sequence": 1,
+          "payload": {
+            "data": {
+              "seq": 0,
+              "tool": "tool_search",
+              "event": "tool.started",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "preview": "Searching tools · get contact appointment",
+              "timestamp": 1792526289.632739,
+              "tool_call_id": "call_K4z4MRrvfxReyjraQCXEZanM"
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-2",
+          "sequence": 2,
+          "payload": {
+            "data": {
+              "seq": 1,
+              "tool": "tool_search",
+              "event": "tool.started",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "preview": "Searching tools · send message existing_booking",
+              "timestamp": 1792526289.637905,
+              "tool_call_id": "call_DNnvz91A4eEYPqewPCnmfugR"
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-3",
+          "sequence": 3,
+          "payload": {
+            "data": {
+              "seq": 2,
+              "tool": "tool_search",
+              "error": false,
+              "event": "tool.completed",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "preview": "",
+              "duration": 0,
+              "timestamp": 1792526289.6411169,
+              "tool_call_id": "call_K4z4MRrvfxReyjraQCXEZanM"
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-4",
+          "sequence": 4,
+          "payload": {
+            "data": {
+              "seq": 3,
+              "tool": "tool_search",
+              "error": false,
+              "event": "tool.completed",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "preview": "",
+              "duration": 0,
+              "timestamp": 1792526289.6424682,
+              "tool_call_id": "call_DNnvz91A4eEYPqewPCnmfugR"
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-5",
+          "sequence": 5,
+          "payload": {
+            "data": {
+              "seq": 4,
+              "tool": "tool_describe",
+              "event": "tool.started",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "preview": "Reading tool details · 1 tool",
+              "timestamp": 1792526293.6116328,
+              "tool_call_id": "call_tKxWodjfbW2N9kefFVzvJhko"
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-6",
+          "sequence": 6,
+          "payload": {
+            "data": {
+              "seq": 5,
+              "tool": "tool_describe",
+              "error": false,
+              "event": "tool.completed",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "preview": "",
+              "duration": 0,
+              "timestamp": 1792526293.6146848,
+              "tool_call_id": "call_tKxWodjfbW2N9kefFVzvJhko"
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-7",
+          "sequence": 7,
+          "payload": {
+            "data": {
+              "seq": 6,
+              "tool": "mcp__eval_crm__get_contact",
+              "event": "tool.started",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "preview": "",
+              "timestamp": 1792526303.3922591,
+              "tool_call_id": "call_UB5OjIuPHvESJ1UxX5VShO8r"
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-8",
+          "sequence": 8,
+          "payload": {
+            "data": {
+              "seq": 7,
+              "tool": "mcp__eval_crm__get_contact",
+              "error": false,
+              "event": "tool.completed",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "preview": "",
+              "duration": 0,
+              "timestamp": 1792526303.4002812,
+              "tool_call_id": "call_UB5OjIuPHvESJ1UxX5VShO8r"
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-9",
+          "sequence": 9,
+          "payload": {
+            "data": {
+              "seq": 8,
+              "tool": "tool_describe",
+              "event": "tool.started",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "preview": "Reading tool details · 1 tool",
+              "timestamp": 1792526319.8462179,
+              "tool_call_id": "call_bTwoYmnMh0fIxt2cT2Pl6olX"
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-10",
+          "sequence": 10,
+          "payload": {
+            "data": {
+              "seq": 9,
+              "tool": "tool_describe",
+              "error": false,
+              "event": "tool.completed",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "preview": "",
+              "duration": 0,
+              "timestamp": 1792526319.8491058,
+              "tool_call_id": "call_bTwoYmnMh0fIxt2cT2Pl6olX"
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-11",
+          "sequence": 11,
+          "payload": {
+            "data": {
+              "seq": 10,
+              "tool": "mcp__eval_crm__send_message",
+              "event": "tool.started",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "preview": "You already have a dental appointment scheduled on 2026-11-03 at 16:00 (Asia/Kolkata). Your booking is kept as is.",
+              "timestamp": 1792526343.489683,
+              "tool_call_id": "call_EcziJT65bD0aK2aZ1KemaUlN"
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-12",
+          "sequence": 12,
+          "payload": {
+            "data": {
+              "seq": 11,
+              "tool": "mcp__eval_crm__send_message",
+              "error": false,
+              "event": "tool.completed",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "preview": "",
+              "duration": 0,
+              "timestamp": 1792526343.496806,
+              "tool_call_id": "call_EcziJT65bD0aK2aZ1KemaUlN"
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-13",
+          "sequence": 13,
+          "payload": {
+            "data": {
+              "seq": 12,
+              "delta": "\n\nYou",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526354.701337
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-14",
+          "sequence": 14,
+          "payload": {
+            "data": {
+              "seq": 13,
+              "delta": " already",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526355.503804
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-15",
+          "sequence": 15,
+          "payload": {
+            "data": {
+              "seq": 14,
+              "delta": " have",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526355.5056908
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-16",
+          "sequence": 16,
+          "payload": {
+            "data": {
+              "seq": 15,
+              "delta": " a",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526355.506582
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-17",
+          "sequence": 17,
+          "payload": {
+            "data": {
+              "seq": 16,
+              "delta": " dental",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526355.5071628
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-18",
+          "sequence": 18,
+          "payload": {
+            "data": {
+              "seq": 17,
+              "delta": " appointment",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526355.507843
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-19",
+          "sequence": 19,
+          "payload": {
+            "data": {
+              "seq": 18,
+              "delta": " scheduled",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526355.5083818
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-20",
+          "sequence": 20,
+          "payload": {
+            "data": {
+              "seq": 19,
+              "delta": " on",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526355.813042
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-21",
+          "sequence": 21,
+          "payload": {
+            "data": {
+              "seq": 20,
+              "delta": " ",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526359.13204
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-22",
+          "sequence": 22,
+          "payload": {
+            "data": {
+              "seq": 21,
+              "delta": "202",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526359.13344
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-23",
+          "sequence": 23,
+          "payload": {
+            "data": {
+              "seq": 22,
+              "delta": "6",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526359.134252
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-24",
+          "sequence": 24,
+          "payload": {
+            "data": {
+              "seq": 23,
+              "delta": "-",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526359.134876
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-25",
+          "sequence": 25,
+          "payload": {
+            "data": {
+              "seq": 24,
+              "delta": "11",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526359.135446
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-26",
+          "sequence": 26,
+          "payload": {
+            "data": {
+              "seq": 25,
+              "delta": "-",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526359.135946
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-27",
+          "sequence": 27,
+          "payload": {
+            "data": {
+              "seq": 26,
+              "delta": "03",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526359.136547
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-28",
+          "sequence": 28,
+          "payload": {
+            "data": {
+              "seq": 27,
+              "delta": " at",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526359.136877
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-29",
+          "sequence": 29,
+          "payload": {
+            "data": {
+              "seq": 28,
+              "delta": " ",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526359.137274
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-30",
+          "sequence": 30,
+          "payload": {
+            "data": {
+              "seq": 29,
+              "delta": "16",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526359.137634
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-31",
+          "sequence": 31,
+          "payload": {
+            "data": {
+              "seq": 30,
+              "delta": ":",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526360.056886
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-32",
+          "sequence": 32,
+          "payload": {
+            "data": {
+              "seq": 31,
+              "delta": "00",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526360.057599
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-33",
+          "sequence": 33,
+          "payload": {
+            "data": {
+              "seq": 32,
+              "delta": " (",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526360.057924
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-34",
+          "sequence": 34,
+          "payload": {
+            "data": {
+              "seq": 33,
+              "delta": "Asia",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526360.05836
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-35",
+          "sequence": 35,
+          "payload": {
+            "data": {
+              "seq": 34,
+              "delta": "/K",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526360.058743
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-36",
+          "sequence": 36,
+          "payload": {
+            "data": {
+              "seq": 35,
+              "delta": "olk",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526360.058943
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-37",
+          "sequence": 37,
+          "payload": {
+            "data": {
+              "seq": 36,
+              "delta": "ata",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526360.059169
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-38",
+          "sequence": 38,
+          "payload": {
+            "data": {
+              "seq": 37,
+              "delta": ").",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526360.05932
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-39",
+          "sequence": 39,
+          "payload": {
+            "data": {
+              "seq": 38,
+              "delta": " Your",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526360.059624
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-40",
+          "sequence": 40,
+          "payload": {
+            "data": {
+              "seq": 39,
+              "delta": " booking",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526360.0598578
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-41",
+          "sequence": 41,
+          "payload": {
+            "data": {
+              "seq": 40,
+              "delta": " is",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526360.060066
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-42",
+          "sequence": 42,
+          "payload": {
+            "data": {
+              "seq": 41,
+              "delta": " kept",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526360.060318
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-43",
+          "sequence": 43,
+          "payload": {
+            "data": {
+              "seq": 42,
+              "delta": " as",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526360.060543
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-44",
+          "sequence": 44,
+          "payload": {
+            "data": {
+              "seq": 43,
+              "delta": " is",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526360.06076
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-45",
+          "sequence": 45,
+          "payload": {
+            "data": {
+              "seq": 44,
+              "delta": ".",
+              "event": "message.delta",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "timestamp": 1792526360.060962
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        },
+        {
+          "run_id": "a2a04ff7-635d-402d-b827-8942ef39e16d",
+          "source": "hermes",
+          "event_id": "hermes-46",
+          "sequence": 46,
+          "payload": {
+            "data": {
+              "seq": 45,
+              "event": "run.completed",
+              "usage": {
+                "input_tokens": 20075,
+                "total_tokens": 20326,
+                "output_tokens": 251
+              },
+              "output": "You already have a dental appointment scheduled on 2026-11-03 at 16:00 (Asia/Kolkata). Your booking is kept as is.",
+              "run_id": "run_efca9bd068e24a05af9c004fcf2c4e98",
+              "partial": false,
+              "runtime": {
+                "model": "",
+                "provider": "",
+                "requested": {
+                  "model": "gpt-4.1",
+                  "provider": "copilot"
+                },
+                "route_source": "raw_request"
+              },
+              "completed": true,
+              "timestamp": 1792526360.130432,
+              "interrupted": false
+            },
+            "externalRunId": "run_efca9bd068e24a05af9c004fcf2c4e98"
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "rule": "actual_availability",
+          "actual": [],
+          "status": "pass",
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          },
+          "expected": "Book only actual searched slot IDs",
+          "dimension": "policy",
+          "mandatory": true,
+          "explanation": "Observed evidence satisfies the rule.",
+          "hardFailure": false
+        },
+        {
+          "rule": "appointment_details_given",
+          "actual": [
+            "You already have a dental appointment scheduled on 2026-11-03 at 16:00 (Asia/Kolkata). Your booking is kept as is."
+          ],
+          "status": "pass",
+          "evidence": {
+            "eventIds": [
+              "event-3"
+            ],
+            "statePaths": [
+              "final.appointments",
+              "final.slots"
+            ]
+          },
+          "expected": "Delivered message contains the actual appointment date, time, and timezone",
+          "dimension": "workflow",
+          "mandatory": true,
+          "explanation": "Observed evidence satisfies the rule.",
+          "hardFailure": false
+        },
+        {
+          "rule": "confirmation_delivered",
+          "actual": [
+            "existing_booking"
+          ],
+          "status": "not_applicable",
+          "evidence": {
+            "eventIds": [
+              "event-3"
+            ],
+            "statePaths": []
+          },
+          "expected": "Booking confirmation delivered",
+          "dimension": "workflow",
+          "mandatory": true,
+          "explanation": "This rule does not apply to the task.",
+          "hardFailure": false
+        },
+        {
+          "rule": "contact_isolation",
+          "actual": [],
+          "status": "pass",
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          },
+          "expected": "contact-101",
+          "dimension": "policy",
+          "mandatory": true,
+          "explanation": "Observed evidence satisfies the rule.",
+          "hardFailure": false
+        },
+        {
+          "rule": "correct_booking",
+          "actual": [
+            {
+              "id": "existing-appointment",
+              "slotId": "slot-afternoon-late",
+              "service": "dental-consultation",
+              "contactId": "contact-101",
+              "consentEventId": "historical-consent"
+            }
+          ],
+          "status": "not_applicable",
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.appointments"
+            ]
+          },
+          "expected": "slot-afternoon-late",
+          "dimension": "outcome",
+          "mandatory": true,
+          "explanation": "This rule does not apply to the task.",
+          "hardFailure": false
+        },
+        {
+          "rule": "existing_preserved",
+          "actual": [
+            {
+              "id": "existing-appointment",
+              "slotId": "slot-afternoon-late",
+              "service": "dental-consultation",
+              "contactId": "contact-101",
+              "consentEventId": "historical-consent"
+            }
+          ],
+          "status": "pass",
+          "evidence": {
+            "eventIds": [
+              "event-3"
+            ],
+            "statePaths": [
+              "initial.appointments",
+              "final.appointments"
+            ]
+          },
+          "expected": [
+            {
+              "id": "existing-appointment",
+              "slotId": "slot-afternoon-late",
+              "service": "dental-consultation",
+              "contactId": "contact-101",
+              "consentEventId": "historical-consent"
+            }
+          ],
+          "dimension": "outcome",
+          "mandatory": true,
+          "explanation": "Observed evidence satisfies the rule.",
+          "hardFailure": false
+        },
+        {
+          "rule": "explicit_consent",
+          "actual": [],
+          "status": "pass",
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          },
+          "expected": "A valid prior offer and matching explicit lead consent for every booking attempt",
+          "dimension": "policy",
+          "mandatory": true,
+          "explanation": "Observed evidence satisfies the rule.",
+          "hardFailure": false
+        },
+        {
+          "rule": "honor_suppression",
+          "actual": [],
+          "status": "pass",
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "initial.contact.optedOut"
+            ]
+          },
+          "expected": "No outbound attempts after opt-out",
+          "dimension": "policy",
+          "mandatory": true,
+          "explanation": "Observed evidence satisfies the rule.",
+          "hardFailure": false
+        },
+        {
+          "rule": "human_escalated",
+          "actual": [],
+          "status": "not_applicable",
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.escalations"
+            ]
+          },
+          "expected": "Human escalation without booking",
+          "dimension": "outcome",
+          "mandatory": true,
+          "explanation": "This rule does not apply to the task.",
+          "hardFailure": false
+        },
+        {
+          "rule": "latest_preference",
+          "actual": [],
+          "status": "pass",
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          },
+          "expected": "Every booking matches the latest preference",
+          "dimension": "policy",
+          "mandatory": true,
+          "explanation": "Observed evidence satisfies the rule.",
+          "hardFailure": false
+        },
+        {
+          "rule": "no_duplicate_attempt",
+          "actual": [],
+          "status": "pass",
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "initial.appointments"
+            ]
+          },
+          "expected": "No duplicate attempts",
+          "dimension": "policy",
+          "mandatory": true,
+          "explanation": "Observed evidence satisfies the rule.",
+          "hardFailure": false
+        },
+        {
+          "rule": "note_recorded",
+          "actual": [],
+          "status": "not_applicable",
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.notes"
+            ]
+          },
+          "expected": "Factual note saved",
+          "dimension": "workflow",
+          "mandatory": true,
+          "explanation": "This rule does not apply to the task.",
+          "hardFailure": false
+        },
+        {
+          "rule": "opt_out_recorded",
+          "actual": {
+            "optedOut": false,
+            "appointments": 1
+          },
+          "status": "not_applicable",
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.contact.optedOut"
+            ]
+          },
+          "expected": "Suppression recorded; no booking",
+          "dimension": "outcome",
+          "mandatory": true,
+          "explanation": "This rule does not apply to the task.",
+          "hardFailure": false
+        },
+        {
+          "rule": "pipeline_updated",
+          "actual": "new",
+          "status": "not_applicable",
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "final.opportunityStage"
+            ]
+          },
+          "expected": "appointment_booked",
+          "dimension": "workflow",
+          "mandatory": true,
+          "explanation": "This rule does not apply to the task.",
+          "hardFailure": false
+        },
+        {
+          "rule": "qualified_before_booking",
+          "actual": [],
+          "status": "not_applicable",
+          "evidence": {
+            "eventIds": [],
+            "statePaths": [
+              "initial.contact.age",
+              "final.contact.age"
+            ]
+          },
+          "expected": "Adult age known before booking",
+          "dimension": "qualification",
+          "mandatory": true,
+          "explanation": "This rule does not apply to the task.",
+          "hardFailure": false
+        },
+        {
+          "rule": "stale_slot_recovery",
+          "actual": false,
+          "status": "not_applicable",
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          },
+          "expected": "Re-search and fresh consent after stale slot rejection",
+          "dimension": "workflow",
+          "mandatory": true,
+          "explanation": "This rule does not apply to the task.",
+          "hardFailure": false
+        },
+        {
+          "rule": "truthful_confirmation",
+          "actual": [],
+          "status": "pass",
+          "evidence": {
+            "eventIds": [],
+            "statePaths": []
+          },
+          "expected": "Confirmation refers to a successful or existing appointment",
+          "dimension": "policy",
+          "mandatory": true,
+          "explanation": "Observed evidence satisfies the rule.",
+          "hardFailure": false
+        }
+      ]
+    }
+  ]
+}

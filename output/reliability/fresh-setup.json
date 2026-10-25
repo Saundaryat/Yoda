@@ -1,0 +1,33 @@
+{
+  "checkedAt": "2026-10-25T07:25:38.901Z",
+  "sourceCopy": "/var/folders/2g/h5v7scln7h52p5hvs69dwv180000gn/T/tracework-fresh-ofaV3U",
+  "command": "npm run review",
+  "noExistingDependencies": true,
+  "noEnvFile": true,
+  "noHermesCheckout": true,
+  "freshDockerProject": "tracework-fresh-1792913138899",
+  "newInference": false,
+  "passed": true,
+  "health": {
+    "status": "ok",
+    "database": "postgresql",
+    "executor": "saved-evidence",
+    "readOnly": true
+  },
+  "suiteCount": 2,
+  "experimentId": "85a17d77-42e3-481d-9044-aa4366761a98",
+  "runs": 40,
+  "validPairs": 16,
+  "passes": [
+    14,
+    13
+  ],
+  "servedProductionAssets": true,
+  "writesBlocked": true,
+  "freshUnitTestsPassed": true,
+  "startupLog": "/var/folders/2g/h5v7scln7h52p5hvs69dwv180000gn/T/tracework-fresh-ofaV3U/fresh-start.log",
+  "liveStartupVerified": true,
+  "liveDraftCreatedAndCancelled": true,
+  "liveProviderExecutionTested": false,
+  "disposableDatabaseRemoved": true
+}

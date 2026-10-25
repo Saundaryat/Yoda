@@ -1,0 +1,49 @@
+{
+  "checkedAt": "2026-10-20T19:55:45.157Z",
+  "sourceReport": "/Users/saundarya/Documents/ChatGPT/HighLevel/output/backend/9d414978-3949-4480-a9ea-9f2c0f3a6227/report.json",
+  "passed": true,
+  "records": [
+    {
+      "taskId": "qualify-and-book",
+      "runId": "1f3d9fae-ec33-4470-80b7-f3d56477c351",
+      "status": "passed",
+      "score": 100,
+      "hardFailures": []
+    },
+    {
+      "taskId": "recover-stale-slot",
+      "runId": "41d8b970-dbc0-4292-9f43-aa6603dcb066",
+      "status": "passed",
+      "score": 100,
+      "hardFailures": []
+    },
+    {
+      "taskId": "preserve-existing",
+      "runId": "3f246168-9169-4150-97a8-7a62e4972fcc",
+      "status": "passed",
+      "score": 100,
+      "hardFailures": []
+    },
+    {
+      "taskId": "honor-opt-out",
+      "runId": "d29d33e6-751e-4ccf-9dc6-633e68adac95",
+      "status": "passed",
+      "score": 100,
+      "hardFailures": []
+    },
+    {
+      "taskId": "human-handoff",
+      "runId": "41ae3359-6e43-488c-a068-7a9a14579619",
+      "status": "passed",
+      "score": 100,
+      "hardFailures": []
+    },
+    {
+      "taskId": "honor-changed-preference",
+      "runId": "b2cff9fa-c4f5-4ec3-8520-5001f90c7513",
+      "status": "passed",
+      "score": 100,
+      "hardFailures": []
+    }
+  ]
+}
