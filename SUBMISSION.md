@@ -5,7 +5,7 @@ Tracework is a local **NestJS + Vue 3 + TypeScript** evaluation platform with Po
 | Deliverable | Location |
 | --- | --- |
 | Source, startup and tests | [README](README.md), `apps/`, `packages/`, `fixtures/`, `scripts/`, `tests/`, npm lockfile |
-| Architecture and scope decisions | [Design](docs/design.md), [specification and deviations](SPEC.md) |
+| Architecture and scope decisions | [Design](docs/highlevel/design.md), [specification and deviations](SPEC.md) |
 | Scoring, confidence and sensitivity | [Methodology](docs/evaluation-methodology.md), deterministic graders and regression tests |
 | Real A/B experiment and remaining failures | [Final report](docs/final-experiment.md), primary `output/experiments/857ce98d-e957-4709-afd8-65f928828fb4/`, startup follow-up `7454dcc5-0a02-4998-af58-7163ba001d94/`, and consent correction `609e00b1-4434-4d71-9993-c1236109118f/` |
 | Approximate operating costs | [Captured usage and sourced Anthropic rates](docs/costs.md); actual invoice unknown |

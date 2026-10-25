@@ -183,4 +183,4 @@ Replace `<id>` with the experiment folder name. If its saved grader differs from
 | `tests/` | Grader, CRM, runtime, API, and browser checks |
 | `output/experiments/` | Exported protocols, reports, and versioned regrades |
 
-For more detail, see [runtime settings and advanced commands](docs/evals-reference.md), [architecture](docs/design.md), [known limits](docs/limitations.md), [cost accounting](docs/costs.md), and [the submission guide](SUBMISSION.md).
+For more detail, see [runtime settings and advanced commands](docs/evals-reference.md), [architecture](docs/highlevel/design.md), [known limits](docs/limitations.md), [cost accounting](docs/costs.md), and [the submission guide](SUBMISSION.md).
