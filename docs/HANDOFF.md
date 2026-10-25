@@ -1,5 +1,11 @@
 # Handoff: Agent Evals on Hermes (2026-10-25)
 
+## Consistent configuration names (2026-10-25)
+
+All nine saved configurations now use **V# · Plain-language title**, in version order. Model and reasoning settings stay in their own fields. The same display labels appear in the library, saved details, copy flow, experiment selectors and comparisons. Short descriptions explain each change. The latest candidate is **V9 · Guided booking with safeguards** (original saved name: Grounded SMS workflow v3 (Sonnet 4.6)); its comparison baseline is **V4 · Customer preference recall**. Versions indicate history rather than guaranteed quality. Original immutable names, IDs, specifications and experiment evidence are preserved; user-created names remain unchanged.
+
+Existing naming tests (4), browser regressions (30), build, typecheck and lint passed. Live verification confirmed V1–V9 library/selector order, consistent detail/copy/comparison names and no console errors. All nine configuration records and before/after hashes for 1,586 runs, 12,512 checks and 20,628 events match. Evidence: `docs/experiments/2026-10-25-configuration-names-ui.{json,png}`. Work now continues on the promoted **main** branch; `dummy-main` preserves the old Python repository.
+
 ## Observed-result presentation (2026-10-25)
 
 On 3080, the experiment list and comparison headline now state the observed pass-rate result: **A scored higher**, **B scored higher**, or **Same pass rate**. For example, experiment `36780c0d-c90d-4fb5-bf4d-6da3800192be` displays **B scored higher in this test: 72% vs 60%**. The unchanged statistical assessment (including Inconclusive, where applicable), confidence interval and practical margin remain under **Confidence & methodology**. Missing repetitions or required judgments still display **Incomplete**. Numerical scores, grader behavior and comparison verdicts were not altered.
@@ -198,7 +204,7 @@ confidence, and shows where the agent can improve. The evaluator is what will be
 
 ## Where things are
 
-- Repo: `~/Documents/ChatGPT/agent-evals`, branch `highlevel-agent-evals`, pushed to
+- Repo: `~/Documents/ChatGPT/agent-evals`, branch `main`, pushed to
   `github.com/Saundaryat/Yoda` (private). Yoda's `main` is an unrelated Python skeleton: leave it.
 - Run: `docker compose up --build` → http://127.0.0.1:3080. Needs `.env` with
   `ANTHROPIC_API_KEY`; add `TYPESAFE_API_KEY` for Jev grounding severity (never commit either).

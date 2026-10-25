@@ -4,14 +4,10 @@ import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
 import { useResource } from '../composables/useResource.js';
 import { dateTime } from '../format.js';
-import { configurationName, configurationPurpose } from '../names.js';
+import { compareConfigurations, configurationName, configurationPurpose } from '../names.js';
 
 const { data: configurations, error } = useResource<Configuration[]>('/configurations');
-const ordered = computed(() =>
-  [...(configurations.value ?? [])].sort((a, b) =>
-    configurationName(a).localeCompare(configurationName(b)),
-  ),
-);
+const ordered = computed(() => [...(configurations.value ?? [])].sort(compareConfigurations));
 </script>
 
 <template>
@@ -20,8 +16,8 @@ const ordered = computed(() =>
       <p class="page-kicker">Agent library</p>
       <h1>Configurations</h1>
       <p class="subtitle">
-        Saved agent versions, from basic booking to verified actions. Open a version to inspect its
-        instructions and settings, or copy it to try a change.
+        Saved agent versions, from basic booking to guided workflows with safeguards. Open a version
+        to inspect its instructions and settings, or copy it to try a change.
       </p>
     </div>
     <RouterLink to="/configurations/new" class="button primary">New configuration</RouterLink>

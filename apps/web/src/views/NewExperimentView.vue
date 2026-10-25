@@ -11,7 +11,7 @@ import { RouterLink, useRouter } from 'vue-router';
 import { api } from '../api.js';
 import { useResource } from '../composables/useResource.js';
 import { money } from '../format.js';
-import { configurationName, groupName, taskName } from '../names.js';
+import { compareConfigurations, configurationName, groupName, taskName } from '../names.js';
 
 interface TaskItem {
   id: string;
@@ -27,6 +27,9 @@ const { data: tasks, error: tasksError } = useResource<TaskItem[]>('/tasks');
 const { data: configurations, error: configurationsError } =
   useResource<Configuration[]>('/configurations');
 const { data: history } = useResource<ExperimentSummary[]>('/experiments');
+const orderedConfigurations = computed(() =>
+  [...(configurations.value ?? [])].sort(compareConfigurations),
+);
 
 const form = ref({
   name: '',
@@ -212,7 +215,7 @@ async function create() {
         <span class="side-a">A — baseline</span>
         <select v-model="form.baselineConfigId" required>
           <option value="" disabled>Choose a configuration</option>
-          <option v-for="c in configurations" :key="c.id" :value="c.id">
+          <option v-for="c in orderedConfigurations" :key="c.id" :value="c.id">
             {{ configurationName(c) }}
           </option>
         </select>
@@ -223,7 +226,7 @@ async function create() {
         <select v-model="form.candidateConfigId" required>
           <option value="" disabled>Choose a configuration</option>
           <option
-            v-for="c in configurations"
+            v-for="c in orderedConfigurations"
             :key="c.id"
             :value="c.id"
             :disabled="c.id === form.baselineConfigId"

@@ -16,7 +16,7 @@ describe('plain-language presentation names', () => {
       name: 'Original name',
       description: 'Original description',
     };
-    expect(configurationName(config)).toBe('V4 · Save and recall customer preferences');
+    expect(configurationName(config)).toBe('V4 · Customer preference recall');
     expect(configurationPurpose(config)).toContain('contact-specific CRM notes');
     expect(config.name).toBe('Original name');
   });

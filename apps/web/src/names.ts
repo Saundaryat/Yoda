@@ -1,25 +1,50 @@
 /** Presentation aliases only. Never change frozen experiment/configuration/task records. */
-const versions: Record<string, { name: string; purpose: string }> = {
+const versions: Record<string, { version: number; title: string; purpose: string }> = {
   'bb492502-d4ff-4d8e-b264-894c7bdd683f': {
-    name: 'V1 · Basic booking assistant',
-    purpose: 'General instructions and CRM tools; no clinic policy skill.',
+    version: 1,
+    title: 'Basic booking',
+    purpose: 'Basic booking instructions and CRM tools, without clinic policy.',
   },
   'cc58d4e7-11a7-4770-bbb4-ec9489292332': {
-    name: 'V2 · Clinic policy on demand',
-    purpose: 'V1 plus a policy skill the agent must choose to open.',
+    version: 2,
+    title: 'Clinic policy on demand',
+    purpose: 'Adds clinic policy that the agent can open when needed.',
   },
   '75d90f45-fefa-49f4-bb35-236b2dd4df19': {
-    name: 'V3 · Clinic policy always included',
-    purpose: 'The policy is included in every conversation; no skill lookup needed.',
+    version: 3,
+    title: 'Clinic policy always included',
+    purpose: 'Includes clinic policy in every conversation, without a separate lookup.',
   },
   '1a381370-08c5-4fbb-b822-f2678ec1d588': {
-    name: 'V4 · Save and recall customer preferences',
-    purpose: 'V3 plus explicit instructions to save and read contact-specific CRM notes.',
+    version: 4,
+    title: 'Customer preference recall',
+    purpose: 'Adds saving and recalling each customer’s preferences in contact-specific CRM notes.',
   },
   '476b2d12-1a2d-4ef6-9fe0-29e472f608d2': {
-    name: 'V5 · Confirm actions before claiming success',
+    version: 5,
+    title: 'Verified CRM actions',
+    purpose: 'Adds instructions to confirm CRM actions before reporting success.',
+  },
+  '466a1ada-76e5-48dc-8815-a072797560f0': {
+    version: 6,
+    title: 'Replies based on CRM',
+    purpose: 'Adds detailed reply instructions to use CRM results and avoid unsupported promises.',
+  },
+  '2a81b01c-8ace-44c1-8c67-482c29a3c652': {
+    version: 7,
+    title: 'Replies with extra reasoning',
+    purpose: 'Uses V6’s reply instructions with Sonnet and extra reasoning.',
+  },
+  '835e397a-2861-4dea-9fc8-3adce394b3bb': {
+    version: 8,
+    title: 'Guided booking workflow',
     purpose:
-      'V4 plus instructions to report only completed actions and avoid unsupported follow-up promises.',
+      'Uses shorter steps for offering slots, getting consent, saving booking notes and handing off to staff.',
+  },
+  '8b643dae-8a4c-4e02-b4f2-8fbdb2a28ef6': {
+    version: 9,
+    title: 'Guided booking with safeguards',
+    purpose: 'Adds explicit safeguards for opt-outs, existing appointments and same-day booking.',
   },
 };
 const stages: Record<string, { step: number; name: string }> = {
@@ -77,8 +102,19 @@ const developmentNames: Record<string, string> = {
   'd394cc37-6ced-413b-8097-f5a530014188': 'Development 4 · Separate reply style from task success',
   'da238104-ded5-41c6-9a33-a673943519b6': 'Development 5 · Add claim-severity scoring',
 };
-export const configurationName = (c?: { id: string; name: string } | null) =>
-  c ? (versions[c.id]?.name ?? c.name) : 'Loading…';
+export const configurationName = (c?: { id: string; name: string } | null) => {
+  if (!c) return 'Loading…';
+  const version = versions[c.id];
+  return version ? `V${version.version} · ${version.title}` : c.name;
+};
+/** Saved versions first, in numerical order; user-created names stay unchanged. */
+export const compareConfigurations = (
+  a: { id: string; name: string },
+  b: { id: string; name: string },
+) =>
+  (versions[a.id]?.version ?? Number.MAX_SAFE_INTEGER) -
+    (versions[b.id]?.version ?? Number.MAX_SAFE_INTEGER) ||
+  configurationName(a).localeCompare(configurationName(b), undefined, { numeric: true });
 export const configurationPurpose = (c: { id: string; description: string }) =>
   versions[c.id]?.purpose ?? c.description;
 export const experimentName = (e: { id: string; name: string }) =>

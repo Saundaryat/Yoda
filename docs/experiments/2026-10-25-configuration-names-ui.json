@@ -1,0 +1,66 @@
+{
+  "change": "Consistent V1\u2013V9 presentation names, plain descriptions and numerical ordering across the library and selectors. Original saved configurations unchanged.",
+  "tests": {
+    "naming": 4,
+    "browser": 30,
+    "build": "passed",
+    "typecheck": "passed",
+    "lint": "passed"
+  },
+  "preservation": {
+    "before": {
+      "runs": {
+        "hash": "000af35d7924406870a737bf96ba72de",
+        "count": 1586
+      },
+      "checks": {
+        "hash": "334c399794c332771e3eafc5d965d27a",
+        "count": 12512
+      },
+      "events": {
+        "hash": "630920d3e28f93e74e78dfc475fa2c0c",
+        "count": 20628
+      }
+    },
+    "after": {
+      "runs": {
+        "hash": "000af35d7924406870a737bf96ba72de",
+        "count": 1586
+      },
+      "checks": {
+        "hash": "334c399794c332771e3eafc5d965d27a",
+        "count": 12512
+      },
+      "events": {
+        "hash": "630920d3e28f93e74e78dfc475fa2c0c",
+        "count": 20628
+      }
+    },
+    "matched": true,
+    "unchangedConfigurations": 9
+  },
+  "browser": {
+    "url": "http://127.0.0.1:3080/configurations",
+    "versionNames": [
+      "V1 \u00b7 Basic booking",
+      "V2 \u00b7 Clinic policy on demand",
+      "V3 \u00b7 Clinic policy always included",
+      "V4 \u00b7 Customer preference recall",
+      "V5 \u00b7 Verified CRM actions",
+      "V6 \u00b7 Replies based on CRM",
+      "V7 \u00b7 Replies with extra reasoning",
+      "V8 \u00b7 Guided booking workflow",
+      "V9 \u00b7 Guided booking with safeguards"
+    ],
+    "verified": [
+      "all nine names use V# \u00b7 Plain-language title",
+      "library sorted V1 through V9",
+      "both experiment selectors match library order and labels",
+      "detail and copy form use the same V9 name",
+      "original configuration name remains in metadata",
+      "saved comparison uses the same V4 and V9 labels",
+      "no browser console errors"
+    ],
+    "consoleErrors": []
+  }
+}
