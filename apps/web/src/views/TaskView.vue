@@ -3,6 +3,7 @@ import type { TaskDefinition } from '@evals/shared';
 import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
 import { useResource } from '../composables/useResource.js';
+import { groupName, taskName } from '../names.js';
 
 interface TaskRow {
   id: string;
@@ -25,24 +26,34 @@ const describeCheck = (check: TaskDefinition['checks'][number]) => {
 
 <template>
   <p v-if="error" class="error">{{ error }}</p>
+  <p v-else-if="!data" class="muted" role="status">Loading scenario…</p>
   <template v-else-if="data && d">
     <div class="page-head">
       <div>
-        <p class="subtitle"><RouterLink to="/tasks">← Tasks</RouterLink></p>
-        <h1>{{ d.title }}</h1>
+        <p class="subtitle"><RouterLink to="/tasks">← Scenarios</RouterLink></p>
+        <p class="page-kicker">Scenario details</p>
+        <h1>{{ taskName({ key: data.key, title: d.title }) }}</h1>
         <p class="subtitle">
           <span class="mono">{{ data.suite }}/{{ data.split }}/{{ data.key }}.yaml</span> · group
-          {{ d.group }} · family {{ d.family }} · version {{ data.versionHash.slice(0, 8) }}
+          {{ groupName(d.group) }} · version {{ data.versionHash.slice(0, 8) }}
         </p>
       </div>
     </div>
     <p v-if="d.description" class="card">{{ d.description }}</p>
+    <details class="metadata">
+      <summary>Original scenario title</summary>
+      <p>{{ d.title }}</p>
+    </details>
 
-    <section class="card">
+    <section class="card table-scroll">
       <h2>How it is scored</h2>
       <p class="hint">
         Score = weighted share of checks passed. The run passes when every critical check passes and
         the score is at least {{ d.passThreshold }}.
+      </p>
+      <p class="hint">
+        These are the scenario-specific checks. Each scored run also checks claim grounding and CRM
+        consistency; reply quality is reported separately.
       </p>
       <table>
         <thead>
@@ -60,15 +71,28 @@ const describeCheck = (check: TaskDefinition['checks'][number]) => {
             </td>
             <td class="mono">{{ check.type }}</td>
             <td class="num">{{ check.weight }}</td>
-            <td class="mono">{{ describeCheck(check) }}</td>
+            <td>
+              <details>
+                <summary>View rule</summary>
+                <pre>{{ describeCheck(check) }}</pre>
+              </details>
+            </td>
           </tr>
         </tbody>
       </table>
     </section>
 
-    <section v-for="(session, i) in d.sessions" :key="i" class="card">
-      <h2>Scripted lead{{ d.sessions.length > 1 ? `, session ${i + 1}` : '' }}</h2>
+    <section v-for="(session, i) in d.sessions" :key="i" class="card table-scroll">
+      <h2>Customer script{{ d.sessions.length > 1 ? `, session ${i + 1}` : '' }}</h2>
+      <p class="hint">
+        Contact: {{ session.contact }}. Scripted mode uses the reply rules below; Claude mode uses
+        them as intent guidance.
+      </p>
       <p><strong>Opens with:</strong> “{{ session.opening }}”</p>
+      <details v-if="session.persona">
+        <summary>Customer persona for Claude mode</summary>
+        <p>{{ session.persona }}</p>
+      </details>
       <table>
         <thead>
           <tr>
@@ -97,7 +121,10 @@ const describeCheck = (check: TaskDefinition['checks'][number]) => {
 
     <section class="card">
       <h2>CRM at the start</h2>
-      <pre>{{ JSON.stringify(d.crm, null, 2) }}</pre>
+      <details>
+        <summary>View starting CRM data</summary>
+        <pre>{{ JSON.stringify(d.crm, null, 2) }}</pre>
+      </details>
       <p class="hint">
         Slot days are relative to the run date (0 = today), in clinic time (America/Chicago).
       </p>

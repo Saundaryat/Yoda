@@ -1,0 +1,21 @@
+{
+  "url": "http://127.0.0.1:3080/experiments/0dd95f29-e8b1-4f32-9346-69a8d8bb0cf8",
+  "browser": "passed",
+  "comparedRuns": 90,
+  "passToFail": 6,
+  "failToPass": 4,
+  "scoreOnlyChanges": 2,
+  "verified": [
+    "focused scope",
+    "both change filters",
+    "old/new reasons",
+    "binding CRM evidence",
+    "original model and raw Jev provenance",
+    "conversation highlighting",
+    "cleared false alarm evidence",
+    "120-run source preserved",
+    "mobile layout"
+  ],
+  "consoleErrors": [],
+  "writes": []
+}

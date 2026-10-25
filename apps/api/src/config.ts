@@ -36,6 +36,10 @@ const envSchema = z.object({
   LEAD_MODEL: z.string().default('claude-opus-5-5'),
   /** Claude model that judges every reply after a run (a different model from the agent and lead). */
   JUDGE_MODEL: z.string().default('claude-sonnet-5-5'),
+  /** Optional Jev classifier for minor vs serious verified grounding failures. */
+  TYPESAFE_API_KEY: z.string().optional(),
+  /** Pinned by default so evaluator decisions do not drift when the latest alias moves. */
+  JEV_MODEL: z.string().default('jev-1.14.0'),
 });
 
 export type AppConfig = z.infer<typeof envSchema>;

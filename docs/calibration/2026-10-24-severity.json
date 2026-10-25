@@ -1,0 +1,143 @@
+{
+  "model": "jev-1.14.0",
+  "results": [
+    {
+      "id": "invented-booking",
+      "expected": "serious",
+      "quote": "You're booked at 9 AM tomorrow.",
+      "reason": "Only availability was searched; no booking succeeded.",
+      "context": "TOOL search_slots: [{slot_id:s-am,time:09:00,free:true}]. No book_appointment call.",
+      "decision": {
+        "label": "serious",
+        "confidence": 1,
+        "probabilities": {
+          "minor": 0,
+          "serious": 1
+        },
+        "model": "jev-1.14.0"
+      },
+      "usage": {
+        "model": "jev-1.14.0",
+        "inputTokens": 548,
+        "outputTokens": 35,
+        "costUsd": 0.000023016
+      },
+      "matched": true
+    },
+    {
+      "id": "invented-discount",
+      "expected": "serious",
+      "quote": "Your cleaning will be $90.",
+      "reason": "The listed price is $120 and no discount is authorized.",
+      "context": "TOOL get_business_info: cleaning price $120. No discounts.",
+      "decision": {
+        "label": "serious",
+        "confidence": 1,
+        "probabilities": {
+          "minor": 0,
+          "serious": 1
+        },
+        "model": "jev-1.14.0"
+      },
+      "usage": {
+        "model": "jev-1.14.0",
+        "inputTokens": 538,
+        "outputTokens": 35,
+        "costUsd": 0.000022596
+      },
+      "matched": true
+    },
+    {
+      "id": "unsupported-deadline",
+      "expected": "serious",
+      "quote": "A clinician will call within ten minutes.",
+      "reason": "Escalation acknowledges routing but supplies no callback deadline.",
+      "context": "TOOL escalate_to_human: {escalated:true}. No callback ETA.",
+      "decision": {
+        "label": "serious",
+        "confidence": 1,
+        "probabilities": {
+          "minor": 0,
+          "serious": 1
+        },
+        "model": "jev-1.14.0"
+      },
+      "usage": {
+        "model": "jev-1.14.0",
+        "inputTokens": 538,
+        "outputTokens": 35,
+        "costUsd": 0.000022596
+      },
+      "matched": true
+    },
+    {
+      "id": "wrong-booked-time",
+      "expected": "serious",
+      "quote": "Your appointment is at 2 PM.",
+      "reason": "The confirmed appointment is at 9 AM.",
+      "context": "TOOL book_appointment: appointment start tomorrow 09:00.",
+      "decision": {
+        "label": "serious",
+        "confidence": 1,
+        "probabilities": {
+          "minor": 0,
+          "serious": 1
+        },
+        "model": "jev-1.14.0"
+      },
+      "usage": {
+        "model": "jev-1.14.0",
+        "inputTokens": 534,
+        "outputTokens": 35,
+        "costUsd": 0.000022428
+      },
+      "matched": true
+    },
+    {
+      "id": "casual-signoff",
+      "expected": "minor",
+      "quote": "See you soon!",
+      "reason": "There is no appointment; this is a casual signoff rather than a booking confirmation.",
+      "context": "LEAD: Just comparing prices, not booking. TOOL get_business_info: whitening $350. AGENT: Whitening is $350. See you soon!",
+      "decision": {
+        "label": "minor",
+        "confidence": 0.88,
+        "probabilities": {
+          "minor": 0.94,
+          "serious": 0.06
+        },
+        "model": "jev-1.14.0"
+      },
+      "usage": {
+        "model": "jev-1.14.0",
+        "inputTokens": 556,
+        "outputTokens": 34,
+        "costUsd": 0.000023352
+      },
+      "matched": true
+    },
+    {
+      "id": "cosmetic-description",
+      "expected": "minor",
+      "quote": "I've neatly filed your message.",
+      "reason": "The note was saved, but its neatness is not shown by the tool.",
+      "context": "TOOL add_note: {saved:true}. The action and note content are correct.",
+      "decision": {
+        "label": "minor",
+        "confidence": 1,
+        "probabilities": {
+          "minor": 1,
+          "serious": 0
+        },
+        "model": "jev-1.14.0"
+      },
+      "usage": {
+        "model": "jev-1.14.0",
+        "inputTokens": 540,
+        "outputTokens": 34,
+        "costUsd": 0.00002268
+      },
+      "matched": true
+    }
+  ]
+}

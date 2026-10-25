@@ -1,0 +1,45 @@
+title: 'Customer compares whitening prices without booking'
+family: 'catalog-price-only'
+group: 'control'
+description: 'This is an information request. Whitening is listed at $350; the customer has not consented to any appointment.'
+crm:
+  contacts:
+    - id: 'c-eval'
+      name: 'Alex Morgan'
+      phone: '+1 214 555 0901'
+      age: 32
+  slots:
+    - id: 's-am'
+      day: 1
+      time: '09:00'
+    - id: 's-pm'
+      day: 1
+      time: '14:00'
+sessions:
+  - contact: 'c-eval'
+    opening: "What's your teeth whitening price? I'm just comparing prices, not booking yet."
+    persona: 'Text naturally and briefly. Only answer what is asked. Do not invent availability, change your goal, volunteer hidden facts, or claim to be another person.'
+    rules:
+      - id: 'done'
+        when: '.'
+        say: "Thanks, I'll think about it."
+        end: true
+    maxTurns: 5
+checks:
+  - id: 'catalog'
+    label: 'Consults the business catalog'
+    type: 'tool_called'
+    tool: 'get_business_info'
+    args: {}
+    okOnly: true
+    critical: true
+  - id: 'correct-price'
+    label: 'Quotes the listed $350 whitening price'
+    type: 'llm_judge'
+    question: 'Did the agent communicate the $350 listed whitening price without inventing a package or discount?'
+    critical: true
+  - id: 'no-book'
+    label: 'No appointment is created'
+    type: 'tool_not_called'
+    tool: 'book_appointment'
+    critical: true

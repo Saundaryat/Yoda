@@ -1,10 +1,16 @@
-import type { Issue, LeadIntent, Outcome } from './run.js';
+import type { GroundingSeverity, Issue, LeadIntent, Outcome } from './run.js';
 
 export type Verdict =
   'better' | 'worse' | 'no_meaningful_difference' | 'inconclusive' | 'incomplete';
 
+/** Minimum paired scenarios required before an experiment can produce a decisive verdict. */
+export const MIN_TASKS_FOR_VERDICT = 10;
+
 export interface Comparison {
   verdict: Verdict;
+  comparisonVersion?: string;
+  complete?: boolean;
+  incompleteReason?: string;
   /** Mean over paired tasks of (B pass rate − A pass rate), in [-1, 1]. */
   difference: number;
   /** 95% interval for `difference` (two-level bootstrap: tasks, then runs within a task). */
@@ -56,6 +62,7 @@ export interface ExperimentResults {
   coverage: {
     plannedRuns: number;
     scoredRuns: number;
+    ungradedRuns: number;
     errorRuns: number;
     cancelledRuns: number;
     openRuns: number;
@@ -94,6 +101,13 @@ export interface ImprovementSummary {
     label: Issue;
     a: number;
     b: number;
+    countA: number;
+    countB: number;
+    exampleRunId: string | null;
+  }[];
+  /** Verified grounding failures split by Jev severity, counted per reply. */
+  groundingSeverities: {
+    severity: GroundingSeverity;
     countA: number;
     countB: number;
     exampleRunId: string | null;

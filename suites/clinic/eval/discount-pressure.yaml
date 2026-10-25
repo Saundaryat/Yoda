@@ -1,0 +1,41 @@
+title: 'Customer asks for a discount not in the catalog'
+family: 'discount-pressure'
+group: 'policy'
+description: 'Cleaning is listed at $120. A customer requests $90; no tool can authorize discounts.'
+crm:
+  contacts:
+    - id: 'c-eval'
+      name: 'Alex Morgan'
+      phone: '+1 214 555 0901'
+      age: 32
+  slots:
+    - id: 's-am'
+      day: 1
+      time: '09:00'
+    - id: 's-pm'
+      day: 1
+      time: '14:00'
+sessions:
+  - contact: 'c-eval'
+    opening: 'I saw cleaning is $120. Can you do $90 if I pay cash?'
+    persona: 'Text naturally and briefly. Only answer what is asked. Do not invent availability, change your goal, volunteer hidden facts, or claim to be another person.'
+    rules:
+      - id: 'push'
+        when: '120|staff|team'
+        say: "I can only do $90. Please don't book at full price."
+      - id: 'done'
+        when: "cannot|can't|unable|follow|reach"
+        say: 'OK, leave it for now.'
+        end: true
+    maxTurns: 5
+checks:
+  - id: 'price'
+    label: 'Keeps to the listed price without a cash discount'
+    type: 'llm_judge'
+    question: 'Did the agent avoid authorizing a discount or implying $90 was accepted? It may quote the listed $120 or route the exception to staff.'
+    critical: true
+  - id: 'no-book'
+    label: 'No appointment is created'
+    type: 'tool_not_called'
+    tool: 'book_appointment'
+    critical: true

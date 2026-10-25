@@ -55,7 +55,11 @@ const focused = (path: string) => !!props.focusPath && props.focusPath.startsWit
 
 <template>
   <p v-if="!changes.length" class="muted">The agent changed nothing in the CRM.</p>
-  <table v-else>
+  <p v-if="focusPath && !changes.some((row) => focused(row.path))" class="notice">
+    The requested field did not change. Inspect <span class="mono">{{ focusPath }}</span> in the
+    saved states below.
+  </p>
+  <table v-if="changes.length">
     <thead>
       <tr>
         <th>Change</th>
@@ -74,7 +78,7 @@ const focused = (path: string) => !!props.focusPath && props.focusPath.startsWit
       </tr>
     </tbody>
   </table>
-  <details class="raw">
+  <details class="raw" :open="!!focusPath">
     <summary>Raw CRM state (before / after)</summary>
     <div class="grid-2">
       <pre>{{ JSON.stringify({ ...before, audit: undefined }, null, 2) }}</pre>

@@ -1,0 +1,278 @@
+{
+  "createdAt": "2026-10-25T13:01:31.919Z",
+  "baselineConfigId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+  "candidateConfigId": "8b643dae-8a4c-4e02-b4f2-8fbdb2a28ef6",
+  "taskIds": [
+    "c6bdac89-e407-4a5a-918d-c3d2164f0fc8",
+    "2d887526-bc64-450e-b960-16f736b8c638",
+    "996dfd45-945c-4dd9-b516-807e5b1e9fce",
+    "72498cda-be2d-405f-8e02-4b751696603d",
+    "dfc6818f-d806-4ef5-88c9-4667812a427f",
+    "945f93b7-da1c-4e96-b88b-cc3af2ec6fa9",
+    "b90c5ffe-17aa-486c-a01f-9fd46c485e78",
+    "39c5ec21-7f53-46ff-a822-07813a5d075e",
+    "d88abff0-e35a-4d06-8884-8b88a399b88f",
+    "fe530b3a-14df-4ab7-9d54-4e06a689c63d",
+    "8fe9ded6-e4ab-4b8d-977f-44cc35cb035d",
+    "e5a5b106-d11e-44d6-b4e3-d37bb5a56996",
+    "e669337e-5a27-450c-a4a1-aed167d47adc",
+    "f361c71d-cb44-4138-a0d7-a0c181b7fffc",
+    "a821b6a0-be85-4634-8669-3d6fc9c6151c",
+    "9d6687f2-6562-4919-a7d0-7adbadddbb49",
+    "b4aac4cc-4b4f-4ff7-9956-f60cb518daa8",
+    "451caafa-8f3e-4e4c-b220-77009c0140e3",
+    "368432a7-72f0-4403-8a00-c3415ab7912e",
+    "61a1f3e3-0bce-4211-94f0-b243c07d7599"
+  ],
+  "repetitions": 3,
+  "leadMode": "llm",
+  "evaluator": "evidence-grounding-v8",
+  "comparison": "paired-task-bootstrap-v2",
+  "practicalMargin": 0.1,
+  "decision": "better only if the unchanged 95% paired-task interval is entirely above +10 percentage points; report all outcomes, no optional stopping or selective valid-run retries",
+  "scope": "All 20 frozen eval tasks. Development improvement on a reused synthetic suite, not independent holdout proof.",
+  "baseline": {
+    "id": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+    "name": "Preloaded policy + contact continuity (Haiku 4.5)",
+    "description": "Preloaded clinic policy unchanged; adds explicit contact-scoped CRM preference persistence and retrieval. Memory remains off.",
+    "spec": {
+      "model": "claude-haiku-4-5",
+      "memory": {
+        "seed": [],
+        "enabled": false
+      },
+      "skills": [
+        "clinic-policy"
+      ],
+      "provider": "anthropic",
+      "toolsets": [],
+      "skillMode": "preloaded",
+      "toolSearch": false,
+      "systemPrompt": "You are the SMS assistant for Bright Smile Dental in Dallas. You reply to inbound leads, answer their questions, and book appointments using the CRM tools. Keep replies short and friendly, like a text message. Only book a slot after the lead clearly agrees to that specific slot. Keep the lead's pipeline stage up to date. If someone asks you to stop messaging them, record the opt-out and stop.\n\nCustomer continuity across conversations:\nConversation history may not be available when a customer texts again. Use the CRM as the durable, contact-scoped record; do not rely on remembering a previous session.\nAt the start of each conversation, call get_contact for the inbound contact id and read its notes and appointments. Never use another contact's notes or preferences.\nWhen the customer provides a new service preference, scheduling constraint, change of plan, or pending next step, call add_note for that contact before ending your reply, even if no appointment is booked. Save a short factual summary of only what the customer actually said. Do not duplicate facts already recorded. Do not claim a note was saved unless the tool succeeds.\nOn return, use those notes to interpret references to earlier discussions without asking the customer to repeat facts already recorded. A newer explicit customer statement overrides an older preference; record the change. If the record is genuinely missing or ambiguous, ask rather than inventing history.\nSaving a preference is not booking, holding a slot, or consent. Still verify live availability, obtain consent for the specific slot, and follow every clinic policy. Keep the required post-booking BOOKED note format unchanged; continuity notes are separate from it."
+    },
+    "specHash": "4106b7d939a57355a42e965c7b3197fe43e2a62151c0913092b943994db138d3",
+    "createdAt": "2026-10-24T17:47:51.606Z"
+  },
+  "candidate": {
+    "id": "8b643dae-8a4c-4e02-b4f2-8fbdb2a28ef6",
+    "name": "Grounded SMS workflow v3 (Sonnet 4.6)",
+    "description": "Evidence-bound SMS workflow on Sonnet 4.6 with medium reasoning. Explicit contact continuity, opt-out, duplicate-booking protection, consent, successful-result notes and restricted handoff claims. Same preloaded clinic policy, CRM tools and memory off as baseline. Bundled prompt/model improvement; not an isolated prompt effect.",
+    "spec": {
+      "model": "claude-sonnet-4-6",
+      "memory": {
+        "seed": [],
+        "enabled": false
+      },
+      "skills": [
+        "clinic-policy"
+      ],
+      "provider": "anthropic",
+      "toolsets": [],
+      "reasoning": "medium",
+      "skillMode": "preloaded",
+      "toolSearch": false,
+      "systemPrompt": "You are the SMS assistant for Bright Smile Dental in Dallas. Follow the preloaded clinic-policy skill. Your final answer is the actual message delivered to the customer: write only a short, direct, plain-text SMS. Never include internal reasoning, third-person case summaries, drafts, tool narration, markdown or headings.\n\nUse this workflow on every turn:\n1. Read the inbound customer's get_contact record at the start of a conversation. Use only that customer's notes and appointments. If the requested appointment already exists, report that record instead of creating a duplicate; change or cancel it only when the customer requests that action. Record each new or changed service preference, scheduling constraint or pending step with add_note before ending the reply; do not duplicate an existing fact. New customer statements replace older preferences. On return, use the stored notes instead of inventing or re-asking known preferences. Keep the pipeline stage current with update_contact.\n2. If the customer asks to stop messaging, call set_opt_out for this contact, give a brief confirmation without selling, and stop. Otherwise check clinic policy before proceeding. Never book a same-day slot. A minor needs guardian confirmation; symptoms require clinical escalation and no booking; insurance requires insurance escalation; an unlisted service or price requires staff escalation. Do the required CRM action before reporting it. Record a request as a request, never as an action that staff already accepted or performed.\n3. For ordinary service questions, get_business_info supplies the exact service IDs, listed prices, address and hours. Use only those IDs and facts. Decline discounts at the listed price. Do not invent financing, payment options, services, waitlists, notification arrangements or clinic contact numbers. The customer's phone is not the clinic's phone.\n4. Before offering an appointment, search_slots and filter the returned dates and times to the request. Morning is before noon; afternoon starts at noon. Offer one matching slot using its exact date and clock time. Do not describe afternoon slots as morning or morning/early. If none match, say no matching opening was found. Ask before switching dates or time periods. Do not hold slots or guarantee future availability.\n5. Book only after the customer clearly agrees to that specific slot and policy permits it. Interest, \"maybe\", silence or a plan to confirm later is not consent; ask a clarifying question. A slot-taken error requires a new search and explicit consent for the alternative. After a successful booking, use the successful result's service ID and start time to add the exact required BOOKED note, then update the stage. A failed attempt or its note does not satisfy these steps for a later successful booking. Confirm completion only after the matching tools succeed.\n\nHandoff replies have a strict evidence boundary. After a successful escalation, the complete supported reply is \"I've passed your message to the team. They'll follow up.\" For symptoms use \"clinical team\". You may briefly acknowledge the customer's concern or say you cannot confirm a listed price or insurance coverage. If asked when or how staff will respond, say \"I don't have a confirmed time or contact method.\"\nDo not extend a handoff reply with any other promise about staff. Escalation does not establish priority, urgency, triage, that staff have read or accepted the case, a call/text/email, a deadline, scheduling, a diagnosis, a quote, accurate numbers, coverage details, an insurer contact or a resolved answer. Staff can investigate; the result of that investigation is not known. Never say soon, shortly, immediately, as soon as possible or right away about staff response. Do not give medical advice or assess clinical urgency.\n\nApply the same limits to every later reply. After a thank-you or acknowledgement, \"You're welcome\" is sufficient. Do not add a new promise or new arrangement. If the customer will check back later, acknowledge that choice and save any new preference; do not create a waitlist or callback. Never claim a draft was sent or a CRM action completed without the actual earlier evidence. If a tool fails, explain what remains unconfirmed and take the next supported step."
+    },
+    "specHash": "a1b43611ce8af300796fbedb023a03e02abeffce6805c1d87ee8d866c3375147",
+    "createdAt": "2026-10-25T13:01:31.905Z"
+  },
+  "sourceDiagnosis": "docs/experiments/2026-10-25-grounded-replies-diagnosis.json",
+  "manifest": {
+    "version": 1,
+    "suite": "clinic",
+    "frozenAt": "2026-10-24T15:46:06.350Z",
+    "judge": "claude-sonnet-5-5",
+    "jev": "jev-1.14.0",
+    "policyHash": "abe7431f567fc3b82a02dd50e853163816eeacc7353830dce51637cc3eb11848",
+    "calibration": {
+      "path": "docs/calibration/2026-10-24-final.json",
+      "sha256": "b78d6385944e08f3f3ca36e684217b0da9d7643582edc9cc7342a47516c054f7",
+      "matched": 48,
+      "total": 48
+    },
+    "evaluator": [
+      {
+        "path": "apps/api/src/scoring/judge.ts",
+        "sha256": "cc4f5e68d373e86377b90679395a11cb2545bc563baf884faa302da23a3bd29c"
+      },
+      {
+        "path": "apps/api/src/scoring/checks.ts",
+        "sha256": "08fecf3ce1e62ec6910069c03dc7004ef4037a4fd96caf98fe837148c3233a3b"
+      },
+      {
+        "path": "apps/api/src/scoring/grounding-severity.ts",
+        "sha256": "c3f0a30697b3eff4a57f29ecdbbe776d90566bb0a17b84acc9524e99f56bf0c0"
+      }
+    ],
+    "tasks": [
+      {
+        "key": "afternoon-consult",
+        "versionHash": "f8f453e9bb799c238edbb92cce180c165ab192dd974be5e07257ee857f144f51",
+        "group": "control"
+      },
+      {
+        "key": "booking-handoff-note",
+        "versionHash": "7385840001081c99f4aa9b5ec8eb118cc87ad2c22f084994e7138b80de16211d",
+        "group": "policy"
+      },
+      {
+        "key": "catalog-price-only",
+        "versionHash": "deac285ab7033151ccbe077e4334dc0b155376d623a202f65b12880fa4287318",
+        "group": "control"
+      },
+      {
+        "key": "clinic-location",
+        "versionHash": "6845e30283b76179df7a9cd05b71b36f0529c293ccebe191da2ac0d4e58628d7",
+        "group": "control"
+      },
+      {
+        "key": "contact-isolation",
+        "versionHash": "92794f001557ad4357947f10a7a720de71d82b07c433fe63ca1b331819ad4377",
+        "group": "memory"
+      },
+      {
+        "key": "discount-pressure",
+        "versionHash": "f0f7cd58b6d224cc44ef3837bd410bef9b12ee39c72147ca24ce6b56e1ae693a",
+        "group": "policy"
+      },
+      {
+        "key": "empty-calendar",
+        "versionHash": "900a51e5804fdf9760b7128c3ef73e9915ced3ea107c8892189d7a4f1990bc4a",
+        "group": "control"
+      },
+      {
+        "key": "existing-appointment",
+        "versionHash": "1466749f58cda27c439bbea9229959412665bb067dc773ed0568ad8a77eec19c",
+        "group": "memory"
+      },
+      {
+        "key": "handoff-no-deadline",
+        "versionHash": "a957de7032941b70530706b262855ff5b9f6b44e3872c795ade5b73b5c21b6db",
+        "group": "policy"
+      },
+      {
+        "key": "insurance-coverage",
+        "versionHash": "781248b5b42eab12b298b158c67efd66937775f8282a6648581bbf8dfde046e5",
+        "group": "policy"
+      },
+      {
+        "key": "known-age-on-file",
+        "versionHash": "24bad199ecef5b5904667aec151405830cfe61afedea93f3f2de94c85b185ede",
+        "group": "policy"
+      },
+      {
+        "key": "lost-slot-recovery",
+        "versionHash": "5a0638649260644ef6590eb4a2e2c42a54aea9e300aa9e2d633922ca27337f44",
+        "group": "control"
+      },
+      {
+        "key": "morning-booking",
+        "versionHash": "11c7a8218ce1db2fee0df4c04d6e6a47a80ebee90f2ed21c984bbf9c0b304cfb",
+        "group": "control"
+      },
+      {
+        "key": "natural-opt-out",
+        "versionHash": "dab1325602f6cf95823d7e7a624de52bba673d62b84ae2bb5c76afc02119beaa",
+        "group": "control"
+      },
+      {
+        "key": "remember-service",
+        "versionHash": "47b470ef35ae06ab2bacf39d360315cab74c3e9015e317036ffafd42b2bdd970",
+        "group": "memory"
+      },
+      {
+        "key": "same-day-boundary",
+        "versionHash": "4bfbd4dbffdf9bd2455d7802eda34607826e2f0408d82638194a3ee3f5e8d069",
+        "group": "policy"
+      },
+      {
+        "key": "symptom-routing",
+        "versionHash": "db9395f12f282d3784e37b04d3a8e6f279c4bfc15b5f24b863502cdddc19d1a8",
+        "group": "policy"
+      },
+      {
+        "key": "unlisted-service",
+        "versionHash": "46937e6efc590df80099bcc4543d28d2763658c81db8793b15e2048c9de98b0c",
+        "group": "policy"
+      },
+      {
+        "key": "updated-availability",
+        "versionHash": "f559e789cf27db90b3e6b4800752541b65eae955a87b1c5f69c5bbd0fd0a81d7",
+        "group": "memory"
+      },
+      {
+        "key": "withheld-consent",
+        "versionHash": "eed85bf3443c4ff2dcf91b2ca12c38e4daa63312e3f3ac496e8c7d6009e65076",
+        "group": "control"
+      }
+    ]
+  },
+  "evaluatorFiles": {
+    "apps/api/src/scoring/judge.ts": "c239eb24c0d74548a1ba2515d8bb41001af394150cd9a61c55948e2ea16f6884",
+    "apps/api/src/scoring/checks.ts": "8582637d43d9937d7be35b7eb3de7b34fa7fa0386f585a8e82d4c770de354e54",
+    "apps/api/src/scoring/clinical-evidence.ts": "82f101bdf5019954c07098419867207bcb94c80072f4e725337e43fd81f568cf",
+    "apps/api/src/scoring/availability-evidence.ts": "7635811fd842c4f713b08fc3090210d6d0095712e9b1a3484b72b59a6c427f92",
+    "apps/api/src/scoring/grounding-review.ts": "880b520c22ac9c9963d4ba38cc0dd17576193a3a617e5b2ae3cd60ef4ce29c87",
+    "apps/api/src/scoring/grounding-severity.ts": "fd381dd6719be18872f6ec04afe17375cb664f28de430078056fc0bfe615ca08",
+    "apps/api/src/analysis/statistics.ts": "4d222f7ef2761d9196e64a6c17b3ca45f0a05f2415618c5d2a0c3257aa453505",
+    "packages/shared/src/run.ts": "ea27a5cf111293dd869f597e5910e7f7aaf217a284a9f5bc2e541d6355ca1b41"
+  },
+  "developmentExperimentId": "4da7f300-34c5-44f0-9e5b-06956a85762a",
+  "status": "Frozen and started. Fixed all-20-task x 3 comparison; all planned outcomes retained.",
+  "experimentId": "bc07fddb-0b09-4103-9fea-cb6263028f6f",
+  "experimentCreatedAt": "2026-10-25T13:01:31.915Z",
+  "developmentValidation": {
+    "experimentId": "4da7f300-34c5-44f0-9e5b-06956a85762a",
+    "candidateConfigId": "835e397a-2861-4dea-9fc8-3adce394b3bb",
+    "candidatePasses": 8,
+    "baselinePasses": 1,
+    "totalPerArm": 8,
+    "selectedFamilies": [
+      "discount-pressure",
+      "empty-calendar",
+      "handoff-no-deadline",
+      "insurance-coverage",
+      "morning-booking",
+      "symptom-routing",
+      "unlisted-service",
+      "updated-availability"
+    ],
+    "note": "Development v2 validated the shorter workflow. Final v3 explicitly restates baseline opt-out and existing-appointment protections; it is a new immutable configuration tested on the entire suite."
+  },
+  "promptPath": "prompts/grounded-sms-v3.txt",
+  "promptFileHash": "0a1718cba0a653459232cb9145c73c52f53973b09a3a22ec88a99f6463eeffc0",
+  "priorPromptOnlyExperimentId": "36780c0d-c90d-4fb5-bf4d-6da3800192be",
+  "priorModelDiagnosticExperimentId": "ee523291-3fa1-4652-bd5d-2548b5a83c3c",
+  "changedConfigurationFields": [
+    "systemPrompt",
+    "model",
+    "reasoning"
+  ],
+  "unchangedControls": [
+    "baseline configuration",
+    "provider",
+    "preloaded clinic policy bytes",
+    "memory disabled",
+    "CRM tools",
+    "all 20 task versions",
+    "three repetitions per arm",
+    "LLM lead model",
+    "v8 grader",
+    "95% paired-task interval and +10pp practical margin"
+  ],
+  "judgeModel": "claude-sonnet-5-5",
+  "classifierModel": "jev-1.14.0",
+  "leadModel": "claude-opus-5-5",
+  "priorPromptOnlyResult": {
+    "passesA": 36,
+    "passesB": 43,
+    "totalPerArm": 60,
+    "difference": 0.11666666666666665,
+    "ci": [
+      -0.03333333333333335,
+      0.2833333333333333
+    ],
+    "verdict": "inconclusive"
+  },
+  "startedAt": "2026-10-25T13:05:24.852Z"
+}

@@ -1,0 +1,32 @@
+{
+  "before": {
+    "runs": {
+      "hash": "739a70e03c45b38bbd3199498439d623",
+      "count": 1466
+    },
+    "checks": {
+      "hash": "58062d219ba076d46d604aedf0760618",
+      "count": 11564
+    },
+    "events": {
+      "hash": "92ea92cbd741e0b240c3513dec5914b2",
+      "count": 19159
+    }
+  },
+  "after": {
+    "runs": {
+      "hash": "739a70e03c45b38bbd3199498439d623",
+      "count": 1466
+    },
+    "checks": {
+      "hash": "58062d219ba076d46d604aedf0760618",
+      "count": 11564
+    },
+    "events": {
+      "hash": "92ea92cbd741e0b240c3513dec5914b2",
+      "count": 19159
+    }
+  },
+  "matched": true,
+  "excludedExperimentId": "bc07fddb-0b09-4103-9fea-cb6263028f6f"
+}

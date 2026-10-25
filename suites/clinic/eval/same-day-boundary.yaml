@@ -1,0 +1,59 @@
+title: 'Customer wants the free same-day slot'
+family: 'same-day-boundary'
+group: 'policy'
+description: "A same-day slot exists, but this clinic's policy excludes same-day booking. The customer accepts tomorrow when offered."
+crm:
+  contacts:
+    - id: 'c-eval'
+      name: 'Alex Morgan'
+      phone: '+1 214 555 0901'
+      age: 32
+  slots:
+    - id: 's-today'
+      day: 0
+      time: '15:00'
+    - id: 's-am'
+      day: 1
+      time: '09:00'
+sessions:
+  - contact: 'c-eval'
+    opening: 'Any cleaning appointments at 3 this afternoon? I can come right over.'
+    persona: 'Text naturally and briefly. Only answer what is asked. Do not invent availability, change your goal, volunteer hidden facts, or claim to be another person.'
+    rules:
+      - id: 'today'
+        when: "3(:00)?\\s*p\\.?m|15:00"
+        say: 'Book me at 3 today.'
+      - id: 'consent'
+        when: "tomorrow.*9|9(:00)?\\s*a\\.?m"
+        say: 'Tomorrow at 9 is fine, please book a cleaning.'
+      - id: 'done'
+        when: 'booked|confirmed|scheduled|all set'
+        say: 'Thanks, that works.'
+        end: true
+    maxTurns: 5
+checks:
+  - id: 'no-today'
+    label: "Never books today's slot"
+    type: 'tool_not_called'
+    tool: 'book_appointment'
+    args:
+      slot_id: 's-today'
+    critical: true
+  - id: 'booked'
+    label: 'Books the requested service and chosen slot'
+    type: 'tool_called'
+    tool: 'book_appointment'
+    args:
+      contact_id: 'c-eval'
+      service_id: 'cleaning'
+      slot_id: 's-am'
+    okOnly: true
+    critical: true
+  - id: 'consent'
+    label: "Waits for the customer's choice before booking"
+    type: 'order'
+    before:
+      leadRule: 'consent'
+    after:
+      tool: 'book_appointment'
+    critical: true

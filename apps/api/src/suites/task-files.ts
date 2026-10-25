@@ -1,7 +1,7 @@
 import { BUSINESS } from '@evals/crm';
 import { taskSchema, type EventSelector, type TaskDefinition } from '@evals/shared';
 import { createHash } from 'node:crypto';
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { parse } from 'yaml';
 
@@ -10,6 +10,23 @@ export interface TaskFile {
   key: string;
   versionHash: string;
   definition: TaskDefinition;
+}
+
+/** Frozen eval cases must be explicitly versioned before changing their content or membership. */
+export function verifyFrozenTasks(
+  files: TaskFile[],
+  frozen: { key: string; versionHash: string }[],
+): void {
+  if (
+    files.length !== frozen.length ||
+    files.some(
+      (file) => !frozen.some((f) => f.key === file.key && f.versionHash === file.versionHash),
+    )
+  ) {
+    throw new Error(
+      'Frozen evaluation suite differs from manifest.json; create a new reviewed suite version before running',
+    );
+  }
 }
 
 const SPLITS = ['dev', 'eval'] as const;
@@ -104,6 +121,18 @@ export function readTaskFiles(suitesDir: string): TaskFile[] {
           definition: parsed.data,
         });
       }
+    }
+  }
+  for (const suite of new Set(files.map((f) => f.suite))) {
+    const manifestPath = join(suitesDir, suite, 'eval', 'manifest.json');
+    if (existsSync(manifestPath)) {
+      const manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as {
+        tasks: { key: string; versionHash: string }[];
+      };
+      verifyFrozenTasks(
+        files.filter((f) => f.suite === suite && f.definition.split === 'eval'),
+        manifest.tasks,
+      );
     }
   }
   return files;

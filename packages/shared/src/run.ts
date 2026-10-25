@@ -105,21 +105,60 @@ export type AgentAct = (typeof AGENT_ACTS)[number];
 export type Issue = (typeof ISSUES)[number];
 export type Outcome = (typeof OUTCOMES)[number];
 
+export type GroundingSeverity = 'minor' | 'serious';
+
+/** A Jev Choice decision about how much an otherwise verified grounding failure matters. */
+export interface GroundingSeverityDecision {
+  label: GroundingSeverity;
+  confidence: number;
+  probabilities: Record<GroundingSeverity, number>;
+  /** Versioned model id returned by TypeSafe, even when the request used an alias. */
+  model: string;
+}
+
 /** The judge's verdict on one agent reply. A failure carries a verbatim quote from the reply. */
 export interface TurnJudgment {
   eventSeq: number;
   audience: JudgeVerdict;
   format: JudgeVerdict;
-  grounded: JudgeVerdict;
+  grounded: JudgeVerdict & { severity?: GroundingSeverityDecision };
   act: AgentAct;
   /** Every verified problem in this reply: the failed rubric criteria plus the judge's extra labels. */
-  issues: { label: Issue; quote: string; reason: string }[];
+  issues: {
+    label: Issue;
+    quote: string;
+    reason: string;
+    /** Present for verified `unbacked_claim` issues when Jev classification is configured. */
+    severity?: GroundingSeverityDecision;
+    evidenceRule?: EvidenceRuleDecision;
+  }[];
+}
+
+export interface EvidenceRuleDecision {
+  id: 'availability-evidence-v1' | 'unsupported-waitlist-v1' | 'clinic-contact-evidence-v1';
+  severity: 'serious';
+  evidenceSeqs: number[];
+  modelVerdict: { pass: boolean; quote: string; reason: string; verified: boolean };
+}
+
+export function effectiveGroundingSeverity(
+  verdict: JudgeVerdict & { severity?: GroundingSeverityDecision },
+): GroundingSeverity | undefined {
+  return verdict.evidenceRule?.severity ?? verdict.severity?.label;
 }
 
 export interface JudgeVerdict {
   pass: boolean;
   quote: string;
   reason: string;
+  /** Binding CRM fact assessment; original model decision and Jev probabilities remain intact. */
+  evidenceRule?: EvidenceRuleDecision;
+  review?: {
+    model: string;
+    basis: 'supported_fact' | 'future_intent' | 'unsupported';
+    evidenceSeqs: number[];
+    modelVerdict: { pass: boolean; quote: string; reason: string; verified: boolean };
+  };
   /** False when the judge failed a reply but its quote isn't in the reply: the failure is ignored. */
   verified: boolean;
 }
@@ -131,6 +170,7 @@ export interface LeadLabel {
 }
 
 export interface JudgeReport {
+  evaluatorVersion?: string;
   model: string;
   turns: TurnJudgment[];
   leadTurns: LeadLabel[];
@@ -142,13 +182,28 @@ export interface JudgeReport {
   firstProblemSeq: number | null;
   /** Share of replies written to the lead in SMS style (audience and format), 0–1. */
   replyQuality: number | null;
+  /** One batched Jev call classifies all verified grounding failures; null when none was needed. */
+  groundingClassifier?: {
+    model: string;
+    inputTokens: number | null;
+    outputTokens: number | null;
+    costUsd: number | null;
+  } | null;
+  groundingReview?: {
+    model: string;
+    inputTokens: number;
+    outputTokens: number;
+    costUsd: number | null;
+  } | null;
+  /** Combined Claude judge, evidence reviewer and Jev classifier usage. */
   usage: { inputTokens: number; outputTokens: number; costUsd: number | null };
 }
 
 export interface Score {
-  passed: boolean;
-  /** 0–100, weighted share of checks passed. */
-  score: number;
+  /** Null when a critical check could not be evaluated. */
+  passed: boolean | null;
+  /** 0–100; null when required evaluation is incomplete. */
+  score: number | null;
   checks: CheckResult[];
 }
 

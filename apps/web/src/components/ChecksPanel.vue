@@ -10,30 +10,42 @@ const emit = defineEmits<{ focus: [seqs: number[]]; state: [path: string] }>();
     <li
       v-for="check in checks"
       :key="check.checkId"
-      :class="check.skipped ? 'skipped' : check.passed ? 'pass' : 'fail'"
+      :class="
+        check.informational
+          ? 'informational'
+          : check.skipped
+            ? 'skipped'
+            : check.passed
+              ? 'pass'
+              : 'fail'
+      "
     >
       <div class="title">
         <span class="mark">{{ check.skipped ? '–' : check.passed ? '✓' : '✗' }}</span>
         <span>{{ check.label }}</span>
-      </div>
-      <div class="meta">
-        <span class="badge mono">{{ check.type }}</span>
-        <span v-if="check.type === 'llm_judge' || check.type === 'reply_judge'" class="badge info"
-          >LLM-judged</span
-        >
-        <span v-if="check.type === 'reply_judge' || check.type === 'invariant'" class="badge"
-          >every run</span
-        >
-        <span v-if="check.skipped" class="badge">not judged</span>
-        <span
-          v-if="check.informational"
-          class="badge warn"
-          title="Reply quality is scored separately from pass/fail"
-          >reply quality · not scored</span
-        >
         <span v-if="check.critical" class="badge warn">critical</span>
-        <span class="badge">weight {{ check.weight }}</span>
+        <span v-if="check.informational" class="badge">style only · not scored</span>
       </div>
+      <details class="check-metadata">
+        <summary>Scoring rule</summary>
+        <div class="meta">
+          <span class="badge mono">{{ check.type }}</span>
+          <span v-if="check.type === 'llm_judge' || check.type === 'reply_judge'" class="badge info"
+            >LLM-judged</span
+          >
+          <span v-if="check.type === 'reply_judge' || check.type === 'invariant'" class="badge"
+            >every run</span
+          >
+          <span v-if="check.skipped" class="badge">not judged</span>
+          <span
+            v-if="check.informational"
+            class="badge warn"
+            title="Reply quality is scored separately from pass/fail"
+            >reply quality · not scored</span
+          >
+          <span class="badge">weight {{ check.weight }}</span>
+        </div>
+      </details>
       <div class="detail">{{ check.detail }}</div>
       <div v-if="check.evidence.length" class="evidence">
         <button

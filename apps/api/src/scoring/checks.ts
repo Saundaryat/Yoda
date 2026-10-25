@@ -12,6 +12,8 @@ import type {
   TaskDefinition,
 } from '@evals/shared';
 
+import { effectiveGroundingSeverity } from '@evals/shared';
+
 type ToolEvent = Extract<RunEvent, { kind: 'tool' }>;
 
 const regex = (pattern: string) => new RegExp(pattern, 'i');
@@ -77,7 +79,7 @@ const times = (n: number) => (n === 1 ? 'once' : `${n} times`);
 type Outcome = Pick<CheckResult, 'passed' | 'detail' | 'evidence' | 'skipped'>;
 
 const NOT_JUDGED: Outcome = {
-  passed: true,
+  passed: false,
   skipped: true,
   detail: 'Not judged: no judge model configured (set ANTHROPIC_API_KEY)',
   evidence: [],
@@ -88,6 +90,7 @@ function evaluate(
   events: RunEvent[],
   crm: CrmState,
   judge: JudgeReport | null | undefined,
+  task: TaskDefinition,
 ): Outcome {
   switch (check.type) {
     case 'tool_called': {
@@ -132,27 +135,55 @@ function evaluate(
       };
     }
     case 'order': {
-      const before = select(events, check.before)[0];
-      const after = select(events, check.after)[0];
-      if (!after) {
+      const before = select(events, check.before);
+      const after = select(events, check.after);
+      if (!after.length)
         return {
           passed: check.afterOptional,
           detail: `${describe(check.after)} never happened`,
-          evidence: seqs(before ? [before] : []),
+          evidence: seqs(before),
         };
-      }
-      if (!before) {
-        return {
-          passed: false,
-          detail: `${describe(check.after)} happened without ${describe(check.before)} before it`,
-          evidence: seqs([after]),
-        };
-      }
-      const passed = before.seq < after.seq;
-      const detail = passed
-        ? `${describe(check.before)} came before ${describe(check.after)}`
-        : `${describe(check.after)} came before ${describe(check.before)}`;
-      return { passed, detail, evidence: seqs([before, after]) };
+      const consentCheck =
+        'leadRule' in check.before &&
+        'tool' in check.after &&
+        check.after.tool === 'book_appointment';
+      const violations = after.filter((action) => {
+        const prior = before.findLast(
+          (event) => event.session === action.session && event.seq < action.seq,
+        );
+        if (!prior) return true;
+        if (!consentCheck) return false;
+        // Consent is scoped to this contact/session and this decision. A later
+        // customer reply or another booking attempt requires a fresh acceptance.
+        const latestLead = events.findLast(
+          (event) =>
+            event.kind === 'lead' && event.session === action.session && event.seq < action.seq,
+        );
+        const previousAttempt = events.findLast(
+          (event) =>
+            event.kind === 'tool' &&
+            event.tool === 'book_appointment' &&
+            event.session === action.session &&
+            event.seq < action.seq,
+        );
+        return (
+          latestLead?.seq !== prior.seq ||
+          (previousAttempt !== undefined && previousAttempt.seq > prior.seq) ||
+          (action.kind === 'tool' &&
+            action.args.contact_id !== task.sessions[action.session - 1]?.contact) ||
+          (prior.kind === 'lead' &&
+            /\b(?:maybe|not (?:yet |really )?(?:sure|ready|decided)|do not book|don't book|not book|haven't decided)\b/i.test(
+              prior.text,
+            ))
+        );
+      });
+      return {
+        passed: violations.length === 0,
+        detail: violations.length
+          ? `${describe(check.after)} has ${violations.length} attempt(s) without valid prior ${describe(check.before)} in the same session${consentCheck ? ' and current customer decision' : ''}`
+          : `${describe(check.before)} came before every ${describe(check.after)} in the same session`,
+        evidence: seqs(violations.length ? [...before, ...violations] : [...before, ...after]),
+      };
     }
     case 'budget': {
       const toolCalls = events.filter((e) => e.kind === 'tool' && e.source === 'crm').length;
@@ -175,7 +206,16 @@ function evaluate(
       if (!answer) return NOT_JUDGED;
       const quoted = answer.quote.trim().toLowerCase();
       const source = quoted
-        ? events.find((e) => 'text' in e && e.text.toLowerCase().includes(quoted))
+        ? events.find((e) =>
+            ('text' in e
+              ? e.text
+              : e.kind === 'tool'
+                ? JSON.stringify(e.args) + '\n' + JSON.stringify(e.result)
+                : ''
+            )
+              .toLowerCase()
+              .includes(quoted),
+          )
         : undefined;
       return {
         passed: answer.answer === 'yes',
@@ -218,7 +258,7 @@ const REPLY_CHECKS = [
   },
 ] as const;
 
-/** Checks every run gets from the judge's per-reply verdicts. Unverified failures don't count. */
+/** Per-reply verdicts: unverified correctness failures require grading before a final score. */
 export function replyChecks(judge: JudgeReport | null): CheckResult[] {
   return REPLY_CHECKS.map(({ id, key, label, weight, critical, informational }) => {
     const base = {
@@ -230,17 +270,54 @@ export function replyChecks(judge: JudgeReport | null): CheckResult[] {
       ...(informational && { informational }),
     };
     if (!judge) return { ...base, ...NOT_JUDGED };
-    const failures = judge.turns.filter((t) => !t[key].pass && t[key].verified);
+    if (!judge.turns.length)
+      return {
+        ...base,
+        passed: false,
+        detail: 'No customer-facing agent reply was judged',
+        evidence: [],
+      };
+    const verified = judge.turns.filter((t) => !t[key].pass && t[key].verified);
+    // Without Jev configured, preserve the conservative historical behavior: an unclassified
+    // grounding failure is serious. A Jev-classified minor claim is reported but does not fail.
+    const failures = verified.filter(
+      (t) => key !== 'grounded' || effectiveGroundingSeverity(t.grounded) !== 'minor',
+    );
+    const minor =
+      key === 'grounded'
+        ? verified.filter((t) => effectiveGroundingSeverity(t.grounded) === 'minor')
+        : [];
     const ignored = judge.turns.filter((t) => !t[key].pass && !t[key].verified).length;
     const first = failures[0];
+    const incomplete = key === 'grounded' && ignored > 0 && !failures.length;
     const verdict: JudgeVerdict | undefined = first?.[key];
+    const cleared =
+      key === 'grounded'
+        ? judge.turns.filter(
+            (t) => t.grounded.pass && t.grounded.review && !t.grounded.review.modelVerdict.pass,
+          )
+        : [];
+    const suffix = [
+      cleared.length
+        ? `${cleared.length} model finding(s) cleared by evidence review: #${cleared[0]!.eventSeq} ${cleared[0]!.grounded.reason}`
+        : '',
+      minor.length
+        ? `${minor.length} minor grounding issue${minor.length > 1 ? 's' : ''} noted`
+        : '',
+      ignored ? `${ignored} unverified judge failure${ignored > 1 ? 's' : ''} ignored` : '',
+    ]
+      .filter(Boolean)
+      .join('; ');
     return {
       ...base,
-      passed: failures.length === 0,
+      passed: !incomplete && failures.length === 0,
+      ...(incomplete && { skipped: true }),
       detail: first
-        ? `${failures.length} of ${judge.turns.length} replies failed. #${first.eventSeq}: ${verdict!.reason} ("${verdict!.quote}")`
-        : `All ${judge.turns.length} replies passed${ignored ? ` (${ignored} unverified judge failure${ignored > 1 ? 's' : ''} ignored)` : ''}`,
-      evidence: failures.map((t) => ({ eventSeq: t.eventSeq })),
+        ? `${failures.length} of ${judge.turns.length} replies failed. #${first.eventSeq}: ${verdict!.reason} ("${verdict!.quote}")${suffix ? ` (${suffix})` : ''}`
+        : incomplete
+          ? 'Needs grading: a grounding failure could not be verified against the transcript.'
+          : `All ${judge.turns.length} replies passed${suffix ? ` (${suffix})` : ''}`,
+      evidence: [...failures, ...minor, ...cleared].map((t) => ({ eventSeq: t.eventSeq })),
     };
   });
 }
@@ -288,8 +365,8 @@ export interface StandardChecks {
 /**
  * Score a finished run. Pass = every critical check passes and the weighted score clears the bar.
  * With `standard`, the checks every run gets (judge reply checks, CRM invariants) are added to the
- * task's own. Skipped checks (no judge configured) and reply-quality checks are left out of the
- * score; reply quality is reported on its own.
+ * task's own. Missing critical judgments prevent a final score. Optional skipped checks and
+ * informational reply-quality checks are excluded; reply quality is reported on its own.
  */
 export function scoreRun(
   task: TaskDefinition,
@@ -308,15 +385,18 @@ export function scoreRun(
       check.session ? events.filter((e) => e.session === check.session) : events,
       crm,
       standard?.judge,
+      task,
     ),
   }));
   if (standard) {
     checks.push(...replyChecks(standard.judge), ...invariantChecks(standard.crmInitial, crm));
   }
+  if (checks.some((check) => check.critical && check.skipped))
+    return { passed: null, score: null, checks };
   const counted = checks.filter((c) => !c.skipped && !c.informational);
   const total = counted.reduce((sum, c) => sum + c.weight, 0);
   const earned = counted.reduce((sum, c) => sum + (c.passed ? c.weight : 0), 0);
-  const score = Math.round((earned / total) * 1000) / 10;
+  const score = total ? Math.round((earned / total) * 1000) / 10 : 0;
   const criticalOk = counted.every((c) => c.passed || !c.critical);
   return { passed: criticalOk && score >= task.passThreshold, score, checks };
 }

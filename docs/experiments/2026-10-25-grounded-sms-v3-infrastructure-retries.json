@@ -1,0 +1,259 @@
+[
+  {
+    "at": "2026-10-25T17:13:25.160Z",
+    "reason": "Invalid judge output enum after automatic retries; no valid behavioral grade exists. Existing retry-errors endpoint reruns the affected execution from scratch. No scored run retried.",
+    "before": [
+      {
+        "run": {
+          "id": "dfbd09c2-b8e6-4f43-b174-18ecf0e7aece",
+          "experimentId": "bc07fddb-0b09-4103-9fea-cb6263028f6f",
+          "taskId": "39c5ec21-7f53-46ff-a822-07813a5d075e",
+          "configId": "8b643dae-8a4c-4e02-b4f2-8fbdb2a28ef6",
+          "repetition": 3,
+          "position": 95,
+          "status": "error",
+          "availableAt": "2026-10-25T17:11:13.403Z",
+          "attempts": 3,
+          "attemptLog": [
+            {
+              "at": "2026-10-25T17:10:18.448Z",
+              "kind": "provider_error",
+              "detail": "LLM judge: Failed to parse structured output: Error: Failed to parse structured output: [\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"booked\",\n      \"escalated\",\n      \"opted_out\",\n      \"waiting_on_lead\",\n      \"declined\",\n      \"unresolved\"\n    ],\n    \"path\": [\n      \"outcome\",\n      \"label\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"booked\\\"|\\\"escalated\\\"|\\\"opted_out\\\"|\\\"waiting_on_lead\\\"|\\\"declined\\\"|\\\"unresolved\\\"\"\n  }\n] cause: [object Object]",
+              "attempt": 1
+            },
+            {
+              "at": "2026-10-25T17:11:03.393Z",
+              "kind": "provider_error",
+              "detail": "LLM judge: Failed to parse structured output: Error: Failed to parse structured output: [\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"booked\",\n      \"escalated\",\n      \"opted_out\",\n      \"waiting_on_lead\",\n      \"declined\",\n      \"unresolved\"\n    ],\n    \"path\": [\n      \"outcome\",\n      \"label\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"booked\\\"|\\\"escalated\\\"|\\\"opted_out\\\"|\\\"waiting_on_lead\\\"|\\\"declined\\\"|\\\"unresolved\\\"\"\n  }\n] cause: [object Object]",
+              "attempt": 2
+            },
+            {
+              "at": "2026-10-25T17:11:45.850Z",
+              "kind": "provider_error",
+              "detail": "LLM judge: Failed to parse structured output: Error: Failed to parse structured output: [\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"booked\",\n      \"escalated\",\n      \"opted_out\",\n      \"waiting_on_lead\",\n      \"declined\",\n      \"unresolved\"\n    ],\n    \"path\": [\n      \"outcome\",\n      \"label\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"booked\\\"|\\\"escalated\\\"|\\\"opted_out\\\"|\\\"waiting_on_lead\\\"|\\\"declined\\\"|\\\"unresolved\\\"\"\n  }\n] cause: [object Object]",
+              "attempt": 3
+            }
+          ],
+          "errorKind": "provider_error",
+          "errorDetail": "LLM judge: Failed to parse structured output: Error: Failed to parse structured output: [\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"booked\",\n      \"escalated\",\n      \"opted_out\",\n      \"waiting_on_lead\",\n      \"declined\",\n      \"unresolved\"\n    ],\n    \"path\": [\n      \"outcome\",\n      \"label\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"booked\\\"|\\\"escalated\\\"|\\\"opted_out\\\"|\\\"waiting_on_lead\\\"|\\\"declined\\\"|\\\"unresolved\\\"\"\n  }\n] cause: [object Object]",
+          "passed": null,
+          "score": null,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costUsd": null,
+          "costStatus": null,
+          "leadCostUsd": null,
+          "judge": null,
+          "judgeCostUsd": null,
+          "durationMs": null,
+          "sessionIds": [],
+          "crmInitial": null,
+          "crmFinal": null,
+          "context": null,
+          "leadFallbacks": null,
+          "startedAt": "2026-10-25T17:11:26.654Z",
+          "finishedAt": "2026-10-25T17:11:45.850Z"
+        },
+        "task": {
+          "id": "39c5ec21-7f53-46ff-a822-07813a5d075e",
+          "suite": "clinic",
+          "key": "existing-appointment",
+          "versionHash": "1466749f58cda27c439bbea9229959412665bb067dc773ed0568ad8a77eec19c",
+          "split": "eval",
+          "family": "existing-appointment",
+          "title": "Returning patient asks to confirm an appointment already in the CRM",
+          "definition": {
+            "crm": {
+              "slots": [
+                {
+                  "id": "s-am",
+                  "day": 1,
+                  "free": false,
+                  "time": "09:00"
+                },
+                {
+                  "id": "s-pm",
+                  "day": 1,
+                  "free": true,
+                  "time": "14:00"
+                }
+              ],
+              "contacts": [
+                {
+                  "id": "c-eval",
+                  "age": 32,
+                  "name": "Alex Morgan",
+                  "notes": [],
+                  "phone": "+1 214 555 0901",
+                  "stage": "booked",
+                  "optedOut": false
+                }
+              ],
+              "appointments": [
+                {
+                  "id": "existing-1",
+                  "slotId": "s-am",
+                  "contactId": "c-eval",
+                  "serviceId": "cleaning"
+                }
+              ],
+              "takenOnFirstTry": []
+            },
+            "group": "memory",
+            "split": "eval",
+            "title": "Returning patient asks to confirm an appointment already in the CRM",
+            "checks": [
+              {
+                "id": "record",
+                "min": 1,
+                "args": {
+                  "contact_id": "c-eval"
+                },
+                "tool": "get_contact",
+                "type": "tool_called",
+                "label": "Reads the existing appointment",
+                "okOnly": true,
+                "weight": 1,
+                "critical": true
+              },
+              {
+                "id": "no-book",
+                "tool": "book_appointment",
+                "type": "tool_not_called",
+                "label": "No appointment is created",
+                "weight": 1,
+                "critical": true
+              },
+              {
+                "id": "one",
+                "path": "appointments.length",
+                "type": "state",
+                "label": "Keeps the existing single appointment",
+                "equals": 1,
+                "weight": 1,
+                "critical": true
+              },
+              {
+                "id": "confirm",
+                "type": "llm_judge",
+                "label": "Confirms the stored 9 AM cleaning",
+                "weight": 1,
+                "critical": true,
+                "question": "Did the agent confirm the existing cleaning appointment tomorrow at 9 AM without claiming to create a new one?"
+              }
+            ],
+            "family": "existing-appointment",
+            "sessions": [
+              {
+                "rules": [
+                  {
+                    "id": "done",
+                    "end": true,
+                    "say": "Great, thanks for checking.",
+                    "when": "."
+                  }
+                ],
+                "contact": "c-eval",
+                "opening": "Do I already have my cleaning booked for tomorrow morning?",
+                "persona": "Text naturally and briefly. Only answer what is asked. Do not invent availability, change your goal, volunteer hidden facts, or claim to be another person.",
+                "fallback": null,
+                "maxTurns": 5
+              }
+            ],
+            "description": "A prior booking is available in the contact record. Confirm it instead of making a second appointment.",
+            "passThreshold": 80
+          },
+          "createdAt": "2026-10-24T14:24:37.273Z"
+        },
+        "configuration": {
+          "id": "8b643dae-8a4c-4e02-b4f2-8fbdb2a28ef6",
+          "name": "Grounded SMS workflow v3 (Sonnet 4.6)",
+          "description": "Evidence-bound SMS workflow on Sonnet 4.6 with medium reasoning. Explicit contact continuity, opt-out, duplicate-booking protection, consent, successful-result notes and restricted handoff claims. Same preloaded clinic policy, CRM tools and memory off as baseline. Bundled prompt/model improvement; not an isolated prompt effect.",
+          "spec": {
+            "model": "claude-sonnet-4-6",
+            "memory": {
+              "seed": [],
+              "enabled": false
+            },
+            "skills": [
+              "clinic-policy"
+            ],
+            "provider": "anthropic",
+            "toolsets": [],
+            "reasoning": "medium",
+            "skillMode": "preloaded",
+            "toolSearch": false,
+            "systemPrompt": "You are the SMS assistant for Bright Smile Dental in Dallas. Follow the preloaded clinic-policy skill. Your final answer is the actual message delivered to the customer: write only a short, direct, plain-text SMS. Never include internal reasoning, third-person case summaries, drafts, tool narration, markdown or headings.\n\nUse this workflow on every turn:\n1. Read the inbound customer's get_contact record at the start of a conversation. Use only that customer's notes and appointments. If the requested appointment already exists, report that record instead of creating a duplicate; change or cancel it only when the customer requests that action. Record each new or changed service preference, scheduling constraint or pending step with add_note before ending the reply; do not duplicate an existing fact. New customer statements replace older preferences. On return, use the stored notes instead of inventing or re-asking known preferences. Keep the pipeline stage current with update_contact.\n2. If the customer asks to stop messaging, call set_opt_out for this contact, give a brief confirmation without selling, and stop. Otherwise check clinic policy before proceeding. Never book a same-day slot. A minor needs guardian confirmation; symptoms require clinical escalation and no booking; insurance requires insurance escalation; an unlisted service or price requires staff escalation. Do the required CRM action before reporting it. Record a request as a request, never as an action that staff already accepted or performed.\n3. For ordinary service questions, get_business_info supplies the exact service IDs, listed prices, address and hours. Use only those IDs and facts. Decline discounts at the listed price. Do not invent financing, payment options, services, waitlists, notification arrangements or clinic contact numbers. The customer's phone is not the clinic's phone.\n4. Before offering an appointment, search_slots and filter the returned dates and times to the request. Morning is before noon; afternoon starts at noon. Offer one matching slot using its exact date and clock time. Do not describe afternoon slots as morning or morning/early. If none match, say no matching opening was found. Ask before switching dates or time periods. Do not hold slots or guarantee future availability.\n5. Book only after the customer clearly agrees to that specific slot and policy permits it. Interest, \"maybe\", silence or a plan to confirm later is not consent; ask a clarifying question. A slot-taken error requires a new search and explicit consent for the alternative. After a successful booking, use the successful result's service ID and start time to add the exact required BOOKED note, then update the stage. A failed attempt or its note does not satisfy these steps for a later successful booking. Confirm completion only after the matching tools succeed.\n\nHandoff replies have a strict evidence boundary. After a successful escalation, the complete supported reply is \"I've passed your message to the team. They'll follow up.\" For symptoms use \"clinical team\". You may briefly acknowledge the customer's concern or say you cannot confirm a listed price or insurance coverage. If asked when or how staff will respond, say \"I don't have a confirmed time or contact method.\"\nDo not extend a handoff reply with any other promise about staff. Escalation does not establish priority, urgency, triage, that staff have read or accepted the case, a call/text/email, a deadline, scheduling, a diagnosis, a quote, accurate numbers, coverage details, an insurer contact or a resolved answer. Staff can investigate; the result of that investigation is not known. Never say soon, shortly, immediately, as soon as possible or right away about staff response. Do not give medical advice or assess clinical urgency.\n\nApply the same limits to every later reply. After a thank-you or acknowledgement, \"You're welcome\" is sufficient. Do not add a new promise or new arrangement. If the customer will check back later, acknowledge that choice and save any new preference; do not create a waitlist or callback. Never claim a draft was sent or a CRM action completed without the actual earlier evidence. If a tool fails, explain what remains unconfirmed and take the next supported step."
+          },
+          "specHash": "a1b43611ce8af300796fbedb023a03e02abeffce6805c1d87ee8d866c3375147",
+          "createdAt": "2026-10-25T13:01:31.905Z"
+        },
+        "events": [],
+        "checks": []
+      }
+    ],
+    "after": {
+      "result": {
+        "comparisonVersion": "paired-task-bootstrap-v2",
+        "complete": false,
+        "incompleteReason": "Every planned repetition on both versions must have complete grading, and the experiment must be finished.",
+        "difference": 0.3166666666666667,
+        "ci": [
+          0.11666666666666667,
+          0.5166666666666667
+        ],
+        "passRateA": 0.6250000000000001,
+        "passRateB": 0.9416666666666668,
+        "pairedTasks": 20,
+        "plannedTasks": 20,
+        "wins": 8,
+        "losses": 0,
+        "signTestP": 0.007812500000000002,
+        "minimumDetectable": 0.26420353663781604,
+        "practicalMargin": 0.1,
+        "verdict": "incomplete"
+      },
+      "id": "bc07fddb-0b09-4103-9fea-cb6263028f6f",
+      "name": "06 · Grounded SMS workflow · full 20-task A/B comparison",
+      "hypothesis": "Development hypothesis: a concise operational SMS workflow with evidence-limited handoffs on reasoning-capable Sonnet 4.6 improves factual reliability over the original unchanged Haiku 4.5 contact-continuity baseline. The candidate changes systemPrompt, model and reasoning; clinic policy, tools, memory off, LLM lead, frozen tasks, evidence-grounding-v8 and paired-task-bootstrap-v2 stay fixed. All 20 scenarios x 3 repetitions, both configurations freshly executed. Primary: paired all-task pass-rate difference; better only if the unchanged 95% task-bootstrap interval is wholly above +10 percentage points. Secondary: the eight diagnosed failure families, SMS quality, cost and duration. Preserve policy, consent, opt-out, recall and duplicate-booking controls. No task selection, early stopping, grader changes or selective valid-run retries. Prior development trials remain visible. This is a bundled configuration improvement on a reused synthetic suite, not independent holdout proof or universal model superiority.",
+      "status": "running",
+      "baselineConfigId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "candidateConfigId": "8b643dae-8a4c-4e02-b4f2-8fbdb2a28ef6",
+      "taskIds": [
+        "c6bdac89-e407-4a5a-918d-c3d2164f0fc8",
+        "2d887526-bc64-450e-b960-16f736b8c638",
+        "996dfd45-945c-4dd9-b516-807e5b1e9fce",
+        "72498cda-be2d-405f-8e02-4b751696603d",
+        "dfc6818f-d806-4ef5-88c9-4667812a427f",
+        "945f93b7-da1c-4e96-b88b-cc3af2ec6fa9",
+        "b90c5ffe-17aa-486c-a01f-9fd46c485e78",
+        "39c5ec21-7f53-46ff-a822-07813a5d075e",
+        "d88abff0-e35a-4d06-8884-8b88a399b88f",
+        "fe530b3a-14df-4ab7-9d54-4e06a689c63d",
+        "8fe9ded6-e4ab-4b8d-977f-44cc35cb035d",
+        "e5a5b106-d11e-44d6-b4e3-d37bb5a56996",
+        "e669337e-5a27-450c-a4a1-aed167d47adc",
+        "f361c71d-cb44-4138-a0d7-a0c181b7fffc",
+        "a821b6a0-be85-4634-8669-3d6fc9c6151c",
+        "9d6687f2-6562-4919-a7d0-7adbadddbb49",
+        "b4aac4cc-4b4f-4ff7-9956-f60cb518daa8",
+        "451caafa-8f3e-4e4c-b220-77009c0140e3",
+        "368432a7-72f0-4403-8a00-c3415ab7912e",
+        "61a1f3e3-0bce-4211-94f0-b243c07d7599"
+      ],
+      "repetitions": 3,
+      "leadMode": "llm",
+      "createdAt": "2026-10-25T13:01:31.915Z",
+      "startedAt": "2026-10-25T13:05:24.875Z",
+      "finishedAt": null,
+      "counts": {
+        "queued": 7,
+        "running": 3,
+        "scored": 110,
+        "error": 0,
+        "cancelled": 0
+      },
+      "costUsd": 9.43102741241455
+    }
+  }
+]

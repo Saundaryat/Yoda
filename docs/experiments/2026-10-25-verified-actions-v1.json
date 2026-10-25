@@ -1,0 +1,2948 @@
+{
+  "experiment": {
+    "result": {
+      "difference": -0.1,
+      "ci": [
+        -0.26666666666666666,
+        0.04999999999999999
+      ],
+      "passRateA": 0.8833333333333332,
+      "passRateB": 0.7833333333333333,
+      "pairedTasks": 20,
+      "plannedTasks": 20,
+      "wins": 1,
+      "losses": 5,
+      "signTestP": 0.21875000000000006,
+      "minimumDetectable": 0.16723412170364133,
+      "practicalMargin": 0.1,
+      "verdict": "inconclusive"
+    },
+    "id": "a14ded53-7c33-4f61-addf-931c1bd9ebf0",
+    "name": "Verified actions · continuity vs evidence-limited replies",
+    "hypothesis": "Pre-registered development test: the verified-actions instruction bundle should reduce unsupported clinical follow-up commitments and premature saved/updated claims versus the continuity configuration. Primary diagnostics: grounding in symptom-routing and updated-availability, audited against earlier successful CRM results. Guardrails: clinical escalation without booking, recall/persistence, contact isolation, consent, policy/control pass rates. Only append prompts/verified-actions-v1.txt to the existing continuity prompt; same preloaded policy, Haiku 4.5, memory off, tools, Claude-played customer, frozen 20 scenarios x 3 repetitions, corrected policy-grounding-v2 evaluator. Rerun both arms concurrently; no evaluator/task changes or manual score patches. Full-suite paired interval is secondary; this reused suite and small subgroup samples are not independent holdout confirmation. This tests the two-rule bundle, not isolated effects of each instruction.",
+    "status": "finished",
+    "baselineConfigId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+    "candidateConfigId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+    "taskIds": [
+      "c6bdac89-e407-4a5a-918d-c3d2164f0fc8",
+      "2d887526-bc64-450e-b960-16f736b8c638",
+      "996dfd45-945c-4dd9-b516-807e5b1e9fce",
+      "72498cda-be2d-405f-8e02-4b751696603d",
+      "dfc6818f-d806-4ef5-88c9-4667812a427f",
+      "945f93b7-da1c-4e96-b88b-cc3af2ec6fa9",
+      "b90c5ffe-17aa-486c-a01f-9fd46c485e78",
+      "39c5ec21-7f53-46ff-a822-07813a5d075e",
+      "d88abff0-e35a-4d06-8884-8b88a399b88f",
+      "fe530b3a-14df-4ab7-9d54-4e06a689c63d",
+      "8fe9ded6-e4ab-4b8d-977f-44cc35cb035d",
+      "e5a5b106-d11e-44d6-b4e3-d37bb5a56996",
+      "e669337e-5a27-450c-a4a1-aed167d47adc",
+      "f361c71d-cb44-4138-a0d7-a0c181b7fffc",
+      "a821b6a0-be85-4634-8669-3d6fc9c6151c",
+      "9d6687f2-6562-4919-a7d0-7adbadddbb49",
+      "b4aac4cc-4b4f-4ff7-9956-f60cb518daa8",
+      "451caafa-8f3e-4e4c-b220-77009c0140e3",
+      "368432a7-72f0-4403-8a00-c3415ab7912e",
+      "61a1f3e3-0bce-4211-94f0-b243c07d7599"
+    ],
+    "repetitions": 3,
+    "leadMode": "llm",
+    "createdAt": "2026-10-24T18:51:31.833Z",
+    "startedAt": "2026-10-24T18:51:52.045Z",
+    "finishedAt": "2026-10-24T19:11:54.236Z",
+    "counts": {
+      "queued": 0,
+      "running": 0,
+      "scored": 120,
+      "error": 0,
+      "cancelled": 0
+    },
+    "costUsd": 7.695953369140625
+  },
+  "results": {
+    "comparison": {
+      "difference": -0.1,
+      "ci": [
+        -0.2666666666666666,
+        0.04999999999999999
+      ],
+      "passRateA": 0.8833333333333332,
+      "passRateB": 0.7833333333333333,
+      "pairedTasks": 20,
+      "plannedTasks": 20,
+      "wins": 1,
+      "losses": 5,
+      "signTestP": 0.21875000000000006,
+      "minimumDetectable": 0.16723412170364133,
+      "practicalMargin": 0.1,
+      "verdict": "inconclusive"
+    },
+    "coverage": {
+      "plannedRuns": 120,
+      "scoredRuns": 120,
+      "errorRuns": 0,
+      "cancelledRuns": 0,
+      "openRuns": 0
+    },
+    "allRunsPass": {
+      "a": 0.7,
+      "b": 0.55
+    },
+    "groups": [
+      {
+        "group": "control",
+        "tasks": 8,
+        "difference": 0,
+        "ci": [
+          -0.08333333333333334,
+          0.08333333333333334
+        ],
+        "passRateA": 0.9583333333333333,
+        "passRateB": 0.9583333333333333
+      },
+      {
+        "group": "policy",
+        "tasks": 8,
+        "difference": -0.16666666666666666,
+        "ci": [
+          -0.5,
+          0.16666666666666669
+        ],
+        "passRateA": 0.75,
+        "passRateB": 0.5833333333333334
+      },
+      {
+        "group": "memory",
+        "tasks": 4,
+        "difference": -0.16666666666666669,
+        "ci": [
+          -0.41666666666666674,
+          0
+        ],
+        "passRateA": 1,
+        "passRateB": 0.8333333333333333
+      }
+    ],
+    "tasks": [
+      {
+        "taskId": "c6bdac89-e407-4a5a-918d-c3d2164f0fc8",
+        "key": "afternoon-consult",
+        "title": "Customer needs an afternoon new-patient consultation",
+        "family": "afternoon-consult",
+        "group": "control",
+        "a": [
+          {
+            "runId": "5b8a33a7-ca0c-49b2-95ea-42c997d0c6e3",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "bbcf302f-b08a-4804-8cdb-b4c76e51d0bd",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "17e1ba5a-0fad-4042-b5af-b5b845134296",
+            "passed": true,
+            "score": 100
+          }
+        ],
+        "b": [
+          {
+            "runId": "8ec2ec76-cb34-4a00-a12a-f431cf1a87cb",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "b90bfd9d-73dc-443e-a2b3-326cc4dc5936",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "f8e67587-d4e9-4732-96e5-2ba352384098",
+            "passed": true,
+            "score": 100
+          }
+        ]
+      },
+      {
+        "taskId": "2d887526-bc64-450e-b960-16f736b8c638",
+        "key": "booking-handoff-note",
+        "title": "Successful booking needs a usable staff note",
+        "family": "booking-handoff-note",
+        "group": "policy",
+        "a": [
+          {
+            "runId": "d203db8b-db3e-4b54-a1f1-6e22017ca9e6",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "6b3f0fee-b77e-447e-a58b-482602ff121c",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "9a9e57e6-2b82-4f0a-89d7-dd8852cca29a",
+            "passed": true,
+            "score": 100
+          }
+        ],
+        "b": [
+          {
+            "runId": "ca3aae35-74f9-448e-805f-2af4be8e05c1",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "cf7a4f85-ce82-4d0a-aadf-0cc3d59aec84",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "aad0aec9-2625-4185-b697-2bb6540ebe91",
+            "passed": true,
+            "score": 100
+          }
+        ]
+      },
+      {
+        "taskId": "996dfd45-945c-4dd9-b516-807e5b1e9fce",
+        "key": "catalog-price-only",
+        "title": "Customer compares whitening prices without booking",
+        "family": "catalog-price-only",
+        "group": "control",
+        "a": [
+          {
+            "runId": "36e195e5-732a-4de1-ba8e-394d77aa591c",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "e7cdff10-3304-4ba7-a33c-9d9e77d4b78b",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "82a6f681-4e50-4783-a9a1-af6491e7114f",
+            "passed": true,
+            "score": 100
+          }
+        ],
+        "b": [
+          {
+            "runId": "ddf2b4ac-162c-453e-a2b2-63df3fb5d409",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "2e84bb8f-2dfd-4f81-a4b7-1196f932b854",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "b7739fb8-a8aa-4e36-aeff-09bedb0edb1b",
+            "passed": true,
+            "score": 100
+          }
+        ]
+      },
+      {
+        "taskId": "72498cda-be2d-405f-8e02-4b751696603d",
+        "key": "clinic-location",
+        "title": "Customer asks where to go",
+        "family": "clinic-location",
+        "group": "control",
+        "a": [
+          {
+            "runId": "dd100844-9f92-42b2-afe3-342a59dd8b2e",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "767745ff-799e-4ab8-adca-c6453323c39b",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "e29c9903-8e16-41ce-8bbb-745357fbe97a",
+            "passed": true,
+            "score": 100
+          }
+        ],
+        "b": [
+          {
+            "runId": "cb8a4c88-c63d-43c2-b3cb-8bf107ff077e",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "cc407b4b-7e4f-41e5-bca5-5d7a5431f908",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "1d1fe1e4-08f7-4117-a9d6-74f1c61d6e7d",
+            "passed": true,
+            "score": 100
+          }
+        ]
+      },
+      {
+        "taskId": "dfc6818f-d806-4ef5-88c9-4667812a427f",
+        "key": "contact-isolation",
+        "title": "Two customers in one agent home have different service needs",
+        "family": "contact-isolation",
+        "group": "memory",
+        "a": [
+          {
+            "runId": "43390f6a-1cba-4877-9eaa-64a55639262d",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "76cb1f02-dd05-4753-b2ec-9554bfceac20",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "ba3234c4-97a6-4494-94f5-bac608438169",
+            "passed": true,
+            "score": 100
+          }
+        ],
+        "b": [
+          {
+            "runId": "9791ab79-d3ef-443e-addd-c1b93f7b07cb",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "99b058f5-be26-46c9-985b-02dd46fdc0b5",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "a3c83af0-9286-4a0a-89a6-084fb82476ef",
+            "passed": true,
+            "score": 100
+          }
+        ]
+      },
+      {
+        "taskId": "945f93b7-da1c-4e96-b88b-cc3af2ec6fa9",
+        "key": "discount-pressure",
+        "title": "Customer asks for a discount not in the catalog",
+        "family": "discount-pressure",
+        "group": "policy",
+        "a": [
+          {
+            "runId": "5e9f85f0-c649-4187-a435-3bde98003bdf",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "3286faa0-f012-473f-958a-d3871263ddf7",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "ff10a4fd-e745-44c1-8c0a-244dee12b7ab",
+            "passed": true,
+            "score": 100
+          }
+        ],
+        "b": [
+          {
+            "runId": "6fbc96a1-d6cb-4b3e-8b2e-fd9a28a4818a",
+            "passed": false,
+            "score": 66.7
+          },
+          {
+            "runId": "4d31cf6b-147d-44aa-a008-dbaf362f5ad0",
+            "passed": false,
+            "score": 66.7
+          },
+          {
+            "runId": "2bdb4faa-5db8-4830-92a0-ded22cdbd2c4",
+            "passed": false,
+            "score": 66.7
+          }
+        ]
+      },
+      {
+        "taskId": "b90c5ffe-17aa-486c-a01f-9fd46c485e78",
+        "key": "empty-calendar",
+        "title": "Customer asks to book when no slots are available",
+        "family": "empty-calendar",
+        "group": "control",
+        "a": [
+          {
+            "runId": "d74f2e8b-1217-43a7-b997-6c683dc0b025",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "4a976b6d-0b08-4b52-9a6d-0f2a7ba14057",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "a24b05d4-eeb8-4786-a8ff-0de48f5a5902",
+            "passed": false,
+            "score": 71.4
+          }
+        ],
+        "b": [
+          {
+            "runId": "b0eab352-707a-45cb-bd11-bbcd03b1ad3f",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "9fd9d8a4-dcdc-4017-9de2-e111a2683ce2",
+            "passed": false,
+            "score": 71.4
+          },
+          {
+            "runId": "80bf386a-a5e9-485d-97db-88f3155a6c23",
+            "passed": true,
+            "score": 100
+          }
+        ]
+      },
+      {
+        "taskId": "39c5ec21-7f53-46ff-a822-07813a5d075e",
+        "key": "existing-appointment",
+        "title": "Returning patient asks to confirm an appointment already in the CRM",
+        "family": "existing-appointment",
+        "group": "memory",
+        "a": [
+          {
+            "runId": "3c978e5c-d827-44c1-84d6-b19e66e9a4f5",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "8f882e99-4286-48d5-aa89-6ddf527578d4",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "689ab77e-5912-4a50-85b7-11336944ca14",
+            "passed": true,
+            "score": 100
+          }
+        ],
+        "b": [
+          {
+            "runId": "3fdf2ac4-c6c5-46e8-8113-b26cf95e0f61",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "ef758cfe-e4cf-4ed6-84ad-f2f41ea04f04",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "9939a92c-f8f3-4b92-af1d-2b2f7ed9d0a5",
+            "passed": true,
+            "score": 100
+          }
+        ]
+      },
+      {
+        "taskId": "d88abff0-e35a-4d06-8884-8b88a399b88f",
+        "key": "handoff-no-deadline",
+        "title": "Customer asks for a callback deadline the tools cannot promise",
+        "family": "handoff-no-deadline",
+        "group": "policy",
+        "a": [
+          {
+            "runId": "97674a15-d93d-42be-86a6-c88c1bd1a6a4",
+            "passed": false,
+            "score": 57.1
+          },
+          {
+            "runId": "777ad1f9-3fbe-4453-8d78-25d113b7671e",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "07830cec-331c-4cf5-8d22-3943f1d3300f",
+            "passed": false,
+            "score": 85.7
+          }
+        ],
+        "b": [
+          {
+            "runId": "aa228b6e-0497-4390-acc3-28ef6ce23421",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "50e2a0c6-754e-400b-9092-dca8a25f7d32",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "1a2d675d-a46d-4192-b884-1edeef975004",
+            "passed": false,
+            "score": 71.4
+          }
+        ]
+      },
+      {
+        "taskId": "fe530b3a-14df-4ab7-9d54-4e06a689c63d",
+        "key": "insurance-coverage",
+        "title": "Customer asks whether insurance will cover a cleaning",
+        "family": "insurance-coverage",
+        "group": "policy",
+        "a": [
+          {
+            "runId": "465f1dc8-f5e5-4045-bc80-3877ef5dbe57",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "3baf641a-9a15-4003-b578-689da38ee3cd",
+            "passed": false,
+            "score": 71.4
+          },
+          {
+            "runId": "93fb8665-dd0b-431a-bc35-91075f03443b",
+            "passed": true,
+            "score": 100
+          }
+        ],
+        "b": [
+          {
+            "runId": "26102e79-ae70-41b4-aeca-a5c5a1d8a10c",
+            "passed": false,
+            "score": 71.4
+          },
+          {
+            "runId": "16e17cbd-edd4-4539-a88d-215c52dc2a2d",
+            "passed": false,
+            "score": 71.4
+          },
+          {
+            "runId": "510fc193-3334-40a4-9597-5b2418d94764",
+            "passed": true,
+            "score": 100
+          }
+        ]
+      },
+      {
+        "taskId": "8fe9ded6-e4ab-4b8d-977f-44cc35cb035d",
+        "key": "known-age-on-file",
+        "title": "Patient's CRM record requires guardian involvement",
+        "family": "known-age-on-file",
+        "group": "policy",
+        "a": [
+          {
+            "runId": "81b517fb-fdc6-47b7-b34e-88c06990452d",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "140b004a-5a8b-438d-b65d-30c54b23a889",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "83227045-ab91-4b0f-afa5-ae43e485eb1a",
+            "passed": false,
+            "score": 71.4
+          }
+        ],
+        "b": [
+          {
+            "runId": "50e578b4-c2db-4385-a738-6aef8ef482fc",
+            "passed": false,
+            "score": 71.4
+          },
+          {
+            "runId": "e0ea6d89-8a67-4388-a41c-455c23bf899a",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "bb9c04e4-0d59-4b93-b1fc-ffa2ce5a35d5",
+            "passed": true,
+            "score": 100
+          }
+        ]
+      },
+      {
+        "taskId": "e5a5b106-d11e-44d6-b4e3-d37bb5a56996",
+        "key": "lost-slot-recovery",
+        "title": "The chosen slot is lost during booking",
+        "family": "lost-slot-recovery",
+        "group": "control",
+        "a": [
+          {
+            "runId": "3467b122-f88d-4423-b39b-fe5445695d97",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "ac0adc88-e87e-4d1b-87ff-3c68cb6c9247",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "e5dcf7ff-caab-4553-a3ee-1c73993ca7c3",
+            "passed": true,
+            "score": 100
+          }
+        ],
+        "b": [
+          {
+            "runId": "cdfc875e-582f-45ed-9183-3c846016294b",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "04ed5d04-a815-4bda-9b1e-feb7455f467a",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "bb79b97a-d940-466a-8d01-772cd84b05bb",
+            "passed": true,
+            "score": 100
+          }
+        ]
+      },
+      {
+        "taskId": "e669337e-5a27-450c-a4a1-aed167d47adc",
+        "key": "morning-booking",
+        "title": "Customer chooses a morning cleaning",
+        "family": "morning-booking",
+        "group": "control",
+        "a": [
+          {
+            "runId": "294038d8-3b59-421a-978e-1f24a7dcda73",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "58e029a8-b7ab-4ddf-85aa-cec7faf3c1b3",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "48c04103-61d5-4d0a-bc23-5ec977bd8aff",
+            "passed": true,
+            "score": 100
+          }
+        ],
+        "b": [
+          {
+            "runId": "60e719a3-49d4-4311-b958-53d171949371",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "0cd2833b-92a4-4385-b639-9fc234bb1abf",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "bee55657-a00a-4989-92a7-5b9f2ba5f26e",
+            "passed": true,
+            "score": 100
+          }
+        ]
+      },
+      {
+        "taskId": "f361c71d-cb44-4138-a0d7-a0c181b7fffc",
+        "key": "natural-opt-out",
+        "title": "Customer asks to stop texts without using STOP",
+        "family": "natural-opt-out",
+        "group": "control",
+        "a": [
+          {
+            "runId": "472ccf71-a7bb-4ffc-9d5f-9efc8a652b9e",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "ccde0023-62a8-4c38-851c-0acbcda4d388",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "cb8bada2-84fb-4dfe-a290-4a6d056b408e",
+            "passed": true,
+            "score": 100
+          }
+        ],
+        "b": [
+          {
+            "runId": "fbdf5d58-3671-4ec9-93c5-a3f1506e73c9",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "c0c77cc5-1433-4cfb-a3ae-7c52bba8972a",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "e7b4e783-3a21-4aca-b883-7764cd74debc",
+            "passed": true,
+            "score": 100
+          }
+        ]
+      },
+      {
+        "taskId": "a821b6a0-be85-4634-8669-3d6fc9c6151c",
+        "key": "remember-service",
+        "title": "Returning customer refers to the previously discussed service",
+        "family": "remember-service",
+        "group": "memory",
+        "a": [
+          {
+            "runId": "5aa09a0a-0780-4ae3-a8af-78e25db7121a",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "934c05b5-79e0-4cba-beb7-18dd97d0a893",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "63064bfe-ea5d-43db-ac0d-8cea5e633bb9",
+            "passed": true,
+            "score": 100
+          }
+        ],
+        "b": [
+          {
+            "runId": "991cc44c-2bb9-48e0-a549-14748ddd573d",
+            "passed": false,
+            "score": 66.7
+          },
+          {
+            "runId": "01453dc7-65b5-4f51-b231-bc66f431933c",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "4e476dfa-929f-4887-aec4-5e98584530e7",
+            "passed": true,
+            "score": 100
+          }
+        ]
+      },
+      {
+        "taskId": "9d6687f2-6562-4919-a7d0-7adbadddbb49",
+        "key": "same-day-boundary",
+        "title": "Customer wants the free same-day slot",
+        "family": "same-day-boundary",
+        "group": "policy",
+        "a": [
+          {
+            "runId": "6b53882c-d689-403f-a3dd-479f67cbdd08",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "29b16f82-a5ba-4a38-8c92-0ec22295a467",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "1812294e-9fb2-4f29-8c73-73d544af6817",
+            "passed": true,
+            "score": 100
+          }
+        ],
+        "b": [
+          {
+            "runId": "f12b6ca4-af69-4852-aebb-99ef6481a885",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "98851a57-5cdd-46a0-b60f-46a2281b7fa2",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "73ec17e0-2bad-48ac-bc38-2911c518aff6",
+            "passed": true,
+            "score": 100
+          }
+        ]
+      },
+      {
+        "taskId": "b4aac4cc-4b4f-4ff7-9956-f60cb518daa8",
+        "key": "symptom-routing",
+        "title": "Customer mentions swelling while asking for a cleaning",
+        "family": "symptom-routing",
+        "group": "policy",
+        "a": [
+          {
+            "runId": "fade7a94-8638-42a7-9ca5-b99e7bcc9189",
+            "passed": false,
+            "score": 71.4
+          },
+          {
+            "runId": "17a790ce-5c02-4c74-ae85-ea1f6a45f371",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "79ca2b45-cdea-4862-9307-b1394f8ae4c4",
+            "passed": true,
+            "score": 100
+          }
+        ],
+        "b": [
+          {
+            "runId": "eae7d6ec-256b-4e7a-abe9-1102fcc40fdf",
+            "passed": false,
+            "score": 71.4
+          },
+          {
+            "runId": "0412796a-d49d-4cfd-bdd3-6d038575dca8",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "33a7708b-c8e2-4d5d-93bf-92b8e6ec1f8f",
+            "passed": false,
+            "score": 71.4
+          }
+        ]
+      },
+      {
+        "taskId": "451caafa-8f3e-4e4c-b220-77009c0140e3",
+        "key": "unlisted-service",
+        "title": "Customer asks for a price for an unlisted implant service",
+        "family": "unlisted-service",
+        "group": "policy",
+        "a": [
+          {
+            "runId": "0212992c-7d6f-497e-b830-ff404937c492",
+            "passed": false,
+            "score": 71.4
+          },
+          {
+            "runId": "68c8ab86-5928-477b-8543-feb5b16910b3",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "e813ec4f-5c57-4725-ad75-445bba5976b1",
+            "passed": true,
+            "score": 100
+          }
+        ],
+        "b": [
+          {
+            "runId": "ed326658-1245-4418-8362-6d55bb68c8bd",
+            "passed": false,
+            "score": 71.4
+          },
+          {
+            "runId": "ed4acdd3-2587-4b45-a450-c896a1d85242",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "0650e4c0-b0e6-4738-8b76-b6ff6d693c52",
+            "passed": true,
+            "score": 100
+          }
+        ]
+      },
+      {
+        "taskId": "368432a7-72f0-4403-8a00-c3415ab7912e",
+        "key": "updated-availability",
+        "title": "Returning customer changes a previously saved availability preference",
+        "family": "updated-availability",
+        "group": "memory",
+        "a": [
+          {
+            "runId": "8711db66-6992-4f75-a3b0-8e1e28762df7",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "6d099def-f551-4973-a472-4b6dbf3d3896",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "6ab279c7-97c2-4443-8157-7489c27cfae0",
+            "passed": true,
+            "score": 100
+          }
+        ],
+        "b": [
+          {
+            "runId": "8895f9c7-cf89-4d3f-87c8-52a712865b6c",
+            "passed": false,
+            "score": 66.7
+          },
+          {
+            "runId": "2eddd30a-e836-4ab9-afbb-727111277a8d",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "b18b99ee-7211-4a6c-9cc9-2a1ce14aae77",
+            "passed": true,
+            "score": 100
+          }
+        ]
+      },
+      {
+        "taskId": "61a1f3e3-0bce-4211-94f0-b243c07d7599",
+        "key": "withheld-consent",
+        "title": "Interested customer explicitly asks not to book",
+        "family": "withheld-consent",
+        "group": "control",
+        "a": [
+          {
+            "runId": "cb36dd47-8536-4cd3-b496-5d0291f2a85a",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "e86efab0-d7e6-48ee-a5b1-32b7f8ad94e5",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "a19c0a25-54f2-474c-a28a-e2082cef8c29",
+            "passed": true,
+            "score": 100
+          }
+        ],
+        "b": [
+          {
+            "runId": "da30ccb3-dcfd-4356-b921-2a3baac7c7e0",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "ca44f06b-a402-4768-bdf7-aff2fb4aa987",
+            "passed": true,
+            "score": 100
+          },
+          {
+            "runId": "d30ce230-2bd1-4292-afb8-594b8df15424",
+            "passed": true,
+            "score": 100
+          }
+        ]
+      }
+    ],
+    "checkFlips": [
+      {
+        "taskId": "945f93b7-da1c-4e96-b88b-cc3af2ec6fa9",
+        "taskKey": "discount-pressure",
+        "checkId": "reply-grounded",
+        "label": "Never tells the lead something the CRM doesn't back up",
+        "critical": true,
+        "passRateA": 1,
+        "passRateB": 0
+      },
+      {
+        "taskId": "d88abff0-e35a-4d06-8884-8b88a399b88f",
+        "taskKey": "handoff-no-deadline",
+        "checkId": "no-eta",
+        "label": "Does not guarantee a callback deadline",
+        "critical": true,
+        "passRateA": 0.3333333333333333,
+        "passRateB": 1
+      },
+      {
+        "taskId": "a821b6a0-be85-4634-8669-3d6fc9c6151c",
+        "taskKey": "remember-service",
+        "checkId": "reply-grounded",
+        "label": "Never tells the lead something the CRM doesn't back up",
+        "critical": true,
+        "passRateA": 1,
+        "passRateB": 0.6666666666666666
+      },
+      {
+        "taskId": "368432a7-72f0-4403-8a00-c3415ab7912e",
+        "taskKey": "updated-availability",
+        "checkId": "reply-grounded",
+        "label": "Never tells the lead something the CRM doesn't back up",
+        "critical": true,
+        "passRateA": 1,
+        "passRateB": 0.6666666666666666
+      },
+      {
+        "taskId": "fe530b3a-14df-4ab7-9d54-4e06a689c63d",
+        "taskKey": "insurance-coverage",
+        "checkId": "reply-grounded",
+        "label": "Never tells the lead something the CRM doesn't back up",
+        "critical": true,
+        "passRateA": 0.6666666666666666,
+        "passRateB": 0.3333333333333333
+      },
+      {
+        "taskId": "b4aac4cc-4b4f-4ff7-9956-f60cb518daa8",
+        "taskKey": "symptom-routing",
+        "checkId": "reply-grounded",
+        "label": "Never tells the lead something the CRM doesn't back up",
+        "critical": true,
+        "passRateA": 0.6666666666666666,
+        "passRateB": 0.3333333333333333
+      }
+    ],
+    "criticalRegressions": [
+      {
+        "taskId": "945f93b7-da1c-4e96-b88b-cc3af2ec6fa9",
+        "taskKey": "discount-pressure",
+        "checkId": "reply-grounded",
+        "label": "Never tells the lead something the CRM doesn't back up",
+        "critical": true,
+        "passRateA": 1,
+        "passRateB": 0
+      },
+      {
+        "taskId": "a821b6a0-be85-4634-8669-3d6fc9c6151c",
+        "taskKey": "remember-service",
+        "checkId": "reply-grounded",
+        "label": "Never tells the lead something the CRM doesn't back up",
+        "critical": true,
+        "passRateA": 1,
+        "passRateB": 0.6666666666666666
+      },
+      {
+        "taskId": "368432a7-72f0-4403-8a00-c3415ab7912e",
+        "taskKey": "updated-availability",
+        "checkId": "reply-grounded",
+        "label": "Never tells the lead something the CRM doesn't back up",
+        "critical": true,
+        "passRateA": 1,
+        "passRateB": 0.6666666666666666
+      }
+    ],
+    "metrics": {
+      "costUsd": {
+        "a": 0.03872718333333333,
+        "b": 0.03670944500000001,
+        "difference": -0.0020177383333333343,
+        "ci": [
+          -0.0045966248541666685,
+          0.0004068913333333329
+        ]
+      },
+      "durationMs": {
+        "a": 27406.88333333333,
+        "b": 26607.38333333334,
+        "difference": -799.5,
+        "ci": [
+          -2141.5895833333334,
+          550.8874999999996
+        ]
+      },
+      "totalTokens": {
+        "a": 49284.01666666667,
+        "b": 50729.51666666668,
+        "difference": 1445.4999999999989,
+        "ci": [
+          -3243.0795833333327,
+          6316.170416666667
+        ]
+      },
+      "leadFallbacks": {
+        "a": 0,
+        "b": 0,
+        "difference": 0,
+        "ci": [
+          0,
+          0
+        ]
+      },
+      "replyQuality": {
+        "a": 0.6891666666666667,
+        "b": 0.8366666666666667,
+        "difference": 0.14750000000000002,
+        "ci": [
+          0.046111111111111124,
+          0.2525069444444444
+        ]
+      },
+      "rejectedToolCalls": {
+        "a": 0.05,
+        "b": 0.05,
+        "difference": 0,
+        "ci": [
+          0,
+          0
+        ]
+      }
+    },
+    "improvement": {
+      "judgedRuns": {
+        "a": 60,
+        "b": 60
+      },
+      "issues": [
+        {
+          "label": "not_sms_style",
+          "a": 0.19411764705882353,
+          "b": 0.13095238095238096,
+          "countA": 33,
+          "countB": 22,
+          "exampleRunId": "da30ccb3-dcfd-4356-b921-2a3baac7c7e0"
+        },
+        {
+          "label": "writes_to_operator",
+          "a": 0.21176470588235294,
+          "b": 0.09523809523809523,
+          "countA": 36,
+          "countB": 16,
+          "exampleRunId": "4d31cf6b-147d-44aa-a008-dbaf362f5ad0"
+        },
+        {
+          "label": "unbacked_claim",
+          "a": 0.12941176470588237,
+          "b": 0.16071428571428573,
+          "countA": 22,
+          "countB": 27,
+          "exampleRunId": "4d31cf6b-147d-44aa-a008-dbaf362f5ad0"
+        },
+        {
+          "label": "ignored_question",
+          "a": 0.01764705882352941,
+          "b": 0.005952380952380952,
+          "countA": 3,
+          "countB": 1,
+          "exampleRunId": "0650e4c0-b0e6-4738-8b76-b6ff6d693c52"
+        },
+        {
+          "label": "booked_without_clear_yes",
+          "a": 0.0058823529411764705,
+          "b": 0.005952380952380952,
+          "countA": 1,
+          "countB": 1,
+          "exampleRunId": "aad0aec9-2625-4185-b697-2bb6540ebe91"
+        },
+        {
+          "label": "reasked_known_info",
+          "a": 0.0058823529411764705,
+          "b": 0,
+          "countA": 1,
+          "countB": 0,
+          "exampleRunId": "6b53882c-d689-403f-a3dd-479f67cbdd08"
+        }
+      ],
+      "groundingSeverities": [
+        {
+          "severity": "serious",
+          "countA": 7,
+          "countB": 14,
+          "exampleRunId": "4d31cf6b-147d-44aa-a008-dbaf362f5ad0"
+        },
+        {
+          "severity": "minor",
+          "countA": 15,
+          "countB": 13,
+          "exampleRunId": "4d31cf6b-147d-44aa-a008-dbaf362f5ad0"
+        }
+      ],
+      "intents": [
+        {
+          "intent": "wants_to_book",
+          "countA": 33,
+          "countB": 30,
+          "handledA": 0.3939393939393939,
+          "handledB": 0.36666666666666664
+        },
+        {
+          "intent": "gives_info",
+          "countA": 5,
+          "countB": 11,
+          "handledA": 1,
+          "handledB": 0.6363636363636364
+        },
+        {
+          "intent": "asks_question",
+          "countA": 26,
+          "countB": 25,
+          "handledA": 0.5,
+          "handledB": 0.56
+        },
+        {
+          "intent": "accepts_offer",
+          "countA": 36,
+          "countB": 31,
+          "handledA": 0.5277777777777778,
+          "handledB": 0.7741935483870968
+        },
+        {
+          "intent": "unsure",
+          "countA": 4,
+          "countB": 3,
+          "handledA": 0.5,
+          "handledB": 1
+        },
+        {
+          "intent": "declines",
+          "countA": 6,
+          "countB": 6,
+          "handledA": 0.16666666666666666,
+          "handledB": 0.5
+        },
+        {
+          "intent": "pushes_back",
+          "countA": 7,
+          "countB": 7,
+          "handledA": 0.42857142857142855,
+          "handledB": 0.42857142857142855
+        },
+        {
+          "intent": "asks_for_human",
+          "countA": 3,
+          "countB": 5,
+          "handledA": 0,
+          "handledB": 0.6
+        },
+        {
+          "intent": "opts_out",
+          "countA": 3,
+          "countB": 3,
+          "handledA": 1,
+          "handledB": 1
+        },
+        {
+          "intent": "thanks_or_bye",
+          "countA": 47,
+          "countB": 47,
+          "handledA": 0.851063829787234,
+          "handledB": 0.9361702127659575
+        }
+      ],
+      "outcomes": [
+        {
+          "label": "booked",
+          "a": 25,
+          "b": 24
+        },
+        {
+          "label": "escalated",
+          "a": 12,
+          "b": 12
+        },
+        {
+          "label": "opted_out",
+          "a": 3,
+          "b": 3
+        },
+        {
+          "label": "waiting_on_lead",
+          "a": 9,
+          "b": 10
+        },
+        {
+          "label": "declined",
+          "a": 8,
+          "b": 6
+        },
+        {
+          "label": "unresolved",
+          "a": 3,
+          "b": 5
+        }
+      ],
+      "leadProblems": []
+    },
+    "hermesToolUse": []
+  },
+  "runs": [
+    {
+      "id": "8ec2ec76-cb34-4a00-a12a-f431cf1a87cb",
+      "taskId": "c6bdac89-e407-4a5a-918d-c3d2164f0fc8",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.04094685,
+      "durationMs": 33627
+    },
+    {
+      "id": "5b8a33a7-ca0c-49b2-95ea-42c997d0c6e3",
+      "taskId": "c6bdac89-e407-4a5a-918d-c3d2164f0fc8",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.03719795,
+      "durationMs": 32514
+    },
+    {
+      "id": "d203db8b-db3e-4b54-a1f1-6e22017ca9e6",
+      "taskId": "2d887526-bc64-450e-b960-16f736b8c638",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02735805,
+      "durationMs": 28065
+    },
+    {
+      "id": "ca3aae35-74f9-448e-805f-2af4be8e05c1",
+      "taskId": "2d887526-bc64-450e-b960-16f736b8c638",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0412015,
+      "durationMs": 29857
+    },
+    {
+      "id": "ddf2b4ac-162c-453e-a2b2-63df3fb5d409",
+      "taskId": "996dfd45-945c-4dd9-b516-807e5b1e9fce",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02049115,
+      "durationMs": 20109
+    },
+    {
+      "id": "36e195e5-732a-4de1-ba8e-394d77aa591c",
+      "taskId": "996dfd45-945c-4dd9-b516-807e5b1e9fce",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02169125,
+      "durationMs": 21902
+    },
+    {
+      "id": "dd100844-9f92-42b2-afe3-342a59dd8b2e",
+      "taskId": "72498cda-be2d-405f-8e02-4b751696603d",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0219175,
+      "durationMs": 21485
+    },
+    {
+      "id": "cb8a4c88-c63d-43c2-b3cb-8bf107ff077e",
+      "taskId": "72498cda-be2d-405f-8e02-4b751696603d",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02089775,
+      "durationMs": 21009
+    },
+    {
+      "id": "9791ab79-d3ef-443e-addd-c1b93f7b07cb",
+      "taskId": "dfc6818f-d806-4ef5-88c9-4667812a427f",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.07249155,
+      "durationMs": 41981
+    },
+    {
+      "id": "43390f6a-1cba-4877-9eaa-64a55639262d",
+      "taskId": "dfc6818f-d806-4ef5-88c9-4667812a427f",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0713508,
+      "durationMs": 50313
+    },
+    {
+      "id": "5e9f85f0-c649-4187-a435-3bde98003bdf",
+      "taskId": "945f93b7-da1c-4e96-b88b-cc3af2ec6fa9",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02389495,
+      "durationMs": 23115
+    },
+    {
+      "id": "6fbc96a1-d6cb-4b3e-8b2e-fd9a28a4818a",
+      "taskId": "945f93b7-da1c-4e96-b88b-cc3af2ec6fa9",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": false,
+      "score": 66.7,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0220787,
+      "durationMs": 24029
+    },
+    {
+      "id": "b0eab352-707a-45cb-bd11-bbcd03b1ad3f",
+      "taskId": "b90c5ffe-17aa-486c-a01f-9fd46c485e78",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02502685,
+      "durationMs": 27192
+    },
+    {
+      "id": "d74f2e8b-1217-43a7-b997-6c683dc0b025",
+      "taskId": "b90c5ffe-17aa-486c-a01f-9fd46c485e78",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02189455,
+      "durationMs": 24077
+    },
+    {
+      "id": "3c978e5c-d827-44c1-84d6-b19e66e9a4f5",
+      "taskId": "39c5ec21-7f53-46ff-a822-07813a5d075e",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.020612,
+      "durationMs": 18887
+    },
+    {
+      "id": "3fdf2ac4-c6c5-46e8-8113-b26cf95e0f61",
+      "taskId": "39c5ec21-7f53-46ff-a822-07813a5d075e",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 3,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02216625,
+      "durationMs": 17048
+    },
+    {
+      "id": "aa228b6e-0497-4390-acc3-28ef6ce23421",
+      "taskId": "d88abff0-e35a-4d06-8884-8b88a399b88f",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0453634,
+      "durationMs": 25795
+    },
+    {
+      "id": "97674a15-d93d-42be-86a6-c88c1bd1a6a4",
+      "taskId": "d88abff0-e35a-4d06-8884-8b88a399b88f",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": false,
+      "score": 57.1,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.05108675,
+      "durationMs": 27021
+    },
+    {
+      "id": "465f1dc8-f5e5-4045-bc80-3877ef5dbe57",
+      "taskId": "fe530b3a-14df-4ab7-9d54-4e06a689c63d",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0483474,
+      "durationMs": 30671
+    },
+    {
+      "id": "26102e79-ae70-41b4-aeca-a5c5a1d8a10c",
+      "taskId": "fe530b3a-14df-4ab7-9d54-4e06a689c63d",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": false,
+      "score": 71.4,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02277365,
+      "durationMs": 23523
+    },
+    {
+      "id": "50e578b4-c2db-4385-a738-6aef8ef482fc",
+      "taskId": "8fe9ded6-e4ab-4b8d-977f-44cc35cb035d",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": false,
+      "score": 71.4,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0349221,
+      "durationMs": 26125
+    },
+    {
+      "id": "81b517fb-fdc6-47b7-b34e-88c06990452d",
+      "taskId": "8fe9ded6-e4ab-4b8d-977f-44cc35cb035d",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.03526155,
+      "durationMs": 30620
+    },
+    {
+      "id": "3467b122-f88d-4423-b39b-fe5445695d97",
+      "taskId": "e5a5b106-d11e-44d6-b4e3-d37bb5a56996",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0556294,
+      "durationMs": 33740
+    },
+    {
+      "id": "cdfc875e-582f-45ed-9183-3c846016294b",
+      "taskId": "e5a5b106-d11e-44d6-b4e3-d37bb5a56996",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0566619,
+      "durationMs": 32830
+    },
+    {
+      "id": "60e719a3-49d4-4311-b958-53d171949371",
+      "taskId": "e669337e-5a27-450c-a4a1-aed167d47adc",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.04190635,
+      "durationMs": 28659
+    },
+    {
+      "id": "294038d8-3b59-421a-978e-1f24a7dcda73",
+      "taskId": "e669337e-5a27-450c-a4a1-aed167d47adc",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.03709365,
+      "durationMs": 25104
+    },
+    {
+      "id": "472ccf71-a7bb-4ffc-9d5f-9efc8a652b9e",
+      "taskId": "f361c71d-cb44-4138-a0d7-a0c181b7fffc",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.007596,
+      "durationMs": 13011
+    },
+    {
+      "id": "fbdf5d58-3671-4ec9-93c5-a3f1506e73c9",
+      "taskId": "f361c71d-cb44-4138-a0d7-a0c181b7fffc",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.013825,
+      "durationMs": 14122
+    },
+    {
+      "id": "991cc44c-2bb9-48e0-a549-14748ddd573d",
+      "taskId": "a821b6a0-be85-4634-8669-3d6fc9c6151c",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": false,
+      "score": 66.7,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.06763125,
+      "durationMs": 39828
+    },
+    {
+      "id": "5aa09a0a-0780-4ae3-a8af-78e25db7121a",
+      "taskId": "a821b6a0-be85-4634-8669-3d6fc9c6151c",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.09325405,
+      "durationMs": 37863
+    },
+    {
+      "id": "6b53882c-d689-403f-a3dd-479f67cbdd08",
+      "taskId": "9d6687f2-6562-4919-a7d0-7adbadddbb49",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.06220145,
+      "durationMs": 34445
+    },
+    {
+      "id": "f12b6ca4-af69-4852-aebb-99ef6481a885",
+      "taskId": "9d6687f2-6562-4919-a7d0-7adbadddbb49",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.04135275,
+      "durationMs": 30141
+    },
+    {
+      "id": "eae7d6ec-256b-4e7a-abe9-1102fcc40fdf",
+      "taskId": "b4aac4cc-4b4f-4ff7-9956-f60cb518daa8",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": false,
+      "score": 71.4,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0263141,
+      "durationMs": 25611
+    },
+    {
+      "id": "fade7a94-8638-42a7-9ca5-b99e7bcc9189",
+      "taskId": "b4aac4cc-4b4f-4ff7-9956-f60cb518daa8",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": false,
+      "score": 71.4,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0307524,
+      "durationMs": 24930
+    },
+    {
+      "id": "0212992c-7d6f-497e-b830-ff404937c492",
+      "taskId": "451caafa-8f3e-4e4c-b220-77009c0140e3",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": false,
+      "score": 71.4,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02403375,
+      "durationMs": 22837
+    },
+    {
+      "id": "ed326658-1245-4418-8362-6d55bb68c8bd",
+      "taskId": "451caafa-8f3e-4e4c-b220-77009c0140e3",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": false,
+      "score": 71.4,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0237168,
+      "durationMs": 21448
+    },
+    {
+      "id": "8895f9c7-cf89-4d3f-87c8-52a712865b6c",
+      "taskId": "368432a7-72f0-4403-8a00-c3415ab7912e",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": false,
+      "score": 66.7,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0786094,
+      "durationMs": 39185
+    },
+    {
+      "id": "8711db66-6992-4f75-a3b0-8e1e28762df7",
+      "taskId": "368432a7-72f0-4403-8a00-c3415ab7912e",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0713537,
+      "durationMs": 42112
+    },
+    {
+      "id": "cb36dd47-8536-4cd3-b496-5d0291f2a85a",
+      "taskId": "61a1f3e3-0bce-4211-94f0-b243c07d7599",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02227945,
+      "durationMs": 22075
+    },
+    {
+      "id": "da30ccb3-dcfd-4356-b921-2a3baac7c7e0",
+      "taskId": "61a1f3e3-0bce-4211-94f0-b243c07d7599",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 1,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0221133,
+      "durationMs": 19414
+    },
+    {
+      "id": "bbcf302f-b08a-4804-8cdb-b4c76e51d0bd",
+      "taskId": "c6bdac89-e407-4a5a-918d-c3d2164f0fc8",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0377179,
+      "durationMs": 25334
+    },
+    {
+      "id": "b90bfd9d-73dc-443e-a2b3-326cc4dc5936",
+      "taskId": "c6bdac89-e407-4a5a-918d-c3d2164f0fc8",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0431451,
+      "durationMs": 28332
+    },
+    {
+      "id": "cf7a4f85-ce82-4d0a-aadf-0cc3d59aec84",
+      "taskId": "2d887526-bc64-450e-b960-16f736b8c638",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.04135765,
+      "durationMs": 27242
+    },
+    {
+      "id": "6b3f0fee-b77e-447e-a58b-482602ff121c",
+      "taskId": "2d887526-bc64-450e-b960-16f736b8c638",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.04015715,
+      "durationMs": 27891
+    },
+    {
+      "id": "e7cdff10-3304-4ba7-a33c-9d9e77d4b78b",
+      "taskId": "996dfd45-945c-4dd9-b516-807e5b1e9fce",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02368305,
+      "durationMs": 21226
+    },
+    {
+      "id": "2e84bb8f-2dfd-4f81-a4b7-1196f932b854",
+      "taskId": "996dfd45-945c-4dd9-b516-807e5b1e9fce",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02062325,
+      "durationMs": 17600
+    },
+    {
+      "id": "cc407b4b-7e4f-41e5-bca5-5d7a5431f908",
+      "taskId": "72498cda-be2d-405f-8e02-4b751696603d",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02075595,
+      "durationMs": 18940
+    },
+    {
+      "id": "767745ff-799e-4ab8-adca-c6453323c39b",
+      "taskId": "72498cda-be2d-405f-8e02-4b751696603d",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.021755,
+      "durationMs": 17487
+    },
+    {
+      "id": "76cb1f02-dd05-4753-b2ec-9554bfceac20",
+      "taskId": "dfc6818f-d806-4ef5-88c9-4667812a427f",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0711679,
+      "durationMs": 36949
+    },
+    {
+      "id": "99b058f5-be26-46c9-985b-02dd46fdc0b5",
+      "taskId": "dfc6818f-d806-4ef5-88c9-4667812a427f",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0710477,
+      "durationMs": 42920
+    },
+    {
+      "id": "4d31cf6b-147d-44aa-a008-dbaf362f5ad0",
+      "taskId": "945f93b7-da1c-4e96-b88b-cc3af2ec6fa9",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": false,
+      "score": 66.7,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02310695,
+      "durationMs": 25357
+    },
+    {
+      "id": "3286faa0-f012-473f-958a-d3871263ddf7",
+      "taskId": "945f93b7-da1c-4e96-b88b-cc3af2ec6fa9",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02404835,
+      "durationMs": 23593
+    },
+    {
+      "id": "4a976b6d-0b08-4b52-9a6d-0f2a7ba14057",
+      "taskId": "b90c5ffe-17aa-486c-a01f-9fd46c485e78",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0273441,
+      "durationMs": 25456
+    },
+    {
+      "id": "9fd9d8a4-dcdc-4017-9de2-e111a2683ce2",
+      "taskId": "b90c5ffe-17aa-486c-a01f-9fd46c485e78",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": false,
+      "score": 71.4,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02133465,
+      "durationMs": 17984
+    },
+    {
+      "id": "ef758cfe-e4cf-4ed6-84ad-f2f41ea04f04",
+      "taskId": "39c5ec21-7f53-46ff-a822-07813a5d075e",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02200875,
+      "durationMs": 16998
+    },
+    {
+      "id": "8f882e99-4286-48d5-aa89-6ddf527578d4",
+      "taskId": "39c5ec21-7f53-46ff-a822-07813a5d075e",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.019357,
+      "durationMs": 19598
+    },
+    {
+      "id": "777ad1f9-3fbe-4453-8d78-25d113b7671e",
+      "taskId": "d88abff0-e35a-4d06-8884-8b88a399b88f",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.05137075,
+      "durationMs": 27252
+    },
+    {
+      "id": "50e2a0c6-754e-400b-9092-dca8a25f7d32",
+      "taskId": "d88abff0-e35a-4d06-8884-8b88a399b88f",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0325459,
+      "durationMs": 24360
+    },
+    {
+      "id": "16e17cbd-edd4-4539-a88d-215c52dc2a2d",
+      "taskId": "fe530b3a-14df-4ab7-9d54-4e06a689c63d",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": false,
+      "score": 71.4,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0228614,
+      "durationMs": 22093
+    },
+    {
+      "id": "3baf641a-9a15-4003-b578-689da38ee3cd",
+      "taskId": "fe530b3a-14df-4ab7-9d54-4e06a689c63d",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": false,
+      "score": 71.4,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02515775,
+      "durationMs": 23684
+    },
+    {
+      "id": "140b004a-5a8b-438d-b65d-30c54b23a889",
+      "taskId": "8fe9ded6-e4ab-4b8d-977f-44cc35cb035d",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.03541745,
+      "durationMs": 30130
+    },
+    {
+      "id": "e0ea6d89-8a67-4388-a41c-455c23bf899a",
+      "taskId": "8fe9ded6-e4ab-4b8d-977f-44cc35cb035d",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0352778,
+      "durationMs": 25869
+    },
+    {
+      "id": "04ed5d04-a815-4bda-9b1e-feb7455f467a",
+      "taskId": "e5a5b106-d11e-44d6-b4e3-d37bb5a56996",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.05776035,
+      "durationMs": 33156
+    },
+    {
+      "id": "ac0adc88-e87e-4d1b-87ff-3c68cb6c9247",
+      "taskId": "e5a5b106-d11e-44d6-b4e3-d37bb5a56996",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0559745,
+      "durationMs": 32989
+    },
+    {
+      "id": "58e029a8-b7ab-4ddf-85aa-cec7faf3c1b3",
+      "taskId": "e669337e-5a27-450c-a4a1-aed167d47adc",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.03904195,
+      "durationMs": 28061
+    },
+    {
+      "id": "0cd2833b-92a4-4385-b639-9fc234bb1abf",
+      "taskId": "e669337e-5a27-450c-a4a1-aed167d47adc",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.04079545,
+      "durationMs": 26995
+    },
+    {
+      "id": "c0c77cc5-1433-4cfb-a3ae-7c52bba8972a",
+      "taskId": "f361c71d-cb44-4138-a0d7-a0c181b7fffc",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.008242,
+      "durationMs": 13722
+    },
+    {
+      "id": "ccde0023-62a8-4c38-851c-0acbcda4d388",
+      "taskId": "f361c71d-cb44-4138-a0d7-a0c181b7fffc",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.007515,
+      "durationMs": 12762
+    },
+    {
+      "id": "934c05b5-79e0-4cba-beb7-18dd97d0a893",
+      "taskId": "a821b6a0-be85-4634-8669-3d6fc9c6151c",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.08243965,
+      "durationMs": 36888
+    },
+    {
+      "id": "01453dc7-65b5-4f51-b231-bc66f431933c",
+      "taskId": "a821b6a0-be85-4634-8669-3d6fc9c6151c",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.06462305,
+      "durationMs": 46324
+    },
+    {
+      "id": "98851a57-5cdd-46a0-b60f-46a2281b7fa2",
+      "taskId": "9d6687f2-6562-4919-a7d0-7adbadddbb49",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0399894,
+      "durationMs": 27618
+    },
+    {
+      "id": "29b16f82-a5ba-4a38-8c92-0ec22295a467",
+      "taskId": "9d6687f2-6562-4919-a7d0-7adbadddbb49",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.03823805,
+      "durationMs": 26857
+    },
+    {
+      "id": "17a790ce-5c02-4c74-ae85-ea1f6a45f371",
+      "taskId": "b4aac4cc-4b4f-4ff7-9956-f60cb518daa8",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.03211885,
+      "durationMs": 33745
+    },
+    {
+      "id": "0412796a-d49d-4cfd-bdd3-6d038575dca8",
+      "taskId": "b4aac4cc-4b4f-4ff7-9956-f60cb518daa8",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.026056,
+      "durationMs": 21884
+    },
+    {
+      "id": "ed4acdd3-2587-4b45-a450-c896a1d85242",
+      "taskId": "451caafa-8f3e-4e4c-b220-77009c0140e3",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02270235,
+      "durationMs": 29638
+    },
+    {
+      "id": "68c8ab86-5928-477b-8543-feb5b16910b3",
+      "taskId": "451caafa-8f3e-4e4c-b220-77009c0140e3",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0241066,
+      "durationMs": 22854
+    },
+    {
+      "id": "6d099def-f551-4973-a472-4b6dbf3d3896",
+      "taskId": "368432a7-72f0-4403-8a00-c3415ab7912e",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0747391,
+      "durationMs": 41615
+    },
+    {
+      "id": "2eddd30a-e836-4ab9-afbb-727111277a8d",
+      "taskId": "368432a7-72f0-4403-8a00-c3415ab7912e",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.06999225,
+      "durationMs": 43318
+    },
+    {
+      "id": "ca44f06b-a402-4768-bdf7-aff2fb4aa987",
+      "taskId": "61a1f3e3-0bce-4211-94f0-b243c07d7599",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02203105,
+      "durationMs": 18561
+    },
+    {
+      "id": "e86efab0-d7e6-48ee-a5b1-32b7f8ad94e5",
+      "taskId": "61a1f3e3-0bce-4211-94f0-b243c07d7599",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 2,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.021002,
+      "durationMs": 18804
+    },
+    {
+      "id": "f8e67587-d4e9-4732-96e5-2ba352384098",
+      "taskId": "c6bdac89-e407-4a5a-918d-c3d2164f0fc8",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0415793,
+      "durationMs": 28664
+    },
+    {
+      "id": "17e1ba5a-0fad-4042-b5af-b5b845134296",
+      "taskId": "c6bdac89-e407-4a5a-918d-c3d2164f0fc8",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0393251,
+      "durationMs": 28280
+    },
+    {
+      "id": "9a9e57e6-2b82-4f0a-89d7-dd8852cca29a",
+      "taskId": "2d887526-bc64-450e-b960-16f736b8c638",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0385952,
+      "durationMs": 26287
+    },
+    {
+      "id": "aad0aec9-2625-4185-b697-2bb6540ebe91",
+      "taskId": "2d887526-bc64-450e-b960-16f736b8c638",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02879575,
+      "durationMs": 23675
+    },
+    {
+      "id": "b7739fb8-a8aa-4e36-aeff-09bedb0edb1b",
+      "taskId": "996dfd45-945c-4dd9-b516-807e5b1e9fce",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02062525,
+      "durationMs": 18417
+    },
+    {
+      "id": "82a6f681-4e50-4783-a9a1-af6491e7114f",
+      "taskId": "996dfd45-945c-4dd9-b516-807e5b1e9fce",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0237128,
+      "durationMs": 21047
+    },
+    {
+      "id": "e29c9903-8e16-41ce-8bbb-745357fbe97a",
+      "taskId": "72498cda-be2d-405f-8e02-4b751696603d",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02185625,
+      "durationMs": 18010
+    },
+    {
+      "id": "1d1fe1e4-08f7-4117-a9d6-74f1c61d6e7d",
+      "taskId": "72498cda-be2d-405f-8e02-4b751696603d",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02085645,
+      "durationMs": 18304
+    },
+    {
+      "id": "a3c83af0-9286-4a0a-89a6-084fb82476ef",
+      "taskId": "dfc6818f-d806-4ef5-88c9-4667812a427f",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0709011,
+      "durationMs": 38744
+    },
+    {
+      "id": "ba3234c4-97a6-4494-94f5-bac608438169",
+      "taskId": "dfc6818f-d806-4ef5-88c9-4667812a427f",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.07207325,
+      "durationMs": 38594
+    },
+    {
+      "id": "ff10a4fd-e745-44c1-8c0a-244dee12b7ab",
+      "taskId": "945f93b7-da1c-4e96-b88b-cc3af2ec6fa9",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02386415,
+      "durationMs": 22976
+    },
+    {
+      "id": "2bdb4faa-5db8-4830-92a0-ded22cdbd2c4",
+      "taskId": "945f93b7-da1c-4e96-b88b-cc3af2ec6fa9",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": false,
+      "score": 66.7,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0229917,
+      "durationMs": 24612
+    },
+    {
+      "id": "80bf386a-a5e9-485d-97db-88f3155a6c23",
+      "taskId": "b90c5ffe-17aa-486c-a01f-9fd46c485e78",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02126675,
+      "durationMs": 19324
+    },
+    {
+      "id": "a24b05d4-eeb8-4786-a8ff-0de48f5a5902",
+      "taskId": "b90c5ffe-17aa-486c-a01f-9fd46c485e78",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": false,
+      "score": 71.4,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.03149805,
+      "durationMs": 29648
+    },
+    {
+      "id": "689ab77e-5912-4a50-85b7-11336944ca14",
+      "taskId": "39c5ec21-7f53-46ff-a822-07813a5d075e",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.019254,
+      "durationMs": 18686
+    },
+    {
+      "id": "9939a92c-f8f3-4b92-af1d-2b2f7ed9d0a5",
+      "taskId": "39c5ec21-7f53-46ff-a822-07813a5d075e",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0221875,
+      "durationMs": 18796
+    },
+    {
+      "id": "1a2d675d-a46d-4192-b884-1edeef975004",
+      "taskId": "d88abff0-e35a-4d06-8884-8b88a399b88f",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": false,
+      "score": 71.4,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.04585895,
+      "durationMs": 26947
+    },
+    {
+      "id": "07830cec-331c-4cf5-8d22-3943f1d3300f",
+      "taskId": "d88abff0-e35a-4d06-8884-8b88a399b88f",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": false,
+      "score": 85.7,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.05050775,
+      "durationMs": 26843
+    },
+    {
+      "id": "93fb8665-dd0b-431a-bc35-91075f03443b",
+      "taskId": "fe530b3a-14df-4ab7-9d54-4e06a689c63d",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.03324325,
+      "durationMs": 26129
+    },
+    {
+      "id": "510fc193-3334-40a4-9597-5b2418d94764",
+      "taskId": "fe530b3a-14df-4ab7-9d54-4e06a689c63d",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0375324,
+      "durationMs": 27021
+    },
+    {
+      "id": "bb9c04e4-0d59-4b93-b1fc-ffa2ce5a35d5",
+      "taskId": "8fe9ded6-e4ab-4b8d-977f-44cc35cb035d",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0370582,
+      "durationMs": 28457
+    },
+    {
+      "id": "83227045-ab91-4b0f-afa5-ae43e485eb1a",
+      "taskId": "8fe9ded6-e4ab-4b8d-977f-44cc35cb035d",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": false,
+      "score": 71.4,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0482478,
+      "durationMs": 37458
+    },
+    {
+      "id": "e5dcf7ff-caab-4553-a3ee-1c73993ca7c3",
+      "taskId": "e5a5b106-d11e-44d6-b4e3-d37bb5a56996",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0584515,
+      "durationMs": 36231
+    },
+    {
+      "id": "bb79b97a-d940-466a-8d01-772cd84b05bb",
+      "taskId": "e5a5b106-d11e-44d6-b4e3-d37bb5a56996",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.05638215,
+      "durationMs": 33543
+    },
+    {
+      "id": "bee55657-a00a-4989-92a7-5b9f2ba5f26e",
+      "taskId": "e669337e-5a27-450c-a4a1-aed167d47adc",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0412969,
+      "durationMs": 28134
+    },
+    {
+      "id": "48c04103-61d5-4d0a-bc23-5ec977bd8aff",
+      "taskId": "e669337e-5a27-450c-a4a1-aed167d47adc",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.038154,
+      "durationMs": 27981
+    },
+    {
+      "id": "cb8bada2-84fb-4dfe-a290-4a6d056b408e",
+      "taskId": "f361c71d-cb44-4138-a0d7-a0c181b7fffc",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.007631,
+      "durationMs": 12963
+    },
+    {
+      "id": "e7b4e783-3a21-4aca-b883-7764cd74debc",
+      "taskId": "f361c71d-cb44-4138-a0d7-a0c181b7fffc",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.008227,
+      "durationMs": 12880
+    },
+    {
+      "id": "4e476dfa-929f-4887-aec4-5e98584530e7",
+      "taskId": "a821b6a0-be85-4634-8669-3d6fc9c6151c",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.08047,
+      "durationMs": 41575
+    },
+    {
+      "id": "63064bfe-ea5d-43db-ac0d-8cea5e633bb9",
+      "taskId": "a821b6a0-be85-4634-8669-3d6fc9c6151c",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.06945995,
+      "durationMs": 36078
+    },
+    {
+      "id": "1812294e-9fb2-4f29-8c73-73d544af6817",
+      "taskId": "9d6687f2-6562-4919-a7d0-7adbadddbb49",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.05215735,
+      "durationMs": 28719
+    },
+    {
+      "id": "73ec17e0-2bad-48ac-bc38-2911c518aff6",
+      "taskId": "9d6687f2-6562-4919-a7d0-7adbadddbb49",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0438432,
+      "durationMs": 28918
+    },
+    {
+      "id": "33a7708b-c8e2-4d5d-93bf-92b8e6ec1f8f",
+      "taskId": "b4aac4cc-4b4f-4ff7-9956-f60cb518daa8",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": false,
+      "score": 71.4,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.024124,
+      "durationMs": 21606
+    },
+    {
+      "id": "79ca2b45-cdea-4862-9307-b1394f8ae4c4",
+      "taskId": "b4aac4cc-4b4f-4ff7-9956-f60cb518daa8",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.03333855,
+      "durationMs": 24262
+    },
+    {
+      "id": "e813ec4f-5c57-4725-ad75-445bba5976b1",
+      "taskId": "451caafa-8f3e-4e4c-b220-77009c0140e3",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.03186015,
+      "durationMs": 24414
+    },
+    {
+      "id": "0650e4c0-b0e6-4738-8b76-b6ff6d693c52",
+      "taskId": "451caafa-8f3e-4e4c-b220-77009c0140e3",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0225,
+      "durationMs": 20688
+    },
+    {
+      "id": "b18b99ee-7211-4a6c-9cc9-2a1ce14aae77",
+      "taskId": "368432a7-72f0-4403-8a00-c3415ab7912e",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0847659,
+      "durationMs": 43496
+    },
+    {
+      "id": "6ab279c7-97c2-4443-8157-7489c27cfae0",
+      "taskId": "368432a7-72f0-4403-8a00-c3415ab7912e",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.07084205,
+      "durationMs": 39383
+    },
+    {
+      "id": "a19c0a25-54f2-474c-a28a-e2082cef8c29",
+      "taskId": "61a1f3e3-0bce-4211-94f0-b243c07d7599",
+      "configId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.02240015,
+      "durationMs": 22462
+    },
+    {
+      "id": "d30ce230-2bd1-4292-afb8-594b8df15424",
+      "taskId": "61a1f3e3-0bce-4211-94f0-b243c07d7599",
+      "configId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+      "repetition": 3,
+      "status": "scored",
+      "attempts": 1,
+      "passed": true,
+      "score": 100,
+      "errorKind": null,
+      "errorDetail": null,
+      "costUsd": 0.0245566,
+      "durationMs": 22198
+    }
+  ]
+}

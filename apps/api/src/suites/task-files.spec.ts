@@ -1,6 +1,6 @@
 import { taskSchema } from '@evals/shared';
 import { fileURLToPath } from 'node:url';
-import { lintTask, readTaskFiles } from './task-files.js';
+import { lintTask, readTaskFiles, verifyFrozenTasks } from './task-files.js';
 
 const SUITES_DIR = fileURLToPath(new URL('../../../../suites', import.meta.url));
 
@@ -14,6 +14,19 @@ describe('the task files in this repo', () => {
   it('have unique keys per suite', () => {
     const keys = files.map((f) => `${f.suite}/${f.key}`);
     expect(new Set(keys).size).toBe(keys.length);
+  });
+
+  it('refuses stale hashes and changed membership in a frozen suite', () => {
+    const evaluation = files.filter((f) => f.definition.split === 'eval');
+    const frozen = evaluation.map(({ key, versionHash }) => ({ key, versionHash }));
+    expect(() => verifyFrozenTasks(evaluation, frozen)).not.toThrow();
+    expect(() => verifyFrozenTasks(evaluation, frozen.slice(1))).toThrow('Frozen');
+    expect(() =>
+      verifyFrozenTasks(
+        evaluation,
+        frozen.map((f, i) => (i === 0 ? { ...f, versionHash: 'changed' } : f)),
+      ),
+    ).toThrow('Frozen');
   });
 });
 

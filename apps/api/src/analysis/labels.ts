@@ -1,3 +1,4 @@
+import { effectiveGroundingSeverity } from '@evals/shared';
 import {
   ISSUES,
   LEAD_INTENTS,
@@ -65,9 +66,24 @@ export function improvementSummary(runs: LabelledRun[]): ImprovementSummary {
     b: bySide('b').filter((r) => r.judge.outcome.label === label).length,
   })).filter((row) => row.a + row.b > 0);
 
+  const groundingSeverities = (['serious', 'minor'] as const)
+    .map((severity) => {
+      const hits = (side: 'a' | 'b') =>
+        replies(side).filter(({ turn }) => effectiveGroundingSeverity(turn.grounded) === severity);
+      const [a, b] = [hits('a'), hits('b')];
+      return {
+        severity,
+        countA: a.length,
+        countB: b.length,
+        exampleRunId: (b[0] ?? a[0])?.run.runId ?? null,
+      };
+    })
+    .filter((row) => row.countA + row.countB > 0);
+
   return {
     judgedRuns: { a: bySide('a').length, b: bySide('b').length },
     issues: issues.sort((x, y) => y.countA + y.countB - (x.countA + x.countB)),
+    groundingSeverities,
     intents,
     outcomes,
     leadProblems: judged

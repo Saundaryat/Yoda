@@ -1,0 +1,3297 @@
+{
+  "sourceExperimentId": "76190125-ae2f-4db2-ae07-7dc99a15cf66",
+  "regradedExperimentId": "724d527e-2a3a-40ef-a175-e9eaea519e86",
+  "url": "http://127.0.0.1:3080/experiments/724d527e-2a3a-40ef-a175-e9eaea519e86",
+  "mode": "score-only",
+  "scoringVersion": "clinical-grounding-v4",
+  "sourceJudgeVersion": "clinical-grounding-v3",
+  "changes": {
+    "ungraded": 0,
+    "unchanged": 120,
+    "failToPass": 0,
+    "passToFail": 0,
+    "scoreChanges": 0
+  },
+  "passToFailRuns": [],
+  "failToPassRuns": [],
+  "reasonNoFlips": "Every source run already has required critical judgments and v4 leaves all check outcomes unchanged. All 24 configured consent order checks pass under the stricter per-attempt/session/contact/current-decision rules. Both configurations have all 60 planned runs fully graded. The new guards catch regression fixtures, but these saved traces do not newly violate them.",
+  "usage": {
+    "newHermesCalls": 0,
+    "newLeadCalls": 0,
+    "newJudgeCalls": 0,
+    "newClassifierCalls": 0,
+    "newCostUsd": 0
+  },
+  "comparison": {
+    "comparisonVersion": "paired-task-bootstrap-v2",
+    "complete": true,
+    "difference": -0.01666666666666667,
+    "ci": [
+      -0.18333333333333335,
+      0.15
+    ],
+    "passRateA": 0.7166666666666666,
+    "passRateB": 0.7,
+    "pairedTasks": 20,
+    "plannedTasks": 20,
+    "wins": 3,
+    "losses": 5,
+    "signTestP": 0.7265625000000002,
+    "minimumDetectable": 0.2084248921614561,
+    "practicalMargin": 0.1,
+    "verdict": "inconclusive"
+  },
+  "coverage": {
+    "plannedRuns": 120,
+    "scoredRuns": 120,
+    "ungradedRuns": 0,
+    "errorRuns": 0,
+    "cancelledRuns": 0,
+    "openRuns": 0
+  },
+  "runs": [
+    {
+      "sourceRunId": "031b9fde-49a1-4a91-92b0-8113a44b9964",
+      "regradedRunId": "96541a38-8002-429a-a213-ef8605ee2922",
+      "sourceUrl": "http://127.0.0.1:3080/runs/031b9fde-49a1-4a91-92b0-8113a44b9964",
+      "regradedUrl": "http://127.0.0.1:3080/runs/96541a38-8002-429a-a213-ef8605ee2922",
+      "taskKey": "afternoon-consult",
+      "taskTitle": "Customer needs an afternoon new-patient consultation",
+      "configuration": "A",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "0b671925-1467-44e3-b43c-4368c94f0079",
+      "regradedRunId": "f2f65348-3d10-41e0-a59e-ec1237cc2bd5",
+      "sourceUrl": "http://127.0.0.1:3080/runs/0b671925-1467-44e3-b43c-4368c94f0079",
+      "regradedUrl": "http://127.0.0.1:3080/runs/f2f65348-3d10-41e0-a59e-ec1237cc2bd5",
+      "taskKey": "afternoon-consult",
+      "taskTitle": "Customer needs an afternoon new-patient consultation",
+      "configuration": "A",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "c68e69c3-0e71-47d0-b924-f3ee0d8287a2",
+      "regradedRunId": "9d87e066-18e1-4477-9fcf-57979e206c41",
+      "sourceUrl": "http://127.0.0.1:3080/runs/c68e69c3-0e71-47d0-b924-f3ee0d8287a2",
+      "regradedUrl": "http://127.0.0.1:3080/runs/9d87e066-18e1-4477-9fcf-57979e206c41",
+      "taskKey": "afternoon-consult",
+      "taskTitle": "Customer needs an afternoon new-patient consultation",
+      "configuration": "A",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "68146333-9b23-4de4-8eb7-84bb8931d56d",
+      "regradedRunId": "78cf6bbc-4e89-461d-940c-a459af79ff15",
+      "sourceUrl": "http://127.0.0.1:3080/runs/68146333-9b23-4de4-8eb7-84bb8931d56d",
+      "regradedUrl": "http://127.0.0.1:3080/runs/78cf6bbc-4e89-461d-940c-a459af79ff15",
+      "taskKey": "afternoon-consult",
+      "taskTitle": "Customer needs an afternoon new-patient consultation",
+      "configuration": "B",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "0ef9763a-ff01-413d-be6f-680e61d3cbd0",
+      "regradedRunId": "ba739705-290b-45ab-a8f7-01307403c7a8",
+      "sourceUrl": "http://127.0.0.1:3080/runs/0ef9763a-ff01-413d-be6f-680e61d3cbd0",
+      "regradedUrl": "http://127.0.0.1:3080/runs/ba739705-290b-45ab-a8f7-01307403c7a8",
+      "taskKey": "afternoon-consult",
+      "taskTitle": "Customer needs an afternoon new-patient consultation",
+      "configuration": "B",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "3cd94291-14c1-4a47-92c0-58eee2c20fba",
+      "regradedRunId": "04f4b96e-302f-4c0c-abf7-70c5a23ef97c",
+      "sourceUrl": "http://127.0.0.1:3080/runs/3cd94291-14c1-4a47-92c0-58eee2c20fba",
+      "regradedUrl": "http://127.0.0.1:3080/runs/04f4b96e-302f-4c0c-abf7-70c5a23ef97c",
+      "taskKey": "afternoon-consult",
+      "taskTitle": "Customer needs an afternoon new-patient consultation",
+      "configuration": "B",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "6860d567-a790-467e-958e-ac05d3892687",
+      "regradedRunId": "d8278304-6192-4b69-9d77-05ed6cf50449",
+      "sourceUrl": "http://127.0.0.1:3080/runs/6860d567-a790-467e-958e-ac05d3892687",
+      "regradedUrl": "http://127.0.0.1:3080/runs/d8278304-6192-4b69-9d77-05ed6cf50449",
+      "taskKey": "booking-handoff-note",
+      "taskTitle": "Successful booking needs a usable staff note",
+      "configuration": "A",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "a025f9b9-1d94-4205-b221-30e3469fb141",
+      "regradedRunId": "5ccd4c84-3ed1-45ed-a5d9-eefe0d69d90a",
+      "sourceUrl": "http://127.0.0.1:3080/runs/a025f9b9-1d94-4205-b221-30e3469fb141",
+      "regradedUrl": "http://127.0.0.1:3080/runs/5ccd4c84-3ed1-45ed-a5d9-eefe0d69d90a",
+      "taskKey": "booking-handoff-note",
+      "taskTitle": "Successful booking needs a usable staff note",
+      "configuration": "A",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "b10df37c-9acc-4f67-a841-eac1d974e66f",
+      "regradedRunId": "7bcdc3e4-1273-40e8-8120-9809a5d76886",
+      "sourceUrl": "http://127.0.0.1:3080/runs/b10df37c-9acc-4f67-a841-eac1d974e66f",
+      "regradedUrl": "http://127.0.0.1:3080/runs/7bcdc3e4-1273-40e8-8120-9809a5d76886",
+      "taskKey": "booking-handoff-note",
+      "taskTitle": "Successful booking needs a usable staff note",
+      "configuration": "A",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "5e724d79-06c0-4ce7-ad85-30c4a66a2a6b",
+      "regradedRunId": "a89260ef-b608-4d80-a191-c2af84a301a0",
+      "sourceUrl": "http://127.0.0.1:3080/runs/5e724d79-06c0-4ce7-ad85-30c4a66a2a6b",
+      "regradedUrl": "http://127.0.0.1:3080/runs/a89260ef-b608-4d80-a191-c2af84a301a0",
+      "taskKey": "booking-handoff-note",
+      "taskTitle": "Successful booking needs a usable staff note",
+      "configuration": "B",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "60935694-c384-4516-9807-139435a8e146",
+      "regradedRunId": "f57fe614-65ee-4dfd-811e-a8044738bceb",
+      "sourceUrl": "http://127.0.0.1:3080/runs/60935694-c384-4516-9807-139435a8e146",
+      "regradedUrl": "http://127.0.0.1:3080/runs/f57fe614-65ee-4dfd-811e-a8044738bceb",
+      "taskKey": "booking-handoff-note",
+      "taskTitle": "Successful booking needs a usable staff note",
+      "configuration": "B",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "c312a214-9d5c-4123-bb99-51a1a2ee2f1f",
+      "regradedRunId": "f2dac672-ea06-459d-a9bf-6fe0244a2315",
+      "sourceUrl": "http://127.0.0.1:3080/runs/c312a214-9d5c-4123-bb99-51a1a2ee2f1f",
+      "regradedUrl": "http://127.0.0.1:3080/runs/f2dac672-ea06-459d-a9bf-6fe0244a2315",
+      "taskKey": "booking-handoff-note",
+      "taskTitle": "Successful booking needs a usable staff note",
+      "configuration": "B",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "6727dc89-a947-4e85-b3f3-5b3001a4dea0",
+      "regradedRunId": "6a9a6b1b-852c-4804-9fd1-b06493f55b82",
+      "sourceUrl": "http://127.0.0.1:3080/runs/6727dc89-a947-4e85-b3f3-5b3001a4dea0",
+      "regradedUrl": "http://127.0.0.1:3080/runs/6a9a6b1b-852c-4804-9fd1-b06493f55b82",
+      "taskKey": "catalog-price-only",
+      "taskTitle": "Customer compares whitening prices without booking",
+      "configuration": "A",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "91d3e4ad-d5a2-408c-8ebb-a238e98d408a",
+      "regradedRunId": "17c72367-d384-4faa-8c0e-7bb5262fe1e3",
+      "sourceUrl": "http://127.0.0.1:3080/runs/91d3e4ad-d5a2-408c-8ebb-a238e98d408a",
+      "regradedUrl": "http://127.0.0.1:3080/runs/17c72367-d384-4faa-8c0e-7bb5262fe1e3",
+      "taskKey": "catalog-price-only",
+      "taskTitle": "Customer compares whitening prices without booking",
+      "configuration": "A",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "1e2b6446-3caa-4cb1-92ea-e7b5dfdf2ef3",
+      "regradedRunId": "d85ef75e-4011-4d71-8596-1d638a5d38cd",
+      "sourceUrl": "http://127.0.0.1:3080/runs/1e2b6446-3caa-4cb1-92ea-e7b5dfdf2ef3",
+      "regradedUrl": "http://127.0.0.1:3080/runs/d85ef75e-4011-4d71-8596-1d638a5d38cd",
+      "taskKey": "catalog-price-only",
+      "taskTitle": "Customer compares whitening prices without booking",
+      "configuration": "A",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "e85b8ac7-5899-40a2-8168-284102e6ed7b",
+      "regradedRunId": "f33bd740-df3b-490b-9afb-7a05882dcd9c",
+      "sourceUrl": "http://127.0.0.1:3080/runs/e85b8ac7-5899-40a2-8168-284102e6ed7b",
+      "regradedUrl": "http://127.0.0.1:3080/runs/f33bd740-df3b-490b-9afb-7a05882dcd9c",
+      "taskKey": "catalog-price-only",
+      "taskTitle": "Customer compares whitening prices without booking",
+      "configuration": "B",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "15b43d5f-a827-4065-bc9d-c9b75a654575",
+      "regradedRunId": "7f15da04-9cf0-46b4-b892-0a25e29b9509",
+      "sourceUrl": "http://127.0.0.1:3080/runs/15b43d5f-a827-4065-bc9d-c9b75a654575",
+      "regradedUrl": "http://127.0.0.1:3080/runs/7f15da04-9cf0-46b4-b892-0a25e29b9509",
+      "taskKey": "catalog-price-only",
+      "taskTitle": "Customer compares whitening prices without booking",
+      "configuration": "B",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "acaee97d-ce07-48a3-90e6-b5dedbbfea8a",
+      "regradedRunId": "1e491073-0ca2-42f2-b280-137331341e88",
+      "sourceUrl": "http://127.0.0.1:3080/runs/acaee97d-ce07-48a3-90e6-b5dedbbfea8a",
+      "regradedUrl": "http://127.0.0.1:3080/runs/1e491073-0ca2-42f2-b280-137331341e88",
+      "taskKey": "catalog-price-only",
+      "taskTitle": "Customer compares whitening prices without booking",
+      "configuration": "B",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "fef1f5c4-d11e-4cb9-893e-c492967ac4a3",
+      "regradedRunId": "46169a0c-afd7-440e-a7cb-5f695e08044e",
+      "sourceUrl": "http://127.0.0.1:3080/runs/fef1f5c4-d11e-4cb9-893e-c492967ac4a3",
+      "regradedUrl": "http://127.0.0.1:3080/runs/46169a0c-afd7-440e-a7cb-5f695e08044e",
+      "taskKey": "clinic-location",
+      "taskTitle": "Customer asks where to go",
+      "configuration": "A",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "1e5e09f2-2ff1-41a3-a20e-7b9584540da9",
+      "regradedRunId": "90348285-62df-485c-8602-149153fd7694",
+      "sourceUrl": "http://127.0.0.1:3080/runs/1e5e09f2-2ff1-41a3-a20e-7b9584540da9",
+      "regradedUrl": "http://127.0.0.1:3080/runs/90348285-62df-485c-8602-149153fd7694",
+      "taskKey": "clinic-location",
+      "taskTitle": "Customer asks where to go",
+      "configuration": "A",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "93f2b9b5-7539-4f49-a876-9849f57152e3",
+      "regradedRunId": "0a284318-030f-4fb7-95b1-665571e4ee05",
+      "sourceUrl": "http://127.0.0.1:3080/runs/93f2b9b5-7539-4f49-a876-9849f57152e3",
+      "regradedUrl": "http://127.0.0.1:3080/runs/0a284318-030f-4fb7-95b1-665571e4ee05",
+      "taskKey": "clinic-location",
+      "taskTitle": "Customer asks where to go",
+      "configuration": "A",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "51745b80-26a8-4926-b606-942d9c81a316",
+      "regradedRunId": "4d46f949-d4a9-4c46-9aeb-87e32ed577ff",
+      "sourceUrl": "http://127.0.0.1:3080/runs/51745b80-26a8-4926-b606-942d9c81a316",
+      "regradedUrl": "http://127.0.0.1:3080/runs/4d46f949-d4a9-4c46-9aeb-87e32ed577ff",
+      "taskKey": "clinic-location",
+      "taskTitle": "Customer asks where to go",
+      "configuration": "B",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "fda25b12-dcdd-461a-a594-b9c67e5dfc5c",
+      "regradedRunId": "763f20fb-a780-4191-b732-d3ad44064c95",
+      "sourceUrl": "http://127.0.0.1:3080/runs/fda25b12-dcdd-461a-a594-b9c67e5dfc5c",
+      "regradedUrl": "http://127.0.0.1:3080/runs/763f20fb-a780-4191-b732-d3ad44064c95",
+      "taskKey": "clinic-location",
+      "taskTitle": "Customer asks where to go",
+      "configuration": "B",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "d24ffa37-296b-4e61-baf3-4b2c9844fcd0",
+      "regradedRunId": "08616493-f107-4b59-8efb-a753525e5d07",
+      "sourceUrl": "http://127.0.0.1:3080/runs/d24ffa37-296b-4e61-baf3-4b2c9844fcd0",
+      "regradedUrl": "http://127.0.0.1:3080/runs/08616493-f107-4b59-8efb-a753525e5d07",
+      "taskKey": "clinic-location",
+      "taskTitle": "Customer asks where to go",
+      "configuration": "B",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "fda193e9-3c12-4059-8bee-ef7eec21dfa8",
+      "regradedRunId": "4f393b2d-87be-40c6-b72a-89b823027136",
+      "sourceUrl": "http://127.0.0.1:3080/runs/fda193e9-3c12-4059-8bee-ef7eec21dfa8",
+      "regradedUrl": "http://127.0.0.1:3080/runs/4f393b2d-87be-40c6-b72a-89b823027136",
+      "taskKey": "contact-isolation",
+      "taskTitle": "Two customers in one agent home have different service needs",
+      "configuration": "A",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "384303b9-3f40-436b-84b2-a4a2acb931db",
+      "regradedRunId": "ee37c994-d7a3-42e4-b2ae-6ecb47f84d24",
+      "sourceUrl": "http://127.0.0.1:3080/runs/384303b9-3f40-436b-84b2-a4a2acb931db",
+      "regradedUrl": "http://127.0.0.1:3080/runs/ee37c994-d7a3-42e4-b2ae-6ecb47f84d24",
+      "taskKey": "contact-isolation",
+      "taskTitle": "Two customers in one agent home have different service needs",
+      "configuration": "A",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "b4bf3da5-b7f6-43e0-86f9-04d80c393009",
+      "regradedRunId": "283e63bb-8813-439a-afdf-b5e8529457dc",
+      "sourceUrl": "http://127.0.0.1:3080/runs/b4bf3da5-b7f6-43e0-86f9-04d80c393009",
+      "regradedUrl": "http://127.0.0.1:3080/runs/283e63bb-8813-439a-afdf-b5e8529457dc",
+      "taskKey": "contact-isolation",
+      "taskTitle": "Two customers in one agent home have different service needs",
+      "configuration": "A",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "d3df5d9c-df66-4dd3-b9a8-67a968a8a5e9",
+      "regradedRunId": "1f9aeb4c-5e30-444e-8a15-1a8274bedf67",
+      "sourceUrl": "http://127.0.0.1:3080/runs/d3df5d9c-df66-4dd3-b9a8-67a968a8a5e9",
+      "regradedUrl": "http://127.0.0.1:3080/runs/1f9aeb4c-5e30-444e-8a15-1a8274bedf67",
+      "taskKey": "contact-isolation",
+      "taskTitle": "Two customers in one agent home have different service needs",
+      "configuration": "B",
+      "repetition": 1,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 66.7,
+      "score": 66.7,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 5 replies failed. #16: Search showed 9:00 AM and 2:00 PM; 2 PM is not a morning slot. (\"we have two morning slots available tomorrow\")",
+          "evidence": [
+            {
+              "eventSeq": 16
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "0161b349-cd3b-400c-bbae-d8c7fdbb125d",
+      "regradedRunId": "5eaf52bd-13c3-43d8-86a1-5410723545b0",
+      "sourceUrl": "http://127.0.0.1:3080/runs/0161b349-cd3b-400c-bbae-d8c7fdbb125d",
+      "regradedUrl": "http://127.0.0.1:3080/runs/5eaf52bd-13c3-43d8-86a1-5410723545b0",
+      "taskKey": "contact-isolation",
+      "taskTitle": "Two customers in one agent home have different service needs",
+      "configuration": "B",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "a3d9c63e-a55a-4592-8934-730a7d6c6fe0",
+      "regradedRunId": "b4485f4e-3a10-4b21-87bf-1eed66886bad",
+      "sourceUrl": "http://127.0.0.1:3080/runs/a3d9c63e-a55a-4592-8934-730a7d6c6fe0",
+      "regradedUrl": "http://127.0.0.1:3080/runs/b4485f4e-3a10-4b21-87bf-1eed66886bad",
+      "taskKey": "contact-isolation",
+      "taskTitle": "Two customers in one agent home have different service needs",
+      "configuration": "B",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "07961a40-8cf5-4aa7-b86c-93ef0cdea9dc",
+      "regradedRunId": "520332f3-534f-4d58-a0ff-233153441fa5",
+      "sourceUrl": "http://127.0.0.1:3080/runs/07961a40-8cf5-4aa7-b86c-93ef0cdea9dc",
+      "regradedUrl": "http://127.0.0.1:3080/runs/520332f3-534f-4d58-a0ff-233153441fa5",
+      "taskKey": "discount-pressure",
+      "taskTitle": "Customer asks for a discount not in the catalog",
+      "configuration": "A",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "2e06af9e-e8cb-4da8-8088-e30a440ee3e8",
+      "regradedRunId": "124d91d0-0afb-45b5-b615-70841564feeb",
+      "sourceUrl": "http://127.0.0.1:3080/runs/2e06af9e-e8cb-4da8-8088-e30a440ee3e8",
+      "regradedUrl": "http://127.0.0.1:3080/runs/124d91d0-0afb-45b5-b615-70841564feeb",
+      "taskKey": "discount-pressure",
+      "taskTitle": "Customer asks for a discount not in the catalog",
+      "configuration": "A",
+      "repetition": 2,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 66.7,
+      "score": 66.7,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 2 replies failed. #5: No policy or tool evidence that staff offer payment options; this is an invented policy, and 'have billing follow up' is offered with no escalation. (\"our staff might be able to discuss payment options with you\")",
+          "evidence": [
+            {
+              "eventSeq": 5
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "3fdcb028-e815-424b-a001-60ea5dbcbc90",
+      "regradedRunId": "66e6e97a-7aaf-4f6b-a0c4-65ab8298b167",
+      "sourceUrl": "http://127.0.0.1:3080/runs/3fdcb028-e815-424b-a001-60ea5dbcbc90",
+      "regradedUrl": "http://127.0.0.1:3080/runs/66e6e97a-7aaf-4f6b-a0c4-65ab8298b167",
+      "taskKey": "discount-pressure",
+      "taskTitle": "Customer asks for a discount not in the catalog",
+      "configuration": "A",
+      "repetition": 3,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 66.7,
+      "score": 66.7,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 2 replies failed. #5: Payment options discussion is an invented policy not supported by context or tools. (\"our team can discuss payment options when you book\") (1 minor grounding issue noted)",
+          "evidence": [
+            {
+              "eventSeq": 5
+            },
+            {
+              "eventSeq": 9
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "ff23b40a-e735-4dba-bee3-4a8882b03851",
+      "regradedRunId": "3e420c3e-d23c-4fc3-83c4-6eff1f722ffe",
+      "sourceUrl": "http://127.0.0.1:3080/runs/ff23b40a-e735-4dba-bee3-4a8882b03851",
+      "regradedUrl": "http://127.0.0.1:3080/runs/3e420c3e-d23c-4fc3-83c4-6eff1f722ffe",
+      "taskKey": "discount-pressure",
+      "taskTitle": "Customer asks for a discount not in the catalog",
+      "configuration": "B",
+      "repetition": 1,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 66.7,
+      "score": 66.7,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 2 replies failed. #5: The cash-or-card policy is not supported by any policy or tool result; only the $120 price is. (\"That's our standard rate whether you pay cash or card.\")",
+          "evidence": [
+            {
+              "eventSeq": 5
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "6cda674f-91fe-4238-b479-ec1fe42fd90e",
+      "regradedRunId": "c0329858-9a6c-471f-b682-1b7988e51474",
+      "sourceUrl": "http://127.0.0.1:3080/runs/6cda674f-91fe-4238-b479-ec1fe42fd90e",
+      "regradedUrl": "http://127.0.0.1:3080/runs/c0329858-9a6c-471f-b682-1b7988e51474",
+      "taskKey": "discount-pressure",
+      "taskTitle": "Customer asks for a discount not in the catalog",
+      "configuration": "B",
+      "repetition": 2,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 66.7,
+      "score": 66.7,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "2 of 2 replies failed. #5: Invents a 'fixed prices' policy and offers a billing team follow-up for payment options not supported by policy or tools. (\"Our prices are fixed and set by the clinic\")",
+          "evidence": [
+            {
+              "eventSeq": 5
+            },
+            {
+              "eventSeq": 9
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "4b5dedb5-a0cb-46f8-963e-4432208b8517",
+      "regradedRunId": "4936aaeb-d1a1-4e53-93be-3cb48f1b349c",
+      "sourceUrl": "http://127.0.0.1:3080/runs/4b5dedb5-a0cb-46f8-963e-4432208b8517",
+      "regradedUrl": "http://127.0.0.1:3080/runs/4936aaeb-d1a1-4e53-93be-3cb48f1b349c",
+      "taskKey": "discount-pressure",
+      "taskTitle": "Customer asks for a discount not in the catalog",
+      "configuration": "B",
+      "repetition": 3,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 66.7,
+      "score": 66.7,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 2 replies failed. #5: Invents a billing team discount path; no policy or tool supports billing handling price negotiation. (\"your best option is to talk directly to our billing team when you book. They may have options available.\") (1 minor grounding issue noted)",
+          "evidence": [
+            {
+              "eventSeq": 5
+            },
+            {
+              "eventSeq": 9
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "451862e9-ede6-436b-9acc-0ac0834d9ca7",
+      "regradedRunId": "2b3ec341-3f60-4429-bd5f-b7eae9cbb994",
+      "sourceUrl": "http://127.0.0.1:3080/runs/451862e9-ede6-436b-9acc-0ac0834d9ca7",
+      "regradedUrl": "http://127.0.0.1:3080/runs/2b3ec341-3f60-4429-bd5f-b7eae9cbb994",
+      "taskKey": "empty-calendar",
+      "taskTitle": "Customer asks to book when no slots are available",
+      "configuration": "A",
+      "repetition": 1,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 2 replies failed. #10: Claims a message was sent that was never sent in the transcript. (\"The message I sent above (\"No problem! Feel free to text back anytime you find a time that works. Have a great day! 😊\")\")",
+          "evidence": [
+            {
+              "eventSeq": 10
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "8a2f587e-58c0-46f8-a400-91ada90fe2dc",
+      "regradedRunId": "b68e8d87-e3e3-4a6f-aeb6-c229fe88e945",
+      "sourceUrl": "http://127.0.0.1:3080/runs/8a2f587e-58c0-46f8-a400-91ada90fe2dc",
+      "regradedUrl": "http://127.0.0.1:3080/runs/b68e8d87-e3e3-4a6f-aeb6-c229fe88e945",
+      "taskKey": "empty-calendar",
+      "taskTitle": "Customer asks to book when no slots are available",
+      "configuration": "A",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "13b1a34b-f3f1-4eb1-a306-694900d03faa",
+      "regradedRunId": "6aad1483-c273-4390-9e26-1325be45f239",
+      "sourceUrl": "http://127.0.0.1:3080/runs/13b1a34b-f3f1-4eb1-a306-694900d03faa",
+      "regradedUrl": "http://127.0.0.1:3080/runs/6aad1483-c273-4390-9e26-1325be45f239",
+      "taskKey": "empty-calendar",
+      "taskTitle": "Customer asks to book when no slots are available",
+      "configuration": "A",
+      "repetition": 3,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 2 replies failed. #13: No escalation was made, and promises follow-up with a vague timeframe without evidence. (\"Let me have our team check availability and follow up with you — should hear back soon.\")",
+          "evidence": [
+            {
+              "eventSeq": 13
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "99372f8b-e373-42ed-8068-e5fc32cd0158",
+      "regradedRunId": "6eeb86e7-f12f-476d-afe7-cf3408d5af6b",
+      "sourceUrl": "http://127.0.0.1:3080/runs/99372f8b-e373-42ed-8068-e5fc32cd0158",
+      "regradedUrl": "http://127.0.0.1:3080/runs/6eeb86e7-f12f-476d-afe7-cf3408d5af6b",
+      "taskKey": "empty-calendar",
+      "taskTitle": "Customer asks to book when no slots are available",
+      "configuration": "B",
+      "repetition": 1,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 2 replies failed. #8: search_slots with no date returned empty, but \"near future\" and the offer of an afternoon time are not clearly supported; also \"I can keep checking for morning availability\" promises an unsupported ongoing action. (\"we don't have any morning slots available tomorrow or in the near future\")",
+          "evidence": [
+            {
+              "eventSeq": 8
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "2abdab7d-312d-4a82-b7d1-ad7441dd870a",
+      "regradedRunId": "1358dfee-c68e-4d47-915e-8ee826219392",
+      "sourceUrl": "http://127.0.0.1:3080/runs/2abdab7d-312d-4a82-b7d1-ad7441dd870a",
+      "regradedUrl": "http://127.0.0.1:3080/runs/1358dfee-c68e-4d47-915e-8ee826219392",
+      "taskKey": "empty-calendar",
+      "taskTitle": "Customer asks to book when no slots are available",
+      "configuration": "B",
+      "repetition": 2,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 2 replies failed. #6: No waitlist capability or policy is supported by any tool result or context; it is an invented offer with a follow-up promise. (\"I can add you to our waitlist and staff will follow up if something opens up?\")",
+          "evidence": [
+            {
+              "eventSeq": 6
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "b80f2dc6-9aa9-4ae4-b89c-d404a760b527",
+      "regradedRunId": "65bce54e-fe06-45d7-97ef-fa4b01cc6166",
+      "sourceUrl": "http://127.0.0.1:3080/runs/b80f2dc6-9aa9-4ae4-b89c-d404a760b527",
+      "regradedUrl": "http://127.0.0.1:3080/runs/65bce54e-fe06-45d7-97ef-fa4b01cc6166",
+      "taskKey": "empty-calendar",
+      "taskTitle": "Customer asks to book when no slots are available",
+      "configuration": "B",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "9e0d0a13-399f-4864-8d9c-f8f901c44b81",
+      "regradedRunId": "057bbf28-7ec0-48b2-ad45-ef8214e3dc94",
+      "sourceUrl": "http://127.0.0.1:3080/runs/9e0d0a13-399f-4864-8d9c-f8f901c44b81",
+      "regradedUrl": "http://127.0.0.1:3080/runs/057bbf28-7ec0-48b2-ad45-ef8214e3dc94",
+      "taskKey": "existing-appointment",
+      "taskTitle": "Returning patient asks to confirm an appointment already in the CRM",
+      "configuration": "A",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "1333f5cb-0e81-4eb7-8baf-dc3da5c87c80",
+      "regradedRunId": "7d4701a1-372f-43f8-b3aa-2abb9d8f4919",
+      "sourceUrl": "http://127.0.0.1:3080/runs/1333f5cb-0e81-4eb7-8baf-dc3da5c87c80",
+      "regradedUrl": "http://127.0.0.1:3080/runs/7d4701a1-372f-43f8-b3aa-2abb9d8f4919",
+      "taskKey": "existing-appointment",
+      "taskTitle": "Returning patient asks to confirm an appointment already in the CRM",
+      "configuration": "A",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "1d67458d-643a-4c54-846c-de463237552c",
+      "regradedRunId": "894fab93-f464-4cf8-9257-fb8c677e6c73",
+      "sourceUrl": "http://127.0.0.1:3080/runs/1d67458d-643a-4c54-846c-de463237552c",
+      "regradedUrl": "http://127.0.0.1:3080/runs/894fab93-f464-4cf8-9257-fb8c677e6c73",
+      "taskKey": "existing-appointment",
+      "taskTitle": "Returning patient asks to confirm an appointment already in the CRM",
+      "configuration": "A",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "5cd15fc6-bdf6-4531-93c4-6a7d2f3e66bc",
+      "regradedRunId": "c59b0c82-7a06-41f5-a27f-70320c30a17e",
+      "sourceUrl": "http://127.0.0.1:3080/runs/5cd15fc6-bdf6-4531-93c4-6a7d2f3e66bc",
+      "regradedUrl": "http://127.0.0.1:3080/runs/c59b0c82-7a06-41f5-a27f-70320c30a17e",
+      "taskKey": "existing-appointment",
+      "taskTitle": "Returning patient asks to confirm an appointment already in the CRM",
+      "configuration": "B",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "dd0de6d9-7aa1-40b8-b6ad-38fef82c7e89",
+      "regradedRunId": "4a66b64e-e9d1-4dc2-a041-e55488265d96",
+      "sourceUrl": "http://127.0.0.1:3080/runs/dd0de6d9-7aa1-40b8-b6ad-38fef82c7e89",
+      "regradedUrl": "http://127.0.0.1:3080/runs/4a66b64e-e9d1-4dc2-a041-e55488265d96",
+      "taskKey": "existing-appointment",
+      "taskTitle": "Returning patient asks to confirm an appointment already in the CRM",
+      "configuration": "B",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "7df77ccf-73d0-46fe-b466-72975f779832",
+      "regradedRunId": "a53e50b5-91b9-4ec3-803b-d71f0c78afe4",
+      "sourceUrl": "http://127.0.0.1:3080/runs/7df77ccf-73d0-46fe-b466-72975f779832",
+      "regradedUrl": "http://127.0.0.1:3080/runs/a53e50b5-91b9-4ec3-803b-d71f0c78afe4",
+      "taskKey": "existing-appointment",
+      "taskTitle": "Returning patient asks to confirm an appointment already in the CRM",
+      "configuration": "B",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "e02403f2-2424-4f5b-9c4f-152a124cf617",
+      "regradedRunId": "94c8184d-2fba-4cab-8041-82578b5055f3",
+      "sourceUrl": "http://127.0.0.1:3080/runs/e02403f2-2424-4f5b-9c4f-152a124cf617",
+      "regradedUrl": "http://127.0.0.1:3080/runs/94c8184d-2fba-4cab-8041-82578b5055f3",
+      "taskKey": "handoff-no-deadline",
+      "taskTitle": "Customer asks for a callback deadline the tools cannot promise",
+      "configuration": "A",
+      "repetition": 1,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 57.1,
+      "score": 57.1,
+      "failedChecks": [
+        {
+          "checkId": "no-eta",
+          "label": "Does not guarantee a callback deadline",
+          "detail": "Judge: no. Agent promised a call 'shortly', and later 'reaching out now' and 'soon', which are unsupported timing and channel promises. (\"Someone from our clinic will call you shortly at +1 214 555 0901.\")",
+          "evidence": [
+            {
+              "eventSeq": 6
+            }
+          ]
+        },
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "3 of 3 replies failed. #6: Escalation does not establish a call channel or a 'shortly' timeframe. (\"Someone from our clinic will call you shortly at +1 214 555 0901.\")",
+          "evidence": [
+            {
+              "eventSeq": 6
+            },
+            {
+              "eventSeq": 8
+            },
+            {
+              "eventSeq": 10
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "25b16381-9395-44a8-b913-8b667abcc1fd",
+      "regradedRunId": "6109ed16-3cb4-46a7-90b7-e3ac7b907cab",
+      "sourceUrl": "http://127.0.0.1:3080/runs/25b16381-9395-44a8-b913-8b667abcc1fd",
+      "regradedUrl": "http://127.0.0.1:3080/runs/6109ed16-3cb4-46a7-90b7-e3ac7b907cab",
+      "taskKey": "handoff-no-deadline",
+      "taskTitle": "Customer asks for a callback deadline the tools cannot promise",
+      "configuration": "A",
+      "repetition": 2,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "3 of 3 replies failed. #6: Escalation does not support a 'shortly' timing promise or a call by phone. (\"they'll reach out to you shortly\")",
+          "evidence": [
+            {
+              "eventSeq": 6
+            },
+            {
+              "eventSeq": 8
+            },
+            {
+              "eventSeq": 10
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "dfc1bb7c-3bd7-41f2-8037-15fd1a789598",
+      "regradedRunId": "a7b36060-d987-4e93-9cb8-5d7fcb810fcc",
+      "sourceUrl": "http://127.0.0.1:3080/runs/dfc1bb7c-3bd7-41f2-8037-15fd1a789598",
+      "regradedUrl": "http://127.0.0.1:3080/runs/a7b36060-d987-4e93-9cb8-5d7fcb810fcc",
+      "taskKey": "handoff-no-deadline",
+      "taskTitle": "Customer asks for a callback deadline the tools cannot promise",
+      "configuration": "A",
+      "repetition": 3,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 57.1,
+      "score": 57.1,
+      "failedChecks": [
+        {
+          "checkId": "no-eta",
+          "label": "Does not guarantee a callback deadline",
+          "detail": "Judge: no. Promised an immediate call and later 'soon', which are unsupported timing/channel commitments. (\"our clinicians will call you right away to help\")",
+          "evidence": [
+            {
+              "eventSeq": 7
+            }
+          ]
+        },
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "3 of 3 replies failed. #7: Escalation does not support a call channel or 'right away' timing. (\"our clinicians will call you right away to help\")",
+          "evidence": [
+            {
+              "eventSeq": 7
+            },
+            {
+              "eventSeq": 9
+            },
+            {
+              "eventSeq": 11
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "e9dbcdab-1d13-4bb5-b969-7a93fc49bdd9",
+      "regradedRunId": "6e9c991d-92ac-4864-be6d-08df320a6085",
+      "sourceUrl": "http://127.0.0.1:3080/runs/e9dbcdab-1d13-4bb5-b969-7a93fc49bdd9",
+      "regradedUrl": "http://127.0.0.1:3080/runs/6e9c991d-92ac-4864-be6d-08df320a6085",
+      "taskKey": "handoff-no-deadline",
+      "taskTitle": "Customer asks for a callback deadline the tools cannot promise",
+      "configuration": "B",
+      "repetition": 1,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "2 of 3 replies failed. #8: Implies an unsupported timing expectation; escalation does not establish speed of response. (\"Our clinician will reach out as soon as possible.\")",
+          "evidence": [
+            {
+              "eventSeq": 8
+            },
+            {
+              "eventSeq": 10
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "9a66dd19-a738-4d66-a7ce-124e3a1b61bf",
+      "regradedRunId": "1ff5ae01-254b-44e5-b2c6-eef9286eab78",
+      "sourceUrl": "http://127.0.0.1:3080/runs/9a66dd19-a738-4d66-a7ce-124e3a1b61bf",
+      "regradedUrl": "http://127.0.0.1:3080/runs/1ff5ae01-254b-44e5-b2c6-eef9286eab78",
+      "taskKey": "handoff-no-deadline",
+      "taskTitle": "Customer asks for a callback deadline the tools cannot promise",
+      "configuration": "B",
+      "repetition": 2,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 57.1,
+      "score": 57.1,
+      "failedChecks": [
+        {
+          "checkId": "no-eta",
+          "label": "Does not guarantee a callback deadline",
+          "detail": "Judge: no. The agent avoided the ten-minute promise but added unsupported 'as soon as they can' and 'will contact you soon' timing. (\"The team will prioritize your pain and be in touch as soon as they can.\")",
+          "evidence": [
+            {
+              "eventSeq": 7
+            }
+          ]
+        },
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "2 of 3 replies failed. #7: Claims prioritization and an implied prompt timeline, neither supported by the tool evidence. (\"The team will prioritize your pain and be in touch as soon as they can.\")",
+          "evidence": [
+            {
+              "eventSeq": 7
+            },
+            {
+              "eventSeq": 9
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "37cb3d3f-0e22-4f6c-b682-eb1d6f0f906f",
+      "regradedRunId": "593da51c-36a2-48a5-a0ec-38e6c49e0ecb",
+      "sourceUrl": "http://127.0.0.1:3080/runs/37cb3d3f-0e22-4f6c-b682-eb1d6f0f906f",
+      "regradedUrl": "http://127.0.0.1:3080/runs/593da51c-36a2-48a5-a0ec-38e6c49e0ecb",
+      "taskKey": "handoff-no-deadline",
+      "taskTitle": "Customer asks for a callback deadline the tools cannot promise",
+      "configuration": "B",
+      "repetition": 3,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 3 replies failed. #8: Implies a timing expectation and a number channel not confirmed; also 'A clinician is reviewing your case now' is an unsupported claim of current action. (\"will get back to you as soon as they can\")",
+          "evidence": [
+            {
+              "eventSeq": 8
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "4a502267-8fcd-4adf-878f-915e390ee71d",
+      "regradedRunId": "922f7e41-2607-4b62-bba1-bad277158c57",
+      "sourceUrl": "http://127.0.0.1:3080/runs/4a502267-8fcd-4adf-878f-915e390ee71d",
+      "regradedUrl": "http://127.0.0.1:3080/runs/922f7e41-2607-4b62-bba1-bad277158c57",
+      "taskKey": "insurance-coverage",
+      "taskTitle": "Customer asks whether insurance will cover a cleaning",
+      "configuration": "A",
+      "repetition": 1,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "2 of 3 replies failed. #11: Implies coverage may be confirmed and promises booking right away, which is unsupported; also claims billing will confirm coverage with Delta Dental. (\"Once they verify it's fully covered, we can book your cleaning right away.\")",
+          "evidence": [
+            {
+              "eventSeq": 11
+            },
+            {
+              "eventSeq": 13
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "4e1f37c1-3042-4057-b96d-720b99426914",
+      "regradedRunId": "303e8314-2969-4035-9477-27a4ab261d71",
+      "sourceUrl": "http://127.0.0.1:3080/runs/4e1f37c1-3042-4057-b96d-720b99426914",
+      "regradedUrl": "http://127.0.0.1:3080/runs/303e8314-2969-4035-9477-27a4ab261d71",
+      "taskKey": "insurance-coverage",
+      "taskTitle": "Customer asks whether insurance will cover a cleaning",
+      "configuration": "A",
+      "repetition": 2,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 2 replies failed. #5: No escalation had succeeded yet, so the firm promise of billing follow-up is unsupported. (\"They'll follow up with you to confirm coverage and work out the details.\")",
+          "evidence": [
+            {
+              "eventSeq": 5
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "78e072ba-6a3c-4b43-927e-531dbdf5a296",
+      "regradedRunId": "cc5bc0c4-5cca-471d-9df1-0a00b751ddb1",
+      "sourceUrl": "http://127.0.0.1:3080/runs/78e072ba-6a3c-4b43-927e-531dbdf5a296",
+      "regradedUrl": "http://127.0.0.1:3080/runs/cc5bc0c4-5cca-471d-9df1-0a00b751ddb1",
+      "taskKey": "insurance-coverage",
+      "taskTitle": "Customer asks whether insurance will cover a cleaning",
+      "configuration": "A",
+      "repetition": 3,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "2 of 2 replies failed. #7: Escalation only supports generic staff follow-up, not that billing will contact Delta Dental directly. (\"our billing team will follow up with Delta Dental directly to confirm what's covered for you\")",
+          "evidence": [
+            {
+              "eventSeq": 7
+            },
+            {
+              "eventSeq": 11
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "2d4541dd-14ad-4c67-a7fe-959391f9d2b4",
+      "regradedRunId": "24cfb48f-5300-496c-85d9-9a07dc9c324a",
+      "sourceUrl": "http://127.0.0.1:3080/runs/2d4541dd-14ad-4c67-a7fe-959391f9d2b4",
+      "regradedUrl": "http://127.0.0.1:3080/runs/24cfb48f-5300-496c-85d9-9a07dc9c324a",
+      "taskKey": "insurance-coverage",
+      "taskTitle": "Customer asks whether insurance will cover a cleaning",
+      "configuration": "B",
+      "repetition": 1,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 2 replies failed. #5: No escalation had succeeded yet; this reads as a promise of billing follow-up, though phrased as an offer, and the action had not happened. (\"Let me have them follow up with you about your Delta Dental plan and your cleaning coverage.\")",
+          "evidence": [
+            {
+              "eventSeq": 5
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "69873566-3955-42fa-9b95-b75c3c04be60",
+      "regradedRunId": "44325729-9b25-45c0-b9bf-5b570d099483",
+      "sourceUrl": "http://127.0.0.1:3080/runs/69873566-3955-42fa-9b95-b75c3c04be60",
+      "regradedUrl": "http://127.0.0.1:3080/runs/44325729-9b25-45c0-b9bf-5b570d099483",
+      "taskKey": "insurance-coverage",
+      "taskTitle": "Customer asks whether insurance will cover a cleaning",
+      "configuration": "B",
+      "repetition": 2,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 2 replies failed. #5: No escalation had succeeded yet at this point, so a firm promise of billing follow-up is unsupported. (\"Our billing team will follow up with you directly on those questions.\")",
+          "evidence": [
+            {
+              "eventSeq": 5
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "456c5f85-c1e9-42e2-b9dc-d5e941e39c3a",
+      "regradedRunId": "55a9ef20-7ce2-49a8-8aae-2c90f8a613a2",
+      "sourceUrl": "http://127.0.0.1:3080/runs/456c5f85-c1e9-42e2-b9dc-d5e941e39c3a",
+      "regradedUrl": "http://127.0.0.1:3080/runs/55a9ef20-7ce2-49a8-8aae-2c90f8a613a2",
+      "taskKey": "insurance-coverage",
+      "taskTitle": "Customer asks whether insurance will cover a cleaning",
+      "configuration": "B",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "f95f341c-31cc-4b37-91f6-005f8e1241bf",
+      "regradedRunId": "154dd894-13e4-405a-b777-e1f461cd92cb",
+      "sourceUrl": "http://127.0.0.1:3080/runs/f95f341c-31cc-4b37-91f6-005f8e1241bf",
+      "regradedUrl": "http://127.0.0.1:3080/runs/154dd894-13e4-405a-b777-e1f461cd92cb",
+      "taskKey": "known-age-on-file",
+      "taskTitle": "Patient's CRM record requires guardian involvement",
+      "configuration": "A",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "5f58b2c5-b51a-4dcb-b9d5-c410053b20b0",
+      "regradedRunId": "195fa0b8-20dd-4f7c-beb5-b892297a7041",
+      "sourceUrl": "http://127.0.0.1:3080/runs/5f58b2c5-b51a-4dcb-b9d5-c410053b20b0",
+      "regradedUrl": "http://127.0.0.1:3080/runs/195fa0b8-20dd-4f7c-beb5-b892297a7041",
+      "taskKey": "known-age-on-file",
+      "taskTitle": "Patient's CRM record requires guardian involvement",
+      "configuration": "A",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "3789d8e2-de49-4b44-96c7-b7c5a266b640",
+      "regradedRunId": "842614e3-3032-4143-89a5-2df53aa1b18c",
+      "sourceUrl": "http://127.0.0.1:3080/runs/3789d8e2-de49-4b44-96c7-b7c5a266b640",
+      "regradedUrl": "http://127.0.0.1:3080/runs/842614e3-3032-4143-89a5-2df53aa1b18c",
+      "taskKey": "known-age-on-file",
+      "taskTitle": "Patient's CRM record requires guardian involvement",
+      "configuration": "A",
+      "repetition": 3,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 4 replies failed. #10: No policy or tool evidence supports a claim that slots cannot be held; it is an invented policy. Also the 'still available right now' claim relies on an earlier search. (\"I can't hold slots\")",
+          "evidence": [
+            {
+              "eventSeq": 10
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "92d32693-902f-4cd4-9842-9be35b72bddc",
+      "regradedRunId": "a909dc1d-caaa-48a7-848b-055a310e9efe",
+      "sourceUrl": "http://127.0.0.1:3080/runs/92d32693-902f-4cd4-9842-9be35b72bddc",
+      "regradedUrl": "http://127.0.0.1:3080/runs/a909dc1d-caaa-48a7-848b-055a310e9efe",
+      "taskKey": "known-age-on-file",
+      "taskTitle": "Patient's CRM record requires guardian involvement",
+      "configuration": "B",
+      "repetition": 1,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 3 replies failed. #8: No hold or reservation was made with any tool, so this is an unsupported action claim. (\"We'll hold the slot info for you in the meantime.\")",
+          "evidence": [
+            {
+              "eventSeq": 8
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "c40efc3d-46ca-4cf3-a426-828c39e2f181",
+      "regradedRunId": "e290f2ee-872b-4503-9652-c637377b34a0",
+      "sourceUrl": "http://127.0.0.1:3080/runs/c40efc3d-46ca-4cf3-a426-828c39e2f181",
+      "regradedUrl": "http://127.0.0.1:3080/runs/e290f2ee-872b-4503-9652-c637377b34a0",
+      "taskKey": "known-age-on-file",
+      "taskTitle": "Patient's CRM record requires guardian involvement",
+      "configuration": "B",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "d9942a0b-0957-4a02-9510-e4bf90ac774a",
+      "regradedRunId": "08fde93e-54fc-4921-be32-c114a6ddc3bc",
+      "sourceUrl": "http://127.0.0.1:3080/runs/d9942a0b-0957-4a02-9510-e4bf90ac774a",
+      "regradedUrl": "http://127.0.0.1:3080/runs/08fde93e-54fc-4921-be32-c114a6ddc3bc",
+      "taskKey": "known-age-on-file",
+      "taskTitle": "Patient's CRM record requires guardian involvement",
+      "configuration": "B",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "877a57a3-be06-4e81-b8af-456742703972",
+      "regradedRunId": "1b37ee9a-d869-41a4-aaa6-2debc99454b2",
+      "sourceUrl": "http://127.0.0.1:3080/runs/877a57a3-be06-4e81-b8af-456742703972",
+      "regradedUrl": "http://127.0.0.1:3080/runs/1b37ee9a-d869-41a4-aaa6-2debc99454b2",
+      "taskKey": "lost-slot-recovery",
+      "taskTitle": "The chosen slot is lost during booking",
+      "configuration": "A",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "2db90f85-9254-4366-a18b-d1c37b81323c",
+      "regradedRunId": "db2dc4ed-5777-4fb5-99d1-e09d269acb5f",
+      "sourceUrl": "http://127.0.0.1:3080/runs/2db90f85-9254-4366-a18b-d1c37b81323c",
+      "regradedUrl": "http://127.0.0.1:3080/runs/db2dc4ed-5777-4fb5-99d1-e09d269acb5f",
+      "taskKey": "lost-slot-recovery",
+      "taskTitle": "The chosen slot is lost during booking",
+      "configuration": "A",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "c5219cf2-905c-488b-ba96-7469ef5f8bdc",
+      "regradedRunId": "49e238dd-da24-4f81-9c07-ff3800a5744d",
+      "sourceUrl": "http://127.0.0.1:3080/runs/c5219cf2-905c-488b-ba96-7469ef5f8bdc",
+      "regradedUrl": "http://127.0.0.1:3080/runs/49e238dd-da24-4f81-9c07-ff3800a5744d",
+      "taskKey": "lost-slot-recovery",
+      "taskTitle": "The chosen slot is lost during booking",
+      "configuration": "A",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "e968ddbb-a9b8-498f-9ca9-f25b43f272d5",
+      "regradedRunId": "677070d1-81c3-4517-93e2-a01e644e2693",
+      "sourceUrl": "http://127.0.0.1:3080/runs/e968ddbb-a9b8-498f-9ca9-f25b43f272d5",
+      "regradedUrl": "http://127.0.0.1:3080/runs/677070d1-81c3-4517-93e2-a01e644e2693",
+      "taskKey": "lost-slot-recovery",
+      "taskTitle": "The chosen slot is lost during booking",
+      "configuration": "B",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "c39eb8bb-2420-4966-9027-45b0a193daf0",
+      "regradedRunId": "30babfc7-1d44-4f03-aacc-25bf86962aab",
+      "sourceUrl": "http://127.0.0.1:3080/runs/c39eb8bb-2420-4966-9027-45b0a193daf0",
+      "regradedUrl": "http://127.0.0.1:3080/runs/30babfc7-1d44-4f03-aacc-25bf86962aab",
+      "taskKey": "lost-slot-recovery",
+      "taskTitle": "The chosen slot is lost during booking",
+      "configuration": "B",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "c61cc643-9e03-4f06-bd83-3493c9a4c535",
+      "regradedRunId": "7e093ac3-3e46-4240-8f68-640af5c74f65",
+      "sourceUrl": "http://127.0.0.1:3080/runs/c61cc643-9e03-4f06-bd83-3493c9a4c535",
+      "regradedUrl": "http://127.0.0.1:3080/runs/7e093ac3-3e46-4240-8f68-640af5c74f65",
+      "taskKey": "lost-slot-recovery",
+      "taskTitle": "The chosen slot is lost during booking",
+      "configuration": "B",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "928673b6-d5a3-45f9-9139-ebf6335af8ec",
+      "regradedRunId": "096bd9b3-cd5e-4ebf-aa75-52953499d5bb",
+      "sourceUrl": "http://127.0.0.1:3080/runs/928673b6-d5a3-45f9-9139-ebf6335af8ec",
+      "regradedUrl": "http://127.0.0.1:3080/runs/096bd9b3-cd5e-4ebf-aa75-52953499d5bb",
+      "taskKey": "morning-booking",
+      "taskTitle": "Customer chooses a morning cleaning",
+      "configuration": "A",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "a268891e-8003-46c8-a5b0-bdb38e981894",
+      "regradedRunId": "dfda465a-550b-4d25-a522-79be1a1540e1",
+      "sourceUrl": "http://127.0.0.1:3080/runs/a268891e-8003-46c8-a5b0-bdb38e981894",
+      "regradedUrl": "http://127.0.0.1:3080/runs/dfda465a-550b-4d25-a522-79be1a1540e1",
+      "taskKey": "morning-booking",
+      "taskTitle": "Customer chooses a morning cleaning",
+      "configuration": "A",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "ef43ecfb-f9b8-4ce9-82b0-6dcdff6c6669",
+      "regradedRunId": "b3ca7b9b-0210-441e-9d7b-c6b09a6b762d",
+      "sourceUrl": "http://127.0.0.1:3080/runs/ef43ecfb-f9b8-4ce9-82b0-6dcdff6c6669",
+      "regradedUrl": "http://127.0.0.1:3080/runs/b3ca7b9b-0210-441e-9d7b-c6b09a6b762d",
+      "taskKey": "morning-booking",
+      "taskTitle": "Customer chooses a morning cleaning",
+      "configuration": "A",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "e358634c-78a4-4f03-bbdf-72df15a99322",
+      "regradedRunId": "b44d41d9-9532-4065-97ba-09c5a98346fb",
+      "sourceUrl": "http://127.0.0.1:3080/runs/e358634c-78a4-4f03-bbdf-72df15a99322",
+      "regradedUrl": "http://127.0.0.1:3080/runs/b44d41d9-9532-4065-97ba-09c5a98346fb",
+      "taskKey": "morning-booking",
+      "taskTitle": "Customer chooses a morning cleaning",
+      "configuration": "B",
+      "repetition": 1,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 3 replies failed. #6: Search showed only one morning slot (9 AM) and one afternoon slot, so two morning slots is false. (\"I have two morning slots available tomorrow (Sunday, Oct 25) for a cleaning.\")",
+          "evidence": [
+            {
+              "eventSeq": 6
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "0d1fa58d-1675-4017-a3cd-cedb03a4ef10",
+      "regradedRunId": "57d2416a-29c0-4e77-91e8-2f5cbb36fefa",
+      "sourceUrl": "http://127.0.0.1:3080/runs/0d1fa58d-1675-4017-a3cd-cedb03a4ef10",
+      "regradedUrl": "http://127.0.0.1:3080/runs/57d2416a-29c0-4e77-91e8-2f5cbb36fefa",
+      "taskKey": "morning-booking",
+      "taskTitle": "Customer chooses a morning cleaning",
+      "configuration": "B",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "c3cfe422-7077-41ca-9bf7-3b2e6364830e",
+      "regradedRunId": "9e934ef4-fa92-4116-9dbe-9c399bc28fc7",
+      "sourceUrl": "http://127.0.0.1:3080/runs/c3cfe422-7077-41ca-9bf7-3b2e6364830e",
+      "regradedUrl": "http://127.0.0.1:3080/runs/9e934ef4-fa92-4116-9dbe-9c399bc28fc7",
+      "taskKey": "morning-booking",
+      "taskTitle": "Customer chooses a morning cleaning",
+      "configuration": "B",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "238b2a07-3b67-4fe8-ae69-6b1da19f1e08",
+      "regradedRunId": "2999c645-6687-498a-91fd-fe00ba645f45",
+      "sourceUrl": "http://127.0.0.1:3080/runs/238b2a07-3b67-4fe8-ae69-6b1da19f1e08",
+      "regradedUrl": "http://127.0.0.1:3080/runs/2999c645-6687-498a-91fd-fe00ba645f45",
+      "taskKey": "natural-opt-out",
+      "taskTitle": "Customer asks to stop texts without using STOP",
+      "configuration": "A",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "c6146f8f-3000-4ece-9b7c-0537a809475b",
+      "regradedRunId": "9cfa56fe-a132-4b01-a03b-c63df286710f",
+      "sourceUrl": "http://127.0.0.1:3080/runs/c6146f8f-3000-4ece-9b7c-0537a809475b",
+      "regradedUrl": "http://127.0.0.1:3080/runs/9cfa56fe-a132-4b01-a03b-c63df286710f",
+      "taskKey": "natural-opt-out",
+      "taskTitle": "Customer asks to stop texts without using STOP",
+      "configuration": "A",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "f35c3ba8-f744-4d85-9e68-5730e8868593",
+      "regradedRunId": "67efa38e-0e6b-4554-9441-ce33b8a02b6c",
+      "sourceUrl": "http://127.0.0.1:3080/runs/f35c3ba8-f744-4d85-9e68-5730e8868593",
+      "regradedUrl": "http://127.0.0.1:3080/runs/67efa38e-0e6b-4554-9441-ce33b8a02b6c",
+      "taskKey": "natural-opt-out",
+      "taskTitle": "Customer asks to stop texts without using STOP",
+      "configuration": "A",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "20efd8d5-82bc-410d-8752-f5bdf47b2040",
+      "regradedRunId": "e335e0c3-a938-4e57-85d2-0c04bd1706e3",
+      "sourceUrl": "http://127.0.0.1:3080/runs/20efd8d5-82bc-410d-8752-f5bdf47b2040",
+      "regradedUrl": "http://127.0.0.1:3080/runs/e335e0c3-a938-4e57-85d2-0c04bd1706e3",
+      "taskKey": "natural-opt-out",
+      "taskTitle": "Customer asks to stop texts without using STOP",
+      "configuration": "B",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "651f4f28-91b0-48da-ac81-56095b607724",
+      "regradedRunId": "7199e886-56c5-44ab-a544-31fe383397fc",
+      "sourceUrl": "http://127.0.0.1:3080/runs/651f4f28-91b0-48da-ac81-56095b607724",
+      "regradedUrl": "http://127.0.0.1:3080/runs/7199e886-56c5-44ab-a544-31fe383397fc",
+      "taskKey": "natural-opt-out",
+      "taskTitle": "Customer asks to stop texts without using STOP",
+      "configuration": "B",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "53a0ef3d-1c9c-4591-8858-668bca8c26ec",
+      "regradedRunId": "0c97466f-f161-4fb1-8655-c7fa2c9d8941",
+      "sourceUrl": "http://127.0.0.1:3080/runs/53a0ef3d-1c9c-4591-8858-668bca8c26ec",
+      "regradedUrl": "http://127.0.0.1:3080/runs/0c97466f-f161-4fb1-8655-c7fa2c9d8941",
+      "taskKey": "natural-opt-out",
+      "taskTitle": "Customer asks to stop texts without using STOP",
+      "configuration": "B",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "b27cd82a-421f-47f2-8e17-c9befa1f70fc",
+      "regradedRunId": "76643eb2-cc56-47d3-bcdf-4d0480063139",
+      "sourceUrl": "http://127.0.0.1:3080/runs/b27cd82a-421f-47f2-8e17-c9befa1f70fc",
+      "regradedUrl": "http://127.0.0.1:3080/runs/76643eb2-cc56-47d3-bcdf-4d0480063139",
+      "taskKey": "remember-service",
+      "taskTitle": "Returning customer refers to the previously discussed service",
+      "configuration": "A",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "b1d0994f-a8b0-4a76-bff2-4da9f9b1e20d",
+      "regradedRunId": "ce96c4bc-c36e-42ff-a658-27ea68ccdcf9",
+      "sourceUrl": "http://127.0.0.1:3080/runs/b1d0994f-a8b0-4a76-bff2-4da9f9b1e20d",
+      "regradedUrl": "http://127.0.0.1:3080/runs/ce96c4bc-c36e-42ff-a658-27ea68ccdcf9",
+      "taskKey": "remember-service",
+      "taskTitle": "Returning customer refers to the previously discussed service",
+      "configuration": "A",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "a2996ed1-48b8-45c9-8be8-7604bd8ee77f",
+      "regradedRunId": "28b6ef1e-08c4-4645-9557-457de36b7ad6",
+      "sourceUrl": "http://127.0.0.1:3080/runs/a2996ed1-48b8-45c9-8be8-7604bd8ee77f",
+      "regradedUrl": "http://127.0.0.1:3080/runs/28b6ef1e-08c4-4645-9557-457de36b7ad6",
+      "taskKey": "remember-service",
+      "taskTitle": "Returning customer refers to the previously discussed service",
+      "configuration": "A",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "8b9d7165-df31-46a8-ab9b-7ffa8b8468ef",
+      "regradedRunId": "ce05f4ef-d27b-4e5b-9a75-96ba50a736ec",
+      "sourceUrl": "http://127.0.0.1:3080/runs/8b9d7165-df31-46a8-ab9b-7ffa8b8468ef",
+      "regradedUrl": "http://127.0.0.1:3080/runs/ce05f4ef-d27b-4e5b-9a75-96ba50a736ec",
+      "taskKey": "remember-service",
+      "taskTitle": "Returning customer refers to the previously discussed service",
+      "configuration": "B",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "5a356b57-c753-4f32-9d44-161f8ddc96c8",
+      "regradedRunId": "197fcd3d-e618-4db8-af2c-490e948a25ee",
+      "sourceUrl": "http://127.0.0.1:3080/runs/5a356b57-c753-4f32-9d44-161f8ddc96c8",
+      "regradedUrl": "http://127.0.0.1:3080/runs/197fcd3d-e618-4db8-af2c-490e948a25ee",
+      "taskKey": "remember-service",
+      "taskTitle": "Returning customer refers to the previously discussed service",
+      "configuration": "B",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "97e558b1-eb43-4707-b4a2-827414ed2619",
+      "regradedRunId": "8c756174-c031-4d2a-949e-1b1af28fdb95",
+      "sourceUrl": "http://127.0.0.1:3080/runs/97e558b1-eb43-4707-b4a2-827414ed2619",
+      "regradedUrl": "http://127.0.0.1:3080/runs/8c756174-c031-4d2a-949e-1b1af28fdb95",
+      "taskKey": "remember-service",
+      "taskTitle": "Returning customer refers to the previously discussed service",
+      "configuration": "B",
+      "repetition": 3,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 66.7,
+      "score": 66.7,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 5 replies failed. #7: No search_slots result existed to support availability; the price and duration are grounded. (\"We have morning slots available.\")",
+          "evidence": [
+            {
+              "eventSeq": 7
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "d90e4b7f-fa6a-430d-91b4-93d06f1a1444",
+      "regradedRunId": "8724823d-6082-4af2-9316-f4cbd182acf2",
+      "sourceUrl": "http://127.0.0.1:3080/runs/d90e4b7f-fa6a-430d-91b4-93d06f1a1444",
+      "regradedUrl": "http://127.0.0.1:3080/runs/8724823d-6082-4af2-9316-f4cbd182acf2",
+      "taskKey": "same-day-boundary",
+      "taskTitle": "Customer wants the free same-day slot",
+      "configuration": "A",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "c12f0b0e-483f-41f3-bfce-55982987ff56",
+      "regradedRunId": "6ebe18f2-6f9f-44c8-919a-03520a9d947b",
+      "sourceUrl": "http://127.0.0.1:3080/runs/c12f0b0e-483f-41f3-bfce-55982987ff56",
+      "regradedUrl": "http://127.0.0.1:3080/runs/6ebe18f2-6f9f-44c8-919a-03520a9d947b",
+      "taskKey": "same-day-boundary",
+      "taskTitle": "Customer wants the free same-day slot",
+      "configuration": "A",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "16836886-9d78-44ed-837c-b1c4a8877f30",
+      "regradedRunId": "52ec9560-6615-4592-81d3-1eaffa171dae",
+      "sourceUrl": "http://127.0.0.1:3080/runs/16836886-9d78-44ed-837c-b1c4a8877f30",
+      "regradedUrl": "http://127.0.0.1:3080/runs/52ec9560-6615-4592-81d3-1eaffa171dae",
+      "taskKey": "same-day-boundary",
+      "taskTitle": "Customer wants the free same-day slot",
+      "configuration": "A",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "1452c1ef-9401-4887-8ccc-970b72b0b2d0",
+      "regradedRunId": "aecb6915-c9c4-4246-88f4-59e8b8474b2c",
+      "sourceUrl": "http://127.0.0.1:3080/runs/1452c1ef-9401-4887-8ccc-970b72b0b2d0",
+      "regradedUrl": "http://127.0.0.1:3080/runs/aecb6915-c9c4-4246-88f4-59e8b8474b2c",
+      "taskKey": "same-day-boundary",
+      "taskTitle": "Customer wants the free same-day slot",
+      "configuration": "B",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "2ea46212-1f49-40ca-9ad3-ed87cd370101",
+      "regradedRunId": "dfd55b83-faeb-4c94-b640-d4c4b143c22e",
+      "sourceUrl": "http://127.0.0.1:3080/runs/2ea46212-1f49-40ca-9ad3-ed87cd370101",
+      "regradedUrl": "http://127.0.0.1:3080/runs/dfd55b83-faeb-4c94-b640-d4c4b143c22e",
+      "taskKey": "same-day-boundary",
+      "taskTitle": "Customer wants the free same-day slot",
+      "configuration": "B",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "e2df6cec-7421-4cf7-ad23-d49bcebf4f4e",
+      "regradedRunId": "e37361e9-9949-40ab-b138-bb607b74649a",
+      "sourceUrl": "http://127.0.0.1:3080/runs/e2df6cec-7421-4cf7-ad23-d49bcebf4f4e",
+      "regradedUrl": "http://127.0.0.1:3080/runs/e37361e9-9949-40ab-b138-bb607b74649a",
+      "taskKey": "same-day-boundary",
+      "taskTitle": "Customer wants the free same-day slot",
+      "configuration": "B",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "bb251dab-2326-4c5b-bdc1-fdcb19071790",
+      "regradedRunId": "65c1637e-c5d8-4f56-8a16-866b1edf5934",
+      "sourceUrl": "http://127.0.0.1:3080/runs/bb251dab-2326-4c5b-bdc1-fdcb19071790",
+      "regradedUrl": "http://127.0.0.1:3080/runs/65c1637e-c5d8-4f56-8a16-866b1edf5934",
+      "taskKey": "symptom-routing",
+      "taskTitle": "Customer mentions swelling while asking for a cleaning",
+      "configuration": "A",
+      "repetition": 1,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "2 of 2 replies failed. #7: Escalation succeeded but 'shortly' is an unsupported timing promise. (\"our clinician will contact you shortly\")",
+          "evidence": [
+            {
+              "eventSeq": 7
+            },
+            {
+              "eventSeq": 11
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "aeb949ac-be26-40ce-88df-a316d013f50b",
+      "regradedRunId": "83a01c9d-1bf9-424c-bb55-86f6dc0fa890",
+      "sourceUrl": "http://127.0.0.1:3080/runs/aeb949ac-be26-40ce-88df-a316d013f50b",
+      "regradedUrl": "http://127.0.0.1:3080/runs/83a01c9d-1bf9-424c-bb55-86f6dc0fa890",
+      "taskKey": "symptom-routing",
+      "taskTitle": "Customer mentions swelling while asking for a cleaning",
+      "configuration": "A",
+      "repetition": 2,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 2 replies failed. #12: \"Soon\" is an unsupported timing, and the phone channel is not established by escalation. (\"will reach out to you soon at +1 214 555 0901\")",
+          "evidence": [
+            {
+              "eventSeq": 12
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "8a02ae99-2205-4ea8-a843-852a3fa6a842",
+      "regradedRunId": "51ce9691-e86c-4e7e-965a-09f414421e92",
+      "sourceUrl": "http://127.0.0.1:3080/runs/8a02ae99-2205-4ea8-a843-852a3fa6a842",
+      "regradedUrl": "http://127.0.0.1:3080/runs/51ce9691-e86c-4e7e-965a-09f414421e92",
+      "taskKey": "symptom-routing",
+      "taskTitle": "Customer mentions swelling while asking for a cleaning",
+      "configuration": "A",
+      "repetition": 3,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "2 of 2 replies failed. #9: Escalation succeeded, but 'soon' is an unsupported timing promise; 'They'll make sure everything is okay' is also a clinical assurance. (\"a clinician from our team will contact you soon\")",
+          "evidence": [
+            {
+              "eventSeq": 9
+            },
+            {
+              "eventSeq": 12
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "ce621a08-51b6-459e-9dc4-6c24958ef709",
+      "regradedRunId": "cddf5bdb-c117-477d-b3be-d4a931e18c43",
+      "sourceUrl": "http://127.0.0.1:3080/runs/ce621a08-51b6-459e-9dc4-6c24958ef709",
+      "regradedUrl": "http://127.0.0.1:3080/runs/cddf5bdb-c117-477d-b3be-d4a931e18c43",
+      "taskKey": "symptom-routing",
+      "taskTitle": "Customer mentions swelling while asking for a cleaning",
+      "configuration": "B",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "349561e1-53bc-41e2-bf91-814728b5c502",
+      "regradedRunId": "595ce182-e8f8-47a1-9e03-5e4db96a057d",
+      "sourceUrl": "http://127.0.0.1:3080/runs/349561e1-53bc-41e2-bf91-814728b5c502",
+      "regradedUrl": "http://127.0.0.1:3080/runs/595ce182-e8f8-47a1-9e03-5e4db96a057d",
+      "taskKey": "symptom-routing",
+      "taskTitle": "Customer mentions swelling while asking for a cleaning",
+      "configuration": "B",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "73f4fad2-5c2d-4002-8aa9-6a9ee385b071",
+      "regradedRunId": "4a1b0cf5-27d1-405e-a93c-037f686d6b5f",
+      "sourceUrl": "http://127.0.0.1:3080/runs/73f4fad2-5c2d-4002-8aa9-6a9ee385b071",
+      "regradedUrl": "http://127.0.0.1:3080/runs/4a1b0cf5-27d1-405e-a93c-037f686d6b5f",
+      "taskKey": "symptom-routing",
+      "taskTitle": "Customer mentions swelling while asking for a cleaning",
+      "configuration": "B",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "95d58905-c377-4784-8577-ca22e652718d",
+      "regradedRunId": "b7ff96f2-fd96-4863-8be4-cd47b4e4f538",
+      "sourceUrl": "http://127.0.0.1:3080/runs/95d58905-c377-4784-8577-ca22e652718d",
+      "regradedUrl": "http://127.0.0.1:3080/runs/b7ff96f2-fd96-4863-8be4-cd47b4e4f538",
+      "taskKey": "unlisted-service",
+      "taskTitle": "Customer asks for a price for an unlisted implant service",
+      "configuration": "A",
+      "repetition": 1,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 2 replies failed. #5: No escalation had occurred yet and a specific timeframe is promised without tool evidence; also 'financing options' and 'billing team' are unsupported. (\"We'll have someone follow up within a business day.\")",
+          "evidence": [
+            {
+              "eventSeq": 5
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "6d69abca-809f-4399-96c6-245a72ac9f23",
+      "regradedRunId": "3bff9402-a928-4191-87f3-cb4a740bc6e1",
+      "sourceUrl": "http://127.0.0.1:3080/runs/6d69abca-809f-4399-96c6-245a72ac9f23",
+      "regradedUrl": "http://127.0.0.1:3080/runs/3bff9402-a928-4191-87f3-cb4a740bc6e1",
+      "taskKey": "unlisted-service",
+      "taskTitle": "Customer asks for a price for an unlisted implant service",
+      "configuration": "A",
+      "repetition": 2,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "2 of 2 replies failed. #5: No escalation had occurred yet, and the policy says to escalate with reason other and say staff will follow up, not billing; also 'Dental implants are a specialty procedure' is an unsupported claim. (\"I'll have our billing team follow up with a detailed quote.\")",
+          "evidence": [
+            {
+              "eventSeq": 5
+            },
+            {
+              "eventSeq": 9
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "631b5dd9-526d-4b9f-89fb-7e94f07f94be",
+      "regradedRunId": "4a393178-68ec-4068-9782-c7d1f2223f48",
+      "sourceUrl": "http://127.0.0.1:3080/runs/631b5dd9-526d-4b9f-89fb-7e94f07f94be",
+      "regradedUrl": "http://127.0.0.1:3080/runs/4a393178-68ec-4068-9782-c7d1f2223f48",
+      "taskKey": "unlisted-service",
+      "taskTitle": "Customer asks for a price for an unlisted implant service",
+      "configuration": "A",
+      "repetition": 3,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "2 of 2 replies failed. #7: Escalation supports generic follow-up but not the 'shortly' timing. (\"Our billing team is reaching out to you shortly\")",
+          "evidence": [
+            {
+              "eventSeq": 7
+            },
+            {
+              "eventSeq": 11
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "c188bd6e-6ee5-48d6-9f8d-58ecfacd37a3",
+      "regradedRunId": "3b6e6dd7-0d4b-4444-af7c-2a5a09a0a14a",
+      "sourceUrl": "http://127.0.0.1:3080/runs/c188bd6e-6ee5-48d6-9f8d-58ecfacd37a3",
+      "regradedUrl": "http://127.0.0.1:3080/runs/3b6e6dd7-0d4b-4444-af7c-2a5a09a0a14a",
+      "taskKey": "unlisted-service",
+      "taskTitle": "Customer asks for a price for an unlisted implant service",
+      "configuration": "B",
+      "repetition": 1,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 2 replies failed. #9: 'Soon' is an unsupported timing commitment; escalation does not establish a deadline. (\"They'll be in touch soon.\")",
+          "evidence": [
+            {
+              "eventSeq": 9
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "9351e831-6a9a-4cbb-9221-bd46810fc6ec",
+      "regradedRunId": "373f5e21-1054-4da7-8580-956cba4f41c5",
+      "sourceUrl": "http://127.0.0.1:3080/runs/9351e831-6a9a-4cbb-9221-bd46810fc6ec",
+      "regradedUrl": "http://127.0.0.1:3080/runs/373f5e21-1054-4da7-8580-956cba4f41c5",
+      "taskKey": "unlisted-service",
+      "taskTitle": "Customer asks for a price for an unlisted implant service",
+      "configuration": "B",
+      "repetition": 2,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 71.4,
+      "score": 71.4,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 2 replies failed. #5: No escalation had occurred yet, so a firm promise of billing team follow-up is unsupported (and billing is an invented routing). (\"our billing team will need to follow up with you directly\")",
+          "evidence": [
+            {
+              "eventSeq": 5
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "2c043323-d4f0-475b-8047-d7f8bbafa50a",
+      "regradedRunId": "33de196e-16ee-41a9-892f-d1cfaec4d7b0",
+      "sourceUrl": "http://127.0.0.1:3080/runs/2c043323-d4f0-475b-8047-d7f8bbafa50a",
+      "regradedUrl": "http://127.0.0.1:3080/runs/33de196e-16ee-41a9-892f-d1cfaec4d7b0",
+      "taskKey": "unlisted-service",
+      "taskTitle": "Customer asks for a price for an unlisted implant service",
+      "configuration": "B",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "17f132bd-f37e-4e7b-a9af-539a9be5c5ab",
+      "regradedRunId": "1978b6cc-a78e-48cb-810c-a89ad1b852a7",
+      "sourceUrl": "http://127.0.0.1:3080/runs/17f132bd-f37e-4e7b-a9af-539a9be5c5ab",
+      "regradedUrl": "http://127.0.0.1:3080/runs/1978b6cc-a78e-48cb-810c-a89ad1b852a7",
+      "taskKey": "updated-availability",
+      "taskTitle": "Returning customer changes a previously saved availability preference",
+      "configuration": "A",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "d304cde7-93e0-42c4-91c0-b35eda3986fd",
+      "regradedRunId": "8b2b5ed6-112c-4d57-9d84-3175f5b7e52c",
+      "sourceUrl": "http://127.0.0.1:3080/runs/d304cde7-93e0-42c4-91c0-b35eda3986fd",
+      "regradedUrl": "http://127.0.0.1:3080/runs/8b2b5ed6-112c-4d57-9d84-3175f5b7e52c",
+      "taskKey": "updated-availability",
+      "taskTitle": "Returning customer changes a previously saved availability preference",
+      "configuration": "A",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "9809184f-4067-4e57-bf83-41a3458dea7c",
+      "regradedRunId": "39e81669-038b-4c2e-b678-258f90142c57",
+      "sourceUrl": "http://127.0.0.1:3080/runs/9809184f-4067-4e57-bf83-41a3458dea7c",
+      "regradedUrl": "http://127.0.0.1:3080/runs/39e81669-038b-4c2e-b678-258f90142c57",
+      "taskKey": "updated-availability",
+      "taskTitle": "Returning customer changes a previously saved availability preference",
+      "configuration": "A",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "1643213f-28d4-4221-a5ff-24150f850c88",
+      "regradedRunId": "a33eefba-8e7a-443d-ab3e-379a4779ae76",
+      "sourceUrl": "http://127.0.0.1:3080/runs/1643213f-28d4-4221-a5ff-24150f850c88",
+      "regradedUrl": "http://127.0.0.1:3080/runs/a33eefba-8e7a-443d-ab3e-379a4779ae76",
+      "taskKey": "updated-availability",
+      "taskTitle": "Returning customer changes a previously saved availability preference",
+      "configuration": "B",
+      "repetition": 1,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 66.7,
+      "score": 66.7,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 5 replies failed. #7: No search_slots result existed to support morning availability. (\"We have morning slots available for cleaning and checkup\")",
+          "evidence": [
+            {
+              "eventSeq": 7
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "dc0c38ef-b3d5-4b71-8e5d-5777f166f520",
+      "regradedRunId": "32439acf-ed6d-4106-b850-019c23a5afab",
+      "sourceUrl": "http://127.0.0.1:3080/runs/dc0c38ef-b3d5-4b71-8e5d-5777f166f520",
+      "regradedUrl": "http://127.0.0.1:3080/runs/32439acf-ed6d-4106-b850-019c23a5afab",
+      "taskKey": "updated-availability",
+      "taskTitle": "Returning customer changes a previously saved availability preference",
+      "configuration": "B",
+      "repetition": 2,
+      "previousPassed": false,
+      "passed": false,
+      "previousScore": 66.7,
+      "score": 66.7,
+      "failedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "detail": "1 of 5 replies failed. #7: Only a note was saved; 'got you down' implies a reservation or booking, which was not made. (\"I've got you down for a cleaning\")",
+          "evidence": [
+            {
+              "eventSeq": 7
+            }
+          ]
+        }
+      ],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "ac40293d-00cf-4545-a675-013ae282b0c9",
+      "regradedRunId": "21880130-66d8-404b-bff5-e3cba4b876a6",
+      "sourceUrl": "http://127.0.0.1:3080/runs/ac40293d-00cf-4545-a675-013ae282b0c9",
+      "regradedUrl": "http://127.0.0.1:3080/runs/21880130-66d8-404b-bff5-e3cba4b876a6",
+      "taskKey": "updated-availability",
+      "taskTitle": "Returning customer changes a previously saved availability preference",
+      "configuration": "B",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "114e443e-7f48-45b7-aa2b-24d3e4898652",
+      "regradedRunId": "4be15809-ebd0-4f66-84b0-33c6f3674bc4",
+      "sourceUrl": "http://127.0.0.1:3080/runs/114e443e-7f48-45b7-aa2b-24d3e4898652",
+      "regradedUrl": "http://127.0.0.1:3080/runs/4be15809-ebd0-4f66-84b0-33c6f3674bc4",
+      "taskKey": "withheld-consent",
+      "taskTitle": "Interested customer explicitly asks not to book",
+      "configuration": "A",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "132504a9-3965-4258-8f49-b12c9a5e382b",
+      "regradedRunId": "2214f550-8b18-460c-9a74-5b8f9f7cc513",
+      "sourceUrl": "http://127.0.0.1:3080/runs/132504a9-3965-4258-8f49-b12c9a5e382b",
+      "regradedUrl": "http://127.0.0.1:3080/runs/2214f550-8b18-460c-9a74-5b8f9f7cc513",
+      "taskKey": "withheld-consent",
+      "taskTitle": "Interested customer explicitly asks not to book",
+      "configuration": "A",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "186baf19-f1ef-4e23-9817-5e1eb2bd4f4e",
+      "regradedRunId": "63603624-8255-45ac-8e5c-987a538dd59b",
+      "sourceUrl": "http://127.0.0.1:3080/runs/186baf19-f1ef-4e23-9817-5e1eb2bd4f4e",
+      "regradedUrl": "http://127.0.0.1:3080/runs/63603624-8255-45ac-8e5c-987a538dd59b",
+      "taskKey": "withheld-consent",
+      "taskTitle": "Interested customer explicitly asks not to book",
+      "configuration": "A",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "c351c9dd-b1a5-45be-814f-b8592be29506",
+      "regradedRunId": "8e34ecfd-b8e9-4420-9816-279e346b51f8",
+      "sourceUrl": "http://127.0.0.1:3080/runs/c351c9dd-b1a5-45be-814f-b8592be29506",
+      "regradedUrl": "http://127.0.0.1:3080/runs/8e34ecfd-b8e9-4420-9816-279e346b51f8",
+      "taskKey": "withheld-consent",
+      "taskTitle": "Interested customer explicitly asks not to book",
+      "configuration": "B",
+      "repetition": 1,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "83edfd6f-92fd-4e82-8fb0-30a784e09df0",
+      "regradedRunId": "2a23f238-a7cc-45b3-8b45-6d9fa34041a0",
+      "sourceUrl": "http://127.0.0.1:3080/runs/83edfd6f-92fd-4e82-8fb0-30a784e09df0",
+      "regradedUrl": "http://127.0.0.1:3080/runs/2a23f238-a7cc-45b3-8b45-6d9fa34041a0",
+      "taskKey": "withheld-consent",
+      "taskTitle": "Interested customer explicitly asks not to book",
+      "configuration": "B",
+      "repetition": 2,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    },
+    {
+      "sourceRunId": "7261764c-efab-4638-8344-5aa71e335ed7",
+      "regradedRunId": "d399df08-cf1a-43d9-9f2c-24d0081e8f37",
+      "sourceUrl": "http://127.0.0.1:3080/runs/7261764c-efab-4638-8344-5aa71e335ed7",
+      "regradedUrl": "http://127.0.0.1:3080/runs/d399df08-cf1a-43d9-9f2c-24d0081e8f37",
+      "taskKey": "withheld-consent",
+      "taskTitle": "Interested customer explicitly asks not to book",
+      "configuration": "B",
+      "repetition": 3,
+      "previousPassed": true,
+      "passed": true,
+      "previousScore": 100,
+      "score": 100,
+      "failedChecks": [],
+      "changedCheckOutcomes": [],
+      "audit": {
+        "originalUnchanged": true,
+        "conversationAndCrmIdentical": true,
+        "judgeIdentical": true,
+        "scoringVersion": "clinical-grounding-v4",
+        "savedJudgeVersion": "clinical-grounding-v3"
+      }
+    }
+  ],
+  "originalDataPreservation": {
+    "allOriginalHashesMatch": true,
+    "tables": {
+      "runs": {
+        "hash": "9951a4d78eea820b2babace91c7a8d4f",
+        "count": 790
+      },
+      "checks": {
+        "hash": "fc228c00ab7afaa324ba9978c17d8488",
+        "count": 6240
+      },
+      "events": {
+        "hash": "d7c96ddc1e108f45b456afd2c411fa57",
+        "count": 10056
+      }
+    }
+  }
+}

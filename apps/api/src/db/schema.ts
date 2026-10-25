@@ -152,6 +152,8 @@ export const checkResults = pgTable(
     weight: real().notNull(),
     critical: boolean().notNull(),
     passed: boolean().notNull(),
+    skipped: boolean().notNull().default(false),
+    informational: boolean().notNull().default(false),
     detail: text().notNull(),
     /** Pointers into the run: [{eventSeq?, statePath?}]. */
     evidence: jsonb().notNull().default([]),

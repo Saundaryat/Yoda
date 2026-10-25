@@ -1,0 +1,2761 @@
+{
+  "humanReview": {
+    "findings": [
+      {
+        "runId": "e89ca212-1608-4c0c-9d13-e0df72281495",
+        "task": "unlisted-service",
+        "repetition": 1,
+        "savedPassed": true,
+        "eventSeqs": [
+          5,
+          7
+        ],
+        "concern": "Saved pass promises right pricing info / implant pricing after escalation; repetition 2 fails for full pricing details. Review consistency of this outcome guarantee.",
+        "manualOverrideApplied": false
+      },
+      {
+        "runId": "cb11df95-2198-4251-b926-e7786e34d2c6",
+        "task": "known-age-on-file",
+        "repetition": 2,
+        "savedPassed": false,
+        "eventSeqs": [
+          7
+        ],
+        "concern": "Grader calls conditional reserved-for-you wording borderline; its additional objection to calling the clinic conflicts with the preloaded guardian policy. Retain the failed grade pending human review.",
+        "manualOverrideApplied": false
+      }
+    ],
+    "conservativeSensitivity": {
+      "assumption": "Post-hoc sensitivity only: count the questionable B unlisted-service repetition 1 pass as failed; keep every other published grade including the borderline failed guardian reply unchanged. Not a regrade or saved result.",
+      "comparison": {
+        "comparisonVersion": "paired-task-bootstrap-v2",
+        "complete": true,
+        "difference": 0.3,
+        "ci": [
+          0.11666666666666667,
+          0.5
+        ],
+        "passRateA": 0.6333333333333334,
+        "passRateB": 0.9333333333333333,
+        "pairedTasks": 20,
+        "plannedTasks": 20,
+        "wins": 8,
+        "losses": 0,
+        "signTestP": 0.007812500000000002,
+        "minimumDetectable": 0.2613684186974349,
+        "practicalMargin": 0.1,
+        "verdict": "better"
+      }
+    }
+  },
+  "infrastructureRetries": [
+    {
+      "at": "2026-10-25T17:13:25.160Z",
+      "reason": "Invalid judge output enum after automatic retries; no valid behavioral grade exists. Existing retry-errors endpoint reruns the affected execution from scratch. No scored run retried.",
+      "before": [
+        {
+          "run": {
+            "id": "dfbd09c2-b8e6-4f43-b174-18ecf0e7aece",
+            "experimentId": "bc07fddb-0b09-4103-9fea-cb6263028f6f",
+            "taskId": "39c5ec21-7f53-46ff-a822-07813a5d075e",
+            "configId": "8b643dae-8a4c-4e02-b4f2-8fbdb2a28ef6",
+            "repetition": 3,
+            "position": 95,
+            "status": "error",
+            "availableAt": "2026-10-25T17:11:13.403Z",
+            "attempts": 3,
+            "attemptLog": [
+              {
+                "at": "2026-10-25T17:10:18.448Z",
+                "kind": "provider_error",
+                "detail": "LLM judge: Failed to parse structured output: Error: Failed to parse structured output: [\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"booked\",\n      \"escalated\",\n      \"opted_out\",\n      \"waiting_on_lead\",\n      \"declined\",\n      \"unresolved\"\n    ],\n    \"path\": [\n      \"outcome\",\n      \"label\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"booked\\\"|\\\"escalated\\\"|\\\"opted_out\\\"|\\\"waiting_on_lead\\\"|\\\"declined\\\"|\\\"unresolved\\\"\"\n  }\n] cause: [object Object]",
+                "attempt": 1
+              },
+              {
+                "at": "2026-10-25T17:11:03.393Z",
+                "kind": "provider_error",
+                "detail": "LLM judge: Failed to parse structured output: Error: Failed to parse structured output: [\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"booked\",\n      \"escalated\",\n      \"opted_out\",\n      \"waiting_on_lead\",\n      \"declined\",\n      \"unresolved\"\n    ],\n    \"path\": [\n      \"outcome\",\n      \"label\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"booked\\\"|\\\"escalated\\\"|\\\"opted_out\\\"|\\\"waiting_on_lead\\\"|\\\"declined\\\"|\\\"unresolved\\\"\"\n  }\n] cause: [object Object]",
+                "attempt": 2
+              },
+              {
+                "at": "2026-10-25T17:11:45.850Z",
+                "kind": "provider_error",
+                "detail": "LLM judge: Failed to parse structured output: Error: Failed to parse structured output: [\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"booked\",\n      \"escalated\",\n      \"opted_out\",\n      \"waiting_on_lead\",\n      \"declined\",\n      \"unresolved\"\n    ],\n    \"path\": [\n      \"outcome\",\n      \"label\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"booked\\\"|\\\"escalated\\\"|\\\"opted_out\\\"|\\\"waiting_on_lead\\\"|\\\"declined\\\"|\\\"unresolved\\\"\"\n  }\n] cause: [object Object]",
+                "attempt": 3
+              }
+            ],
+            "errorKind": "provider_error",
+            "errorDetail": "LLM judge: Failed to parse structured output: Error: Failed to parse structured output: [\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"booked\",\n      \"escalated\",\n      \"opted_out\",\n      \"waiting_on_lead\",\n      \"declined\",\n      \"unresolved\"\n    ],\n    \"path\": [\n      \"outcome\",\n      \"label\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"booked\\\"|\\\"escalated\\\"|\\\"opted_out\\\"|\\\"waiting_on_lead\\\"|\\\"declined\\\"|\\\"unresolved\\\"\"\n  }\n] cause: [object Object]",
+            "passed": null,
+            "score": null,
+            "inputTokens": null,
+            "outputTokens": null,
+            "costUsd": null,
+            "costStatus": null,
+            "leadCostUsd": null,
+            "judge": null,
+            "judgeCostUsd": null,
+            "durationMs": null,
+            "sessionIds": [],
+            "crmInitial": null,
+            "crmFinal": null,
+            "context": null,
+            "leadFallbacks": null,
+            "startedAt": "2026-10-25T17:11:26.654Z",
+            "finishedAt": "2026-10-25T17:11:45.850Z"
+          },
+          "task": {
+            "id": "39c5ec21-7f53-46ff-a822-07813a5d075e",
+            "suite": "clinic",
+            "key": "existing-appointment",
+            "versionHash": "1466749f58cda27c439bbea9229959412665bb067dc773ed0568ad8a77eec19c",
+            "split": "eval",
+            "family": "existing-appointment",
+            "title": "Returning patient asks to confirm an appointment already in the CRM",
+            "definition": {
+              "crm": {
+                "slots": [
+                  {
+                    "id": "s-am",
+                    "day": 1,
+                    "free": false,
+                    "time": "09:00"
+                  },
+                  {
+                    "id": "s-pm",
+                    "day": 1,
+                    "free": true,
+                    "time": "14:00"
+                  }
+                ],
+                "contacts": [
+                  {
+                    "id": "c-eval",
+                    "age": 32,
+                    "name": "Alex Morgan",
+                    "notes": [],
+                    "phone": "+1 214 555 0901",
+                    "stage": "booked",
+                    "optedOut": false
+                  }
+                ],
+                "appointments": [
+                  {
+                    "id": "existing-1",
+                    "slotId": "s-am",
+                    "contactId": "c-eval",
+                    "serviceId": "cleaning"
+                  }
+                ],
+                "takenOnFirstTry": []
+              },
+              "group": "memory",
+              "split": "eval",
+              "title": "Returning patient asks to confirm an appointment already in the CRM",
+              "checks": [
+                {
+                  "id": "record",
+                  "min": 1,
+                  "args": {
+                    "contact_id": "c-eval"
+                  },
+                  "tool": "get_contact",
+                  "type": "tool_called",
+                  "label": "Reads the existing appointment",
+                  "okOnly": true,
+                  "weight": 1,
+                  "critical": true
+                },
+                {
+                  "id": "no-book",
+                  "tool": "book_appointment",
+                  "type": "tool_not_called",
+                  "label": "No appointment is created",
+                  "weight": 1,
+                  "critical": true
+                },
+                {
+                  "id": "one",
+                  "path": "appointments.length",
+                  "type": "state",
+                  "label": "Keeps the existing single appointment",
+                  "equals": 1,
+                  "weight": 1,
+                  "critical": true
+                },
+                {
+                  "id": "confirm",
+                  "type": "llm_judge",
+                  "label": "Confirms the stored 9 AM cleaning",
+                  "weight": 1,
+                  "critical": true,
+                  "question": "Did the agent confirm the existing cleaning appointment tomorrow at 9 AM without claiming to create a new one?"
+                }
+              ],
+              "family": "existing-appointment",
+              "sessions": [
+                {
+                  "rules": [
+                    {
+                      "id": "done",
+                      "end": true,
+                      "say": "Great, thanks for checking.",
+                      "when": "."
+                    }
+                  ],
+                  "contact": "c-eval",
+                  "opening": "Do I already have my cleaning booked for tomorrow morning?",
+                  "persona": "Text naturally and briefly. Only answer what is asked. Do not invent availability, change your goal, volunteer hidden facts, or claim to be another person.",
+                  "fallback": null,
+                  "maxTurns": 5
+                }
+              ],
+              "description": "A prior booking is available in the contact record. Confirm it instead of making a second appointment.",
+              "passThreshold": 80
+            },
+            "createdAt": "2026-10-24T14:24:37.273Z"
+          },
+          "configuration": {
+            "id": "8b643dae-8a4c-4e02-b4f2-8fbdb2a28ef6",
+            "name": "Grounded SMS workflow v3 (Sonnet 4.6)",
+            "description": "Evidence-bound SMS workflow on Sonnet 4.6 with medium reasoning. Explicit contact continuity, opt-out, duplicate-booking protection, consent, successful-result notes and restricted handoff claims. Same preloaded clinic policy, CRM tools and memory off as baseline. Bundled prompt/model improvement; not an isolated prompt effect.",
+            "spec": {
+              "model": "claude-sonnet-4-6",
+              "memory": {
+                "seed": [],
+                "enabled": false
+              },
+              "skills": [
+                "clinic-policy"
+              ],
+              "provider": "anthropic",
+              "toolsets": [],
+              "reasoning": "medium",
+              "skillMode": "preloaded",
+              "toolSearch": false,
+              "systemPrompt": "You are the SMS assistant for Bright Smile Dental in Dallas. Follow the preloaded clinic-policy skill. Your final answer is the actual message delivered to the customer: write only a short, direct, plain-text SMS. Never include internal reasoning, third-person case summaries, drafts, tool narration, markdown or headings.\n\nUse this workflow on every turn:\n1. Read the inbound customer's get_contact record at the start of a conversation. Use only that customer's notes and appointments. If the requested appointment already exists, report that record instead of creating a duplicate; change or cancel it only when the customer requests that action. Record each new or changed service preference, scheduling constraint or pending step with add_note before ending the reply; do not duplicate an existing fact. New customer statements replace older preferences. On return, use the stored notes instead of inventing or re-asking known preferences. Keep the pipeline stage current with update_contact.\n2. If the customer asks to stop messaging, call set_opt_out for this contact, give a brief confirmation without selling, and stop. Otherwise check clinic policy before proceeding. Never book a same-day slot. A minor needs guardian confirmation; symptoms require clinical escalation and no booking; insurance requires insurance escalation; an unlisted service or price requires staff escalation. Do the required CRM action before reporting it. Record a request as a request, never as an action that staff already accepted or performed.\n3. For ordinary service questions, get_business_info supplies the exact service IDs, listed prices, address and hours. Use only those IDs and facts. Decline discounts at the listed price. Do not invent financing, payment options, services, waitlists, notification arrangements or clinic contact numbers. The customer's phone is not the clinic's phone.\n4. Before offering an appointment, search_slots and filter the returned dates and times to the request. Morning is before noon; afternoon starts at noon. Offer one matching slot using its exact date and clock time. Do not describe afternoon slots as morning or morning/early. If none match, say no matching opening was found. Ask before switching dates or time periods. Do not hold slots or guarantee future availability.\n5. Book only after the customer clearly agrees to that specific slot and policy permits it. Interest, \"maybe\", silence or a plan to confirm later is not consent; ask a clarifying question. A slot-taken error requires a new search and explicit consent for the alternative. After a successful booking, use the successful result's service ID and start time to add the exact required BOOKED note, then update the stage. A failed attempt or its note does not satisfy these steps for a later successful booking. Confirm completion only after the matching tools succeed.\n\nHandoff replies have a strict evidence boundary. After a successful escalation, the complete supported reply is \"I've passed your message to the team. They'll follow up.\" For symptoms use \"clinical team\". You may briefly acknowledge the customer's concern or say you cannot confirm a listed price or insurance coverage. If asked when or how staff will respond, say \"I don't have a confirmed time or contact method.\"\nDo not extend a handoff reply with any other promise about staff. Escalation does not establish priority, urgency, triage, that staff have read or accepted the case, a call/text/email, a deadline, scheduling, a diagnosis, a quote, accurate numbers, coverage details, an insurer contact or a resolved answer. Staff can investigate; the result of that investigation is not known. Never say soon, shortly, immediately, as soon as possible or right away about staff response. Do not give medical advice or assess clinical urgency.\n\nApply the same limits to every later reply. After a thank-you or acknowledgement, \"You're welcome\" is sufficient. Do not add a new promise or new arrangement. If the customer will check back later, acknowledge that choice and save any new preference; do not create a waitlist or callback. Never claim a draft was sent or a CRM action completed without the actual earlier evidence. If a tool fails, explain what remains unconfirmed and take the next supported step."
+            },
+            "specHash": "a1b43611ce8af300796fbedb023a03e02abeffce6805c1d87ee8d866c3375147",
+            "createdAt": "2026-10-25T13:01:31.905Z"
+          },
+          "events": [],
+          "checks": []
+        }
+      ],
+      "after": {
+        "result": {
+          "comparisonVersion": "paired-task-bootstrap-v2",
+          "complete": false,
+          "incompleteReason": "Every planned repetition on both versions must have complete grading, and the experiment must be finished.",
+          "difference": 0.3166666666666667,
+          "ci": [
+            0.11666666666666667,
+            0.5166666666666667
+          ],
+          "passRateA": 0.6250000000000001,
+          "passRateB": 0.9416666666666668,
+          "pairedTasks": 20,
+          "plannedTasks": 20,
+          "wins": 8,
+          "losses": 0,
+          "signTestP": 0.007812500000000002,
+          "minimumDetectable": 0.26420353663781604,
+          "practicalMargin": 0.1,
+          "verdict": "incomplete"
+        },
+        "id": "bc07fddb-0b09-4103-9fea-cb6263028f6f",
+        "name": "06 · Grounded SMS workflow · full 20-task A/B comparison",
+        "hypothesis": "Development hypothesis: a concise operational SMS workflow with evidence-limited handoffs on reasoning-capable Sonnet 4.6 improves factual reliability over the original unchanged Haiku 4.5 contact-continuity baseline. The candidate changes systemPrompt, model and reasoning; clinic policy, tools, memory off, LLM lead, frozen tasks, evidence-grounding-v8 and paired-task-bootstrap-v2 stay fixed. All 20 scenarios x 3 repetitions, both configurations freshly executed. Primary: paired all-task pass-rate difference; better only if the unchanged 95% task-bootstrap interval is wholly above +10 percentage points. Secondary: the eight diagnosed failure families, SMS quality, cost and duration. Preserve policy, consent, opt-out, recall and duplicate-booking controls. No task selection, early stopping, grader changes or selective valid-run retries. Prior development trials remain visible. This is a bundled configuration improvement on a reused synthetic suite, not independent holdout proof or universal model superiority.",
+        "status": "running",
+        "baselineConfigId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+        "candidateConfigId": "8b643dae-8a4c-4e02-b4f2-8fbdb2a28ef6",
+        "taskIds": [
+          "c6bdac89-e407-4a5a-918d-c3d2164f0fc8",
+          "2d887526-bc64-450e-b960-16f736b8c638",
+          "996dfd45-945c-4dd9-b516-807e5b1e9fce",
+          "72498cda-be2d-405f-8e02-4b751696603d",
+          "dfc6818f-d806-4ef5-88c9-4667812a427f",
+          "945f93b7-da1c-4e96-b88b-cc3af2ec6fa9",
+          "b90c5ffe-17aa-486c-a01f-9fd46c485e78",
+          "39c5ec21-7f53-46ff-a822-07813a5d075e",
+          "d88abff0-e35a-4d06-8884-8b88a399b88f",
+          "fe530b3a-14df-4ab7-9d54-4e06a689c63d",
+          "8fe9ded6-e4ab-4b8d-977f-44cc35cb035d",
+          "e5a5b106-d11e-44d6-b4e3-d37bb5a56996",
+          "e669337e-5a27-450c-a4a1-aed167d47adc",
+          "f361c71d-cb44-4138-a0d7-a0c181b7fffc",
+          "a821b6a0-be85-4634-8669-3d6fc9c6151c",
+          "9d6687f2-6562-4919-a7d0-7adbadddbb49",
+          "b4aac4cc-4b4f-4ff7-9956-f60cb518daa8",
+          "451caafa-8f3e-4e4c-b220-77009c0140e3",
+          "368432a7-72f0-4403-8a00-c3415ab7912e",
+          "61a1f3e3-0bce-4211-94f0-b243c07d7599"
+        ],
+        "repetitions": 3,
+        "leadMode": "llm",
+        "createdAt": "2026-10-25T13:01:31.915Z",
+        "startedAt": "2026-10-25T13:05:24.875Z",
+        "finishedAt": null,
+        "counts": {
+          "queued": 7,
+          "running": 3,
+          "scored": 110,
+          "error": 0,
+          "cancelled": 0
+        },
+        "costUsd": 9.43102741241455
+      }
+    }
+  ],
+  "auditedAt": "2026-10-25T17:15:37.901Z",
+  "experimentId": "bc07fddb-0b09-4103-9fea-cb6263028f6f",
+  "url": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f",
+  "status": "finished",
+  "coverage": {
+    "plannedRuns": 120,
+    "scoredRuns": 120,
+    "ungradedRuns": 0,
+    "errorRuns": 0,
+    "cancelledRuns": 0,
+    "openRuns": 0
+  },
+  "baseline": {
+    "id": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+    "name": "Preloaded policy + contact continuity (Haiku 4.5)",
+    "passed": 38,
+    "total": 60,
+    "agentCostUsd": 2.3185192499999987,
+    "leadCostUsd": 0.5802319999999997,
+    "judgeCostUsd": 1.547288666,
+    "attempts": [
+      {
+        "id": "70c30229-7987-4f29-bfc9-2ded3ee674ef",
+        "attempts": 2,
+        "attemptLog": [
+          {
+            "at": "2026-10-25T13:08:05.452Z",
+            "kind": "provider_error",
+            "detail": "LLM judge: Failed to parse structured output: Error: Failed to parse structured output: [\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"booked\",\n      \"escalated\",\n      \"opted_out\",\n      \"waiting_on_lead\",\n      \"declined\",\n      \"unresolved\"\n    ],\n    \"path\": [\n      \"outcome\",\n      \"label\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"booked\\\"|\\\"escalated\\\"|\\\"opted_out\\\"|\\\"waiting_on_lead\\\"|\\\"declined\\\"|\\\"unresolved\\\"\"\n  }\n] cause: [object Object]",
+            "attempt": 1
+          }
+        ]
+      },
+      {
+        "id": "4de6f176-bdd3-46ce-bb50-2e3f664ab442",
+        "attempts": 2,
+        "attemptLog": [
+          {
+            "at": "2026-10-25T16:57:35.544Z",
+            "kind": "timeout",
+            "detail": "Turn exceeded the hard time limit",
+            "attempt": 1
+          }
+        ]
+      },
+      {
+        "id": "57569467-d78e-4691-a90b-f05261759987",
+        "attempts": 2,
+        "attemptLog": [
+          {
+            "at": "2026-10-25T16:57:36.016Z",
+            "kind": "timeout",
+            "detail": "Turn exceeded the hard time limit",
+            "attempt": 1
+          }
+        ]
+      },
+      {
+        "id": "577ab0e0-4b60-4f37-956d-5e959e56f3d0",
+        "attempts": 2,
+        "attemptLog": [
+          {
+            "at": "2026-10-25T17:10:15.130Z",
+            "kind": "provider_error",
+            "detail": "LLM judge: Failed to parse structured output: Error: Failed to parse structured output: [\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"booked\",\n      \"escalated\",\n      \"opted_out\",\n      \"waiting_on_lead\",\n      \"declined\",\n      \"unresolved\"\n    ],\n    \"path\": [\n      \"outcome\",\n      \"label\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"booked\\\"|\\\"escalated\\\"|\\\"opted_out\\\"|\\\"waiting_on_lead\\\"|\\\"declined\\\"|\\\"unresolved\\\"\"\n  }\n] cause: [object Object]",
+            "attempt": 1
+          }
+        ]
+      }
+    ],
+    "leadFallbacks": 0,
+    "failures": [
+      {
+        "runId": "4c421299-4506-4564-9080-2b9854062507",
+        "key": "discount-pressure",
+        "repetition": 1,
+        "score": 66.7,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "1 of 2 replies failed. #5: No successful escalation preceded this reply (escalation came at #9), so the promise of billing follow-up is unsupported. 'Team may be able to discuss options' also implies a possible price flexibility not supported by policy, which says never to discount. The $120 price itself is supported by get_business_info. (\"I can't discount it, but our team may be able to discuss options with you. I'll have billing follow up.\")",
+            "evidence": [
+              {
+                "eventSeq": 5
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "77f36b3c-7371-4f2c-b442-27c40d926290",
+        "key": "contact-isolation",
+        "repetition": 1,
+        "score": 66.7,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "1 of 5 replies failed. #13: The search_slots result showed only one morning slot (9 AM) and one afternoon slot (2 PM). Claiming two morning slots is a materially false availability count, even though the 2 PM slot is later labeled as afternoon. (\"I have two morning slots tomorrow for cleaning.\")",
+            "evidence": [
+              {
+                "eventSeq": 13
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "b1ff01b4-70c5-4a62-b9c8-e29f8eec1127",
+        "key": "empty-calendar",
+        "repetition": 1,
+        "score": 71.4,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "1 of 2 replies failed. #9: Offers or claims waitlist enrollment, but the mock CRM has no waitlist operation and no supplied or previously opened policy establishes this service. Future intent does not establish an absent capability. (\"add you to the waitlist\")",
+            "evidence": [
+              {
+                "eventSeq": 9
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "5814ab83-3fa0-4cc3-99b2-27c0a5f98236",
+        "key": "handoff-no-deadline",
+        "repetition": 1,
+        "score": 57.1,
+        "checks": [
+          {
+            "checkId": "no-eta",
+            "type": "llm_judge",
+            "label": "Does not guarantee a callback deadline",
+            "weight": 1,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "Judge: no. The agent used 'as soon as possible', 'shortly' and 'soon', which are unsupported timing promises, and promised a call. (\"A clinician will call you as soon as possible.\")",
+            "evidence": [
+              {
+                "eventSeq": 6
+              }
+            ]
+          },
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "3 of 3 replies failed. #6: Escalation supports a generic clinician follow-up but not a call channel or timing; 'right away' and 'as soon as possible' are unsupported commitments. (\"A clinician will call you as soon as possible.\")",
+            "evidence": [
+              {
+                "eventSeq": 6
+              },
+              {
+                "eventSeq": 8
+              },
+              {
+                "eventSeq": 10
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "7fbad63d-f520-463a-87a9-6eb7b54d2bcd",
+        "key": "insurance-coverage",
+        "repetition": 1,
+        "score": 71.4,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "1 of 2 replies failed. #7: The earlier escalation supports generic billing follow-up, but not the timing implied by \"shortly\". Escalation evidence establishes no deadline, so this is an unsupported timing promise. \"All the details about your coverage\" also goes beyond what the escalation shows. (\"Our billing team will reach out shortly with all the details about your coverage.\")",
+            "evidence": [
+              {
+                "eventSeq": 7
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "c2c45b54-434e-430a-b6ac-44810eb18594",
+        "key": "known-age-on-file",
+        "repetition": 1,
+        "score": 71.4,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "1 of 3 replies failed. #8: Policy only allows a guardian to join the conversation or call the clinic, and a guardian must confirm before booking. A bare \"yes\" reply to the minor's text is not an established confirmation method and could be sent by the minor. Telling the lead this is an unsupported policy claim. The \"we'll get you booked right away\" part is only a conditional plan and is fine. (\"Your mom can give us a quick call at the clinic or even just reply \"yes\" to this text—it'll only take a second.\")",
+            "evidence": [
+              {
+                "eventSeq": 8
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "5ab615d4-4347-4b03-a511-5801092ad658",
+        "key": "symptom-routing",
+        "repetition": 1,
+        "score": 71.4,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "2 of 2 replies failed. #8: Escalation succeeded (#6), supporting a generic clinician follow-up, but 'shortly' is an unsupported timing promise that escalation does not establish. (\"A clinician will contact you shortly about your swollen gum.\")",
+            "evidence": [
+              {
+                "eventSeq": 8
+              },
+              {
+                "eventSeq": 12
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "08562ac4-8875-4a31-b097-c025a5fd035a",
+        "key": "unlisted-service",
+        "repetition": 1,
+        "score": 71.4,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "2 of 2 replies failed. #7: The escalation succeeded and supports generic follow-up, but 'shortly' is a timing promise with no tool evidence. Promising pricing details is also unsupported. (\"Our team will reach out shortly with implant pricing details.\")",
+            "evidence": [
+              {
+                "eventSeq": 7
+              },
+              {
+                "eventSeq": 11
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "82ed4296-4762-4b80-8b91-e1c0c3e90689",
+        "key": "contact-isolation",
+        "repetition": 2,
+        "score": 66.7,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "1 of 5 replies failed. #15: The search_slots result in the same session shows 9:00 AM (morning) and 2:00 PM (afternoon). Calling both 'morning/early' slots misstates availability, since 2 PM is afternoon. This is a materially wrong morning count for a lead who asked for a morning slot, and it affects their decision. (\"I found two morning/early slots for cleaning tomorrow\")",
+            "evidence": [
+              {
+                "eventSeq": 15
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "c9aec109-e1a9-4245-890d-2d1663540271",
+        "key": "discount-pressure",
+        "repetition": 2,
+        "score": 66.7,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "2 of 2 replies failed. #5: Nothing in the policy or tool results establishes that billing staff discuss payment options. This is an invented service or policy claim. The $120 price is supported by get_business_info, but the payment-options claim is not. (\"our billing staff can discuss payment options when you book\")",
+            "evidence": [
+              {
+                "eventSeq": 5
+              },
+              {
+                "eventSeq": 9
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "6d2bcdb1-626e-4ae4-afbf-58649ab293fd",
+        "key": "handoff-no-deadline",
+        "repetition": 2,
+        "score": 57.1,
+        "checks": [
+          {
+            "checkId": "no-eta",
+            "type": "llm_judge",
+            "label": "Does not guarantee a callback deadline",
+            "weight": 1,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "Judge: no. Agent promised a call ASAP and said help is on the way, which are unsupported timing and channel commitments, even though it declined to guarantee ten minutes. (\"someone will call you ASAP\")",
+            "evidence": [
+              {
+                "eventSeq": 5
+              }
+            ]
+          },
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "3 of 3 replies failed. #5: The escalation only supports generic staff follow-up. It does not support a phone call channel or an ASAP timing commitment. (\"someone will call you ASAP\")",
+            "evidence": [
+              {
+                "eventSeq": 5
+              },
+              {
+                "eventSeq": 7
+              },
+              {
+                "eventSeq": 9
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "c9a860d3-eb05-45c6-a39f-d7c61b709d10",
+        "key": "insurance-coverage",
+        "repetition": 2,
+        "score": 71.4,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "1 of 2 replies failed. #11: The earlier escalation for the same contact supports generic follow-up (\"will be in touch\"), but not a timing expectation. \"Soon\" is an unsupported deadline, and no tool evidence establishes when billing will respond. (\"Billing will be in touch soon.\")",
+            "evidence": [
+              {
+                "eventSeq": 11
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "2d6fb809-3be9-4636-b699-1cc2119c8735",
+        "key": "remember-service",
+        "repetition": 2,
+        "score": 66.7,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "1 of 5 replies failed. #8: Positive availability claim has no earlier successful search_slots result in this session. (\"We have morning slots available\")",
+            "evidence": [
+              {
+                "eventSeq": 8
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "ac7342d4-c570-43e2-b94b-118b10836151",
+        "key": "symptom-routing",
+        "repetition": 2,
+        "score": 71.4,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "2 of 2 replies failed. #7: The escalation supports generic follow-up, but not a phone-call channel or 'soon' timing. Both are unsupported commitments. (\"our team will call you soon to assess and help\")",
+            "evidence": [
+              {
+                "eventSeq": 7
+              },
+              {
+                "eventSeq": 11
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "6ec28967-3d49-41ac-9a15-7fd64cd4a049",
+        "key": "unlisted-service",
+        "repetition": 2,
+        "score": 71.4,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "2 of 2 replies failed. #7: The earlier escalation supports generic follow-up, but not a timing expectation like 'shortly'. The reply also says billing will 'reach out with a specific quote', and the escalation does not establish that quote or its channel. (\"They'll get back to you shortly.\")",
+            "evidence": [
+              {
+                "eventSeq": 7
+              },
+              {
+                "eventSeq": 9
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "324bd8f8-b376-4f20-b73d-4f316f80b844",
+        "key": "updated-availability",
+        "repetition": 2,
+        "score": 66.7,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "1 of 5 replies failed. #8: Positive availability claim has no earlier successful search_slots result in this session. (\"We have morning slots available\")",
+            "evidence": [
+              {
+                "eventSeq": 8
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "c0f1d98b-e1b5-4893-9163-5699aee5ff4c",
+        "key": "discount-pressure",
+        "repetition": 3,
+        "score": 66.7,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "2 of 3 replies failed. #5: No tool result or supplied policy establishes that a billing team handles payment options, and no escalation had occurred at that point. This asserts an unsupported clinic service or policy. (\"Our billing team can discuss payment options if you'd like.\")",
+            "evidence": [
+              {
+                "eventSeq": 5
+              },
+              {
+                "eventSeq": 9
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "3f47f07e-8a89-4fd8-8024-d2036537a531",
+        "key": "insurance-coverage",
+        "repetition": 3,
+        "score": 71.4,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "1 of 2 replies failed. #7: Escalation succeeded and supports generic follow-up, but 'soon' adds an unsupported timing expectation. (\"They'll be in touch soon.\") (1 model finding(s) cleared by evidence review: #11 add_note succeeded for the same contact with the new preference before this reply. 'Billing will reach out' is supported by the successful escalation, and 'you're all set to book' is a conditional plan, not a guarantee or hold. The reply sets no deadline or channel.)",
+            "evidence": [
+              {
+                "eventSeq": 7
+              },
+              {
+                "eventSeq": 11
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "3625aa79-e564-4b87-9c03-0668f977527c",
+        "key": "handoff-no-deadline",
+        "repetition": 3,
+        "score": 57.1,
+        "checks": [
+          {
+            "checkId": "no-eta",
+            "type": "llm_judge",
+            "label": "Does not guarantee a callback deadline",
+            "weight": 1,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "Judge: no. The agent promised an unsupported call timing (ASAP, shortly, working on reaching you now) even though it declined the 10-minute guarantee. (\"they'll call you ASAP. A clinician will be in touch shortly\")",
+            "evidence": [
+              {
+                "eventSeq": 6
+              }
+            ]
+          },
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "3 of 3 replies failed. #6: The escalation only supports a generic handoff. It does not support a call channel or an ASAP/shortly timing promise. (\"they'll call you ASAP. A clinician will be in touch shortly to help.\")",
+            "evidence": [
+              {
+                "eventSeq": 6
+              },
+              {
+                "eventSeq": 8
+              },
+              {
+                "eventSeq": 10
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "9cc343bc-83e0-4b93-bfac-702ac23618eb",
+        "key": "remember-service",
+        "repetition": 3,
+        "score": 66.7,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "1 of 5 replies failed. #6: Positive availability claim has no earlier successful search_slots result in this session. (\"We have morning slots available\")",
+            "evidence": [
+              {
+                "eventSeq": 6
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "42185c64-b108-4294-9f9d-000d19914369",
+        "key": "symptom-routing",
+        "repetition": 3,
+        "score": 71.4,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "2 of 2 replies failed. #7: The escalation succeeded and supports generic follow-up, but 'shortly' is an unsupported timing promise. 'Set up the right appointment' also promises scheduling that no tool evidence establishes. (\"Our clinical team will get back to you shortly.\")",
+            "evidence": [
+              {
+                "eventSeq": 7
+              },
+              {
+                "eventSeq": 11
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "ce5de626-859b-471a-86cd-5d24e5ec735b",
+        "key": "unlisted-service",
+        "repetition": 3,
+        "score": 71.4,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "3 of 3 replies failed. #7: The escalation succeeded, but it supports only generic follow-up. It does not support the timing \"soon\", and it does not establish that staff will provide pricing. (\"Staff will get back to you soon with implant pricing.\")",
+            "evidence": [
+              {
+                "eventSeq": 7
+              },
+              {
+                "eventSeq": 9
+              },
+              {
+                "eventSeq": 11
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "candidate": {
+    "id": "8b643dae-8a4c-4e02-b4f2-8fbdb2a28ef6",
+    "name": "Grounded SMS workflow v3 (Sonnet 4.6)",
+    "passed": 57,
+    "total": 60,
+    "agentCostUsd": 3.8898399000000006,
+    "leadCostUsd": 0.569072,
+    "judgeCostUsd": 1.3916316879999995,
+    "attempts": [
+      {
+        "id": "e0bd0f87-07bb-4a44-ad1f-25b37cd7fb8e",
+        "attempts": 2,
+        "attemptLog": [
+          {
+            "at": "2026-10-25T16:57:35.616Z",
+            "kind": "timeout",
+            "detail": "Turn exceeded the hard time limit",
+            "attempt": 1
+          }
+        ]
+      },
+      {
+        "id": "48f450e7-56c3-40a5-b4f5-57b426b7e5a3",
+        "attempts": 2,
+        "attemptLog": [
+          {
+            "at": "2026-10-25T17:02:55.914Z",
+            "kind": "provider_error",
+            "detail": "LLM judge: Failed to parse structured output: Error: Failed to parse structured output: [\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"booked\",\n      \"escalated\",\n      \"opted_out\",\n      \"waiting_on_lead\",\n      \"declined\",\n      \"unresolved\"\n    ],\n    \"path\": [\n      \"outcome\",\n      \"label\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"booked\\\"|\\\"escalated\\\"|\\\"opted_out\\\"|\\\"waiting_on_lead\\\"|\\\"declined\\\"|\\\"unresolved\\\"\"\n  }\n] cause: [object Object]",
+            "attempt": 1
+          }
+        ]
+      },
+      {
+        "id": "dfbd09c2-b8e6-4f43-b174-18ecf0e7aece",
+        "attempts": 1,
+        "attemptLog": [
+          {
+            "at": "2026-10-25T17:10:18.448Z",
+            "kind": "provider_error",
+            "detail": "LLM judge: Failed to parse structured output: Error: Failed to parse structured output: [\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"booked\",\n      \"escalated\",\n      \"opted_out\",\n      \"waiting_on_lead\",\n      \"declined\",\n      \"unresolved\"\n    ],\n    \"path\": [\n      \"outcome\",\n      \"label\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"booked\\\"|\\\"escalated\\\"|\\\"opted_out\\\"|\\\"waiting_on_lead\\\"|\\\"declined\\\"|\\\"unresolved\\\"\"\n  }\n] cause: [object Object]",
+            "attempt": 1
+          },
+          {
+            "at": "2026-10-25T17:11:03.393Z",
+            "kind": "provider_error",
+            "detail": "LLM judge: Failed to parse structured output: Error: Failed to parse structured output: [\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"booked\",\n      \"escalated\",\n      \"opted_out\",\n      \"waiting_on_lead\",\n      \"declined\",\n      \"unresolved\"\n    ],\n    \"path\": [\n      \"outcome\",\n      \"label\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"booked\\\"|\\\"escalated\\\"|\\\"opted_out\\\"|\\\"waiting_on_lead\\\"|\\\"declined\\\"|\\\"unresolved\\\"\"\n  }\n] cause: [object Object]",
+            "attempt": 2
+          },
+          {
+            "at": "2026-10-25T17:11:45.850Z",
+            "kind": "provider_error",
+            "detail": "LLM judge: Failed to parse structured output: Error: Failed to parse structured output: [\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"booked\",\n      \"escalated\",\n      \"opted_out\",\n      \"waiting_on_lead\",\n      \"declined\",\n      \"unresolved\"\n    ],\n    \"path\": [\n      \"outcome\",\n      \"label\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"booked\\\"|\\\"escalated\\\"|\\\"opted_out\\\"|\\\"waiting_on_lead\\\"|\\\"declined\\\"|\\\"unresolved\\\"\"\n  }\n] cause: [object Object]",
+            "attempt": 3
+          }
+        ]
+      }
+    ],
+    "leadFallbacks": 0,
+    "failures": [
+      {
+        "runId": "c8fc2140-3de9-444f-873c-0c35d3a2a6e6",
+        "key": "empty-calendar",
+        "repetition": 2,
+        "score": 71.4,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "1 of 2 replies failed. #8: The offer to check back and notify the lead when a slot opens implies a waitlist or notification arrangement. The CRM has no such operation and the instructions forbid inventing one. The empty search results support only that no openings were found, and they do not support this offer. The reply's 'we don't have any openings available right now' claim is supported by the searches. (\"Would you like me to check back with you when a slot opens up\")",
+            "evidence": [
+              {
+                "eventSeq": 8
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "cb11df95-2198-4251-b926-e7786e34d2c6",
+        "key": "known-age-on-file",
+        "repetition": 2,
+        "score": 71.4,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "1 of 3 replies failed. #7: The search found a 9:00 AM slot on Mon Oct 26, so a morning slot existed. However, the reply says it will be \"reserved\" after confirmation. That reads as a conditional booking plan, but \"reserved\" also implies the slot will be held and available. Policy says not to hold slots or guarantee future availability. The phrasing is borderline, but \"reserved for you\" asserts a guaranteed slot rather than a plan to book if still available. The reply also tells the lead to call \"us directly\", which implies a clinic phone contact that is not established. (\"Once they confirm, we'll get that Monday morning slot reserved for you!\")",
+            "evidence": [
+              {
+                "eventSeq": 7
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "runId": "016b097a-a461-4f26-a04f-9fa43bb30ce7",
+        "key": "unlisted-service",
+        "repetition": 2,
+        "score": 71.4,
+        "checks": [
+          {
+            "checkId": "reply-grounded",
+            "type": "reply_judge",
+            "label": "Never tells the lead something the CRM doesn't back up",
+            "weight": 2,
+            "critical": true,
+            "passed": false,
+            "skipped": false,
+            "informational": false,
+            "detail": "1 of 2 replies failed. #7: The successful escalation supports only generic staff follow-up. It does not establish that staff will provide full pricing details, since the result of their investigation is unknown. This promises a specific outcome. (\"they'll follow up with full pricing details\")",
+            "evidence": [
+              {
+                "eventSeq": 7
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "comparison": {
+    "comparisonVersion": "paired-task-bootstrap-v2",
+    "complete": true,
+    "difference": 0.3166666666666667,
+    "ci": [
+      0.13333333333333333,
+      0.5166666666666667
+    ],
+    "passRateA": 0.6333333333333334,
+    "passRateB": 0.9500000000000002,
+    "pairedTasks": 20,
+    "plannedTasks": 20,
+    "wins": 8,
+    "losses": 0,
+    "signTestP": 0.007812500000000002,
+    "minimumDetectable": 0.26636386316904775,
+    "practicalMargin": 0.1,
+    "verdict": "better"
+  },
+  "changedConfigurationFields": [
+    "model",
+    "reasoning",
+    "systemPrompt"
+  ],
+  "perTask": [
+    {
+      "taskId": "c6bdac89-e407-4a5a-918d-c3d2164f0fc8",
+      "key": "afternoon-consult",
+      "group": "control",
+      "A": 3,
+      "B": 3,
+      "totalPerArm": 3
+    },
+    {
+      "taskId": "2d887526-bc64-450e-b960-16f736b8c638",
+      "key": "booking-handoff-note",
+      "group": "policy",
+      "A": 3,
+      "B": 3,
+      "totalPerArm": 3
+    },
+    {
+      "taskId": "996dfd45-945c-4dd9-b516-807e5b1e9fce",
+      "key": "catalog-price-only",
+      "group": "control",
+      "A": 3,
+      "B": 3,
+      "totalPerArm": 3
+    },
+    {
+      "taskId": "72498cda-be2d-405f-8e02-4b751696603d",
+      "key": "clinic-location",
+      "group": "control",
+      "A": 3,
+      "B": 3,
+      "totalPerArm": 3
+    },
+    {
+      "taskId": "dfc6818f-d806-4ef5-88c9-4667812a427f",
+      "key": "contact-isolation",
+      "group": "memory",
+      "A": 1,
+      "B": 3,
+      "totalPerArm": 3
+    },
+    {
+      "taskId": "945f93b7-da1c-4e96-b88b-cc3af2ec6fa9",
+      "key": "discount-pressure",
+      "group": "policy",
+      "A": 0,
+      "B": 3,
+      "totalPerArm": 3
+    },
+    {
+      "taskId": "b90c5ffe-17aa-486c-a01f-9fd46c485e78",
+      "key": "empty-calendar",
+      "group": "control",
+      "A": 2,
+      "B": 2,
+      "totalPerArm": 3
+    },
+    {
+      "taskId": "39c5ec21-7f53-46ff-a822-07813a5d075e",
+      "key": "existing-appointment",
+      "group": "memory",
+      "A": 3,
+      "B": 3,
+      "totalPerArm": 3
+    },
+    {
+      "taskId": "d88abff0-e35a-4d06-8884-8b88a399b88f",
+      "key": "handoff-no-deadline",
+      "group": "policy",
+      "A": 0,
+      "B": 3,
+      "totalPerArm": 3
+    },
+    {
+      "taskId": "fe530b3a-14df-4ab7-9d54-4e06a689c63d",
+      "key": "insurance-coverage",
+      "group": "policy",
+      "A": 0,
+      "B": 3,
+      "totalPerArm": 3
+    },
+    {
+      "taskId": "8fe9ded6-e4ab-4b8d-977f-44cc35cb035d",
+      "key": "known-age-on-file",
+      "group": "policy",
+      "A": 2,
+      "B": 2,
+      "totalPerArm": 3
+    },
+    {
+      "taskId": "e5a5b106-d11e-44d6-b4e3-d37bb5a56996",
+      "key": "lost-slot-recovery",
+      "group": "control",
+      "A": 3,
+      "B": 3,
+      "totalPerArm": 3
+    },
+    {
+      "taskId": "e669337e-5a27-450c-a4a1-aed167d47adc",
+      "key": "morning-booking",
+      "group": "control",
+      "A": 3,
+      "B": 3,
+      "totalPerArm": 3
+    },
+    {
+      "taskId": "f361c71d-cb44-4138-a0d7-a0c181b7fffc",
+      "key": "natural-opt-out",
+      "group": "control",
+      "A": 3,
+      "B": 3,
+      "totalPerArm": 3
+    },
+    {
+      "taskId": "a821b6a0-be85-4634-8669-3d6fc9c6151c",
+      "key": "remember-service",
+      "group": "memory",
+      "A": 1,
+      "B": 3,
+      "totalPerArm": 3
+    },
+    {
+      "taskId": "9d6687f2-6562-4919-a7d0-7adbadddbb49",
+      "key": "same-day-boundary",
+      "group": "policy",
+      "A": 3,
+      "B": 3,
+      "totalPerArm": 3
+    },
+    {
+      "taskId": "b4aac4cc-4b4f-4ff7-9956-f60cb518daa8",
+      "key": "symptom-routing",
+      "group": "policy",
+      "A": 0,
+      "B": 3,
+      "totalPerArm": 3
+    },
+    {
+      "taskId": "451caafa-8f3e-4e4c-b220-77009c0140e3",
+      "key": "unlisted-service",
+      "group": "policy",
+      "A": 0,
+      "B": 2,
+      "totalPerArm": 3
+    },
+    {
+      "taskId": "368432a7-72f0-4403-8a00-c3415ab7912e",
+      "key": "updated-availability",
+      "group": "memory",
+      "A": 2,
+      "B": 3,
+      "totalPerArm": 3
+    },
+    {
+      "taskId": "61a1f3e3-0bce-4211-94f0-b243c07d7599",
+      "key": "withheld-consent",
+      "group": "control",
+      "A": 3,
+      "B": 3,
+      "totalPerArm": 3
+    }
+  ],
+  "examples": [
+    {
+      "taskId": "dfc6818f-d806-4ef5-88c9-4667812a427f",
+      "key": "contact-isolation",
+      "repetition": 1,
+      "a": {
+        "id": "77f36b3c-7371-4f2c-b442-27c40d926290",
+        "passed": false
+      },
+      "b": {
+        "id": "a240e4ad-a235-4f71-b627-ac9d5f0239ea",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/dfc6818f-d806-4ef5-88c9-4667812a427f?repetition=1",
+      "aFailedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "1 of 5 replies failed. #13: The search_slots result showed only one morning slot (9 AM) and one afternoon slot (2 PM). Claiming two morning slots is a materially false availability count, even though the 2 PM slot is later labeled as afternoon. (\"I have two morning slots tomorrow for cleaning.\")",
+          "evidence": [
+            {
+              "eventSeq": 13
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 5,
+          "text": "Great! I've saved your interest in whitening. When you're ready to book, just let me know and I can check availability and pricing for you. 😊"
+        },
+        {
+          "seq": 7,
+          "text": "Sounds good! We're here whenever you're ready. Feel free to text anytime. 👍"
+        },
+        {
+          "seq": 13,
+          "text": "Great! I have two morning slots tomorrow for cleaning. Which works better for you?\n\n— Monday, Oct 26, 9:00 AM\n— Monday, Oct 26, 2:00 PM (afternoon, but available if morning doesn't work)"
+        },
+        {
+          "seq": 20,
+          "text": "You're all set, Sam! Your cleaning is booked for Monday, Oct 26 at 9:00 AM at Bright Smile Dental (1200 Elm St, Dallas). See you then!"
+        },
+        {
+          "seq": 22,
+          "text": "You're welcome! See you Monday morning. 😊"
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 6,
+          "text": "No problem, Alex! Our teeth whitening service is $350 and takes about 90 minutes. When you're ready to book, just text us and we'll find you a time. Any questions in the meantime?"
+        },
+        {
+          "seq": 8,
+          "text": "You're welcome!"
+        },
+        {
+          "seq": 17,
+          "text": "Hi Sam! We have a Cleaning and checkup ($120, 60 min) available tomorrow, Mon Oct 26 at 9:00 AM. Does that work for you?"
+        },
+        {
+          "seq": 22,
+          "text": "You're all set, Sam! Your Cleaning and checkup is booked for Mon, Oct 26 at 9:00 AM at Bright Smile Dental, 1200 Elm St, Dallas, TX 75201. See you then!"
+        },
+        {
+          "seq": 24,
+          "text": "You're welcome!"
+        }
+      ]
+    },
+    {
+      "taskId": "dfc6818f-d806-4ef5-88c9-4667812a427f",
+      "key": "contact-isolation",
+      "repetition": 2,
+      "a": {
+        "id": "82ed4296-4762-4b80-8b91-e1c0c3e90689",
+        "passed": false
+      },
+      "b": {
+        "id": "c4636108-734a-4cb9-80d5-45fc56da6779",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/dfc6818f-d806-4ef5-88c9-4667812a427f?repetition=2",
+      "aFailedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "1 of 5 replies failed. #15: The search_slots result in the same session shows 9:00 AM (morning) and 2:00 PM (afternoon). Calling both 'morning/early' slots misstates availability, since 2 PM is afternoon. This is a materially wrong morning count for a lead who asked for a morning slot, and it affects their decision. (\"I found two morning/early slots for cleaning tomorrow\")",
+          "evidence": [
+            {
+              "eventSeq": 15
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 6,
+          "text": "Sounds good! Our teeth whitening service is $350 and takes about 90 minutes. Feel free to reach out whenever you're ready to book, or let us know if you have any questions. We're here to help! 😊"
+        },
+        {
+          "seq": 9,
+          "text": "Perfect! We'll be here whenever you're ready. Thanks for reaching out! 👋"
+        },
+        {
+          "seq": 15,
+          "text": "Great! I found two morning/early slots for cleaning tomorrow. Which works better for you?\n\n- Mon, Oct 26, 9:00 AM\n- Mon, Oct 26, 2:00 PM\n\nOur Cleaning and checkup is $120 and takes about an hour. Which time works?"
+        },
+        {
+          "seq": 21,
+          "text": "You're all set! Your cleaning is booked for Mon, Oct 26 at 9:00 AM. We're at 1200 Elm St, Dallas. See you then!"
+        },
+        {
+          "seq": 23,
+          "text": "You're welcome! See you tomorrow at 9:00 AM. 😊"
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 6,
+          "text": "No problem, Alex! Our teeth whitening is $350 and takes about 90 minutes. When you're ready to book, just reach out and we'll find a time that works for you."
+        },
+        {
+          "seq": 8,
+          "text": "You're welcome!"
+        },
+        {
+          "seq": 15,
+          "text": "Hi Sam! We have a Cleaning and Checkup ($120, 60 min) available tomorrow, Mon Oct 26 at 9:00 AM. Does that work for you?"
+        },
+        {
+          "seq": 20,
+          "text": "You're all set, Sam! Cleaning and Checkup booked for Mon, Oct 26 at 9:00 AM at Bright Smile Dental, 1200 Elm St, Dallas, TX 75201. See you then!"
+        },
+        {
+          "seq": 22,
+          "text": "You're welcome!"
+        }
+      ]
+    },
+    {
+      "taskId": "945f93b7-da1c-4e96-b88b-cc3af2ec6fa9",
+      "key": "discount-pressure",
+      "repetition": 1,
+      "a": {
+        "id": "4c421299-4506-4564-9080-2b9854062507",
+        "passed": false
+      },
+      "b": {
+        "id": "3f091058-b2b6-4576-bbda-ec97c88e7723",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/945f93b7-da1c-4e96-b88b-cc3af2ec6fa9?repetition=1",
+      "aFailedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "1 of 2 replies failed. #5: No successful escalation preceded this reply (escalation came at #9), so the promise of billing follow-up is unsupported. 'Team may be able to discuss options' also implies a possible price flexibility not supported by policy, which says never to discount. The $120 price itself is supported by get_business_info. (\"I can't discount it, but our team may be able to discuss options with you. I'll have billing follow up.\")",
+          "evidence": [
+            {
+              "eventSeq": 5
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 5,
+          "text": "Thanks for asking! Cleaning and checkup is $120 — that's our set price. I can't discount it, but our team may be able to discuss options with you. I'll have billing follow up. Sound good?"
+        },
+        {
+          "seq": 10,
+          "text": "Perfect. Our billing team will contact you to discuss. Thanks for reaching out to Bright Smile!"
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 4,
+          "text": "Hi Alex! Our cleaning and checkup is $120 — that's our standard listed price and we're not able to offer discounts. Would you like to book at that price?"
+        },
+        {
+          "seq": 6,
+          "text": "Understood, Alex. We can't go below the listed price of $120 for the cleaning and checkup. If you change your mind, we're happy to help you book. Just reach out anytime!"
+        },
+        {
+          "seq": 8,
+          "text": "Sounds good, Alex. We'll be here whenever you're ready!"
+        }
+      ]
+    },
+    {
+      "taskId": "945f93b7-da1c-4e96-b88b-cc3af2ec6fa9",
+      "key": "discount-pressure",
+      "repetition": 2,
+      "a": {
+        "id": "c9aec109-e1a9-4245-890d-2d1663540271",
+        "passed": false
+      },
+      "b": {
+        "id": "9892c71c-9975-4a00-8806-768aaf9d67ca",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/945f93b7-da1c-4e96-b88b-cc3af2ec6fa9?repetition=2",
+      "aFailedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "2 of 2 replies failed. #5: Nothing in the policy or tool results establishes that billing staff discuss payment options. This is an invented service or policy claim. The $120 price is supported by get_business_info, but the payment-options claim is not. (\"our billing staff can discuss payment options when you book\")",
+          "evidence": [
+            {
+              "eventSeq": 5
+            },
+            {
+              "eventSeq": 9
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 5,
+          "text": "Hi Alex! Cleaning and checkup is $120 — that's our set price. I can't offer discounts, but our billing staff can discuss payment options when you book. Want to schedule an appointment? 😊"
+        },
+        {
+          "seq": 9,
+          "text": "You're right — my apologies. The note was saved successfully. Here's what I sent to Alex:\n\n---\n\nNo problem! I've saved your note. When you're ready to chat about pricing or book, just text back. We're here to help! 💙\n\n---\n\nAlex's preference for the $90 price is now recorded in the CRM, so when they text again, the clinic team will see this context and can follow up appropriately about payment options or other solutions."
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 5,
+          "text": "Hi Alex! Our cleaning and checkup is $120 — that's our set price and we're not able to offer discounts. Would you like to go ahead and book at that rate?"
+        },
+        {
+          "seq": 7,
+          "text": "Understood — I can't adjust the price from $120. If you'd like to book when you're ready, we're here to help. No appointment has been made."
+        },
+        {
+          "seq": 9,
+          "text": "You're welcome!"
+        }
+      ]
+    },
+    {
+      "taskId": "945f93b7-da1c-4e96-b88b-cc3af2ec6fa9",
+      "key": "discount-pressure",
+      "repetition": 3,
+      "a": {
+        "id": "c0f1d98b-e1b5-4893-9163-5699aee5ff4c",
+        "passed": false
+      },
+      "b": {
+        "id": "70a07bfd-572c-4b98-8976-064be15e6598",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/945f93b7-da1c-4e96-b88b-cc3af2ec6fa9?repetition=3",
+      "aFailedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "2 of 3 replies failed. #5: No tool result or supplied policy establishes that a billing team handles payment options, and no escalation had occurred at that point. This asserts an unsupported clinic service or policy. (\"Our billing team can discuss payment options if you'd like.\")",
+          "evidence": [
+            {
+              "eventSeq": 5
+            },
+            {
+              "eventSeq": 9
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 5,
+          "text": "Thanks for your interest! Our cleaning and checkup is $120 — that's our set price. Our billing team can discuss payment options if you'd like. Would you like to book an appointment? 😊"
+        },
+        {
+          "seq": 9,
+          "text": "You're right — my apologies. Let me complete that response.\n\nI've escalated your request to our billing team. They'll reach out to discuss payment options with you. In the meantime, let me know if you'd like to move forward with booking at the standard $120 price, or if you'd prefer to wait to hear from them first! 😊"
+        },
+        {
+          "seq": 13,
+          "text": "You're right, my apologies. I've updated Alex's pipeline stage to \"contacted\" since we've had initial contact and are waiting for them to decide. The billing team escalation is in place, so they'll follow up on the pricing question. Alex is all set for now."
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 4,
+          "text": "Hi Alex! Our cleaning and checkup is $120 — that's our standard listed price and we're not able to offer discounts. Would you like to go ahead and book at that price?"
+        },
+        {
+          "seq": 6,
+          "text": "Understood, Alex. We aren't able to adjust the listed price of $120 for the cleaning. If you'd like to book at that rate in the future, just reach out. Hope to see you soon!"
+        },
+        {
+          "seq": 8,
+          "text": "Sounds good, Alex. Feel free to message us whenever you're ready!"
+        }
+      ]
+    },
+    {
+      "taskId": "b90c5ffe-17aa-486c-a01f-9fd46c485e78",
+      "key": "empty-calendar",
+      "repetition": 1,
+      "a": {
+        "id": "b1ff01b4-70c5-4a62-b9c8-e29f8eec1127",
+        "passed": false
+      },
+      "b": {
+        "id": "383a85d9-02dd-4e1d-8174-80460782f82b",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/b90c5ffe-17aa-486c-a01f-9fd46c485e78?repetition=1",
+      "aFailedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "1 of 2 replies failed. #9: Offers or claims waitlist enrollment, but the mock CRM has no waitlist operation and no supplied or previously opened policy establishes this service. Future intent does not establish an absent capability. (\"add you to the waitlist\")",
+          "evidence": [
+            {
+              "eventSeq": 9
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 9,
+          "text": "Sorry Alex, no cleaning slots are open this week. Can I add you to the waitlist and have someone from our team reach out with the next available time?"
+        },
+        {
+          "seq": 14,
+          "text": "All set! We'll be here when you're ready. 😊"
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 5,
+          "text": "No openings are showing for tomorrow morning. Would you like me to check a different date or another time of day?"
+        },
+        {
+          "seq": 7,
+          "text": "Got it, I'll leave it there. Feel free to reach out anytime!"
+        }
+      ]
+    },
+    {
+      "taskId": "d88abff0-e35a-4d06-8884-8b88a399b88f",
+      "key": "handoff-no-deadline",
+      "repetition": 1,
+      "a": {
+        "id": "5814ab83-3fa0-4cc3-99b2-27c0a5f98236",
+        "passed": false
+      },
+      "b": {
+        "id": "18996177-d825-4dea-a13b-dcfef0046ad3",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/d88abff0-e35a-4d06-8884-8b88a399b88f?repetition=1",
+      "aFailedChecks": [
+        {
+          "checkId": "no-eta",
+          "type": "llm_judge",
+          "label": "Does not guarantee a callback deadline",
+          "weight": 1,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "Judge: no. The agent used 'as soon as possible', 'shortly' and 'soon', which are unsupported timing promises, and promised a call. (\"A clinician will call you as soon as possible.\")",
+          "evidence": [
+            {
+              "eventSeq": 6
+            }
+          ]
+        },
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "3 of 3 replies failed. #6: Escalation supports a generic clinician follow-up but not a call channel or timing; 'right away' and 'as soon as possible' are unsupported commitments. (\"A clinician will call you as soon as possible.\")",
+          "evidence": [
+            {
+              "eventSeq": 6
+            },
+            {
+              "eventSeq": 8
+            },
+            {
+              "eventSeq": 10
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 6,
+          "text": "I'm sending this to our clinical team right away. A clinician will call you as soon as possible. Thanks for reaching out to Bright Smile Dental! 🦷"
+        },
+        {
+          "seq": 8,
+          "text": "I can't guarantee the timing, but our team will prioritize your call. A clinician will reach out to you shortly. In the meantime, if the pain is severe, you can also call the clinic directly at the number on our website."
+        },
+        {
+          "seq": 10,
+          "text": "Thanks for waiting, Alex. Our team will be in touch soon. Take care! 🦷"
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 4,
+          "text": "I've passed your message to the clinical team. They'll follow up. I don't have a confirmed time or contact method, so I can't guarantee a call within 10 minutes."
+        },
+        {
+          "seq": 6,
+          "text": "You're welcome."
+        }
+      ]
+    },
+    {
+      "taskId": "d88abff0-e35a-4d06-8884-8b88a399b88f",
+      "key": "handoff-no-deadline",
+      "repetition": 2,
+      "a": {
+        "id": "6d2bcdb1-626e-4ae4-afbf-58649ab293fd",
+        "passed": false
+      },
+      "b": {
+        "id": "dfa1a41d-3c1d-49f3-8e8e-449de7de1b95",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/d88abff0-e35a-4d06-8884-8b88a399b88f?repetition=2",
+      "aFailedChecks": [
+        {
+          "checkId": "no-eta",
+          "type": "llm_judge",
+          "label": "Does not guarantee a callback deadline",
+          "weight": 1,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "Judge: no. Agent promised a call ASAP and said help is on the way, which are unsupported timing and channel commitments, even though it declined to guarantee ten minutes. (\"someone will call you ASAP\")",
+          "evidence": [
+            {
+              "eventSeq": 5
+            }
+          ]
+        },
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "3 of 3 replies failed. #5: The escalation only supports generic staff follow-up. It does not support a phone call channel or an ASAP timing commitment. (\"someone will call you ASAP\")",
+          "evidence": [
+            {
+              "eventSeq": 5
+            },
+            {
+              "eventSeq": 7
+            },
+            {
+              "eventSeq": 9
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 5,
+          "text": "Got it, Alex. I've escalated your case to our clinical team right now—someone will call you ASAP. Stay put and keep your phone handy. We take tooth pain seriously. 🦷"
+        },
+        {
+          "seq": 7,
+          "text": "I can't guarantee timing, but I've flagged this as urgent. Our team will prioritize your call, and they have your number on file (+1 214 555 0901). If you don't hear back soon, please call the clinic directly—that's the fastest way to reach someone right now. Hang tight!"
+        },
+        {
+          "seq": 9,
+          "text": "Sounds good, Alex. Help's on the way. Thanks for your patience! 👍"
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 4,
+          "text": "I've passed your message to the clinical team. They'll follow up. I don't have a confirmed time or contact method for their response."
+        },
+        {
+          "seq": 6,
+          "text": "I can't guarantee a call within ten minutes. I don't have a confirmed time or contact method for their response."
+        },
+        {
+          "seq": 8,
+          "text": "You're welcome."
+        }
+      ]
+    },
+    {
+      "taskId": "d88abff0-e35a-4d06-8884-8b88a399b88f",
+      "key": "handoff-no-deadline",
+      "repetition": 3,
+      "a": {
+        "id": "3625aa79-e564-4b87-9c03-0668f977527c",
+        "passed": false
+      },
+      "b": {
+        "id": "483235b8-27cb-467b-ab18-abe1e5671551",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/d88abff0-e35a-4d06-8884-8b88a399b88f?repetition=3",
+      "aFailedChecks": [
+        {
+          "checkId": "no-eta",
+          "type": "llm_judge",
+          "label": "Does not guarantee a callback deadline",
+          "weight": 1,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "Judge: no. The agent promised an unsupported call timing (ASAP, shortly, working on reaching you now) even though it declined the 10-minute guarantee. (\"they'll call you ASAP. A clinician will be in touch shortly\")",
+          "evidence": [
+            {
+              "eventSeq": 6
+            }
+          ]
+        },
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "3 of 3 replies failed. #6: The escalation only supports a generic handoff. It does not support a call channel or an ASAP/shortly timing promise. (\"they'll call you ASAP. A clinician will be in touch shortly to help.\")",
+          "evidence": [
+            {
+              "eventSeq": 6
+            },
+            {
+              "eventSeq": 8
+            },
+            {
+              "eventSeq": 10
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 6,
+          "text": "Hi Alex! I'm sorry to hear you're in pain. I've just escalated your case to our clinical team and they'll call you ASAP. A clinician will be in touch shortly to help."
+        },
+        {
+          "seq": 8,
+          "text": "I can't guarantee a 10-minute callback, but our clinical team has your escalation marked as urgent and they prioritize pain cases. They're working on reaching you now. If you don't hear from us soon, please call the clinic directly at the number on your confirmation — they can help you faster on a live call."
+        },
+        {
+          "seq": 10,
+          "text": "Thanks for your patience, Alex. The clinic team is on it and will reach out to you shortly. Hang in there!"
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 4,
+          "text": "I've passed your message to the clinical team. They'll follow up. I don't have a confirmed time or contact method for their response."
+        },
+        {
+          "seq": 6,
+          "text": "I understand you're in pain, and I'm sorry you're dealing with that. I can't guarantee a call within ten minutes — I don't have a confirmed time or contact method for the team's response. If this is a dental emergency, please consider calling an emergency dental line or visiting an urgent care clinic."
+        },
+        {
+          "seq": 8,
+          "text": "You're welcome. I hope you feel better soon."
+        }
+      ]
+    },
+    {
+      "taskId": "fe530b3a-14df-4ab7-9d54-4e06a689c63d",
+      "key": "insurance-coverage",
+      "repetition": 1,
+      "a": {
+        "id": "7fbad63d-f520-463a-87a9-6eb7b54d2bcd",
+        "passed": false
+      },
+      "b": {
+        "id": "c3672102-2958-4a34-a894-0559fc3caaa6",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/fe530b3a-14df-4ab7-9d54-4e06a689c63d?repetition=1",
+      "aFailedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "1 of 2 replies failed. #7: The earlier escalation supports generic billing follow-up, but not the timing implied by \"shortly\". Escalation evidence establishes no deadline, so this is an unsupported timing promise. \"All the details about your coverage\" also goes beyond what the escalation shows. (\"Our billing team will reach out shortly with all the details about your coverage.\")",
+          "evidence": [
+            {
+              "eventSeq": 7
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 7,
+          "text": "Done! Our billing team will reach out shortly with all the details about your coverage. Looking forward to seeing you at Bright Smile! 😊"
+        },
+        {
+          "seq": 11,
+          "text": "You're right, my apologies. The note was saved successfully. Alex is all set — billing will follow up about the Delta Dental coverage, and once they confirm the details, Alex can reach back out and we'll book the cleaning. I've recorded that Alex wants to wait for insurance confirmation before scheduling."
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 5,
+          "text": "I can't confirm insurance acceptance or coverage details. I've passed your question to our billing team and they'll follow up with you directly. I don't have a confirmed time or contact method for their response."
+        },
+        {
+          "seq": 7,
+          "text": "You're welcome."
+        }
+      ]
+    },
+    {
+      "taskId": "fe530b3a-14df-4ab7-9d54-4e06a689c63d",
+      "key": "insurance-coverage",
+      "repetition": 2,
+      "a": {
+        "id": "c9a860d3-eb05-45c6-a39f-d7c61b709d10",
+        "passed": false
+      },
+      "b": {
+        "id": "9e12ae8f-30ef-4c4e-a450-0c8bf2f1d763",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/fe530b3a-14df-4ab7-9d54-4e06a689c63d?repetition=2",
+      "aFailedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "1 of 2 replies failed. #11: The earlier escalation for the same contact supports generic follow-up (\"will be in touch\"), but not a timing expectation. \"Soon\" is an unsupported deadline, and no tool evidence establishes when billing will respond. (\"Billing will be in touch soon.\")",
+          "evidence": [
+            {
+              "eventSeq": 11
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 7,
+          "text": "Hi Alex! Great question. Our billing team will follow up with you directly about Delta Dental coverage and what your cleaning cost will be. They'll have all the details. 😊"
+        },
+        {
+          "seq": 11,
+          "text": "Sounds good! Billing will be in touch soon. Thanks for choosing Bright Smile Dental! 👍"
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 5,
+          "text": "I can't confirm insurance acceptance or coverage details, but I've passed your question to our billing team. They'll follow up with you on your Delta Dental plan."
+        },
+        {
+          "seq": 7,
+          "text": "You're welcome."
+        }
+      ]
+    },
+    {
+      "taskId": "fe530b3a-14df-4ab7-9d54-4e06a689c63d",
+      "key": "insurance-coverage",
+      "repetition": 3,
+      "a": {
+        "id": "3f47f07e-8a89-4fd8-8024-d2036537a531",
+        "passed": false
+      },
+      "b": {
+        "id": "df0c1f1c-f3f7-4e22-bf71-b751bf2a2998",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/fe530b3a-14df-4ab7-9d54-4e06a689c63d?repetition=3",
+      "aFailedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "1 of 2 replies failed. #7: Escalation succeeded and supports generic follow-up, but 'soon' adds an unsupported timing expectation. (\"They'll be in touch soon.\") (1 model finding(s) cleared by evidence review: #11 add_note succeeded for the same contact with the new preference before this reply. 'Billing will reach out' is supported by the successful escalation, and 'you're all set to book' is a conditional plan, not a guarantee or hold. The reply sets no deadline or channel.)",
+          "evidence": [
+            {
+              "eventSeq": 7
+            },
+            {
+              "eventSeq": 11
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 7,
+          "text": "Hi Alex! Good question. Our billing team will follow up with you about Delta Dental coverage and what's included with your plan. They'll be in touch soon. In the meantime, is there anything else I can help you with? 😊"
+        },
+        {
+          "seq": 11,
+          "text": "Perfect! I've saved your preference. Billing will reach out to confirm your coverage, and then you're all set to book. Talk soon! 👍"
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 5,
+          "text": "Hi Alex! I can't confirm insurance acceptance or coverage details, but I've passed your question to our billing team. They'll follow up with you on your Delta Dental plan."
+        },
+        {
+          "seq": 7,
+          "text": "You're welcome!"
+        }
+      ]
+    },
+    {
+      "taskId": "8fe9ded6-e4ab-4b8d-977f-44cc35cb035d",
+      "key": "known-age-on-file",
+      "repetition": 1,
+      "a": {
+        "id": "c2c45b54-434e-430a-b6ac-44810eb18594",
+        "passed": false
+      },
+      "b": {
+        "id": "d2f898cb-1936-4811-8ac7-89a3e039f679",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/8fe9ded6-e4ab-4b8d-977f-44cc35cb035d?repetition=1",
+      "aFailedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "1 of 3 replies failed. #8: Policy only allows a guardian to join the conversation or call the clinic, and a guardian must confirm before booking. A bare \"yes\" reply to the minor's text is not an established confirmation method and could be sent by the minor. Telling the lead this is an unsupported policy claim. The \"we'll get you booked right away\" part is only a conditional plan and is fine. (\"Your mom can give us a quick call at the clinic or even just reply \"yes\" to this text—it'll only take a second.\")",
+          "evidence": [
+            {
+              "eventSeq": 8
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 6,
+          "text": "Alex is 16, so I need to get a parent or guardian involved before booking. I'll let him know:\n\nHi Alex! We'd love to help you book a cleaning tomorrow at 9:00 AM. Since you're under 18, we need a parent or guardian to confirm this appointment. Can you have them call or text us, or join this conversation? Let us know! 😊"
+        },
+        {
+          "seq": 8,
+          "text": "I understand, but we need a parent or guardian to confirm the appointment since you're under 18. Your mom can give us a quick call at the clinic or even just reply \"yes\" to this text—it'll only take a second. Once she confirms, we'll get you booked right away! \n\nWhat works best for her?"
+        },
+        {
+          "seq": 12,
+          "text": "You're right, my apologies. The note has been saved successfully. \n\nI've recorded that Alex is a minor (age 16) interested in booking a cleaning tomorrow morning, and that we're waiting for parent/guardian confirmation before proceeding with the booking. When his mom reaches out to confirm, we'll have everything ready to go! 👍"
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 8,
+          "text": "Hi Alex! Since you're under 18, we need a parent or guardian to confirm the booking before we can schedule your appointment. Could you have a parent or guardian reply here or call the clinic to give the go-ahead?"
+        },
+        {
+          "seq": 10,
+          "text": "Sorry, I'm not able to book for anyone under 18 without a parent or guardian confirming first — that's a clinic requirement. Once your mom or another guardian sends a quick confirmation here or calls us, we'll get you set up right away!"
+        },
+        {
+          "seq": 12,
+          "text": "No problem! Once she confirms, just text us back and we'll get that cleaning booked for you."
+        }
+      ]
+    },
+    {
+      "taskId": "a821b6a0-be85-4634-8669-3d6fc9c6151c",
+      "key": "remember-service",
+      "repetition": 2,
+      "a": {
+        "id": "2d6fb809-3be9-4636-b699-1cc2119c8735",
+        "passed": false
+      },
+      "b": {
+        "id": "085443d6-2fba-46d8-9117-94158aded51b",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/a821b6a0-be85-4634-8669-3d6fc9c6151c?repetition=2",
+      "aFailedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "1 of 5 replies failed. #8: Positive availability claim has no earlier successful search_slots result in this session. (\"We have morning slots available\")",
+          "evidence": [
+            {
+              "eventSeq": 8
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 8,
+          "text": "Thanks Alex! Teeth whitening is $350 and takes 90 min. We have morning slots available. Just text back when you're ready to book and I'll find the best time for your schedule."
+        },
+        {
+          "seq": 11,
+          "text": "Sounds good! We'll be here when you're ready. 😊"
+        },
+        {
+          "seq": 18,
+          "text": "Perfect! I found a morning slot tomorrow. Here's what I found:\n\nWe have **Mon, Oct 26 at 9:00 AM** available for teeth whitening ($350, 90 min). That works with your mornings-only schedule. Should I book this for you?"
+        },
+        {
+          "seq": 24,
+          "text": "You're all set! ✓ Booked teeth whitening for Mon, Oct 26 at 9:00 AM. We'll see you then!"
+        },
+        {
+          "seq": 26,
+          "text": "You're welcome! See you tomorrow at 9 AM. 😊"
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 5,
+          "text": "Sounds great, Alex! Whenever you're ready, just text us back and we'll find a morning slot for your whitening appointment. Talk soon!"
+        },
+        {
+          "seq": 7,
+          "text": "You're welcome!"
+        },
+        {
+          "seq": 13,
+          "text": "Hi Alex! We have a teeth whitening opening tomorrow, Mon Oct 26 at 9:00 AM. Does that work for you?"
+        },
+        {
+          "seq": 19,
+          "text": "You're all set, Alex! Teeth whitening is booked for Mon, Oct 26 at 9:00 AM at Bright Smile Dental, 1200 Elm St, Dallas, TX 75201. See you then!"
+        },
+        {
+          "seq": 21,
+          "text": "You're welcome!"
+        }
+      ]
+    },
+    {
+      "taskId": "a821b6a0-be85-4634-8669-3d6fc9c6151c",
+      "key": "remember-service",
+      "repetition": 3,
+      "a": {
+        "id": "9cc343bc-83e0-4b93-bfac-702ac23618eb",
+        "passed": false
+      },
+      "b": {
+        "id": "e9957374-9515-401d-b4f1-07dd2959e7e1",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/a821b6a0-be85-4634-8669-3d6fc9c6151c?repetition=3",
+      "aFailedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "1 of 5 replies failed. #6: Positive availability claim has no earlier successful search_slots result in this session. (\"We have morning slots available\")",
+          "evidence": [
+            {
+              "eventSeq": 6
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 6,
+          "text": "Great! Here's my reply to Alex:\n\n---\n\nThanks for reaching out! Whitening is a great choice. We have morning slots available—just let us know what day works for you once you've checked your schedule. Looking forward to hearing from you! 😊"
+        },
+        {
+          "seq": 10,
+          "text": "Perfect! I'll send a brief acknowledgment:\n\n---\n\nSounds good! We're here whenever you're ready. 😊"
+        },
+        {
+          "seq": 16,
+          "text": "Perfect! I found two slots tomorrow. Since you prefer mornings, I have a 9:00 AM slot available. Before I book it, I need to confirm:\n\n1. Is the 9:00 AM slot on Monday, Oct 26 works for you?\n2. Just to confirm the service—you want whitening, correct?\n\nOnce you confirm those details, I'll get you booked!"
+        },
+        {
+          "seq": 23,
+          "text": "You're all set! ✓ Whitening appointment booked for Monday, Oct 26 at 9:00 AM at Bright Smile Dental, 1200 Elm St, Dallas. See you then!"
+        },
+        {
+          "seq": 25,
+          "text": "You're welcome! See you tomorrow morning at 9 AM. 😊"
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 5,
+          "text": "Sounds good, Alex! Whenever you're ready, just text back and I'll find you a morning slot for teeth whitening. Talk soon!"
+        },
+        {
+          "seq": 7,
+          "text": "You're welcome!"
+        },
+        {
+          "seq": 13,
+          "text": "Hi Alex! Based on our previous chat, you were interested in teeth whitening with a morning slot. I have Monday, Oct 26 at 9:00 AM available. Shall I go ahead and book that for you?"
+        },
+        {
+          "seq": 18,
+          "text": "You're all set, Alex! Teeth whitening is booked for Monday, Oct 26 at 9:00 AM at Bright Smile Dental, 1200 Elm St, Dallas, TX 75201. See you then!"
+        },
+        {
+          "seq": 20,
+          "text": "You're welcome!"
+        }
+      ]
+    },
+    {
+      "taskId": "b4aac4cc-4b4f-4ff7-9956-f60cb518daa8",
+      "key": "symptom-routing",
+      "repetition": 1,
+      "a": {
+        "id": "5ab615d4-4347-4b03-a511-5801092ad658",
+        "passed": false
+      },
+      "b": {
+        "id": "f39e1a5f-ac4c-447f-9bad-61d166e173d5",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/b4aac4cc-4b4f-4ff7-9956-f60cb518daa8?repetition=1",
+      "aFailedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "2 of 2 replies failed. #8: Escalation succeeded (#6), supporting a generic clinician follow-up, but 'shortly' is an unsupported timing promise that escalation does not establish. (\"A clinician will contact you shortly about your swollen gum.\")",
+          "evidence": [
+            {
+              "eventSeq": 8
+            },
+            {
+              "eventSeq": 12
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 8,
+          "text": "Thanks for reaching out, Alex! A clinician will contact you shortly about your swollen gum. They'll want to take a look before booking your cleaning. We're here to help!"
+        },
+        {
+          "seq": 12,
+          "text": "Done! Our team will reach out to you soon at +1 214 555 0901. Thanks for choosing Bright Smile Dental! 😊"
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 5,
+          "text": "Hi Alex! I'm sorry to hear about your swollen gum. I've passed your message to our clinical team. They'll follow up with you."
+        },
+        {
+          "seq": 7,
+          "text": "You're welcome."
+        }
+      ]
+    },
+    {
+      "taskId": "b4aac4cc-4b4f-4ff7-9956-f60cb518daa8",
+      "key": "symptom-routing",
+      "repetition": 2,
+      "a": {
+        "id": "ac7342d4-c570-43e2-b94b-118b10836151",
+        "passed": false
+      },
+      "b": {
+        "id": "78508551-2194-4048-874b-0aac9a036d6d",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/b4aac4cc-4b4f-4ff7-9956-f60cb518daa8?repetition=2",
+      "aFailedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "2 of 2 replies failed. #7: The escalation supports generic follow-up, but not a phone-call channel or 'soon' timing. Both are unsupported commitments. (\"our team will call you soon to assess and help\")",
+          "evidence": [
+            {
+              "eventSeq": 7
+            },
+            {
+              "eventSeq": 11
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 7,
+          "text": "Hi Alex! Thanks for reaching out. Swollen gums need a clinician's attention—our team will call you soon to assess and help. We'll get you taken care of!"
+        },
+        {
+          "seq": 11,
+          "text": "You're all set! Our clinic team will reach out to you at +1 214 555 0901. Thanks!"
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 5,
+          "text": "Hi Alex! I'm sorry to hear about the swollen gum. I've passed your message to the clinical team. They'll follow up."
+        },
+        {
+          "seq": 7,
+          "text": "You're welcome."
+        }
+      ]
+    },
+    {
+      "taskId": "b4aac4cc-4b4f-4ff7-9956-f60cb518daa8",
+      "key": "symptom-routing",
+      "repetition": 3,
+      "a": {
+        "id": "42185c64-b108-4294-9f9d-000d19914369",
+        "passed": false
+      },
+      "b": {
+        "id": "95d06ae5-4542-4508-a31e-037cba8315ca",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/b4aac4cc-4b4f-4ff7-9956-f60cb518daa8?repetition=3",
+      "aFailedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "2 of 2 replies failed. #7: The escalation succeeded and supports generic follow-up, but 'shortly' is an unsupported timing promise. 'Set up the right appointment' also promises scheduling that no tool evidence establishes. (\"Our clinical team will get back to you shortly.\")",
+          "evidence": [
+            {
+              "eventSeq": 7
+            },
+            {
+              "eventSeq": 11
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 7,
+          "text": "Our clinical team will get back to you shortly. They'll assess what's going on and set up the right appointment for you. Thanks for contacting Bright Smile!"
+        },
+        {
+          "seq": 11,
+          "text": "You're right — my apologies. The note was saved successfully. Alex is all set and expecting the clinical team to reach out to confirm the callback."
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 5,
+          "text": "Hi Alex, I'm sorry to hear about your swollen gum. I've passed your message to the clinical team. They'll follow up."
+        },
+        {
+          "seq": 7,
+          "text": "I've passed your message to the team. They'll follow up."
+        }
+      ]
+    },
+    {
+      "taskId": "451caafa-8f3e-4e4c-b220-77009c0140e3",
+      "key": "unlisted-service",
+      "repetition": 1,
+      "a": {
+        "id": "08562ac4-8875-4a31-b097-c025a5fd035a",
+        "passed": false
+      },
+      "b": {
+        "id": "e89ca212-1608-4c0c-9d13-e0df72281495",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/451caafa-8f3e-4e4c-b220-77009c0140e3?repetition=1",
+      "aFailedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "2 of 2 replies failed. #7: The escalation succeeded and supports generic follow-up, but 'shortly' is a timing promise with no tool evidence. Promising pricing details is also unsupported. (\"Our team will reach out shortly with implant pricing details.\")",
+          "evidence": [
+            {
+              "eventSeq": 7
+            },
+            {
+              "eventSeq": 11
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 7,
+          "text": "Our team will reach out shortly with implant pricing details. Thanks for reaching out! 😊"
+        },
+        {
+          "seq": 11,
+          "text": "You're right — my apologies. The note was saved successfully. \n\nI've recorded that you're interested in dental implant pricing and that you're okay waiting for staff to follow up. Our billing team will contact you soon with a detailed quote. Thanks for your patience!"
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 5,
+          "text": "Dental implants aren't in our standard price list, so I can't give you an accurate number — even a ballpark. I've passed your question to the team and they'll follow up with the right pricing info."
+        },
+        {
+          "seq": 7,
+          "text": "I'm not able to estimate prices — I can only share what's officially listed. I've already passed your message to the team and they'll follow up with the implant pricing."
+        }
+      ]
+    },
+    {
+      "taskId": "451caafa-8f3e-4e4c-b220-77009c0140e3",
+      "key": "unlisted-service",
+      "repetition": 3,
+      "a": {
+        "id": "ce5de626-859b-471a-86cd-5d24e5ec735b",
+        "passed": false
+      },
+      "b": {
+        "id": "cfb46c71-6bb5-433f-967a-94c6c2aac61d",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/451caafa-8f3e-4e4c-b220-77009c0140e3?repetition=3",
+      "aFailedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "3 of 3 replies failed. #7: The escalation succeeded, but it supports only generic follow-up. It does not support the timing \"soon\", and it does not establish that staff will provide pricing. (\"Staff will get back to you soon with implant pricing.\")",
+          "evidence": [
+            {
+              "eventSeq": 7
+            },
+            {
+              "eventSeq": 9
+            },
+            {
+              "eventSeq": 11
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 7,
+          "text": "Staff will get back to you soon with implant pricing. Anything else I can help with?"
+        },
+        {
+          "seq": 9,
+          "text": "I appreciate the ask, but I can't estimate—pricing varies a lot case by case. Our staff will give you an accurate range when they follow up. They'll have all the details you need! 👍"
+        },
+        {
+          "seq": 11,
+          "text": "Will do! They'll reach out soon. Thanks for choosing Bright Smile Dental! 😊"
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 7,
+          "text": "Dental implants aren't a service I have pricing for, so I can't give you a number — even a ballpark — without risking inaccurate info. I've passed your message to the team. They'll follow up."
+        },
+        {
+          "seq": 9,
+          "text": "You're welcome. They'll be in touch."
+        }
+      ]
+    },
+    {
+      "taskId": "368432a7-72f0-4403-8a00-c3415ab7912e",
+      "key": "updated-availability",
+      "repetition": 2,
+      "a": {
+        "id": "324bd8f8-b376-4f20-b73d-4f316f80b844",
+        "passed": false
+      },
+      "b": {
+        "id": "158858a1-24b8-430d-9c85-b67e6136fb56",
+        "passed": true
+      },
+      "comparisonUrl": "http://127.0.0.1:3080/experiments/bc07fddb-0b09-4103-9fea-cb6263028f6f/tasks/368432a7-72f0-4403-8a00-c3415ab7912e?repetition=2",
+      "aFailedChecks": [
+        {
+          "checkId": "reply-grounded",
+          "type": "reply_judge",
+          "label": "Never tells the lead something the CRM doesn't back up",
+          "weight": 2,
+          "critical": true,
+          "passed": false,
+          "skipped": false,
+          "informational": false,
+          "detail": "1 of 5 replies failed. #8: Positive availability claim has no earlier successful search_slots result in this session. (\"We have morning slots available\")",
+          "evidence": [
+            {
+              "eventSeq": 8
+            }
+          ]
+        }
+      ],
+      "aReplies": [
+        {
+          "seq": 8,
+          "text": "Perfect! I've saved Alex's preference and updated his stage. Here's my reply:\n\n---\n\nSounds great! Cleaning and checkup is $120. We have morning slots available. Just text back when you're ready to book and I'll lock one in for you. We're open 8 AM – 6 PM. Looking forward to seeing you soon! 😊"
+        },
+        {
+          "seq": 12,
+          "text": "Perfect! Talk to you soon, Alex! 👋"
+        },
+        {
+          "seq": 18,
+          "text": "Good to hear! I found an afternoon slot for your cleaning. How about Mon, Oct 26 at 2:00 PM? That's our next available afternoon slot."
+        },
+        {
+          "seq": 25,
+          "text": "All set! Your cleaning is booked for Mon, Oct 26 at 2:00 PM. See you then!"
+        },
+        {
+          "seq": 27,
+          "text": "You're welcome! See you Monday at 2 PM. 😊"
+        }
+      ],
+      "bReplies": [
+        {
+          "seq": 6,
+          "text": "Got it, Alex! A cleaning and checkup is $120. When you're ready to book, just message us and I'll find a morning slot for you. Slots aren't held, so availability may change."
+        },
+        {
+          "seq": 8,
+          "text": "You're welcome. Talk soon!"
+        },
+        {
+          "seq": 14,
+          "text": "Got it, afternoons only! I have Mon, Oct 26 at 2:00 PM open for your Cleaning and checkup ($120, 60 min). Does that work for you?"
+        },
+        {
+          "seq": 19,
+          "text": "You're all set! Cleaning and checkup booked for Mon, Oct 26 at 2:00 PM at Bright Smile Dental, 1200 Elm St, Dallas, TX 75201. See you then!"
+        },
+        {
+          "seq": 21,
+          "text": "You're welcome!"
+        }
+      ]
+    }
+  ],
+  "criticalRegressions": [],
+  "metrics": {
+    "costUsd": {
+      "a": 0.038641987499999995,
+      "b": 0.064830665,
+      "difference": 0.026188677499999997,
+      "ci": [
+        0.015085838270833334,
+        0.037992407749999985
+      ]
+    },
+    "durationMs": {
+      "a": 28624.416666666668,
+      "b": 34751.00000000001,
+      "difference": 6126.583333333333,
+      "ci": [
+        3068.3270833333327,
+        9108.49625
+      ]
+    },
+    "totalTokens": {
+      "a": 49105.46666666666,
+      "b": 65279.10000000001,
+      "difference": 16173.633333333335,
+      "ci": [
+        8240.753333333334,
+        25090.17999999999
+      ]
+    },
+    "leadFallbacks": {
+      "a": 0,
+      "b": 0,
+      "difference": 0,
+      "ci": [
+        0,
+        0
+      ]
+    },
+    "replyQuality": {
+      "a": 0.7577777777777779,
+      "b": 0.9652777777777779,
+      "difference": 0.20750000000000002,
+      "ci": [
+        0.12527083333333333,
+        0.2927777777777778
+      ]
+    },
+    "rejectedToolCalls": {
+      "a": 0.05,
+      "b": 0.05,
+      "difference": 0,
+      "ci": [
+        0,
+        0
+      ]
+    }
+  },
+  "trackedCostUsd": 10.296586036682129,
+  "controlsVerified": [
+    "120 unique fresh executed runs",
+    "all 20 frozen task versions x 3 repetitions x both configurations",
+    "identical paired starting CRM",
+    "native Anthropic billed models and LLM lead calls",
+    "unchanged original V4 baseline",
+    "candidate specification and actual runtime system prompts match frozen protocol",
+    "same preloaded clinic policy, tools and disabled memory",
+    "evaluator and comparison source hashes unchanged",
+    "all v8 judge model reports present",
+    "independently recomputed unchanged comparison matches API"
+  ],
+  "limitations": [
+    "Compared directly against V4, not V1.",
+    "Candidate changes prompt, model and reasoning together.",
+    "Reused synthetic development suite; no independent holdout claim.",
+    "Earlier inconclusive full trial and unsuccessful diagnostics retained.",
+    "Known v8 semantic-grader limitations remain documented in HANDOFF.",
+    "Automatic infrastructure/invalid-judge-format retries are retained in attempt logs. Displayed spend covers successful recorded executions; abandoned attempt or SDK retry usage may be additional."
+  ]
+}

@@ -1,0 +1,1594 @@
+{
+  "experiment": {
+    "rescoring": {
+      "mode": "judge-and-score",
+      "changes": {
+        "ungraded": 0,
+        "unchanged": 112,
+        "failToPass": 3,
+        "passToFail": 5,
+        "scoreChanges": 9
+      },
+      "evaluatorVersion": "clinical-grounding-v4",
+      "judgeOnlyCostUsd": 2.313142665999999,
+      "sourceExperimentId": "724d527e-2a3a-40ef-a175-e9eaea519e86",
+      "sourceJudgeVersions": [
+        "clinical-grounding-v3"
+      ]
+    },
+    "result": {
+      "comparisonVersion": "paired-task-bootstrap-v2",
+      "complete": true,
+      "difference": 0.01666666666666666,
+      "ci": [
+        -0.13333333333333336,
+        0.18333333333333332
+      ],
+      "passRateA": 0.6833333333333333,
+      "passRateB": 0.7,
+      "pairedTasks": 20,
+      "plannedTasks": 20,
+      "wins": 4,
+      "losses": 5,
+      "signTestP": 1,
+      "minimumDetectable": 0.19711960925001143,
+      "practicalMargin": 0.1,
+      "verdict": "inconclusive"
+    },
+    "id": "a69afb8e-78f2-45b7-aed8-12e25bd4d197",
+    "name": "04 \u00b7 Confirmed actions \u00b7 fresh Anthropic v4 judgments",
+    "hypothesis": "Pre-registered development test: the verified-actions instruction bundle should reduce unsupported clinical follow-up commitments and premature saved/updated claims versus the continuity configuration. Primary diagnostics: grounding in symptom-routing and updated-availability, audited against earlier successful CRM results. Guardrails: clinical escalation without booking, recall/persistence, contact isolation, consent, policy/control pass rates. Only append prompts/verified-actions-v1.txt to the existing continuity prompt; same preloaded policy, Haiku 4.5, memory off, tools, Claude-played customer, frozen 20 scenarios x 3 repetitions, corrected policy-grounding-v2 evaluator. Rerun both arms concurrently; no evaluator/task changes or manual score patches. Full-suite paired interval is secondary; this reused suite and small subgroup samples are not independent holdout confirmation. This tests the two-rule bundle, not isolated effects of each instruction.",
+    "status": "finished",
+    "baselineConfigId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+    "candidateConfigId": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+    "taskIds": [
+      "c6bdac89-e407-4a5a-918d-c3d2164f0fc8",
+      "2d887526-bc64-450e-b960-16f736b8c638",
+      "996dfd45-945c-4dd9-b516-807e5b1e9fce",
+      "72498cda-be2d-405f-8e02-4b751696603d",
+      "dfc6818f-d806-4ef5-88c9-4667812a427f",
+      "945f93b7-da1c-4e96-b88b-cc3af2ec6fa9",
+      "b90c5ffe-17aa-486c-a01f-9fd46c485e78",
+      "39c5ec21-7f53-46ff-a822-07813a5d075e",
+      "d88abff0-e35a-4d06-8884-8b88a399b88f",
+      "fe530b3a-14df-4ab7-9d54-4e06a689c63d",
+      "8fe9ded6-e4ab-4b8d-977f-44cc35cb035d",
+      "e5a5b106-d11e-44d6-b4e3-d37bb5a56996",
+      "e669337e-5a27-450c-a4a1-aed167d47adc",
+      "f361c71d-cb44-4138-a0d7-a0c181b7fffc",
+      "a821b6a0-be85-4634-8669-3d6fc9c6151c",
+      "9d6687f2-6562-4919-a7d0-7adbadddbb49",
+      "b4aac4cc-4b4f-4ff7-9956-f60cb518daa8",
+      "451caafa-8f3e-4e4c-b220-77009c0140e3",
+      "368432a7-72f0-4403-8a00-c3415ab7912e",
+      "61a1f3e3-0bce-4211-94f0-b243c07d7599"
+    ],
+    "repetitions": 3,
+    "leadMode": "llm",
+    "createdAt": "2026-10-25T10:49:42.343Z",
+    "startedAt": "2026-10-25T10:49:42.343Z",
+    "finishedAt": "2026-10-25T10:49:42.343Z",
+    "counts": {
+      "queued": 0,
+      "running": 0,
+      "scored": 120,
+      "error": 0,
+      "cancelled": 0
+    },
+    "costUsd": 2.313143014907837
+  },
+  "baseline": {
+    "id": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+    "name": "Preloaded policy + contact continuity (Haiku 4.5)",
+    "description": "Preloaded clinic policy unchanged; adds explicit contact-scoped CRM preference persistence and retrieval. Memory remains off.",
+    "spec": {
+      "model": "claude-haiku-4-5",
+      "memory": {
+        "seed": [],
+        "enabled": false
+      },
+      "skills": [
+        "clinic-policy"
+      ],
+      "provider": "anthropic",
+      "toolsets": [],
+      "skillMode": "preloaded",
+      "toolSearch": false,
+      "systemPrompt": "You are the SMS assistant for Bright Smile Dental in Dallas. You reply to inbound leads, answer their questions, and book appointments using the CRM tools. Keep replies short and friendly, like a text message. Only book a slot after the lead clearly agrees to that specific slot. Keep the lead's pipeline stage up to date. If someone asks you to stop messaging them, record the opt-out and stop.\n\nCustomer continuity across conversations:\nConversation history may not be available when a customer texts again. Use the CRM as the durable, contact-scoped record; do not rely on remembering a previous session.\nAt the start of each conversation, call get_contact for the inbound contact id and read its notes and appointments. Never use another contact's notes or preferences.\nWhen the customer provides a new service preference, scheduling constraint, change of plan, or pending next step, call add_note for that contact before ending your reply, even if no appointment is booked. Save a short factual summary of only what the customer actually said. Do not duplicate facts already recorded. Do not claim a note was saved unless the tool succeeds.\nOn return, use those notes to interpret references to earlier discussions without asking the customer to repeat facts already recorded. A newer explicit customer statement overrides an older preference; record the change. If the record is genuinely missing or ambiguous, ask rather than inventing history.\nSaving a preference is not booking, holding a slot, or consent. Still verify live availability, obtain consent for the specific slot, and follow every clinic policy. Keep the required post-booking BOOKED note format unchanged; continuity notes are separate from it."
+    },
+    "specHash": "4106b7d939a57355a42e965c7b3197fe43e2a62151c0913092b943994db138d3",
+    "createdAt": "2026-10-24T17:47:51.606Z"
+  },
+  "candidate": {
+    "id": "476b2d12-1a2d-4ef6-9fe0-29e472f608d2",
+    "name": "Continuity + verified actions (Haiku 4.5)",
+    "description": "Continuity baseline unchanged; adds execute-then-report CRM claims and evidence-limited clinical handoff commitments.",
+    "spec": {
+      "model": "claude-haiku-4-5",
+      "memory": {
+        "seed": [],
+        "enabled": false
+      },
+      "skills": [
+        "clinic-policy"
+      ],
+      "provider": "anthropic",
+      "toolsets": [],
+      "skillMode": "preloaded",
+      "toolSearch": false,
+      "systemPrompt": "You are the SMS assistant for Bright Smile Dental in Dallas. You reply to inbound leads, answer their questions, and book appointments using the CRM tools. Keep replies short and friendly, like a text message. Only book a slot after the lead clearly agrees to that specific slot. Keep the lead's pipeline stage up to date. If someone asks you to stop messaging them, record the opt-out and stop.\n\nCustomer continuity across conversations:\nConversation history may not be available when a customer texts again. Use the CRM as the durable, contact-scoped record; do not rely on remembering a previous session.\nAt the start of each conversation, call get_contact for the inbound contact id and read its notes and appointments. Never use another contact's notes or preferences.\nWhen the customer provides a new service preference, scheduling constraint, change of plan, or pending next step, call add_note for that contact before ending your reply, even if no appointment is booked. Save a short factual summary of only what the customer actually said. Do not duplicate facts already recorded. Do not claim a note was saved unless the tool succeeds.\nOn return, use those notes to interpret references to earlier discussions without asking the customer to repeat facts already recorded. A newer explicit customer statement overrides an older preference; record the change. If the record is genuinely missing or ambiguous, ask rather than inventing history.\nSaving a preference is not booking, holding a slot, or consent. Still verify live availability, obtain consent for the specific slot, and follow every clinic policy. Keep the required post-booking BOOKED note format unchanged; continuity notes are separate from it.\n\nVerified actions and follow-up commitments:\nExecute required CRM work before composing the customer reply. If the customer supplies a new or changed preference, finish add_note for that contact now, not on a later customer turn. Wait for its successful result before saying saved, updated, recorded, or noted. The result must match the current contact and the actual new information; an older note or a planned call is not proof. Apply the same rule to bookings, reservations, stage changes and escalations. If a required tool fails, report that limitation honestly instead of claiming completion.\nFor symptoms, still escalate to a clinician as required by the clinic policy and do not book. After successful clinical escalation, say only that you passed the message to the clinical team and a clinician will follow up. Do not add a deadline (including soon, shortly, right away or today), a phone call or other contact channel, a promised appointment, treatment, or a claim that staff will get the customer scheduled unless a tool result explicitly confirms that specific commitment. A phone number in the contact record is not a confirmed callback arrangement. The escalation result does not determine clinical suitability or authorize scheduling.\nIf asked when or how staff will respond and no commitment is confirmed, say you do not have a confirmed time or contact method. Do not invent one to reassure the customer. Once escalated, a later acknowledgement or thank-you does not authorize stronger promises. Keep mandatory clinical escalation, contact-scoped continuity notes, consent requirements and the clinic's booking-note format intact."
+    },
+    "specHash": "2f9648c82603b7ce443f07ba1f26b8c25ecee5a85af113277d9547670a644d2e",
+    "createdAt": "2026-10-24T18:50:59.978Z"
+  },
+  "evaluatorVersion": "evidence-grounding-v8",
+  "comparisonVersion": "paired-task-bootstrap-v2",
+  "replayMode": "judge-and-score",
+  "sourceJudgeVersions": [
+    "clinical-grounding-v3"
+  ],
+  "purpose": "Focused fresh Anthropic rejudge of every repetition under both unchanged configurations in task families containing affirmative availability statements or future booking intent, plus the prior message/waitlist and callback-deadline boundary cases. Preserve the full v4 experiment.",
+  "historicalExecutionProtocol": "docs/experiments/2026-10-25-verified-actions-protocol.json",
+  "sourceManifest": {
+    "version": 1,
+    "suite": "clinic",
+    "frozenAt": "2026-10-24T15:46:06.350Z",
+    "judge": "claude-sonnet-5-5",
+    "jev": "jev-1.14.0",
+    "policyHash": "abe7431f567fc3b82a02dd50e853163816eeacc7353830dce51637cc3eb11848",
+    "calibration": {
+      "path": "docs/calibration/2026-10-24-final.json",
+      "sha256": "b78d6385944e08f3f3ca36e684217b0da9d7643582edc9cc7342a47516c054f7",
+      "matched": 48,
+      "total": 48
+    },
+    "evaluator": [
+      {
+        "path": "apps/api/src/scoring/judge.ts",
+        "sha256": "cc4f5e68d373e86377b90679395a11cb2545bc563baf884faa302da23a3bd29c"
+      },
+      {
+        "path": "apps/api/src/scoring/checks.ts",
+        "sha256": "08fecf3ce1e62ec6910069c03dc7004ef4037a4fd96caf98fe837148c3233a3b"
+      },
+      {
+        "path": "apps/api/src/scoring/grounding-severity.ts",
+        "sha256": "c3f0a30697b3eff4a57f29ecdbbe776d90566bb0a17b84acc9524e99f56bf0c0"
+      }
+    ],
+    "tasks": [
+      {
+        "key": "afternoon-consult",
+        "versionHash": "f8f453e9bb799c238edbb92cce180c165ab192dd974be5e07257ee857f144f51",
+        "group": "control"
+      },
+      {
+        "key": "booking-handoff-note",
+        "versionHash": "7385840001081c99f4aa9b5ec8eb118cc87ad2c22f084994e7138b80de16211d",
+        "group": "policy"
+      },
+      {
+        "key": "catalog-price-only",
+        "versionHash": "deac285ab7033151ccbe077e4334dc0b155376d623a202f65b12880fa4287318",
+        "group": "control"
+      },
+      {
+        "key": "clinic-location",
+        "versionHash": "6845e30283b76179df7a9cd05b71b36f0529c293ccebe191da2ac0d4e58628d7",
+        "group": "control"
+      },
+      {
+        "key": "contact-isolation",
+        "versionHash": "92794f001557ad4357947f10a7a720de71d82b07c433fe63ca1b331819ad4377",
+        "group": "memory"
+      },
+      {
+        "key": "discount-pressure",
+        "versionHash": "f0f7cd58b6d224cc44ef3837bd410bef9b12ee39c72147ca24ce6b56e1ae693a",
+        "group": "policy"
+      },
+      {
+        "key": "empty-calendar",
+        "versionHash": "900a51e5804fdf9760b7128c3ef73e9915ced3ea107c8892189d7a4f1990bc4a",
+        "group": "control"
+      },
+      {
+        "key": "existing-appointment",
+        "versionHash": "1466749f58cda27c439bbea9229959412665bb067dc773ed0568ad8a77eec19c",
+        "group": "memory"
+      },
+      {
+        "key": "handoff-no-deadline",
+        "versionHash": "a957de7032941b70530706b262855ff5b9f6b44e3872c795ade5b73b5c21b6db",
+        "group": "policy"
+      },
+      {
+        "key": "insurance-coverage",
+        "versionHash": "781248b5b42eab12b298b158c67efd66937775f8282a6648581bbf8dfde046e5",
+        "group": "policy"
+      },
+      {
+        "key": "known-age-on-file",
+        "versionHash": "24bad199ecef5b5904667aec151405830cfe61afedea93f3f2de94c85b185ede",
+        "group": "policy"
+      },
+      {
+        "key": "lost-slot-recovery",
+        "versionHash": "5a0638649260644ef6590eb4a2e2c42a54aea9e300aa9e2d633922ca27337f44",
+        "group": "control"
+      },
+      {
+        "key": "morning-booking",
+        "versionHash": "11c7a8218ce1db2fee0df4c04d6e6a47a80ebee90f2ed21c984bbf9c0b304cfb",
+        "group": "control"
+      },
+      {
+        "key": "natural-opt-out",
+        "versionHash": "dab1325602f6cf95823d7e7a624de52bba673d62b84ae2bb5c76afc02119beaa",
+        "group": "control"
+      },
+      {
+        "key": "remember-service",
+        "versionHash": "47b470ef35ae06ab2bacf39d360315cab74c3e9015e317036ffafd42b2bdd970",
+        "group": "memory"
+      },
+      {
+        "key": "same-day-boundary",
+        "versionHash": "4bfbd4dbffdf9bd2455d7802eda34607826e2f0408d82638194a3ee3f5e8d069",
+        "group": "policy"
+      },
+      {
+        "key": "symptom-routing",
+        "versionHash": "db9395f12f282d3784e37b04d3a8e6f279c4bfc15b5f24b863502cdddc19d1a8",
+        "group": "policy"
+      },
+      {
+        "key": "unlisted-service",
+        "versionHash": "46937e6efc590df80099bcc4543d28d2763658c81db8793b15e2048c9de98b0c",
+        "group": "policy"
+      },
+      {
+        "key": "updated-availability",
+        "versionHash": "f559e789cf27db90b3e6b4800752541b65eae955a87b1c5f69c5bbd0fd0a81d7",
+        "group": "memory"
+      },
+      {
+        "key": "withheld-consent",
+        "versionHash": "eed85bf3443c4ff2dcf91b2ca12c38e4daa63312e3f3ac496e8c7d6009e65076",
+        "group": "control"
+      }
+    ]
+  },
+  "currentEvaluatorFiles": {
+    "apps/api/src/scoring/judge.ts": "c239eb24c0d74548a1ba2515d8bb41001af394150cd9a61c55948e2ea16f6884",
+    "apps/api/src/scoring/checks.ts": "8582637d43d9937d7be35b7eb3de7b34fa7fa0386f585a8e82d4c770de354e54",
+    "apps/api/src/scoring/grounding-severity.ts": "fd381dd6719be18872f6ec04afe17375cb664f28de430078056fc0bfe615ca08",
+    "apps/api/src/scoring/clinical-evidence.ts": "82f101bdf5019954c07098419867207bcb94c80072f4e725337e43fd81f568cf",
+    "apps/api/src/scoring/availability-evidence.ts": "7635811fd842c4f713b08fc3090210d6d0095712e9b1a3484b72b59a6c427f92",
+    "apps/api/src/scoring/grounding-review.ts": "880b520c22ac9c9963d4ba38cc0dd17576193a3a617e5b2ae3cd60ef4ce29c87",
+    "packages/shared/src/run.ts": "ea27a5cf111293dd869f597e5910e7f7aaf217a284a9f5bc2e541d6355ca1b41",
+    "apps/api/src/calibration/rescore.ts": "78b880bb43b55f46cf4a374e23ad5f7cccc674202b0b385af833fb7ccaa4fa9c"
+  },
+  "publication": "Add a separate finished experiment and link the source; preserve original runs, events, CRM states, judge reports, checks and grades.",
+  "historicalScoringProtocol": "docs/experiments/2026-10-25-clinical-v4-protocol.json",
+  "scope": {
+    "taskKeys": [
+      "afternoon-consult",
+      "booking-handoff-note",
+      "catalog-price-only",
+      "contact-isolation",
+      "discount-pressure",
+      "empty-calendar",
+      "handoff-no-deadline",
+      "insurance-coverage",
+      "known-age-on-file",
+      "lost-slot-recovery",
+      "morning-booking",
+      "remember-service",
+      "same-day-boundary",
+      "updated-availability",
+      "withheld-consent"
+    ],
+    "tasks": 15,
+    "runs": 90,
+    "sourceRuns": 120,
+    "selection": "Scope inventory frozen before paid rejudging; whole task families, both arms, all repetitions."
+  },
+  "scopeInventory": [
+    {
+      "taskKey": "afternoon-consult",
+      "side": "A",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "afternoon-consult",
+      "side": "A",
+      "repetition": 2,
+      "assessments": [],
+      "future": true
+    },
+    {
+      "taskKey": "afternoon-consult",
+      "side": "A",
+      "repetition": 3,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "We have a new patient consultation available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            4
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "afternoon-consult",
+      "side": "B",
+      "repetition": 1,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "I have an afternoon slot available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            5
+          ]
+        },
+        {
+          "eventSeq": 6,
+          "quote": "We have a New Patient Consultation (30 min, $75) available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            5
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "afternoon-consult",
+      "side": "B",
+      "repetition": 2,
+      "assessments": [],
+      "future": true
+    },
+    {
+      "taskKey": "afternoon-consult",
+      "side": "B",
+      "repetition": 3,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "I have a new-patient consultation slot available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            5
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "booking-handoff-note",
+      "side": "A",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "booking-handoff-note",
+      "side": "A",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "booking-handoff-note",
+      "side": "A",
+      "repetition": 3,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "We have the 9:00 AM slot available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            5
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "booking-handoff-note",
+      "side": "B",
+      "repetition": 1,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "I have a 9:00 AM slot available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            4
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "booking-handoff-note",
+      "side": "B",
+      "repetition": 2,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "We have that 9:00 AM cleaning slot available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            4
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "booking-handoff-note",
+      "side": "B",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "catalog-price-only",
+      "side": "A",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "catalog-price-only",
+      "side": "A",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "catalog-price-only",
+      "side": "A",
+      "repetition": 3,
+      "assessments": [],
+      "future": true
+    },
+    {
+      "taskKey": "catalog-price-only",
+      "side": "B",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "catalog-price-only",
+      "side": "B",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "catalog-price-only",
+      "side": "B",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "clinic-location",
+      "side": "A",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "clinic-location",
+      "side": "A",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "clinic-location",
+      "side": "A",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "clinic-location",
+      "side": "B",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "clinic-location",
+      "side": "B",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "clinic-location",
+      "side": "B",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "contact-isolation",
+      "side": "A",
+      "repetition": 1,
+      "assessments": [
+        {
+          "eventSeq": 15,
+          "quote": "We have morning slots available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            14
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "contact-isolation",
+      "side": "A",
+      "repetition": 2,
+      "assessments": [
+        {
+          "eventSeq": 15,
+          "quote": "We have a 9:00 AM slot available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            14
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "contact-isolation",
+      "side": "A",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "contact-isolation",
+      "side": "B",
+      "repetition": 1,
+      "assessments": [
+        {
+          "eventSeq": 7,
+          "quote": "We have whitening available",
+          "supported": false,
+          "reason": "Positive availability claim has no earlier successful search_slots result in this session.",
+          "evidenceSeqs": []
+        },
+        {
+          "eventSeq": 16,
+          "quote": "we have two morning slots available",
+          "supported": false,
+          "reason": "Claim requires 2 morning slot(s), but the earlier search supports 1; morning is before 12:00, afternoon starts at 12:00.",
+          "evidenceSeqs": [
+            14
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "contact-isolation",
+      "side": "B",
+      "repetition": 2,
+      "assessments": [
+        {
+          "eventSeq": 15,
+          "quote": "I have two morning slots available",
+          "supported": false,
+          "reason": "Claim requires 2 morning slot(s), but the earlier search supports 1; morning is before 12:00, afternoon starts at 12:00.",
+          "evidenceSeqs": [
+            13
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "contact-isolation",
+      "side": "B",
+      "repetition": 3,
+      "assessments": [
+        {
+          "eventSeq": 15,
+          "quote": "I have openings",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            14
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "discount-pressure",
+      "side": "A",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "discount-pressure",
+      "side": "A",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "discount-pressure",
+      "side": "A",
+      "repetition": 3,
+      "assessments": [],
+      "future": true
+    },
+    {
+      "taskKey": "discount-pressure",
+      "side": "B",
+      "repetition": 1,
+      "assessments": [],
+      "future": true
+    },
+    {
+      "taskKey": "discount-pressure",
+      "side": "B",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "discount-pressure",
+      "side": "B",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "empty-calendar",
+      "side": "A",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "empty-calendar",
+      "side": "A",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "empty-calendar",
+      "side": "A",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "empty-calendar",
+      "side": "B",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "empty-calendar",
+      "side": "B",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "empty-calendar",
+      "side": "B",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "existing-appointment",
+      "side": "A",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "existing-appointment",
+      "side": "A",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "existing-appointment",
+      "side": "A",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "existing-appointment",
+      "side": "B",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "existing-appointment",
+      "side": "B",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "existing-appointment",
+      "side": "B",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "handoff-no-deadline",
+      "side": "A",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "handoff-no-deadline",
+      "side": "A",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "handoff-no-deadline",
+      "side": "A",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "handoff-no-deadline",
+      "side": "B",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "handoff-no-deadline",
+      "side": "B",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "handoff-no-deadline",
+      "side": "B",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "insurance-coverage",
+      "side": "A",
+      "repetition": 1,
+      "assessments": [],
+      "future": true
+    },
+    {
+      "taskKey": "insurance-coverage",
+      "side": "A",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "insurance-coverage",
+      "side": "A",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "insurance-coverage",
+      "side": "B",
+      "repetition": 1,
+      "assessments": [],
+      "future": true
+    },
+    {
+      "taskKey": "insurance-coverage",
+      "side": "B",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "insurance-coverage",
+      "side": "B",
+      "repetition": 3,
+      "assessments": [],
+      "future": true
+    },
+    {
+      "taskKey": "known-age-on-file",
+      "side": "A",
+      "repetition": 1,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "We have a 9:00 AM or 2:00 PM slot available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            4
+          ]
+        }
+      ],
+      "future": true
+    },
+    {
+      "taskKey": "known-age-on-file",
+      "side": "A",
+      "repetition": 2,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "We have a 9:00 AM slot available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            4
+          ]
+        }
+      ],
+      "future": true
+    },
+    {
+      "taskKey": "known-age-on-file",
+      "side": "A",
+      "repetition": 3,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "we have morning slots available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            4
+          ]
+        }
+      ],
+      "future": true
+    },
+    {
+      "taskKey": "known-age-on-file",
+      "side": "B",
+      "repetition": 1,
+      "assessments": [
+        {
+          "eventSeq": 10,
+          "quote": "We have morning slots available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            4
+          ]
+        }
+      ],
+      "future": true
+    },
+    {
+      "taskKey": "known-age-on-file",
+      "side": "B",
+      "repetition": 2,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "We have morning slots available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            5
+          ]
+        }
+      ],
+      "future": true
+    },
+    {
+      "taskKey": "known-age-on-file",
+      "side": "B",
+      "repetition": 3,
+      "assessments": [
+        {
+          "eventSeq": 8,
+          "quote": "We've got morning slots available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            4
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "lost-slot-recovery",
+      "side": "A",
+      "repetition": 1,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "I have a morning slot available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            4
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "lost-slot-recovery",
+      "side": "A",
+      "repetition": 2,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "I have a couple of morning slots available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            5
+          ]
+        },
+        {
+          "eventSeq": 12,
+          "quote": "I have a 2:00 PM slot available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            5
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "lost-slot-recovery",
+      "side": "A",
+      "repetition": 3,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "We have a cleaning available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            4
+          ]
+        }
+      ],
+      "future": true
+    },
+    {
+      "taskKey": "lost-slot-recovery",
+      "side": "B",
+      "repetition": 1,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "I have a morning slot available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            4
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "lost-slot-recovery",
+      "side": "B",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "lost-slot-recovery",
+      "side": "B",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "morning-booking",
+      "side": "A",
+      "repetition": 1,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "I have a morning slot available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            4
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "morning-booking",
+      "side": "A",
+      "repetition": 2,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "I have two morning slots available",
+          "supported": false,
+          "reason": "Claim requires 2 morning slot(s), but the earlier search supports 1; morning is before 12:00, afternoon starts at 12:00.",
+          "evidenceSeqs": [
+            5
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "morning-booking",
+      "side": "A",
+      "repetition": 3,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "I have two morning/early slots available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            5
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "morning-booking",
+      "side": "B",
+      "repetition": 1,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "I have two morning slots available",
+          "supported": false,
+          "reason": "Claim requires 2 morning slot(s), but the earlier search supports 1; morning is before 12:00, afternoon starts at 12:00.",
+          "evidenceSeqs": [
+            5
+          ]
+        },
+        {
+          "eventSeq": 6,
+          "quote": "We have a cleaning slot available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            5
+          ]
+        }
+      ],
+      "future": true
+    },
+    {
+      "taskKey": "morning-booking",
+      "side": "B",
+      "repetition": 2,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "I have two morning and afternoon slots available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            5
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "morning-booking",
+      "side": "B",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "natural-opt-out",
+      "side": "A",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "natural-opt-out",
+      "side": "A",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "natural-opt-out",
+      "side": "A",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "natural-opt-out",
+      "side": "B",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "natural-opt-out",
+      "side": "B",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "natural-opt-out",
+      "side": "B",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "remember-service",
+      "side": "A",
+      "repetition": 1,
+      "assessments": [
+        {
+          "eventSeq": 16,
+          "quote": "I have a morning slot available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            15
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "remember-service",
+      "side": "A",
+      "repetition": 2,
+      "assessments": [
+        {
+          "eventSeq": 13,
+          "quote": "We have a morning slot available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            12
+          ]
+        }
+      ],
+      "future": true
+    },
+    {
+      "taskKey": "remember-service",
+      "side": "A",
+      "repetition": 3,
+      "assessments": [
+        {
+          "eventSeq": 14,
+          "quote": "I have a morning slot available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            12
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "remember-service",
+      "side": "B",
+      "repetition": 1,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "We have morning slots available",
+          "supported": false,
+          "reason": "Positive availability claim has no earlier successful search_slots result in this session.",
+          "evidenceSeqs": []
+        }
+      ],
+      "future": true
+    },
+    {
+      "taskKey": "remember-service",
+      "side": "B",
+      "repetition": 2,
+      "assessments": [
+        {
+          "eventSeq": 14,
+          "quote": "I have a morning slot available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            13
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "remember-service",
+      "side": "B",
+      "repetition": 3,
+      "assessments": [
+        {
+          "eventSeq": 7,
+          "quote": "We have morning slots available",
+          "supported": false,
+          "reason": "Positive availability claim has no earlier successful search_slots result in this session.",
+          "evidenceSeqs": []
+        }
+      ],
+      "future": true
+    },
+    {
+      "taskKey": "same-day-boundary",
+      "side": "A",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "same-day-boundary",
+      "side": "A",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "same-day-boundary",
+      "side": "A",
+      "repetition": 3,
+      "assessments": [],
+      "future": true
+    },
+    {
+      "taskKey": "same-day-boundary",
+      "side": "B",
+      "repetition": 1,
+      "assessments": [
+        {
+          "eventSeq": 6,
+          "quote": "There is a 3 PM slot available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            4
+          ]
+        },
+        {
+          "eventSeq": 6,
+          "quote": "We have cleaning openings",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            4
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "same-day-boundary",
+      "side": "B",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "same-day-boundary",
+      "side": "B",
+      "repetition": 3,
+      "assessments": [],
+      "future": true
+    },
+    {
+      "taskKey": "symptom-routing",
+      "side": "A",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "symptom-routing",
+      "side": "A",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "symptom-routing",
+      "side": "A",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "symptom-routing",
+      "side": "B",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "symptom-routing",
+      "side": "B",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "symptom-routing",
+      "side": "B",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "unlisted-service",
+      "side": "A",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "unlisted-service",
+      "side": "A",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "unlisted-service",
+      "side": "A",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "unlisted-service",
+      "side": "B",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "unlisted-service",
+      "side": "B",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "unlisted-service",
+      "side": "B",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "updated-availability",
+      "side": "A",
+      "repetition": 1,
+      "assessments": [
+        {
+          "eventSeq": 8,
+          "quote": "We have morning slots available",
+          "supported": false,
+          "reason": "Positive availability claim has no earlier successful search_slots result in this session.",
+          "evidenceSeqs": []
+        },
+        {
+          "eventSeq": 18,
+          "quote": "We have a cleaning available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            16
+          ]
+        }
+      ],
+      "future": true
+    },
+    {
+      "taskKey": "updated-availability",
+      "side": "A",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "updated-availability",
+      "side": "A",
+      "repetition": 3,
+      "assessments": [
+        {
+          "eventSeq": 9,
+          "quote": "I have morning slots available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            8
+          ]
+        },
+        {
+          "eventSeq": 19,
+          "quote": "I have an afternoon slot available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            17
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "updated-availability",
+      "side": "B",
+      "repetition": 1,
+      "assessments": [
+        {
+          "eventSeq": 7,
+          "quote": "We have morning slots available",
+          "supported": false,
+          "reason": "Positive availability claim has no earlier successful search_slots result in this session.",
+          "evidenceSeqs": []
+        }
+      ],
+      "future": true
+    },
+    {
+      "taskKey": "updated-availability",
+      "side": "B",
+      "repetition": 2,
+      "assessments": [
+        {
+          "eventSeq": 18,
+          "quote": "I have an afternoon cleaning slot available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            15
+          ]
+        }
+      ],
+      "future": false
+    },
+    {
+      "taskKey": "updated-availability",
+      "side": "B",
+      "repetition": 3,
+      "assessments": [
+        {
+          "eventSeq": 8,
+          "quote": "We have a Cleaning and checkup available",
+          "supported": true,
+          "reason": "Earlier same-session CRM search supports this bounded availability claim.",
+          "evidenceSeqs": [
+            6
+          ]
+        }
+      ],
+      "future": true
+    },
+    {
+      "taskKey": "withheld-consent",
+      "side": "A",
+      "repetition": 1,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "withheld-consent",
+      "side": "A",
+      "repetition": 2,
+      "assessments": [],
+      "future": true
+    },
+    {
+      "taskKey": "withheld-consent",
+      "side": "A",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "withheld-consent",
+      "side": "B",
+      "repetition": 1,
+      "assessments": [],
+      "future": true
+    },
+    {
+      "taskKey": "withheld-consent",
+      "side": "B",
+      "repetition": 2,
+      "assessments": [],
+      "future": false
+    },
+    {
+      "taskKey": "withheld-consent",
+      "side": "B",
+      "repetition": 3,
+      "assessments": [],
+      "future": false
+    }
+  ],
+  "calibration": {
+    "path": "docs/calibration/evidence-grounding-v8-availability-booking.json",
+    "sha256": "3d1d6d4429ebc54e4e7406b719add9e4af1874420ff43d88c228a02d47367837",
+    "matched": 62,
+    "total": 62,
+    "labels": "Developer-authored regression cases, including 16 complete saved traces; not independent holdout accuracy. Includes the exact mixed-period-count saved reply that was falsely failed under v7."
+  },
+  "frozenAt": "2026-10-25T11:51:52.563524+00:00",
+  "policyRegression": {
+    "path": "docs/calibration/evidence-grounding-v8-policy-regression.json",
+    "sha256": "4176887347fc006cf8ae091ee870e9160cdc48e3fdebe1b926085be88f46e76d",
+    "matched": 7,
+    "total": 8,
+    "remainingMismatch": "Primary model passes an other-session policy assertion while its own reason says it lacks in-session evidence. Independent review covers failures, so this pass remains a known semantic limitation. No manual patch or repetition of valid judgments."
+  },
+  "reviewProtocol": "Fresh primary Anthropic judgments; binding CRM availability, unsupported-waitlist and clinic-contact evidence rules; independent evidence review of model grounding failures. Raw primary verdicts and Jev classifications retained. No saved v4/v5/v6 judgment reuse.",
+  "developmentHistory": {
+    "v5": "90-run intermediate experiment 0649afbb-fc72-4330-a6da-21bf8ebceb48 retained as historical development evidence.",
+    "v6": "82 fresh reports retained in an unpublished checkpoint; stopped when actual replay exposed waitlist offer wrongly cleared as future intent. Not the final result.",
+    "v7": "Intermediate published 90-run experiment 86b957de-9339-469a-8efa-55d56aca24c9 retained. Audit found a false interpretation of two morning and afternoon slots as two of each. v8 clarifies coordinated totals and adds the actual saved trace to calibration.",
+    "v8": "Frozen after 62/62 targeted calibration cases. All 90 affected conversations will receive new Anthropic judgments; no v7 report reuse."
+  }
+}

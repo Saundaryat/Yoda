@@ -7,6 +7,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import pg from 'pg';
 import request from 'supertest';
+import { fakeJudge } from './fake-judge.js';
 import type { RunQueueService } from '../src/runner/run-queue.service.js';
 
 // Real Nest app + real Postgres (a throwaway schema) + the fake Hermes: everything but the model.
@@ -38,6 +39,7 @@ beforeAll(async () => {
   await app.init();
   queue = app.get(RunQueueService);
   queue.backoffScale = 0;
+  queue.settings.judge = fakeJudge();
   api = request(app.getHttpServer());
 
   const spec = {
@@ -78,6 +80,27 @@ async function experiment(taskKeys: string[], repetitions = 1) {
 }
 
 describe('experiments end to end', () => {
+  it('exposes rescore provenance and original-score links without queueing runs', async () => {
+    const id = await experiment(['qualify-and-book']);
+    const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+    const rescoring = {
+      sourceExperimentId: ids.baseline,
+      evaluatorVersion: 'policy-grounding-v2',
+      judgeOnlyCostUsd: 0.02,
+    };
+    try {
+      await pool.query(`update ${schema}.experiments set analysis=$1 where id=$2`, [
+        { rescoring, correctedExperimentId: ids.candidate },
+        id,
+      ]);
+      const response = await api.get(`/api/experiments/${id}`).expect(200);
+      expect(response.body.rescoring).toEqual(rescoring);
+      expect(response.body.correctedExperimentId).toBe(ids.candidate);
+      expect((await api.get(`/api/experiments/${id}/runs`)).body).toEqual([]);
+    } finally {
+      await pool.end();
+    }
+  });
   it('creates a draft that runs nothing until started', async () => {
     const id = await experiment(['qualify-and-book']);
     const runs = await api.get(`/api/experiments/${id}/runs`).expect(200);
@@ -110,10 +133,18 @@ describe('experiments end to end', () => {
     expect(results.coverage).toMatchObject({ plannedRuns: 8, scoredRuns: 8, openRuns: 0 });
     expect(results.tasks.map((t: { a: unknown[] }) => t.a.length)).toEqual([2, 2]);
     expect(results.metrics.costUsd.a).toBeGreaterThan(0);
+    expect(summary.result).toEqual(results.comparison);
+    const listed = (await api.get('/api/experiments')).body.find(
+      (e: { id: string }) => e.id === id,
+    );
+    expect(listed.result).toEqual(results.comparison);
 
     const detail = (await api.get(`/api/runs/${runs[0]!.id}`).expect(200)).body;
     expect(detail.events[0]).toMatchObject({ kind: 'lead', seq: 1 });
     expect(detail.checks.length).toBeGreaterThan(0);
+    expect(
+      detail.checks.find((c: { checkId: string }) => c.checkId === 'reply-audience'),
+    ).toMatchObject({ informational: true, passed: true });
     expect(detail.run.crmFinal.appointments).toHaveLength(1);
   });
 
@@ -197,4 +228,183 @@ describe('experiments end to end', () => {
       counts: { cancelled: 6, running: 0, queued: 0 },
     });
   });
+});
+
+it('keeps missing critical judgments ungraded through storage, results and run inspection', async () => {
+  const judge = queue.settings.judge;
+  queue.settings.judge = null;
+  try {
+    const id = await experiment(['qualify-and-book']);
+    await api.post(`/api/experiments/${id}/start`).expect(201);
+    await queue.drain(id);
+    const list = (await api.get(`/api/experiments/${id}/runs`)).body;
+    expect(
+      list.every(
+        (r: { passed: boolean | null; score: number | null }) =>
+          r.passed === null && r.score === null,
+      ),
+    ).toBe(true);
+    const result = (await api.get(`/api/experiments/${id}/results`)).body;
+    expect(result.coverage).toMatchObject({
+      plannedRuns: 2,
+      scoredRuns: 0,
+      ungradedRuns: 2,
+      openRuns: 0,
+    });
+    expect(result.comparison.verdict).toBe('incomplete');
+    expect((await api.get(`/api/experiments/${id}`)).body.result).toEqual(result.comparison);
+    expect(
+      (await api.get(`/api/runs/${list[0].id}`)).body.checks.some(
+        (c: { critical: boolean; skipped: boolean }) => c.critical && c.skipped,
+      ),
+    ).toBe(true);
+  } finally {
+    queue.settings.judge = judge;
+  }
+});
+
+it('gates list and detail verdicts on every planned repetition, including missing run rows', async () => {
+  const taskList = (await api.get('/api/tasks')).body.filter(
+    (t: { split: string }) => t.split === 'eval',
+  );
+  const draft = (
+    await api
+      .post('/api/experiments')
+      .send({
+        name: 'Missing repetition regression',
+        baselineConfigId: ids.baseline,
+        candidateConfigId: ids.candidate,
+        taskIds: taskList.map((t: { id: string }) => t.id),
+        repetitions: 3,
+      })
+      .expect(201)
+  ).body;
+  const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+  try {
+    for (const t of taskList)
+      for (const configId of [ids.baseline, ids.candidate])
+        await pool.query(
+          `insert into ${schema}.runs(experiment_id, task_id, config_id, repetition, position, status, passed, score) values($1,$2,$3,1,0,'scored',$4,$5)`,
+          [
+            draft.id,
+            t.id,
+            configId,
+            configId === ids.candidate,
+            configId === ids.candidate ? 100 : 0,
+          ],
+        );
+    await pool.query(
+      `update ${schema}.experiments set status='finished', finished_at=now() where id=$1`,
+      [draft.id],
+    );
+    const result = (await api.get(`/api/experiments/${draft.id}/results`)).body;
+    expect(result.coverage).toMatchObject({ plannedRuns: 120, scoredRuns: 40 });
+    expect(result.comparison).toMatchObject({
+      pairedTasks: 20,
+      verdict: 'incomplete',
+      complete: false,
+    });
+    expect((await api.get(`/api/experiments/${draft.id}`)).body.result).toEqual(result.comparison);
+  } finally {
+    await pool.end();
+  }
+});
+
+it('reviews fresh grade changes by exact source-run identity with old/new evidence and excludes mismatches', async () => {
+  const source = await experiment(['qualify-and-book'], 2);
+  const current = await experiment(['qualify-and-book'], 2);
+  const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+  try {
+    await pool.query(`update ${schema}.experiments set analysis=$1 where id=$2`, [
+      {
+        rescoring: {
+          sourceExperimentId: source,
+          evaluatorVersion: 'clinical-grounding-v4',
+          mode: 'judge-and-score',
+          judgeOnlyCostUsd: 0.1,
+        },
+      },
+      current,
+    ]);
+    const insert = async (
+      experimentId: string,
+      configId: string,
+      repetition: number,
+      passed: boolean,
+      score: number,
+      sourceRunId?: string,
+    ) =>
+      (
+        await pool.query(
+          `insert into ${schema}.runs(experiment_id,task_id,config_id,repetition,position,status,passed,score,context) values($1,$2,$3,$4,0,'scored',$5,$6,$7) returning id`,
+          [
+            experimentId,
+            ids['qualify-and-book'],
+            configId,
+            repetition,
+            passed,
+            score,
+            sourceRunId ? { rescoring: { sourceRunId } } : {},
+          ],
+        )
+      ).rows[0].id as string;
+    const a = await insert(source, ids.baseline!, 1, true, 100);
+    const b = await insert(source, ids.candidate!, 1, false, 50);
+    const a2 = await insert(source, ids.baseline!, 2, false, 50);
+    // Insert B before A: row/position order must never determine the pairing.
+    const newB = await insert(current, ids.candidate!, 1, true, 100, b);
+    const newA = await insert(current, ids.baseline!, 1, false, 90, a);
+    await insert(current, ids.baseline!, 2, false, 70, a2);
+    await insert(current, ids.baseline!, 3, false, 90, a);
+    for (const [runId, passed, detail, eventSeq] of [
+      [a, true, 'All replies backed by tools.', 1],
+      [newA, false, 'Unsupported saved-note claim: "I saved it".', 5],
+      [b, false, 'Unsupported appointment claim.', 4],
+      [newB, true, 'Booking preceded the confirmation.', 6],
+    ] as const)
+      await pool.query(
+        `insert into ${schema}.check_results(run_id,check_id,type,label,weight,critical,passed,detail,evidence) values($1,'reply-grounded','reply_judge','Grounded',2,true,$2,$3,$4)`,
+        [runId, passed, detail, JSON.stringify([{ eventSeq }])],
+      );
+    const report = (await api.get(`/api/experiments/${current}/grade-changes`).expect(200)).body;
+    expect(report).toMatchObject({
+      comparedRuns: 3,
+      unmatchedRuns: 1,
+      passToFail: 1,
+      failToPass: 1,
+      scoreOnlyChanges: 1,
+      unchanged: 0,
+      mode: 'judge-and-score',
+    });
+    expect(report.changes[0]).toMatchObject({
+      runId: newA,
+      sourceRunId: a,
+      side: 'A',
+      previousPassed: true,
+      passed: false,
+      reasons: [
+        {
+          checkId: 'reply-grounded',
+          previous: { passed: true, detail: 'All replies backed by tools.' },
+          current: { passed: false, evidence: [{ eventSeq: 5 }] },
+        },
+      ],
+    });
+    expect(report.changes[1]).toMatchObject({
+      runId: newB,
+      sourceRunId: b,
+      side: 'B',
+      previousPassed: false,
+      passed: true,
+    });
+    expect(report.changes[2]).toMatchObject({
+      previousPassed: false,
+      passed: false,
+      previousScore: 50,
+      score: 70,
+      reasons: [],
+    });
+  } finally {
+    await pool.end();
+  }
 });

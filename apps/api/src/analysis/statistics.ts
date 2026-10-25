@@ -7,7 +7,7 @@
  * tasks (which tasks we happened to write), then resample runs within each task (run-to-run noise).
  */
 
-import type { Comparison, Verdict } from '@evals/shared';
+import { MIN_TASKS_FOR_VERDICT, type Comparison, type Verdict } from '@evals/shared';
 
 /** Per-task samples under each configuration (one value per scored run). */
 export interface Paired<T> {
@@ -17,6 +17,7 @@ export interface Paired<T> {
 }
 
 export type TaskRuns = Paired<boolean>;
+export const COMPARISON_VERSION = 'paired-task-bootstrap-v2';
 
 /** Deterministic PRNG (mulberry32) so a report recomputes to the same interval. */
 export function seededRandom(seed: number): () => number {
@@ -109,7 +110,23 @@ export function compareMetric(tasks: Paired<number>[], { samples = 10_000, seed 
  */
 export function compare(
   tasks: TaskRuns[],
-  { plannedTasks = tasks.length, practicalMargin = 0.1, samples = 10_000, seed = 1 } = {},
+  {
+    plannedTasks = tasks.length,
+    practicalMargin = 0.1,
+    samples = 10_000,
+    seed = 1,
+    plannedRepetitions,
+    experimentStatus,
+    coverageComplete = true,
+  }: {
+    plannedTasks?: number;
+    practicalMargin?: number;
+    samples?: number;
+    seed?: number;
+    plannedRepetitions?: number;
+    experimentStatus?: string;
+    coverageComplete?: boolean;
+  } = {},
 ): Comparison {
   const paired = tasks.filter((t) => t.a.length > 0 && t.b.length > 0);
   const diffs = paired.map(difference);
@@ -117,7 +134,20 @@ export function compare(
   const wins = diffs.filter((d) => d > 0).length;
   const losses = diffs.filter((d) => d < 0).length;
   const spread = standardDeviation(diffs);
+  const complete =
+    coverageComplete &&
+    paired.length === plannedTasks &&
+    tasks.length === plannedTasks &&
+    (!plannedRepetitions ||
+      tasks.every((t) => t.a.length === plannedRepetitions && t.b.length === plannedRepetitions)) &&
+    (!experimentStatus || experimentStatus === 'finished');
   const comparison: Omit<Comparison, 'verdict'> = {
+    comparisonVersion: COMPARISON_VERSION,
+    complete,
+    ...(!complete && {
+      incompleteReason:
+        'Every planned repetition on both versions must have complete grading, and the experiment must be finished.',
+    }),
     difference: mean(diffs),
     ci,
     passRateA: mean(paired.map((t) => rate(t.a))),
@@ -139,14 +169,15 @@ export function compare(
  * Below this many paired tasks the interval is too unstable to act on (with a handful of tasks
  * all tied, the bootstrap interval collapses to [0, 0]); the verdict stays inconclusive.
  */
-export const MIN_TASKS_FOR_VERDICT = 10;
+export { MIN_TASKS_FOR_VERDICT } from '@evals/shared';
 
 export function verdictFor(c: Omit<Comparison, 'verdict'>): Verdict {
-  if (c.pairedTasks === 0 || c.pairedTasks < 0.9 * c.plannedTasks) return 'incomplete';
+  if (c.complete === false || c.pairedTasks === 0 || c.pairedTasks !== c.plannedTasks)
+    return 'incomplete';
   if (c.pairedTasks < MIN_TASKS_FOR_VERDICT) return 'inconclusive';
   const [low, high] = c.ci;
-  if (low > 0) return 'better';
-  if (high < 0) return 'worse';
+  if (low > c.practicalMargin) return 'better';
+  if (high < -c.practicalMargin) return 'worse';
   if (low >= -c.practicalMargin && high <= c.practicalMargin) return 'no_meaningful_difference';
   return 'inconclusive';
 }
@@ -155,4 +186,40 @@ export function verdictFor(c: Omit<Comparison, 'verdict'>): Verdict {
 export function allRunsPassRate(tasks: TaskRuns[], side: 'a' | 'b'): number {
   const withRuns = tasks.filter((t) => t[side].length > 0);
   return mean(withRuns.map((t) => Number(t[side].every(Boolean))));
+}
+
+/** Every planned task/configuration/repetition must occur exactly once with a complete score. */
+export function hasCompleteRunCoverage(
+  records: {
+    taskId: string;
+    configId: string;
+    repetition: number;
+    status: string;
+    passed: boolean | null;
+    score: number | null;
+  }[],
+  taskIds: string[],
+  configurationIds: string[],
+  repetitions: number,
+): boolean {
+  const expected = new Set(
+    taskIds.flatMap((taskId) =>
+      configurationIds.flatMap((configId) =>
+        Array.from({ length: repetitions }, (_, index) => `${taskId}/${configId}/${index + 1}`),
+      ),
+    ),
+  );
+  if (records.length !== expected.size) return false;
+  for (const record of records) {
+    const key = `${record.taskId}/${record.configId}/${record.repetition}`;
+    if (
+      record.status !== 'scored' ||
+      record.passed === null ||
+      record.score === null ||
+      !Number.isFinite(record.score) ||
+      !expected.delete(key)
+    )
+      return false;
+  }
+  return expected.size === 0;
 }

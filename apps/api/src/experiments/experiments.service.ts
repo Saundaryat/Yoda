@@ -5,11 +5,19 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import type { CreateExperiment, ExperimentSummary, RunStatus, RunSummary } from '@evals/shared';
+import type {
+  CreateExperiment,
+  ExperimentSummary,
+  GradeChangeReport,
+  RunGradeChange,
+  RunStatus,
+  RunSummary,
+} from '@evals/shared';
 import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm';
 import { DB, type Db } from '../db/db.module.js';
 import { checkResults, configurations, experiments, runEvents, runs, tasks } from '../db/schema.js';
 import { RunQueueService } from '../runner/run-queue.service.js';
+import { compare, hasCompleteRunCoverage } from '../analysis/statistics.js';
 
 type ExperimentRow = typeof experiments.$inferSelect;
 
@@ -184,6 +192,119 @@ export class ExperimentsService {
     };
   }
 
+  /** Compare immutable source/result records, including the check evidence behind every flip. */
+  async gradeChanges(id: string): Promise<GradeChangeReport | null> {
+    const experiment = await this.row(id);
+    const replay = (experiment.analysis as ExperimentSummary | null)?.rescoring;
+    if (!replay) return null;
+    const records = await this.db
+      .select()
+      .from(runs)
+      .where(inArray(runs.experimentId, [id, replay.sourceExperimentId]));
+    const current = records.filter((r) => r.experimentId === id);
+    const originals = new Map(
+      records.filter((r) => r.experimentId === replay.sourceExperimentId).map((r) => [r.id, r]),
+    );
+    const taskRows = await this.db
+      .select()
+      .from(tasks)
+      .where(inArray(tasks.id, experiment.taskIds));
+    const checks = records.length
+      ? await this.db
+          .select()
+          .from(checkResults)
+          .where(
+            inArray(
+              checkResults.runId,
+              records.map((r) => r.id),
+            ),
+          )
+      : [];
+    const changes: RunGradeChange[] = [];
+    let unmatchedRuns = 0;
+    for (const run of current) {
+      const sourceId = (run.context as { rescoring?: { sourceRunId: string } } | null)?.rescoring
+        ?.sourceRunId;
+      const original = sourceId ? originals.get(sourceId) : undefined;
+      if (
+        !original ||
+        original.taskId !== run.taskId ||
+        original.configId !== run.configId ||
+        original.repetition !== run.repetition
+      ) {
+        unmatchedRuns++;
+        continue;
+      }
+      if (original.passed === run.passed && original.score === run.score) continue;
+      const previous = checks.filter((c) => c.runId === original.id && !c.informational);
+      const next = checks.filter((c) => c.runId === run.id && !c.informational);
+      const checkIds = [...new Set([...previous, ...next].map((c) => c.checkId))];
+      const snapshot = (c: (typeof checks)[number] | undefined) =>
+        c
+          ? {
+              passed: c.passed,
+              skipped: c.skipped,
+              detail: c.detail,
+              evidence: c.evidence as import('@evals/shared').Evidence[],
+            }
+          : null;
+      const task = taskRows.find((t) => t.id === run.taskId)!;
+      changes.push({
+        runId: run.id,
+        sourceRunId: original.id,
+        taskId: run.taskId,
+        taskKey: task.key,
+        taskTitle: task.title,
+        side: run.configId === experiment.baselineConfigId ? 'A' : 'B',
+        repetition: run.repetition,
+        previousPassed: original.passed,
+        passed: run.passed,
+        previousScore: original.score,
+        score: run.score,
+        reasons: checkIds.flatMap((checkId) => {
+          const before = previous.find((c) => c.checkId === checkId),
+            after = next.find((c) => c.checkId === checkId);
+          if (before?.passed === after?.passed && before?.skipped === after?.skipped) return [];
+          const check = after ?? before!;
+          return [
+            {
+              checkId,
+              label: check.label,
+              critical: check.critical,
+              previous: snapshot(before),
+              current: snapshot(after),
+            },
+          ];
+        }),
+      });
+    }
+    const priority = (r: RunGradeChange) =>
+      r.previousPassed === true && r.passed === false
+        ? 0
+        : r.previousPassed === false && r.passed === true
+          ? 1
+          : 2;
+    changes.sort(
+      (a, b) =>
+        priority(a) - priority(b) ||
+        a.taskKey.localeCompare(b.taskKey) ||
+        a.side.localeCompare(b.side) ||
+        a.repetition - b.repetition,
+    );
+    return {
+      sourceExperimentId: replay.sourceExperimentId,
+      evaluatorVersion: replay.evaluatorVersion,
+      mode: replay.mode ?? 'historical',
+      comparedRuns: current.length - unmatchedRuns,
+      unmatchedRuns,
+      passToFail: changes.filter((r) => r.previousPassed === true && r.passed === false).length,
+      failToPass: changes.filter((r) => r.previousPassed === false && r.passed === true).length,
+      scoreOnlyChanges: changes.filter((r) => r.previousPassed === r.passed).length,
+      unchanged: current.length - unmatchedRuns - changes.length,
+      changes,
+    };
+  }
+
   private async row(id: string): Promise<ExperimentRow> {
     const [row] = await this.db.select().from(experiments).where(eq(experiments.id, id));
     if (!row) throw new NotFoundException(`Experiment ${id} not found`);
@@ -191,6 +312,20 @@ export class ExperimentsService {
   }
 
   private async summary(row: ExperimentRow): Promise<ExperimentSummary> {
+    const records = await this.db
+      .select({
+        taskId: runs.taskId,
+        configId: runs.configId,
+        passed: runs.passed,
+        score: runs.score,
+        repetition: runs.repetition,
+        status: runs.status,
+      })
+      .from(runs)
+      .where(eq(runs.experimentId, row.id));
+    const scored = records.filter(
+      (r) => r.status === 'scored' && r.passed !== null && r.score !== null,
+    );
     const grouped = await this.db
       .select({
         status: runs.status,
@@ -207,6 +342,32 @@ export class ExperimentsService {
       costUsd += g.cost;
     }
     return {
+      rescoring: (row.analysis as ExperimentSummary | null)?.rescoring,
+      correctedExperimentId: (row.analysis as ExperimentSummary | null)?.correctedExperimentId,
+      result: records.some((record) => record.status === 'scored')
+        ? compare(
+            row.taskIds.map((taskId) => ({
+              taskId,
+              a: scored
+                .filter((r) => r.taskId === taskId && r.configId === row.baselineConfigId)
+                .map((r) => r.passed!),
+              b: scored
+                .filter((r) => r.taskId === taskId && r.configId === row.candidateConfigId)
+                .map((r) => r.passed!),
+            })),
+            {
+              plannedTasks: row.taskIds.length,
+              plannedRepetitions: row.repetitions,
+              experimentStatus: row.status,
+              coverageComplete: hasCompleteRunCoverage(
+                records,
+                row.taskIds,
+                [row.baselineConfigId, row.candidateConfigId],
+                row.repetitions,
+              ),
+            },
+          )
+        : null,
       id: row.id,
       name: row.name,
       hypothesis: row.hypothesis,

@@ -3,6 +3,7 @@ import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { fakeJudge } from '../../test/fake-judge.js';
 import { Judge } from '../scoring/judge.js';
 import { readTaskFiles } from '../suites/task-files.js';
 import { InfraError } from './hermes-cli.js';
@@ -37,7 +38,7 @@ beforeEach(() => {
     skillContent: () => '---\nname: clinic-policy\ndescription: test\n---\nRules.',
     leadClient: null,
     leadModel: 'claude-test',
-    judge: null,
+    judge: fakeJudge(),
   };
 });
 afterEach(() => rmSync(runsDir, { recursive: true, force: true }));
@@ -170,7 +171,11 @@ describe('executeRun with the fake Hermes', () => {
               act: 'informs',
               issues: [],
             })),
-            leadTurns: [],
+            leadTurns: [...prompt.matchAll(/#(\d+) LEAD:/g)].map(([, seq]) => ({
+              seq: Number(seq),
+              intent: 'other',
+              mood: 'calm',
+            })),
             questions: [],
             outcome: { label: 'booked', reason: 'Booked 9 AM.' },
             leadConsistent: { ok: true, reason: '' },
@@ -218,4 +223,14 @@ describe('executeRun with the fake Hermes', () => {
       message: 'OPENAI_API_KEY is not set',
     });
   });
+});
+
+it('retains the conversation but withholds the final score when no judge is available', async () => {
+  const outcome = await executeRun(
+    { runId: 'no-judge', attempt: 1, task: task('qualify-and-book'), spec, leadMode: 'scripted' },
+    { ...settings, judge: null },
+  );
+  expect(outcome).toMatchObject({ passed: null, score: null });
+  expect(outcome.crmFinal.appointments).toHaveLength(1);
+  expect(outcome.events.some((e) => e.kind === 'agent')).toBe(true);
 });

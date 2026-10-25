@@ -1,0 +1,143 @@
+{
+  "sourceExperimentId": "22793363-85f1-4d43-9cea-0a6df56956b2",
+  "recall": [
+    {
+      "runId": "93afab87-5b80-4420-845a-b50d6346ba57",
+      "mode": "preloaded",
+      "memoryBefore": null,
+      "notesSaved": [],
+      "returnedNotes": [
+        {
+          "seq": 11,
+          "contact": "c-eval",
+          "notes": []
+        }
+      ]
+    },
+    {
+      "runId": "1a08663c-bd8c-4942-85a3-6198c3e64269",
+      "mode": "available",
+      "memoryBefore": null,
+      "notesSaved": [
+        {
+          "seq": 5,
+          "args": {
+            "text": "Interested in teeth whitening. Mornings only. Checking work schedule, will text back.",
+            "contact_id": "c-eval"
+          },
+          "ok": true
+        },
+        {
+          "seq": 9,
+          "args": {
+            "text": "Follow-up: confirmed interest, will provide availability soon.",
+            "contact_id": "c-eval"
+          },
+          "ok": true
+        }
+      ],
+      "returnedNotes": [
+        {
+          "seq": 13,
+          "contact": "c-eval",
+          "notes": [
+            "Interested in teeth whitening. Mornings only. Checking work schedule, will text back.",
+            "Follow-up: confirmed interest, will provide availability soon."
+          ]
+        }
+      ]
+    },
+    {
+      "runId": "424386c6-f139-45e4-9bec-dc074cff4037",
+      "mode": "available",
+      "memoryBefore": null,
+      "notesSaved": [
+        {
+          "seq": 6,
+          "args": {
+            "text": "Interested in teeth whitening. Prefers mornings only. Will text back after checking work schedule.",
+            "contact_id": "c-eval"
+          },
+          "ok": true
+        },
+        {
+          "seq": 9,
+          "args": {
+            "text": "Acknowledged interest. Waiting for Alex to confirm available morning slots.",
+            "contact_id": "c-eval"
+          },
+          "ok": true
+        }
+      ],
+      "returnedNotes": [
+        {
+          "seq": 13,
+          "contact": "c-eval",
+          "notes": [
+            "Interested in teeth whitening. Prefers mornings only. Will text back after checking work schedule.",
+            "Acknowledged interest. Waiting for Alex to confirm available morning slots."
+          ]
+        }
+      ]
+    },
+    {
+      "runId": "04fc7d60-921a-4e8c-881f-53bc0abbc050",
+      "mode": "preloaded",
+      "memoryBefore": null,
+      "notesSaved": [],
+      "returnedNotes": [
+        {
+          "seq": 13,
+          "contact": "c-eval",
+          "notes": []
+        }
+      ]
+    },
+    {
+      "runId": "670b7bed-1537-43d1-b61f-bb64e2d2e28b",
+      "mode": "preloaded",
+      "memoryBefore": null,
+      "notesSaved": [],
+      "returnedNotes": [
+        {
+          "seq": 10,
+          "contact": "c-eval",
+          "notes": []
+        }
+      ]
+    },
+    {
+      "runId": "05c247b5-6807-4410-bda8-c7031f273c8e",
+      "mode": "available",
+      "memoryBefore": null,
+      "notesSaved": [
+        {
+          "seq": 6,
+          "args": {
+            "text": "Interested in teeth whitening. Prefers mornings only. Checking work schedule, will text back.",
+            "contact_id": "c-eval"
+          },
+          "ok": true
+        },
+        {
+          "seq": 11,
+          "args": {
+            "text": "Follow-up: Alex acknowledged info, checking schedule. Awaiting confirmation to book.",
+            "contact_id": "c-eval"
+          },
+          "ok": true
+        }
+      ],
+      "returnedNotes": [
+        {
+          "seq": 15,
+          "contact": "c-eval",
+          "notes": [
+            "Interested in teeth whitening. Prefers mornings only. Checking work schedule, will text back.",
+            "Follow-up: Alex acknowledged info, checking schedule. Awaiting confirmation to book."
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import {
   allRunsPassRate,
+  hasCompleteRunCoverage,
   bootstrapInterval,
   compare,
   seededRandom,
@@ -79,8 +80,8 @@ describe('verdictFor', () => {
     practicalMargin: 0.1,
   };
   it.each([
-    [[0.05, 0.3], 'better'],
-    [[-0.3, -0.01], 'worse'],
+    [[0.11, 0.3], 'better'],
+    [[-0.3, -0.11], 'worse'],
     [[-0.08, 0.09], 'no_meaningful_difference'],
     [[-0.05, 0.25], 'inconclusive'],
   ] as const)('maps interval %j to %s', (ci, verdict) => {
@@ -144,8 +145,8 @@ describe('calibration: A against itself', () => {
     return detected / 200;
   }
 
-  it('usually detects a 30-point average improvement', () => {
-    expect(power(0.6, 0.35)).toBeGreaterThan(0.7);
+  it('usually detects a 40-point gain beyond the practical margin', () => {
+    expect(power(0.8, 0.1)).toBeGreaterThan(0.7);
   });
 
   it('often misses a 20-point average improvement (a stated limit, not a bug)', () => {
@@ -156,5 +157,64 @@ describe('calibration: A against itself', () => {
 describe('bootstrapInterval', () => {
   it('is degenerate with no tasks', () => {
     expect(bootstrapInterval([], () => 1)).toEqual([0, 0]);
+  });
+});
+
+describe('complete coverage and practical verdict regressions', () => {
+  const won = Array.from({ length: 20 }, (_, i) => task(`t${i}`, [0], [1]));
+  it('keeps missing repetitions incomplete even when all twenty tasks have both arms', () => {
+    expect(compare(won, { plannedRepetitions: 3, experimentStatus: 'finished' })).toMatchObject({
+      verdict: 'incomplete',
+      complete: false,
+    });
+  });
+  it('requires all planned tasks, not ninety percent', () => {
+    expect(compare(won.slice(0, 18), { plannedTasks: 20 })).toMatchObject({
+      verdict: 'incomplete',
+      complete: false,
+    });
+  });
+  it.each(['running', 'cancelled'])(
+    'never declares a winner for a %s experiment',
+    (experimentStatus) => {
+      expect(compare(won, { plannedRepetitions: 1, experimentStatus }).verdict).toBe('incomplete');
+    },
+  );
+  it('applies the same version and verdict once all planned work is finished', () => {
+    expect(compare(won, { plannedRepetitions: 1, experimentStatus: 'finished' })).toMatchObject({
+      verdict: 'better',
+      complete: true,
+      comparisonVersion: 'paired-task-bootstrap-v2',
+    });
+  });
+  it.each([
+    [[0.01, 0.03], 'no_meaningful_difference'],
+    [[0.05, 0.3], 'inconclusive'],
+    [[-0.3, -0.05], 'inconclusive'],
+    [[0.1, 0.3], 'inconclusive'],
+    [[-0.3, -0.1], 'inconclusive'],
+  ] as const)('respects the practical margin for %j', (ci, verdict) => {
+    expect(verdictFor({ ...compare(won), ci: [...ci], practicalMargin: 0.1 })).toBe(verdict);
+  });
+  it('rejects duplicate identities, missing grades and missing rows in coverage', () => {
+    const records = ['a', 'b'].map((configId) => ({
+      taskId: 't',
+      configId,
+      repetition: 1,
+      status: 'scored',
+      passed: true,
+      score: 100,
+    }));
+    expect(hasCompleteRunCoverage(records, ['t'], ['a', 'b'], 1)).toBe(true);
+    expect(hasCompleteRunCoverage([records[0]!, records[0]!], ['t'], ['a', 'b'], 1)).toBe(false);
+    expect(
+      hasCompleteRunCoverage(
+        [{ ...records[0]!, passed: null, score: null }, records[1]!],
+        ['t'],
+        ['a', 'b'],
+        1,
+      ),
+    ).toBe(false);
+    expect(hasCompleteRunCoverage(records.slice(0, 1), ['t'], ['a', 'b'], 1)).toBe(false);
   });
 });

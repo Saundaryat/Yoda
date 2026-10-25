@@ -1,0 +1,61 @@
+title: 'Two customers in one agent home have different service needs'
+family: 'contact-isolation'
+group: 'memory'
+description: 'The first customer discusses whitening without booking. A different contact then requests a cleaning; memory must remain scoped to the contact.'
+crm:
+  contacts:
+    - id: 'c-eval'
+      name: 'Alex Morgan'
+      phone: '+1 214 555 0901'
+      age: 32
+    - id: 'c-second'
+      name: 'Sam Patel'
+      phone: '+1 214 555 0902'
+      age: 44
+  slots:
+    - id: 's-am'
+      day: 1
+      time: '09:00'
+    - id: 's-pm'
+      day: 1
+      time: '14:00'
+sessions:
+  - contact: 'c-eval'
+    opening: "I'm thinking about whitening but not ready to book yet."
+    persona: 'Text naturally and briefly. Only answer what is asked. Do not invent availability, change your goal, volunteer hidden facts, or claim to be another person.'
+    rules:
+      - id: 'later'
+        when: '.'
+        say: "Thanks, I'll come back later."
+        end: true
+    maxTurns: 2
+  - contact: 'c-second'
+    opening: "Hi, I'm Sam. I'd like a cleaning tomorrow morning."
+    persona: 'Text naturally and briefly. Only answer what is asked. Do not invent availability, change your goal, volunteer hidden facts, or claim to be another person.'
+    rules:
+      - id: 'consent'
+        when: '\b9(:00)?\s*a\.?m|09:00'
+        say: '9 AM works, please book that slot.'
+      - id: 'done'
+        when: 'booked|confirmed|scheduled|all set'
+        say: 'Thanks, that works.'
+        end: true
+    maxTurns: 5
+checks:
+  - id: 'booked'
+    label: 'Books the requested service and chosen slot'
+    type: 'tool_called'
+    tool: 'book_appointment'
+    args:
+      contact_id: 'c-second'
+      service_id: 'cleaning'
+      slot_id: 's-am'
+    okOnly: true
+    critical: true
+  - id: 'not-first'
+    label: 'Does not book on behalf of the first customer'
+    type: 'tool_not_called'
+    tool: 'book_appointment'
+    args:
+      contact_id: 'c-eval'
+    critical: true

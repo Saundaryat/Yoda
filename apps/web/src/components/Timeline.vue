@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { LeadLabel, RunEvent, TurnJudgment } from '@evals/shared';
-import { ISSUE_TEXT, label } from '../format.js';
+import { computed, ref } from 'vue';
+import { ISSUE_TEXT, label, percent } from '../format.js';
 
 /** A run's conversation: lead messages, agent replies and every tool call in between. */
 const props = defineProps<{
@@ -8,6 +9,7 @@ const props = defineProps<{
   highlighted: number[];
   judgments?: TurnJudgment[];
   leadLabels?: LeadLabel[];
+  idPrefix?: string;
 }>();
 
 const startsSession = (index: number) =>
@@ -16,17 +18,34 @@ const pretty = (value: unknown) =>
   typeof value === 'string' ? value : JSON.stringify(value, null, 2);
 const judgmentFor = (seq: number) => props.judgments?.find((j) => j.eventSeq === seq);
 const leadLabelFor = (seq: number) => props.leadLabels?.find((l) => l.eventSeq === seq);
+const showDetails = ref(false);
+const messages = computed(
+  () => props.events.filter((e) => e.kind === 'lead' || e.kind === 'agent').length,
+);
+const toolCalls = computed(() => props.events.filter((e) => e.kind === 'tool').length);
 </script>
 
 <template>
+  <div class="conversation-toolbar">
+    <span>{{ messages }} messages · {{ toolCalls }} tool calls</span
+    ><label
+      ><input v-model="showDetails" type="checkbox" /> Show tool calls and internal notes</label
+    >
+  </div>
   <ol class="timeline">
     <template v-for="(event, index) in events" :key="event.seq">
       <li v-if="startsSession(index) && events.some((e) => e.session > 1)" class="session">
         Session {{ event.session
-        }}{{ event.session > 1 ? ' — a new conversation with the same lead' : '' }}
+        }}{{ event.session > 1 ? ' — a new conversation; check tools for the contact' : '' }}
       </li>
       <li
-        :id="`event-${event.seq}`"
+        v-if="
+          event.kind === 'lead' ||
+          event.kind === 'agent' ||
+          showDetails ||
+          highlighted.includes(event.seq)
+        "
+        :id="`${idPrefix ?? 'event'}-${event.seq}`"
         class="event"
         :class="[event.kind, { highlight: highlighted.includes(event.seq) }]"
       >
@@ -34,21 +53,21 @@ const leadLabelFor = (seq: number) => props.leadLabels?.find((l) => l.eventSeq =
         <template v-if="event.kind === 'lead'">
           <div class="bubble">
             <div class="who">
-              Lead
-              <span v-if="event.by === 'llm'" class="badge info">LLM</span>
-              <span v-if="event.ruleId" class="badge">
+              Customer
+              <span v-if="showDetails && event.by === 'llm'" class="badge info">Simulated</span>
+              <span v-if="showDetails && event.ruleId" class="badge">
                 {{ event.by === 'llm' ? 'means' : 'rule' }}: {{ event.ruleId }}
               </span>
               <span v-if="event.fallback" class="badge warn">fallback</span>
               <span
-                v-if="leadLabelFor(event.seq)"
+                v-if="showDetails && leadLabelFor(event.seq)"
                 class="badge"
                 title="Judge's label for this message"
               >
                 {{ label(leadLabelFor(event.seq)!.intent) }} · {{ leadLabelFor(event.seq)!.mood }}
               </span>
             </div>
-            {{ event.text }}
+            <span class="message-text">{{ event.text }}</span>
           </div>
         </template>
         <template v-else-if="event.kind === 'agent'">
@@ -56,40 +75,98 @@ const leadLabelFor = (seq: number) => props.leadLabels?.find((l) => l.eventSeq =
             <div class="who">
               Agent reply
               <template v-if="judgmentFor(event.seq)">
-                <span class="badge" title="What kind of reply this was">{{
+                <span v-if="showDetails" class="badge" title="What kind of reply this was">{{
                   label(judgmentFor(event.seq)!.act)
                 }}</span>
-                <span v-if="!judgmentFor(event.seq)!.issues.length" class="badge good"
-                  >judge ✓</span
-                >
                 <span
-                  v-for="issue in judgmentFor(event.seq)!.issues"
-                  :key="issue.label"
-                  class="badge bad"
-                  :title="`${issue.reason} — “${issue.quote}”`"
-                  >{{ ISSUE_TEXT[issue.label] ?? label(issue.label) }}</span
+                  v-if="showDetails && !judgmentFor(event.seq)!.issues.length"
+                  class="badge good"
+                  >No findings</span
+                >
+                <span v-if="judgmentFor(event.seq)!.issues.length" class="badge warn"
+                  >{{ judgmentFor(event.seq)!.issues.length }}
+                  {{ judgmentFor(event.seq)!.issues.length === 1 ? 'finding' : 'findings' }}</span
                 >
               </template>
             </div>
-            <span v-if="event.text">{{ event.text }}</span>
+            <span v-if="event.text" class="message-text">{{ event.text }}</span>
             <em v-else class="muted">(empty reply)</em>
-            <ul v-if="judgmentFor(event.seq)?.issues.length" class="judge-notes">
-              <li v-for="issue in judgmentFor(event.seq)!.issues" :key="issue.label">
-                <strong>{{ ISSUE_TEXT[issue.label] ?? label(issue.label) }}:</strong>
-                {{ issue.reason }}
-                <span class="mono">“{{ issue.quote }}”</span>
-              </li>
-            </ul>
+            <details v-if="judgmentFor(event.seq)?.grounded.review" class="judge-details">
+              <summary>Grounding evidence review</summary>
+              <p>
+                Original model finding:
+                {{ judgmentFor(event.seq)!.grounded.review!.modelVerdict.reason }}
+              </p>
+              <blockquote class="evidence-quote">
+                {{ judgmentFor(event.seq)!.grounded.review!.modelVerdict.quote }}
+              </blockquote>
+              <p>
+                Reviewed: {{ judgmentFor(event.seq)!.grounded.pass ? 'Pass' : 'Fail' }} ·
+                {{ judgmentFor(event.seq)!.grounded.reason }}
+              </p>
+              <p v-if="judgmentFor(event.seq)!.grounded.review!.evidenceSeqs.length">
+                Evidence:
+                {{
+                  judgmentFor(event.seq)!
+                    .grounded.review!.evidenceSeqs.map((seq) => `#${seq}`)
+                    .join(', ')
+                }}.
+              </p>
+            </details>
+            <details v-if="judgmentFor(event.seq)?.issues.length" class="judge-details">
+              <summary>Review scoring evidence</summary>
+              <ul class="judge-notes">
+                <li
+                  v-for="issue in judgmentFor(event.seq)!.issues"
+                  :key="`${issue.label}/${issue.quote}`"
+                >
+                  <strong>{{ ISSUE_TEXT[issue.label] ?? label(issue.label) }}:</strong>
+                  {{ issue.reason }}
+                  <blockquote class="evidence-quote">{{ issue.quote }}</blockquote>
+                  <span v-if="issue.evidenceRule" class="badge bad"
+                    >CRM evidence rule: {{ issue.evidenceRule.severity }} ·
+                    {{ issue.evidenceRule.id }}</span
+                  >
+                  <details v-if="issue.evidenceRule" class="rule-provenance">
+                    <summary>Original model assessment</summary>
+                    <p>
+                      Before the CRM check:
+                      {{ issue.evidenceRule.modelVerdict.pass ? 'Pass' : 'Fail' }}.
+                      {{ issue.evidenceRule.modelVerdict.reason }}
+                    </p>
+                    <p v-if="issue.evidenceRule.evidenceSeqs.length">
+                      Earlier search evidence:
+                      {{ issue.evidenceRule.evidenceSeqs.map((seq) => `#${seq}`).join(', ') }}.
+                    </p>
+                  </details>
+                  <span
+                    v-if="issue.severity"
+                    class="badge"
+                    :class="issue.severity.label === 'minor' ? 'warn' : 'bad'"
+                  >
+                    Jev: {{ issue.severity.label }} ·
+                    {{ percent(issue.severity.confidence) }} confidence · p(minor)
+                    {{ percent(issue.severity.probabilities.minor) }} · p(serious)
+                    {{ percent(issue.severity.probabilities.serious) }}
+                  </span>
+                </li>
+              </ul>
+            </details>
           </div>
         </template>
         <template v-else-if="event.kind === 'tool'">
-          <details class="tool" :class="{ rejected: !event.ok }">
+          <details
+            class="tool"
+            :class="{ rejected: !event.ok }"
+            :open="highlighted.includes(event.seq)"
+          >
             <summary>
               <span class="mono">{{ event.tool }}</span>
               <span class="badge" :class="event.source === 'crm' ? 'info' : ''">{{
                 event.source === 'crm' ? 'CRM' : 'Hermes'
               }}</span>
               <span v-if="!event.ok" class="badge bad">rejected</span>
+              <span v-else class="badge good">succeeded</span>
               <span class="args mono">{{ JSON.stringify(event.args) }}</span>
             </summary>
             <div class="io">
@@ -117,6 +194,8 @@ const leadLabelFor = (seq: number) => props.leadLabels?.find((l) => l.eventSeq =
   padding: 0;
 }
 .event {
+  min-width: 0;
+  overflow-wrap: anywhere;
   position: relative;
   padding: 4px 0 4px 40px;
   border-radius: 6px;
@@ -154,6 +233,7 @@ const leadLabelFor = (seq: number) => props.leadLabels?.find((l) => l.eventSeq =
   margin-left: auto;
 }
 .who {
+  flex-wrap: wrap;
   font-size: 12px;
   font-weight: 600;
   color: var(--muted);
@@ -187,7 +267,7 @@ const leadLabelFor = (seq: number) => props.leadLabels?.find((l) => l.eventSeq =
 }
 .io {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin-top: 8px;
 }
@@ -202,6 +282,14 @@ const leadLabelFor = (seq: number) => props.leadLabels?.find((l) => l.eventSeq =
   border-top: 1px solid var(--border);
   font-size: 12px;
   color: var(--bad);
+}
+.judge-details {
+  margin-top: 10px;
+  white-space: normal;
+}
+.judge-details summary {
+  color: var(--muted);
+  font-size: 12px;
 }
 .note {
   font-size: 12px;

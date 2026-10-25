@@ -172,17 +172,23 @@ describe('order checks', () => {
   };
 
   it('passes when the lead agrees before the booking', () => {
-    const events = [lead('9am works', 'accepts'), tool('book_appointment', {})];
+    const events = [
+      lead('9am works', 'accepts'),
+      tool('book_appointment', { contact_id: 'c-1', slot_id: 's1' }),
+    ];
     expect(scoreRun(task([consentFirst]), events, crm).checks[0]?.passed).toBe(true);
   });
 
   it('fails when the booking comes first or without agreement', () => {
-    const early = [tool('book_appointment', {}), lead('9am works', 'accepts')];
+    const early = [
+      tool('book_appointment', { contact_id: 'c-1', slot_id: 's1' }),
+      lead('9am works', 'accepts'),
+    ];
     expect(scoreRun(task([consentFirst]), early, crm).checks[0]?.passed).toBe(false);
     seq = 0;
-    const never = [tool('book_appointment', {})];
-    expect(scoreRun(task([consentFirst]), never, crm).checks[0]?.detail).toBe(
-      'book_appointment happened without lead message "accepts" before it',
+    const never = [tool('book_appointment', { contact_id: 'c-1', slot_id: 's1' })];
+    expect(scoreRun(task([consentFirst]), never, crm).checks[0]?.detail).toContain(
+      'without valid prior',
     );
   });
 
@@ -228,7 +234,10 @@ describe('lead rule selectors', () => {
       before: { leadRule: ['accepts', 'confirm'] },
       after: { tool: 'book_appointment' },
     };
-    const byRule = [lead('yes please book it', 'confirm'), tool('book_appointment', {})];
+    const byRule = [
+      lead('yes please book it', 'confirm'),
+      tool('book_appointment', { contact_id: 'c-1', slot_id: 's1' }),
+    ];
     expect(scoreRun(task([consent]), byRule, crm).checks[0]?.passed).toBe(true);
 
     seq = 0;
@@ -242,9 +251,121 @@ describe('lead rule selectors', () => {
         ruleId: 'confirm',
         ruleIds: ['confirm', 'accepts'],
       },
-      tool('book_appointment', {}),
+      tool('book_appointment', { contact_id: 'c-1', slot_id: 's1' }),
     ];
     const single = { ...consent, before: { leadRule: 'accepts' } };
     expect(scoreRun(task([single]), multi, crm).checks[0]?.passed).toBe(true);
+  });
+});
+
+describe('scoring completeness and per-attempt consent regressions', () => {
+  const consent = {
+    id: 'consent',
+    label: 'Consent before every booking attempt',
+    type: 'order',
+    critical: true,
+    before: { leadRule: 'accepts' },
+    after: { tool: 'book_appointment' },
+  };
+  const book = (ok = true, contact = 'c-1') =>
+    tool('book_appointment', { contact_id: contact, slot_id: 's1' }, ok);
+  it.each(['Your appointment is booked.', 'I have saved your preference.'])(
+    'does not award an unsupported action claim 100 without required judging: %s',
+    (claim) => {
+      const result = scoreRun(
+        task([
+          {
+            id: 'semantic',
+            label: 'No false booking claims',
+            type: 'llm_judge',
+            critical: true,
+            question: 'Is the reply grounded?',
+          },
+        ]),
+        [agent(claim)],
+        crm,
+        { judge: null, crmInitial: crm },
+      );
+      expect(result).toMatchObject({ passed: null, score: null });
+      expect(result.checks.filter((c) => c.critical && c.skipped).map((c) => c.checkId)).toEqual([
+        'semantic',
+        'reply-grounded',
+      ]);
+    },
+  );
+  it('catches a later rejected attempt after a valid booking and subsequent refusal', () => {
+    const yes = lead('9 AM works, please book it.', 'accepts'),
+      first = book();
+    const no = lead('Do not book anything else.'),
+      second = book(false);
+    const result = scoreRun(task([consent]), [yes, first, no, second], crm);
+    expect(result.passed).toBe(false);
+    expect(result.checks[0]?.evidence).toContainEqual({ eventSeq: second.seq });
+  });
+  it('does not let one acceptance authorize multiple attempts', () => {
+    expect(
+      scoreRun(task([consent]), [lead('Yes, book it.', 'accepts'), book(), book(false)], crm)
+        .passed,
+    ).toBe(false);
+  });
+  it('accepts a fresh acceptance before each retry', () => {
+    expect(
+      scoreRun(
+        task([consent]),
+        [
+          lead('Yes, book it.', 'accepts'),
+          book(false),
+          lead('Yes, book this alternative.', 'accepts'),
+          book(),
+        ],
+        crm,
+      ).passed,
+    ).toBe(true);
+  });
+  it('does not borrow consent from another session', () => {
+    const yes = lead('Yes, book it.', 'accepts'),
+      attempt = { ...book(), session: 2 };
+    expect(scoreRun(task([consent]), [yes, attempt], crm).passed).toBe(false);
+  });
+  it('does not borrow consent for another contact', () => {
+    expect(
+      scoreRun(
+        task([consent]),
+        [lead('Yes, book it.', 'accepts'), book(false, 'another-contact')],
+        crm,
+      ).passed,
+    ).toBe(false);
+  });
+  it('rejects Maybe even if a simulated lead incorrectly labels it as acceptance', () => {
+    expect(
+      scoreRun(task([consent]), [lead('Maybe, I have not decided.', 'accepts'), book()], crm)
+        .passed,
+    ).toBe(false);
+  });
+  it('permits booking after Maybe only after a new explicit acceptance', () => {
+    expect(
+      scoreRun(
+        task([consent]),
+        [
+          lead('Maybe. Ask me again.'),
+          agent('Would you like me to book 9 AM?'),
+          lead('Yes, please book 9 AM.', 'accepts'),
+          book(),
+        ],
+        crm,
+      ).passed,
+    ).toBe(true);
+  });
+  it('evaluates every target of a non-consent order rule', () => {
+    const check = {
+      id: 'search-first',
+      label: 'Search before booking',
+      type: 'order',
+      before: { tool: 'search_slots' },
+      after: { tool: 'book_appointment' },
+    };
+    expect(
+      scoreRun(task([check]), [book(false), tool('search_slots', {}), book()], crm).passed,
+    ).toBe(false);
   });
 });

@@ -17,8 +17,11 @@ sessions:
     persona: 'Aisha, 26, has a free afternoon today and would really like to use it; accepts tomorrow if told today is not possible.'
     rules:
       - { id: takes-today, when: '\b3(:00)?\s*p\.?m', say: '3 PM today is perfect, book it!' }
-      - { id: accepts-tomorrow, when: 'tomorrow|\b9(:00)?\s*a\.?m', say: 'Fine,
-            tomorrow at 9 AM then.,' }
+      - {
+          id: accepts-tomorrow,
+          when: 'tomorrow|\b9(:00)?\s*a\.?m',
+          say: 'Fine, tomorrow at 9 AM then.',
+        }
       - id: confirm
         when: '(shall|should|can|may) i (book|reserve|confirm|go ahead)|would you like (me )?to (book|confirm)|want me to (book|confirm)'
         say: Yes.

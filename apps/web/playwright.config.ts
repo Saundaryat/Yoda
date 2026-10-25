@@ -19,7 +19,7 @@ export default defineConfig({
   use: { baseURL: `http://127.0.0.1:${PORT}`, trace: 'retain-on-failure' },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: `node ${join(api, 'dist/main.js')}`,
+    command: `node --experimental-strip-types ${join(api, 'test/fake-app.mjs')}`,
     url: `http://127.0.0.1:${PORT}/api/health`,
     reuseExistingServer: false,
     env: {

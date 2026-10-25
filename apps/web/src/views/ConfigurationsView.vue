@@ -1,35 +1,49 @@
 <script setup lang="ts">
 import type { Configuration } from '@evals/shared';
+import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
 import { useResource } from '../composables/useResource.js';
 import { dateTime } from '../format.js';
+import { configurationName, configurationPurpose } from '../names.js';
 
 const { data: configurations, error } = useResource<Configuration[]>('/configurations');
+const ordered = computed(() =>
+  [...(configurations.value ?? [])].sort((a, b) =>
+    configurationName(a).localeCompare(configurationName(b)),
+  ),
+);
 </script>
 
 <template>
   <div class="page-head">
     <div>
+      <p class="page-kicker">Agent library</p>
       <h1>Configurations</h1>
       <p class="subtitle">
-        A configuration is everything about the agent that an experiment can change: model,
-        instructions, skills, memory and tools. Saved configurations never change, so old results
-        stay explainable.
+        Saved agent versions, from basic booking to verified actions. Open a version to inspect its
+        instructions and settings, or copy it to try a change.
       </p>
     </div>
     <RouterLink to="/configurations/new" class="button primary">New configuration</RouterLink>
   </div>
+  <div v-if="configurations" class="collection-toolbar">
+    <p>{{ configurations.length }} saved versions</p>
+    <small>Read-only snapshots · a newer version is not automatically better</small>
+  </div>
   <p v-if="error" class="error">{{ error }}</p>
+  <p v-else-if="!configurations" class="muted" role="status">Loading agent versions…</p>
   <div v-else-if="configurations && !configurations.length" class="card empty">
     No configurations yet.
   </div>
   <div class="cards">
-    <article v-for="c in configurations" :key="c.id" class="card">
+    <article v-for="c in ordered" :key="c.id" class="card version-card">
       <div class="row head">
-        <h2>{{ c.name }}</h2>
+        <h2>
+          <RouterLink :to="`/configurations/${c.id}`">{{ configurationName(c) }}</RouterLink>
+        </h2>
         <RouterLink :to="{ path: '/configurations/new', query: { from: c.id } }">Copy</RouterLink>
       </div>
-      <p v-if="c.description" class="muted">{{ c.description }}</p>
+      <p v-if="configurationPurpose(c)" class="muted purpose">{{ configurationPurpose(c) }}</p>
       <dl>
         <dt>Model</dt>
         <dd>
@@ -71,7 +85,7 @@ const { data: configurations, error } = useResource<Configuration[]>('/configura
 <style scoped>
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
 .cards .card {
@@ -96,5 +110,10 @@ summary {
   cursor: pointer;
   color: var(--muted);
   margin-bottom: 6px;
+}
+@media (max-width: 760px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
+import type { RunSummary } from '@evals/shared';
 
-defineProps<{ runs: { runId: string; passed: boolean; score: number }[]; side: 'a' | 'b' }>();
+defineProps<{
+  runs: { runId: string; passed: boolean; score: number }[];
+  side: 'a' | 'b';
+  summaries?: RunSummary[] | null;
+}>();
 </script>
 
 <template>
@@ -12,7 +17,7 @@ defineProps<{ runs: { runId: string; passed: boolean; score: number }[]; side: '
       :to="`/runs/${run.runId}`"
       class="dot"
       :class="run.passed ? 'pass' : 'fail'"
-      :title="`Repetition ${i + 1}: ${run.passed ? 'passed' : 'failed'} (score ${run.score})`"
+      :title="`Repetition ${summaries?.find((r) => r.id === run.runId)?.repetition ?? i + 1}: ${run.passed ? 'passed' : 'failed'} (score ${run.score})`"
       >{{ run.passed ? '✓' : '✗' }}</RouterLink
     >
     <span v-if="!runs.length" class="muted">—</span>

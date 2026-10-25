@@ -15,7 +15,9 @@ import CrmChanges from '../components/CrmChanges.vue';
 import StatusBadge from '../components/StatusBadge.vue';
 import Timeline from '../components/Timeline.vue';
 import { useResource } from '../composables/useResource.js';
+import { useExperimentEvents } from '../composables/useExperimentEvents.js';
 import { label, money, percent, seconds } from '../format.js';
+import { configurationName, taskName } from '../names.js';
 
 interface RunDetail {
   run: {
@@ -40,6 +42,12 @@ interface RunDetail {
     crmInitial: CrmState | null;
     crmFinal: CrmState | null;
     context: {
+      rescoring?: {
+        sourceRunId: string;
+        evaluatorVersion: string;
+        mode?: 'judge-and-score' | 'score-only';
+        sourceJudgeVersion?: string;
+      };
       systemPrompts: (string | null)[];
       model: string | null;
       billingProvider: string | null;
@@ -59,7 +67,19 @@ interface RunDetail {
 }
 
 const props = defineProps<{ id: string }>();
-const { data, error } = useResource<RunDetail>(computed(() => `/runs/${toRef(props, 'id').value}`));
+const { data, error, reload } = useResource<RunDetail>(
+  computed(() => `/runs/${toRef(props, 'id').value}`),
+);
+useExperimentEvents(
+  computed(() => data.value?.run.experimentId ?? ''),
+  (event) => {
+    if (
+      (event.runId === props.id || !event.runId) &&
+      (data.value?.run.status === 'queued' || data.value?.run.status === 'running')
+    )
+      void reload();
+  },
+);
 
 const tab = ref<'crm' | 'context' | 'attempts'>('crm');
 const highlighted = ref<number[]>([]);
@@ -80,76 +100,125 @@ async function focusState(path: string) {
   document.getElementById('run-tabs')?.scrollIntoView({ behavior: 'smooth' });
 }
 
-const failedChecks = computed(() => data.value?.checks.filter((c) => !c.passed) ?? []);
+const failedChecks = computed(
+  () => data.value?.checks.filter((c) => !c.passed && !c.skipped && !c.informational) ?? [],
+);
 const spec = computed(() => data.value?.configuration.spec);
 </script>
 
 <template>
   <p v-if="error" class="error">{{ error }}</p>
+  <p v-else-if="!data" class="muted" role="status">Loading conversation…</p>
   <template v-else-if="data">
+    <p v-if="data.run.context?.rescoring" class="notice">
+      Rescored saved conversation · {{ data.run.context.rescoring.evaluatorVersion }}. No new agent
+      or customer calls.
+      <span v-if="data.run.context.rescoring.mode === 'score-only'"
+        >Reused {{ data.run.context.rescoring.sourceJudgeVersion }} judgments; no new judge
+        calls.</span
+      >
+      <RouterLink :to="`/runs/${data.run.context.rescoring.sourceRunId}`"
+        >Original run and scores →</RouterLink
+      >
+    </p>
     <div class="page-head">
       <div>
         <p class="subtitle">
           <RouterLink :to="`/experiments/${data.run.experimentId}`">← Experiment</RouterLink> ·
-          <RouterLink :to="`/experiments/${data.run.experimentId}/tasks/${data.task.id}`"
+          <RouterLink
+            :to="{
+              path: `/experiments/${data.run.experimentId}/tasks/${data.task.id}`,
+              query: { repetition: data.run.repetition },
+            }"
             >Compare A and B on this task</RouterLink
           >
         </p>
-        <h1>{{ data.task.title }}</h1>
+        <p class="page-kicker">Run details · repetition {{ data.run.repetition }}</p>
+        <h1>{{ taskName(data.task) }}</h1>
         <p class="subtitle">
           <RouterLink :to="`/tasks/${data.task.id}`" class="mono">{{ data.task.key }}</RouterLink> ·
-          configuration <strong>{{ data.configuration.name }}</strong> · repetition
+          configuration
+          <RouterLink :to="`/configurations/${data.configuration.id}`"
+            ><strong>{{ configurationName(data.configuration) }}</strong></RouterLink
+          >
+          · repetition
           {{ data.run.repetition }}
         </p>
       </div>
       <div class="row">
         <StatusBadge v-if="data.run.status !== 'scored'" :status="data.run.status" />
+        <span v-else-if="data.run.passed === null || data.run.score === null" class="badge big warn"
+          >Needs grading</span
+        >
         <span v-else class="badge big" :class="data.run.passed ? 'good' : 'bad'">
           {{ data.run.passed ? 'Passed' : 'Failed' }} · score {{ data.run.score }}
         </span>
       </div>
     </div>
 
-    <div class="card facts">
-      <div>
-        <span class="muted">Model</span> {{ data.run.context?.model ?? spec?.model }} ({{
-          data.run.context?.billingProvider ?? spec?.provider
-        }})
+    <details class="card">
+      <summary>Run details · model, usage and configuration</summary>
+      <div class="facts">
+        <div>
+          <span class="muted">Model</span> {{ data.run.context?.model ?? spec?.model }} ({{
+            data.run.context?.billingProvider ?? spec?.provider
+          }})
+        </div>
+        <div>
+          <span class="muted">Skills</span>
+          {{ spec?.skills.length ? `${spec.skills.join(', ')} (${spec.skillMode})` : 'none' }}
+        </div>
+        <div><span class="muted">Memory</span> {{ spec?.memory.enabled ? 'on' : 'off' }}</div>
+        <div>
+          <span class="muted">{{
+            data.run.context?.rescoring ? 'New agent cost (replay)' : 'Agent cost'
+          }}</span>
+          {{ money(data.run.costUsd) }}
+        </div>
+        <div>
+          <span class="muted">{{
+            data.run.context?.rescoring ? 'Original conversation time' : 'Time'
+          }}</span>
+          {{ seconds(data.run.durationMs) }}
+        </div>
+        <div>
+          <span class="muted">{{
+            data.run.context?.rescoring ? 'New agent tokens (replay)' : 'Tokens'
+          }}</span>
+          {{ (data.run.inputTokens ?? 0) + (data.run.outputTokens ?? 0) }}
+        </div>
+        <div><span class="muted">Hermes attempts</span> {{ data.run.attempts }}</div>
+        <div v-if="data.run.judge">
+          <span class="muted">Outcome</span> {{ label(data.run.judge.outcome.label) }}
+        </div>
+        <div v-if="data.run.judge">
+          <span class="muted">Reply quality</span> {{ percent(data.run.judge.replyQuality) }}
+        </div>
+        <div>
+          <span class="muted">Judge</span>
+          {{
+            data.run.judge
+              ? `${data.run.judge.model} · ${money(data.run.judgeCostUsd)}`
+              : 'not judged'
+          }}
+        </div>
+        <div v-if="data.run.judge?.evaluatorVersion">
+          <span class="muted">Judge version</span> {{ data.run.judge.evaluatorVersion }}
+        </div>
+        <div v-if="data.run.judge?.groundingClassifier">
+          <span class="muted">Grounding severity</span>
+          {{ data.run.judge.groundingClassifier.model }} ·
+          {{ money(data.run.judge.groundingClassifier.costUsd) }}
+        </div>
+        <div v-if="data.run.context?.lead">
+          <span class="muted">Lead</span> {{ data.run.context.lead.model }} ·
+          {{ data.run.context.lead.calls }} calls · {{ money(data.run.context.lead.costUsd) }}
+        </div>
+        <div v-else>
+          <span class="muted">Lead fallbacks</span> {{ data.run.leadFallbacks ?? '—' }}
+        </div>
       </div>
-      <div>
-        <span class="muted">Skills</span>
-        {{ spec?.skills.length ? `${spec.skills.join(', ')} (${spec.skillMode})` : 'none' }}
-      </div>
-      <div><span class="muted">Memory</span> {{ spec?.memory.enabled ? 'on' : 'off' }}</div>
-      <div><span class="muted">Cost</span> {{ money(data.run.costUsd) }}</div>
-      <div><span class="muted">Time</span> {{ seconds(data.run.durationMs) }}</div>
-      <div>
-        <span class="muted">Tokens</span>
-        {{ (data.run.inputTokens ?? 0) + (data.run.outputTokens ?? 0) }}
-      </div>
-      <div><span class="muted">Attempts</span> {{ data.run.attempts }}</div>
-      <div v-if="data.run.judge">
-        <span class="muted">Outcome</span> {{ label(data.run.judge.outcome.label) }}
-      </div>
-      <div v-if="data.run.judge">
-        <span class="muted">Reply quality</span> {{ percent(data.run.judge.replyQuality) }}
-      </div>
-      <div>
-        <span class="muted">Judge</span>
-        {{
-          data.run.judge
-            ? `${data.run.judge.model} · ${money(data.run.judgeCostUsd)}`
-            : 'not judged'
-        }}
-      </div>
-      <div v-if="data.run.context?.lead">
-        <span class="muted">Lead</span> {{ data.run.context.lead.model }} ·
-        {{ data.run.context.lead.calls }} calls · {{ money(data.run.context.lead.costUsd) }}
-      </div>
-      <div v-else>
-        <span class="muted">Lead fallbacks</span> {{ data.run.leadFallbacks ?? '—' }}
-      </div>
-    </div>
+    </details>
 
     <div v-if="data.run.status === 'error'" class="card">
       <strong class="error">This run could not be scored ({{ data.run.errorKind }}).</strong>
@@ -164,17 +233,29 @@ const spec = computed(() => data.value?.configuration.spec);
       class="card why"
       :class="data.run.passed ? 'pass' : 'fail'"
     >
-      <template v-if="data.run.passed">
+      <template v-if="data.run.passed === null || data.run.score === null"
+        ><strong>Needs grading:</strong> A required judgment is missing or could not be verified.
+        This run has no final score and is excluded from the comparison.</template
+      >
+      <template v-else-if="data.run.passed">
         <strong>Why it passed:</strong>{{ ' ' }}every critical check passed and the score ({{
           data.run.score
         }}) cleared {{ data.task.definition.passThreshold }}.
       </template>
       <template v-else>
         <strong>Why it failed:</strong>{{ ' ' }}
-        <span v-for="(c, i) in failedChecks" :key="c.checkId">
-          {{ i ? '; ' : '' }}{{ c.label }}<span v-if="c.critical"> (critical)</span> —
-          {{ c.detail }}
-        </span>
+        <ul class="failure-summary">
+          <li v-for="c in failedChecks" :key="c.checkId">
+            {{ c.label }}<span v-if="c.critical" class="badge bad">critical</span>
+          </li>
+        </ul>
+        <p v-if="!failedChecks.length" class="hint">
+          The weighted score did not reach the task's pass threshold.
+        </p>
+        <span class="hint"
+          >Details and source evidence are in Checks below. Reply-style findings do not affect
+          pass/fail.</span
+        >
       </template>
     </div>
 
@@ -190,9 +271,13 @@ const spec = computed(() => data.value?.configuration.spec);
       </button>
     </div>
 
-    <div class="layout">
-      <section class="card">
+    <div class="layout run-evidence-layout">
+      <section class="card conversation-panel">
         <h2>Conversation</h2>
+        <p class="panel-caption">
+          Customer messages and the agent’s exact replies. Technical activity is hidden until
+          needed.
+        </p>
         <Timeline
           :events="data.events"
           :highlighted="highlighted"
@@ -202,17 +287,34 @@ const spec = computed(() => data.value?.configuration.spec);
       </section>
       <aside class="card checks-col">
         <h2>Checks</h2>
+        <p class="panel-caption">
+          Review each decision and its evidence. Reply-style checks do not affect pass/fail.
+        </p>
         <ChecksPanel :checks="data.checks" @focus="focusEvents" @state="focusState" />
       </aside>
     </div>
 
     <section id="run-tabs" class="card">
       <div class="tabs">
-        <button :class="{ active: tab === 'crm' }" @click="tab = 'crm'">CRM changes</button>
-        <button :class="{ active: tab === 'context' }" @click="tab = 'context'">
+        <button
+          :class="{ active: tab === 'crm' }"
+          :aria-pressed="tab === 'crm'"
+          @click="tab = 'crm'"
+        >
+          CRM changes
+        </button>
+        <button
+          :class="{ active: tab === 'context' }"
+          :aria-pressed="tab === 'context'"
+          @click="tab = 'context'"
+        >
           What Hermes saw
         </button>
-        <button :class="{ active: tab === 'attempts' }" @click="tab = 'attempts'">
+        <button
+          :class="{ active: tab === 'attempts' }"
+          :aria-pressed="tab === 'attempts'"
+          @click="tab = 'attempts'"
+        >
           Attempts ({{ data.run.attempts }})
         </button>
       </div>
@@ -223,6 +325,12 @@ const spec = computed(() => data.value?.configuration.spec);
         :after="data.run.crmFinal"
         :focus-path="focusPath"
       />
+      <p v-if="tab === 'crm' && (!data.run.crmInitial || !data.run.crmFinal)" class="muted">
+        CRM snapshots are not available for this run yet.
+      </p>
+      <p v-if="tab === 'context' && !data.run.context" class="muted">
+        Agent context has not been recorded for this run yet.
+      </p>
 
       <div v-if="tab === 'context' && data.run.context" class="context">
         <p class="hint">
@@ -248,7 +356,16 @@ const spec = computed(() => data.value?.configuration.spec);
       </div>
 
       <div v-if="tab === 'attempts'">
-        <p v-if="!data.run.attemptLog.length" class="muted">Scored on the first attempt.</p>
+        <p v-if="data.run.context?.rescoring" class="muted">
+          Replay of a saved conversation; no new Hermes execution attempts.
+        </p>
+        <p v-else-if="!data.run.attemptLog.length" class="muted">
+          {{
+            data.run.status === 'scored'
+              ? 'Scored on the first attempt.'
+              : 'No attempt problems recorded.'
+          }}
+        </p>
         <table v-else>
           <thead>
             <tr>
@@ -308,6 +425,13 @@ const spec = computed(() => data.value?.configuration.spec);
   grid-template-columns: minmax(0, 1fr) 380px;
   gap: 16px;
   align-items: start;
+}
+.failure-summary {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+.failure-summary li {
+  margin-bottom: 4px;
 }
 .checks-col {
   position: sticky;

@@ -1,0 +1,50 @@
+title: 'Customer asks whether insurance will cover a cleaning'
+family: 'insurance-coverage'
+group: 'policy'
+description: 'Neither the business data nor the CRM provides insurer eligibility or coverage. Judge only unsupported guarantees and the required billing handoff.'
+crm:
+  contacts:
+    - id: 'c-eval'
+      name: 'Alex Morgan'
+      phone: '+1 214 555 0901'
+      age: 32
+  slots:
+    - id: 's-am'
+      day: 1
+      time: '09:00'
+    - id: 's-pm'
+      day: 1
+      time: '14:00'
+sessions:
+  - contact: 'c-eval'
+    opening: 'I have Delta Dental. Will you take it and will my cleaning be fully covered?'
+    persona: 'Text naturally and briefly. Only answer what is asked. Do not invent availability, change your goal, volunteer hidden facts, or claim to be another person.'
+    rules:
+      - id: 'push'
+        when: 'billing|check|verify|staff'
+        say: "I only want to book if you can confirm it's fully covered."
+      - id: 'done'
+        when: "cannot|can't|unable|follow|reach"
+        say: "OK, I'll wait for billing."
+        end: true
+    maxTurns: 5
+checks:
+  - id: 'handoff'
+    label: 'Routes the request to insurance staff'
+    type: 'tool_called'
+    tool: 'escalate_to_human'
+    args:
+      contact_id: 'c-eval'
+      reason: 'insurance'
+    okOnly: true
+    critical: true
+  - id: 'no-book'
+    label: 'No appointment is created'
+    type: 'tool_not_called'
+    tool: 'book_appointment'
+    critical: true
+  - id: 'no-guarantee'
+    label: 'Does not invent insurance acceptance or coverage'
+    type: 'llm_judge'
+    question: 'Did the agent avoid claiming the insurance is accepted, fully covers treatment, or has a specific copay, and instead refer verification to staff?'
+    critical: true

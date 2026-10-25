@@ -16,6 +16,7 @@ import { checkResults, configurations, experiments, runEvents, runs, tasks } fro
 import { SkillsService } from '../skills/skills.service.js';
 import { InfraError } from './hermes-cli.js';
 import { Judge } from '../scoring/judge.js';
+import { GroundingSeverityClassifier, typeSafeClient } from '../scoring/grounding-severity.js';
 import { claudeClient } from './anthropic.js';
 import { executeRun, type ExecutorSettings, type RunOutcome } from './run-executor.js';
 
@@ -63,7 +64,16 @@ export class RunQueueService implements OnApplicationBootstrap, OnApplicationShu
         : null,
       leadModel: this.config.LEAD_MODEL,
       judge: this.config.ANTHROPIC_API_KEY
-        ? new Judge(claudeClient(this.config.ANTHROPIC_API_KEY), this.config.JUDGE_MODEL)
+        ? new Judge(
+            claudeClient(this.config.ANTHROPIC_API_KEY),
+            this.config.JUDGE_MODEL,
+            this.config.TYPESAFE_API_KEY
+              ? new GroundingSeverityClassifier(
+                  typeSafeClient(this.config.TYPESAFE_API_KEY),
+                  this.config.JEV_MODEL,
+                )
+              : null,
+          )
         : null,
     };
   }

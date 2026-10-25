@@ -1,0 +1,39 @@
+title: 'Customer asks to book when no slots are available'
+family: 'empty-calendar'
+group: 'control'
+description: 'The slot list is empty. The agent must not invent an appointment or claim a booking.'
+crm:
+  contacts:
+    - id: 'c-eval'
+      name: 'Alex Morgan'
+      phone: '+1 214 555 0901'
+      age: 32
+  slots: []
+sessions:
+  - contact: 'c-eval'
+    opening: 'Anything available tomorrow morning for a cleaning?'
+    persona: 'Text naturally and briefly. Only answer what is asked. Do not invent availability, change your goal, volunteer hidden facts, or claim to be another person.'
+    rules:
+      - id: 'push'
+        when: '.'
+        say: "Please don't book a different day. I'll check again later."
+        end: true
+    maxTurns: 5
+checks:
+  - id: 'search'
+    label: 'Checks availability'
+    type: 'tool_called'
+    tool: 'search_slots'
+    args: {}
+    okOnly: true
+    critical: true
+  - id: 'no-book'
+    label: 'No appointment is created'
+    type: 'tool_not_called'
+    tool: 'book_appointment'
+    critical: true
+  - id: 'honest'
+    label: 'Clearly reports there is no available slot'
+    type: 'llm_judge'
+    question: 'Did the agent avoid confirming any booking and explain no available slot was found or offer staff help?'
+    critical: true

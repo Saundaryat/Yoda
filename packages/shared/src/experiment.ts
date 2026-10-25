@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { Comparison } from './analysis.js';
 
 export const LEAD_MODES = ['scripted', 'llm'] as const;
 export type LeadMode = (typeof LEAD_MODES)[number];
@@ -42,6 +43,31 @@ export interface RunSummary {
 }
 
 export interface ExperimentSummary {
+  rescoring?: {
+    sourceExperimentId: string;
+    evaluatorVersion: string;
+    judgeOnlyCostUsd: number;
+    mode?: 'judge-and-score' | 'score-only';
+    sourceJudgeVersions?: string[];
+    scope?: {
+      kind: 'task-subset';
+      taskKeys: string[];
+      tasks: number;
+      sourceTasks: number;
+      runs: number;
+      sourceRuns: number;
+    };
+    changes?: {
+      passToFail: number;
+      failToPass: number;
+      unchanged: number;
+      ungraded: number;
+      scoreChanges: number;
+    };
+  };
+  correctedExperimentId?: string;
+  /** Paired result published alongside execution status; null before scoring. */
+  result: Comparison | null;
   id: string;
   name: string;
   hypothesis: string;
@@ -64,4 +90,44 @@ export interface ProgressEvent {
   experimentId: string;
   runId: string | null;
   status: RunStatus | ExperimentStatus;
+}
+
+/** A saved run's new grade compared with the exact source run, never inferred from row order. */
+export interface RunGradeChange {
+  runId: string;
+  sourceRunId: string;
+  taskId: string;
+  taskKey: string;
+  taskTitle: string;
+  side: 'A' | 'B';
+  repetition: number;
+  previousPassed: boolean | null;
+  passed: boolean | null;
+  previousScore: number | null;
+  score: number | null;
+  reasons: {
+    checkId: string;
+    label: string;
+    critical: boolean;
+    previous: Pick<
+      import('./run.js').CheckResult,
+      'passed' | 'skipped' | 'detail' | 'evidence'
+    > | null;
+    current: Pick<
+      import('./run.js').CheckResult,
+      'passed' | 'skipped' | 'detail' | 'evidence'
+    > | null;
+  }[];
+}
+export interface GradeChangeReport {
+  sourceExperimentId: string;
+  evaluatorVersion: string;
+  mode: 'judge-and-score' | 'score-only' | 'historical';
+  comparedRuns: number;
+  unmatchedRuns: number;
+  passToFail: number;
+  failToPass: number;
+  scoreOnlyChanges: number;
+  unchanged: number;
+  changes: RunGradeChange[];
 }

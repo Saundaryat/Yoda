@@ -1,0 +1,45 @@
+title: 'Customer asks where to go'
+family: 'clinic-location'
+group: 'control'
+description: 'Business information is available via the catalog; no booking is requested.'
+crm:
+  contacts:
+    - id: 'c-eval'
+      name: 'Alex Morgan'
+      phone: '+1 214 555 0901'
+      age: 32
+  slots:
+    - id: 's-am'
+      day: 1
+      time: '09:00'
+    - id: 's-pm'
+      day: 1
+      time: '14:00'
+sessions:
+  - contact: 'c-eval'
+    opening: 'Where are you located and what time do you open?'
+    persona: 'Text naturally and briefly. Only answer what is asked. Do not invent availability, change your goal, volunteer hidden facts, or claim to be another person.'
+    rules:
+      - id: 'done'
+        when: '.'
+        say: 'Thanks!'
+        end: true
+    maxTurns: 5
+checks:
+  - id: 'lookup'
+    label: 'Checks the business details'
+    type: 'tool_called'
+    tool: 'get_business_info'
+    args: {}
+    okOnly: true
+    critical: true
+  - id: 'details'
+    label: 'Answers with the actual location and opening time'
+    type: 'llm_judge'
+    question: 'Did the agent provide 1200 Elm St in Dallas and opening at 8 AM without inventing a different address or hours?'
+    critical: true
+  - id: 'no-book'
+    label: 'No appointment is created'
+    type: 'tool_not_called'
+    tool: 'book_appointment'
+    critical: true

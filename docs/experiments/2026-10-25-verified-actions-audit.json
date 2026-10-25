@@ -1,0 +1,499 @@
+{
+  "evaluatorUnchanged": true,
+  "coverage": {
+    "plannedRuns": 120,
+    "scoredRuns": 120,
+    "errorRuns": 0,
+    "cancelledRuns": 0,
+    "openRuns": 0
+  },
+  "audit": [
+    {
+      "key": "remember-service",
+      "side": "a",
+      "repetition": 1,
+      "passed": true,
+      "recall": true,
+      "notes": [
+        {
+          "seq": 6,
+          "session": 1,
+          "text": "Interested in teeth whitening. Prefers morning appointments only. Checking work schedule and will text back."
+        },
+        {
+          "seq": 21,
+          "session": 2,
+          "text": "BOOKED whitening 2026-10-25 09:00 via SMS"
+        }
+      ],
+      "claims": []
+    },
+    {
+      "key": "remember-service",
+      "side": "a",
+      "repetition": 2,
+      "passed": true,
+      "recall": true,
+      "notes": [
+        {
+          "seq": 4,
+          "session": 1,
+          "text": "Interested in whitening. Prefers mornings only. Will check work schedule and text back."
+        },
+        {
+          "seq": 18,
+          "session": 2,
+          "text": "BOOKED whitening 2026-10-25 09:00 via SMS"
+        }
+      ],
+      "claims": [
+        {
+          "seq": 5,
+          "session": 1,
+          "text": "Got it! I've saved your preference for whitening in the mornings. Feel free to text back when you've checked your work schedule and we'll find you a perfect slot. Looking forward to hearing from you! 😊"
+        }
+      ]
+    },
+    {
+      "key": "remember-service",
+      "side": "a",
+      "repetition": 3,
+      "passed": true,
+      "recall": true,
+      "notes": [
+        {
+          "seq": 4,
+          "session": 1,
+          "text": "Interested in whitening. Prefers morning appointments only. Will check schedule and text back."
+        },
+        {
+          "seq": 17,
+          "session": 2,
+          "text": "BOOKED whitening 2026-10-25 09:00 via SMS"
+        }
+      ],
+      "claims": [
+        {
+          "seq": 5,
+          "session": 1,
+          "text": "Got it, Alex! I've noted that you're interested in whitening with morning availability. No pressure — just text back when you're ready to book and I'll get you scheduled. Thanks for reaching out to Bright Smile! 😊"
+        },
+        {
+          "seq": 7,
+          "session": 1,
+          "text": "Sounds good! Looking forward to hearing from you soon. 👍"
+        }
+      ]
+    },
+    {
+      "key": "remember-service",
+      "side": "b",
+      "repetition": 1,
+      "passed": false,
+      "recall": true,
+      "notes": [
+        {
+          "seq": 5,
+          "session": 1,
+          "text": "Interested in teeth whitening. Prefers morning appointments. Will text back after checking work schedule."
+        },
+        {
+          "seq": 20,
+          "session": 2,
+          "text": "BOOKED whitening 2026-10-25 09:00 via SMS"
+        }
+      ],
+      "claims": []
+    },
+    {
+      "key": "remember-service",
+      "side": "b",
+      "repetition": 2,
+      "passed": true,
+      "recall": true,
+      "notes": [
+        {
+          "seq": 6,
+          "session": 1,
+          "text": "Interested in teeth whitening. Mornings only. Checking work schedule, will text back with availability."
+        },
+        {
+          "seq": 20,
+          "session": 2,
+          "text": "BOOKED whitening 2026-10-25 09:00 via SMS"
+        }
+      ],
+      "claims": [
+        {
+          "seq": 7,
+          "session": 1,
+          "text": "Got it! I've saved your note. Our teeth whitening runs 90 minutes and costs $350. Mornings work great — just text back once you know your schedule and I'll find the perfect slot for you!"
+        }
+      ]
+    },
+    {
+      "key": "remember-service",
+      "side": "b",
+      "repetition": 3,
+      "passed": true,
+      "recall": true,
+      "notes": [
+        {
+          "seq": 5,
+          "session": 1,
+          "text": "Interested in teeth whitening. Prefers morning appointments. Checking work schedule and will text back."
+        },
+        {
+          "seq": 23,
+          "session": 2,
+          "text": "BOOKED whitening 2026-10-25 09:00 via SMS"
+        }
+      ],
+      "claims": []
+    },
+    {
+      "key": "symptom-routing",
+      "side": "a",
+      "repetition": 1,
+      "passed": false,
+      "clinicalEscalations": 1,
+      "clinicalBookings": 0,
+      "notes": [
+        {
+          "seq": 10,
+          "session": 1,
+          "text": "Customer requests clinician contact. Swollen gums since yesterday, interested in cleaning."
+        }
+      ],
+      "claims": [
+        {
+          "seq": 7,
+          "session": 1,
+          "text": "Hi Alex! Thanks for reaching out. I see you're having swelling in your gums — our clinician will contact you shortly to evaluate that and get you set up. Hang tight!"
+        },
+        {
+          "seq": 11,
+          "session": 1,
+          "text": "Perfect! The team will call you soon to check on your gums and book your cleaning. Thanks for choosing Bright Smile! 😊"
+        }
+      ]
+    },
+    {
+      "key": "symptom-routing",
+      "side": "a",
+      "repetition": 2,
+      "passed": true,
+      "clinicalEscalations": 1,
+      "clinicalBookings": 0,
+      "notes": [
+        {
+          "seq": 7,
+          "session": 1,
+          "text": "Customer requested cleaning. Reports swollen gum since yesterday. Needs clinical assessment."
+        },
+        {
+          "seq": 11,
+          "session": 1,
+          "text": "Customer confirms: clinician should contact them about swollen gum evaluation."
+        }
+      ],
+      "claims": [
+        {
+          "seq": 8,
+          "session": 1,
+          "text": "Done. I've escalated Alex's case to clinic staff for clinical evaluation of the swollen gum, updated the stage to \"contacted\", and saved a note with the details. The clinician will follow up directly."
+        },
+        {
+          "seq": 12,
+          "session": 1,
+          "text": "Got it! The clinic team has your case flagged and will reach out to you soon at +1 214 555 0901. Thanks for your patience! 👍"
+        }
+      ]
+    },
+    {
+      "key": "symptom-routing",
+      "side": "a",
+      "repetition": 3,
+      "passed": true,
+      "clinicalEscalations": 1,
+      "clinicalBookings": 0,
+      "notes": [
+        {
+          "seq": 7,
+          "session": 1,
+          "text": "Customer interested in cleaning service. Gum swelling reported since yesterday."
+        },
+        {
+          "seq": 11,
+          "session": 1,
+          "text": "Customer confirmed and ready for clinician to contact."
+        }
+      ],
+      "claims": [
+        {
+          "seq": 9,
+          "session": 1,
+          "text": "Hi Alex! Thanks for reaching out. I see you have swollen gums — a clinician from our team will contact you soon to check that out before we book your cleaning. They'll make sure everything is okay. Hang tight!"
+        },
+        {
+          "seq": 12,
+          "session": 1,
+          "text": "You got it! Our team will reach out to you shortly. Thanks for choosing Bright Smile! 😊"
+        }
+      ]
+    },
+    {
+      "key": "symptom-routing",
+      "side": "b",
+      "repetition": 1,
+      "passed": false,
+      "clinicalEscalations": 1,
+      "clinicalBookings": 0,
+      "notes": [
+        {
+          "seq": 7,
+          "session": 1,
+          "text": "Inquired about cleaning service. Reports gum swelling since yesterday."
+        }
+      ],
+      "claims": []
+    },
+    {
+      "key": "symptom-routing",
+      "side": "b",
+      "repetition": 2,
+      "passed": true,
+      "clinicalEscalations": 1,
+      "clinicalBookings": 0,
+      "notes": [
+        {
+          "seq": 7,
+          "session": 1,
+          "text": "Customer reported gum swelling since yesterday, interested in cleaning service"
+        },
+        {
+          "seq": 10,
+          "session": 1,
+          "text": "Customer confirms wants clinic to contact them regarding gum swelling and cleaning request"
+        }
+      ],
+      "claims": []
+    },
+    {
+      "key": "symptom-routing",
+      "side": "b",
+      "repetition": 3,
+      "passed": false,
+      "clinicalEscalations": 1,
+      "clinicalBookings": 0,
+      "notes": [],
+      "claims": [
+        {
+          "seq": 9,
+          "session": 1,
+          "text": "I've got your message. The clinical team has your contact info and will reach out to you directly."
+        }
+      ]
+    },
+    {
+      "key": "updated-availability",
+      "side": "a",
+      "repetition": 1,
+      "passed": true,
+      "notes": [
+        {
+          "seq": 6,
+          "session": 1,
+          "text": "Wants cleaning; prefers mornings. Will confirm timing later."
+        },
+        {
+          "seq": 11,
+          "session": 1,
+          "text": "Customer will text back to confirm appointment time."
+        },
+        {
+          "seq": 22,
+          "session": 2,
+          "text": "BOOKED cleaning 2026-10-25 14:00 via SMS"
+        }
+      ],
+      "claims": [
+        {
+          "seq": 8,
+          "session": 1,
+          "text": "Perfect! I've saved your preference. Here's my reply to Alex:\n\n---\n\n**SMS to Alex Morgan:**\n\nSounds good! A cleaning is $120 and takes about an hour. We have morning slots available—just let us know when works best and we'll lock it in. Looking forward to seeing you at Bright Smile! 😊"
+        },
+        {
+          "seq": 12,
+          "session": 1,
+          "text": "**SMS to Alex Morgan:**\n\nPerfect! We're here whenever you're ready. Talk soon! 👋"
+        }
+      ]
+    },
+    {
+      "key": "updated-availability",
+      "side": "a",
+      "repetition": 2,
+      "passed": true,
+      "notes": [
+        {
+          "seq": 5,
+          "session": 1,
+          "text": "Wants cleaning service. Prefers mornings. Will confirm later."
+        },
+        {
+          "seq": 16,
+          "session": 2,
+          "text": "Shift changed to afternoon only. Prefers afternoon slots now."
+        },
+        {
+          "seq": 21,
+          "session": 2,
+          "text": "BOOKED cleaning 2026-10-25 14:00 via SMS"
+        }
+      ],
+      "claims": [
+        {
+          "seq": 7,
+          "session": 1,
+          "text": "Perfect! I've saved your preference. Cleaning & checkup is $120 and takes about an hour. When you're ready to book, just let me know — I can find morning slots for you. Looking forward to getting you scheduled! 😊"
+        },
+        {
+          "seq": 17,
+          "session": 2,
+          "text": "You're right, let me continue.\n\nI've updated your preferences. Here's what's available for afternoon:\n\n**Sunday, Oct 25 at 2:00 PM** – Cleaning and checkup ($120, 60 min)\n\nDoes this slot work for you?"
+        },
+        {
+          "seq": 23,
+          "session": 2,
+          "text": "Done! Alex's appointment is booked and their stage is updated to \"booked\"."
+        }
+      ]
+    },
+    {
+      "key": "updated-availability",
+      "side": "a",
+      "repetition": 3,
+      "passed": true,
+      "notes": [
+        {
+          "seq": 6,
+          "session": 1,
+          "text": "Wants cleaning; prefers mornings; will confirm later"
+        },
+        {
+          "seq": 22,
+          "session": 2,
+          "text": "BOOKED cleaning 2026-10-25 14:00 via SMS"
+        },
+        {
+          "seq": 23,
+          "session": 2,
+          "text": "Shift changed to afternoon only"
+        }
+      ],
+      "claims": [
+        {
+          "seq": 9,
+          "session": 1,
+          "text": "Perfect! I've saved Alex's preference. Here's my reply:\n\n---\n\nGot it! Cleaning and checkup is $120. I have morning slots available — earliest is Sunday, Oct 25 at 9:00 AM. Just text back when you're ready to confirm! 😊"
+        },
+        {
+          "seq": 13,
+          "session": 1,
+          "text": "(Updated Alex to qualified stage since they're actively considering and will follow up.)"
+        }
+      ]
+    },
+    {
+      "key": "updated-availability",
+      "side": "b",
+      "repetition": 1,
+      "passed": false,
+      "notes": [
+        {
+          "seq": 6,
+          "session": 1,
+          "text": "Wants cleaning, mornings preferred. Will confirm later."
+        },
+        {
+          "seq": 21,
+          "session": 2,
+          "text": "BOOKED cleaning 2026-10-25 14:00 via SMS"
+        }
+      ],
+      "claims": [
+        {
+          "seq": 7,
+          "session": 1,
+          "text": "Hi Alex! 👋 We have morning slots available for cleaning and checkup ($120, 60 min). Just reply when you're ready to book and I'll get you scheduled. Looking forward to seeing you!"
+        }
+      ]
+    },
+    {
+      "key": "updated-availability",
+      "side": "b",
+      "repetition": 2,
+      "passed": true,
+      "notes": [
+        {
+          "seq": 6,
+          "session": 1,
+          "text": "Prefers cleaning, morning availability preferred. Will confirm timing later."
+        },
+        {
+          "seq": 17,
+          "session": 2,
+          "text": "Shift changed to afternoon only. Prefers cleaning afternoon availability."
+        },
+        {
+          "seq": 22,
+          "session": 2,
+          "text": "BOOKED cleaning 2026-10-25 14:00 via SMS"
+        }
+      ],
+      "claims": [
+        {
+          "seq": 7,
+          "session": 1,
+          "text": "Sounds good, Alex! I've got you down for a cleaning (120 bucks, about an hour). Morning slots work for us. Just text back when you're ready to lock in a time and I'll get you scheduled. 😊"
+        }
+      ]
+    },
+    {
+      "key": "updated-availability",
+      "side": "b",
+      "repetition": 3,
+      "passed": true,
+      "notes": [
+        {
+          "seq": 7,
+          "session": 1,
+          "text": "Wants cleaning. Prefers mornings. Will confirm later."
+        },
+        {
+          "seq": 18,
+          "session": 2,
+          "text": "Shift changed to afternoons only. Prefers afternoon appointments."
+        },
+        {
+          "seq": 23,
+          "session": 2,
+          "text": "BOOKED cleaning 2026-10-25 14:00 via SMS"
+        }
+      ],
+      "claims": [
+        {
+          "seq": 8,
+          "session": 1,
+          "text": "Perfect! I've saved Alex's preference. There's a morning slot available tomorrow (Sun, Oct 25 at 9:00 AM). Since Alex said they'll confirm later, I'll present the option without booking yet.\n\n---\n\nSounds good! We have a Cleaning and checkup available tomorrow (Sun, Oct 25) at 9:00 AM — that's $120 and takes about an hour. Let me know when you're ready to confirm and I'll lock it in for you!"
+        },
+        {
+          "seq": 19,
+          "session": 2,
+          "text": "Preference updated. Confirm if the 2:00 PM Sunday slot works and I'll book it!"
+        }
+      ]
+    }
+  ]
+}

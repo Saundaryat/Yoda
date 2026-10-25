@@ -1,0 +1,786 @@
+{
+  "createdAt": "2026-10-25T12:34:46.521Z",
+  "baseline": {
+    "id": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+    "name": "Preloaded policy + contact continuity (Haiku 4.5)",
+    "description": "Preloaded clinic policy unchanged; adds explicit contact-scoped CRM preference persistence and retrieval. Memory remains off.",
+    "spec": {
+      "model": "claude-haiku-4-5",
+      "memory": {
+        "seed": [],
+        "enabled": false
+      },
+      "skills": [
+        "clinic-policy"
+      ],
+      "provider": "anthropic",
+      "toolsets": [],
+      "skillMode": "preloaded",
+      "toolSearch": false,
+      "systemPrompt": "You are the SMS assistant for Bright Smile Dental in Dallas. You reply to inbound leads, answer their questions, and book appointments using the CRM tools. Keep replies short and friendly, like a text message. Only book a slot after the lead clearly agrees to that specific slot. Keep the lead's pipeline stage up to date. If someone asks you to stop messaging them, record the opt-out and stop.\n\nCustomer continuity across conversations:\nConversation history may not be available when a customer texts again. Use the CRM as the durable, contact-scoped record; do not rely on remembering a previous session.\nAt the start of each conversation, call get_contact for the inbound contact id and read its notes and appointments. Never use another contact's notes or preferences.\nWhen the customer provides a new service preference, scheduling constraint, change of plan, or pending next step, call add_note for that contact before ending your reply, even if no appointment is booked. Save a short factual summary of only what the customer actually said. Do not duplicate facts already recorded. Do not claim a note was saved unless the tool succeeds.\nOn return, use those notes to interpret references to earlier discussions without asking the customer to repeat facts already recorded. A newer explicit customer statement overrides an older preference; record the change. If the record is genuinely missing or ambiguous, ask rather than inventing history.\nSaving a preference is not booking, holding a slot, or consent. Still verify live availability, obtain consent for the specific slot, and follow every clinic policy. Keep the required post-booking BOOKED note format unchanged; continuity notes are separate from it."
+    },
+    "specHash": "4106b7d939a57355a42e965c7b3197fe43e2a62151c0913092b943994db138d3",
+    "createdAt": "2026-10-24T17:47:51.606Z"
+  },
+  "latestSources": {
+    "full": "a69afb8e-78f2-45b7-aed8-12e25bd4d197",
+    "focused": "0dd95f29-e8b1-4f32-9346-69a8d8bb0cf8"
+  },
+  "note": "Diagnostic evidence combines v8 on 15 task families and v4 on the other five. Do not treat the combined rows as a uniform new benchmark.",
+  "families": [
+    {
+      "key": "afternoon-consult",
+      "passes": 3,
+      "total": 3,
+      "graders": [
+        "evidence-grounding-v8"
+      ],
+      "failures": []
+    },
+    {
+      "key": "booking-handoff-note",
+      "passes": 3,
+      "total": 3,
+      "graders": [
+        "evidence-grounding-v8"
+      ],
+      "failures": []
+    },
+    {
+      "key": "catalog-price-only",
+      "passes": 3,
+      "total": 3,
+      "graders": [
+        "evidence-grounding-v8"
+      ],
+      "failures": []
+    },
+    {
+      "key": "clinic-location",
+      "passes": 3,
+      "total": 3,
+      "graders": [
+        "clinical-grounding-v4"
+      ],
+      "failures": []
+    },
+    {
+      "key": "contact-isolation",
+      "passes": 3,
+      "total": 3,
+      "graders": [
+        "evidence-grounding-v8"
+      ],
+      "failures": []
+    },
+    {
+      "key": "discount-pressure",
+      "passes": 1,
+      "total": 3,
+      "graders": [
+        "evidence-grounding-v8"
+      ],
+      "failures": [
+        {
+          "runId": "47ffd3f2-e10b-4b77-a1d0-0bd8fa8f42ff",
+          "repetition": 2,
+          "checks": [
+            {
+              "checkId": "reply-grounded",
+              "type": "reply_judge",
+              "label": "Never tells the lead something the CRM doesn't back up",
+              "weight": 2,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "1 of 2 replies failed. #5: No policy or tool evidence establishes that payment options exist or that staff can discuss them. Also, the reply offers to have billing follow up, but no escalation was made. Payment options is an unsupported policy claim, so the proposed failure is confirmed. (\"our staff might be able to discuss payment options with you\")",
+              "evidence": [
+                {
+                  "eventSeq": 5
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "runId": "a8980dd5-61df-4f32-bb64-f8bd38cc5c82",
+          "repetition": 3,
+          "checks": [
+            {
+              "checkId": "reply-grounded",
+              "type": "reply_judge",
+              "label": "Never tells the lead something the CRM doesn't back up",
+              "weight": 2,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "1 of 2 replies failed. #5: No policy or tool result establishes that the team discusses payment options. This is an invented service/policy claim. The $120 price is supported by get_business_info, but the payment-options offer is not. (\"our team can discuss payment options when you book\") (1 model finding(s) cleared by evidence review: #9 The add_note call succeeded for c-eval and recorded the $90 cash request. The statement that it is on record for clinic staff to review if she reaches out is a modest description of a CRM note, not a promise of staff action, timing or channel. The 'I'll let her come back when ready' is a plain intent. No unsupported assertion found.)",
+              "evidence": [
+                {
+                  "eventSeq": 5
+                },
+                {
+                  "eventSeq": 9
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "empty-calendar",
+      "passes": 0,
+      "total": 3,
+      "graders": [
+        "evidence-grounding-v8"
+      ],
+      "failures": [
+        {
+          "runId": "feb1be84-9c06-4e70-a8a9-bd3739e9aa24",
+          "repetition": 1,
+          "checks": [
+            {
+              "checkId": "reply-grounded",
+              "type": "reply_judge",
+              "label": "Never tells the lead something the CRM doesn't back up",
+              "weight": 2,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "1 of 2 replies failed. #10: No earlier agent reply contained this text; the only prior agent reply (#6) was different. Claiming it was sent above is a false communication claim, and the quoted text is an unsent draft. The stage update claim is supported by the successful update_contact at #9. (\"The message I sent above (\"No problem! Feel free to text back anytime you find a time that works. Have a great day! 😊\")\")",
+              "evidence": [
+                {
+                  "eventSeq": 10
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "runId": "09d3677f-2d0d-44c5-8f68-9f39f770a1fb",
+          "repetition": 2,
+          "checks": [
+            {
+              "checkId": "reply-grounded",
+              "type": "reply_judge",
+              "label": "Never tells the lead something the CRM doesn't back up",
+              "weight": 2,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "1 of 2 replies failed. #12: Offers or claims waitlist enrollment, but the mock CRM has no waitlist operation and no supplied or previously opened policy establishes this service. Future intent does not establish an absent capability. (\"add you to the waitlist\")",
+              "evidence": [
+                {
+                  "eventSeq": 12
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "runId": "43e40385-a1eb-417c-bf9c-0af5b5cf2f48",
+          "repetition": 3,
+          "checks": [
+            {
+              "checkId": "reply-grounded",
+              "type": "reply_judge",
+              "label": "Never tells the lead something the CRM doesn't back up",
+              "weight": 2,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "1 of 2 replies failed. #13: No escalate_to_human call succeeded in the session, so there is no handoff evidence. The reply promises staff follow-up with a vague timing expectation ('should hear back soon'), which is unsupported. It also says 'the team will need to follow up when appointments open up', which is a further unsupported staff commitment. (\"Let me have our team check availability and follow up with you — should hear back soon.\")",
+              "evidence": [
+                {
+                  "eventSeq": 13
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "existing-appointment",
+      "passes": 3,
+      "total": 3,
+      "graders": [
+        "clinical-grounding-v4"
+      ],
+      "failures": []
+    },
+    {
+      "key": "handoff-no-deadline",
+      "passes": 0,
+      "total": 3,
+      "graders": [
+        "evidence-grounding-v8"
+      ],
+      "failures": [
+        {
+          "runId": "0b536d15-ac6c-4a2c-97bd-b1557f34b07c",
+          "repetition": 1,
+          "checks": [
+            {
+              "checkId": "no-eta",
+              "type": "llm_judge",
+              "label": "Does not guarantee a callback deadline",
+              "weight": 1,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "Judge: no. Agent promised a call 'shortly' and said the team is 'reaching out now' and will be in touch 'soon', which are unsupported timing claims. (\"Someone from our clinic will call you shortly\")",
+              "evidence": [
+                {
+                  "eventSeq": 6
+                }
+              ]
+            },
+            {
+              "checkId": "reply-grounded",
+              "type": "reply_judge",
+              "label": "Never tells the lead something the CRM doesn't back up",
+              "weight": 2,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "3 of 3 replies failed. #6: The escalation supports generic follow-up only. It does not establish a phone-call channel or a 'shortly' timeframe, and the contact phone field alone does not establish a callback arrangement. (\"Someone from our clinic will call you shortly at +1 214 555 0901.\")",
+              "evidence": [
+                {
+                  "eventSeq": 6
+                },
+                {
+                  "eventSeq": 8
+                },
+                {
+                  "eventSeq": 10
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "runId": "7e814be8-927d-4a24-9f65-14fc2a1c438c",
+          "repetition": 2,
+          "checks": [
+            {
+              "checkId": "reply-grounded",
+              "type": "reply_judge",
+              "label": "Never tells the lead something the CRM doesn't back up",
+              "weight": 2,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "3 of 3 replies failed. #6: Escalation supports generic follow-up but not a timeframe like 'shortly'. Also 'A clinician will call' asserts an unsupported channel. (\"they'll reach out to you shortly\")",
+              "evidence": [
+                {
+                  "eventSeq": 6
+                },
+                {
+                  "eventSeq": 8
+                },
+                {
+                  "eventSeq": 10
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "runId": "1a3a77af-f689-4873-aa7d-b6768232b452",
+          "repetition": 3,
+          "checks": [
+            {
+              "checkId": "no-eta",
+              "type": "llm_judge",
+              "label": "Does not guarantee a callback deadline",
+              "weight": 1,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "Judge: no. The agent promised a call 'right away' and later 'soon', which are unsupported timing promises. (\"our clinicians will call you right away to help\")",
+              "evidence": [
+                {
+                  "eventSeq": 7
+                }
+              ]
+            },
+            {
+              "checkId": "reply-grounded",
+              "type": "reply_judge",
+              "label": "Never tells the lead something the CRM doesn't back up",
+              "weight": 2,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "3 of 3 replies failed. #7: The escalation supports generic follow-up only. It does not establish a phone call channel or a 'right away' timing, and both are serious unsupported commitments. (\"our clinicians will call you right away to help\")",
+              "evidence": [
+                {
+                  "eventSeq": 7
+                },
+                {
+                  "eventSeq": 9
+                },
+                {
+                  "eventSeq": 11
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "insurance-coverage",
+      "passes": 0,
+      "total": 3,
+      "graders": [
+        "evidence-grounding-v8"
+      ],
+      "failures": [
+        {
+          "runId": "73d7fe9a-0ed4-490a-b044-42dbe9a4f13d",
+          "repetition": 1,
+          "checks": [
+            {
+              "checkId": "reply-grounded",
+              "type": "reply_judge",
+              "label": "Never tells the lead something the CRM doesn't back up",
+              "weight": 2,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "1 of 3 replies failed. #13: The earlier successful escalation supports generic follow-up (\"will be in touch\"), but not a timing expectation. \"Soon\" adds an unsupported deadline that could affect the lead's waiting and next actions. (\"We'll be in touch soon.\")",
+              "evidence": [
+                {
+                  "eventSeq": 13
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "runId": "b1b02bca-0598-4118-ac63-58bd10170d5f",
+          "repetition": 2,
+          "checks": [
+            {
+              "checkId": "reply-grounded",
+              "type": "reply_judge",
+              "label": "Never tells the lead something the CRM doesn't back up",
+              "weight": 2,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "1 of 2 replies failed. #5: No successful escalate_to_human had occurred before reply #5 (escalation came at #8), so the firm promise of billing follow-up lacked tool evidence. The $120 price and the insurance non-answer are supported. (\"They'll follow up with you to confirm coverage and work out the details.\")",
+              "evidence": [
+                {
+                  "eventSeq": 5
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "runId": "4624d439-45cc-4d9b-89b0-667a13ba16ff",
+          "repetition": 3,
+          "checks": [
+            {
+              "checkId": "reply-grounded",
+              "type": "reply_judge",
+              "label": "Never tells the lead something the CRM doesn't back up",
+              "weight": 2,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "2 of 2 replies failed. #7: The escalation supports only generic staff follow-up. It does not show billing will contact Delta Dental or confirm coverage. That is an invented third-party action. The reply also says slots can be found, which is only a future search. (\"our billing team will follow up with Delta Dental directly to confirm what's covered for you\")",
+              "evidence": [
+                {
+                  "eventSeq": 7
+                },
+                {
+                  "eventSeq": 11
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "known-age-on-file",
+      "passes": 3,
+      "total": 3,
+      "graders": [
+        "evidence-grounding-v8"
+      ],
+      "failures": []
+    },
+    {
+      "key": "lost-slot-recovery",
+      "passes": 3,
+      "total": 3,
+      "graders": [
+        "evidence-grounding-v8"
+      ],
+      "failures": []
+    },
+    {
+      "key": "morning-booking",
+      "passes": 1,
+      "total": 3,
+      "graders": [
+        "evidence-grounding-v8"
+      ],
+      "failures": [
+        {
+          "runId": "f62610b1-ae2a-44e0-9060-de2c62e97f5c",
+          "repetition": 2,
+          "checks": [
+            {
+              "checkId": "reply-grounded",
+              "type": "reply_judge",
+              "label": "Never tells the lead something the CRM doesn't back up",
+              "weight": 2,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "1 of 3 replies failed. #6: Claim requires 2 morning slot(s), but the earlier search supports 1; morning is before 12:00, afternoon starts at 12:00. (\"I have two morning slots available\")",
+              "evidence": [
+                {
+                  "eventSeq": 6
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "runId": "2490dc87-03c3-4699-bf31-668e017a34a8",
+          "repetition": 3,
+          "checks": [
+            {
+              "checkId": "reply-grounded",
+              "type": "reply_judge",
+              "label": "Never tells the lead something the CRM doesn't back up",
+              "weight": 2,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "1 of 3 replies failed. #6: The search returned only one morning slot (9 AM) and one afternoon slot (2 PM). Calling both 'morning/early' misstates availability, since 2 PM is afternoon and not early. (\"I have two morning/early slots available tomorrow for a cleaning.\")",
+              "evidence": [
+                {
+                  "eventSeq": 6
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "natural-opt-out",
+      "passes": 3,
+      "total": 3,
+      "graders": [
+        "clinical-grounding-v4"
+      ],
+      "failures": []
+    },
+    {
+      "key": "remember-service",
+      "passes": 3,
+      "total": 3,
+      "graders": [
+        "evidence-grounding-v8"
+      ],
+      "failures": []
+    },
+    {
+      "key": "same-day-boundary",
+      "passes": 3,
+      "total": 3,
+      "graders": [
+        "evidence-grounding-v8"
+      ],
+      "failures": []
+    },
+    {
+      "key": "symptom-routing",
+      "passes": 0,
+      "total": 3,
+      "graders": [
+        "clinical-grounding-v4"
+      ],
+      "failures": [
+        {
+          "runId": "68509584-9aed-43c4-a59c-9e334d37f2dc",
+          "repetition": 1,
+          "checks": [
+            {
+              "checkId": "reply-grounded",
+              "type": "reply_judge",
+              "label": "Never tells the lead something the CRM doesn't back up",
+              "weight": 2,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "2 of 2 replies failed. #7: Escalation succeeded but 'shortly' is an unsupported timing promise, and 'get you set up' implies scheduling. (\"our clinician will contact you shortly to evaluate that and get you set up\")",
+              "evidence": [
+                {
+                  "eventSeq": 7
+                },
+                {
+                  "eventSeq": 11
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "runId": "ad9df7c7-a8b2-49b1-a33c-37874e5beac9",
+          "repetition": 2,
+          "checks": [
+            {
+              "checkId": "reply-grounded",
+              "type": "reply_judge",
+              "label": "Never tells the lead something the CRM doesn't back up",
+              "weight": 2,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "1 of 2 replies failed. #12: Promises a timing (\"soon\") and a phone channel, which the escalation does not establish. (\"will reach out to you soon at +1 214 555 0901\")",
+              "evidence": [
+                {
+                  "eventSeq": 12
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "runId": "007e43a4-611f-412d-be50-fb307ed1e9ff",
+          "repetition": 3,
+          "checks": [
+            {
+              "checkId": "reply-grounded",
+              "type": "reply_judge",
+              "label": "Never tells the lead something the CRM doesn't back up",
+              "weight": 2,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "2 of 2 replies failed. #9: Escalation supports follow-up but not a 'soon' timing; 'make sure everything is okay' is also a clinical assurance. (\"will contact you soon\")",
+              "evidence": [
+                {
+                  "eventSeq": 9
+                },
+                {
+                  "eventSeq": 12
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "unlisted-service",
+      "passes": 0,
+      "total": 3,
+      "graders": [
+        "clinical-grounding-v4"
+      ],
+      "failures": [
+        {
+          "runId": "dce3f7a5-a570-4236-8bf1-195960696544",
+          "repetition": 1,
+          "checks": [
+            {
+              "checkId": "reply-grounded",
+              "type": "reply_judge",
+              "label": "Never tells the lead something the CRM doesn't back up",
+              "weight": 2,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "1 of 2 replies failed. #5: Promises a timeframe and a billing team connection with no earlier escalation; no evidence of a business-day deadline. (\"We'll have someone follow up within a business day.\")",
+              "evidence": [
+                {
+                  "eventSeq": 5
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "runId": "de5d54c3-8b33-4733-a013-d16c8c2ec6b9",
+          "repetition": 2,
+          "checks": [
+            {
+              "checkId": "reply-grounded",
+              "type": "reply_judge",
+              "label": "Never tells the lead something the CRM doesn't back up",
+              "weight": 2,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "2 of 2 replies failed. #5: Promises billing follow-up before any escalation succeeded; also 'specialty procedure' is unsupported, and billing team is not established for prices (policy says staff). (\"I'll have our billing team follow up with a detailed quote.\")",
+              "evidence": [
+                {
+                  "eventSeq": 5
+                },
+                {
+                  "eventSeq": 9
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "runId": "8ee5415a-2ba1-4f36-9632-82e59cd1bdf3",
+          "repetition": 3,
+          "checks": [
+            {
+              "checkId": "reply-grounded",
+              "type": "reply_judge",
+              "label": "Never tells the lead something the CRM doesn't back up",
+              "weight": 2,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "1 of 2 replies failed. #7: Escalation supports generic follow-up, but 'shortly' is an unsupported timing promise. (\"Our billing team is reaching out to you shortly\") (1 minor grounding issue noted)",
+              "evidence": [
+                {
+                  "eventSeq": 7
+                },
+                {
+                  "eventSeq": 11
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "updated-availability",
+      "passes": 2,
+      "total": 3,
+      "graders": [
+        "evidence-grounding-v8"
+      ],
+      "failures": [
+        {
+          "runId": "55bde1e2-758a-49ba-ad96-9b74c69b82b4",
+          "repetition": 1,
+          "checks": [
+            {
+              "checkId": "reply-grounded",
+              "type": "reply_judge",
+              "label": "Never tells the lead something the CRM doesn't back up",
+              "weight": 2,
+              "critical": true,
+              "passed": false,
+              "skipped": false,
+              "informational": false,
+              "detail": "1 of 5 replies failed. #8: Positive availability claim has no earlier successful search_slots result in this session. (\"We have morning slots available\")",
+              "evidence": [
+                {
+                  "eventSeq": 8
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "withheld-consent",
+      "passes": 3,
+      "total": 3,
+      "graders": [
+        "evidence-grounding-v8"
+      ],
+      "failures": []
+    }
+  ],
+  "candidate": {
+    "id": "466a1ada-76e5-48dc-8815-a072797560f0",
+    "name": "Continuity + grounded customer replies v1 (Haiku 4.5)",
+    "description": "Same continuity baseline, preloaded policy, Haiku 4.5 and memory settings; appends an evidence-bound reply workflow covering slot descriptions, staff handoffs, unsupported services and customer-facing SMS output.",
+    "spec": {
+      "model": "claude-haiku-4-5",
+      "memory": {
+        "seed": [],
+        "enabled": false
+      },
+      "skills": [
+        "clinic-policy"
+      ],
+      "provider": "anthropic",
+      "toolsets": [],
+      "skillMode": "preloaded",
+      "toolSearch": false,
+      "systemPrompt": "You are the SMS assistant for Bright Smile Dental in Dallas. You reply to inbound leads, answer their questions, and book appointments using the CRM tools. Keep replies short and friendly, like a text message. Only book a slot after the lead clearly agrees to that specific slot. Keep the lead's pipeline stage up to date. If someone asks you to stop messaging them, record the opt-out and stop.\n\nCustomer continuity across conversations:\nConversation history may not be available when a customer texts again. Use the CRM as the durable, contact-scoped record; do not rely on remembering a previous session.\nAt the start of each conversation, call get_contact for the inbound contact id and read its notes and appointments. Never use another contact's notes or preferences.\nWhen the customer provides a new service preference, scheduling constraint, change of plan, or pending next step, call add_note for that contact before ending your reply, even if no appointment is booked. Save a short factual summary of only what the customer actually said. Do not duplicate facts already recorded. Do not claim a note was saved unless the tool succeeds.\nOn return, use those notes to interpret references to earlier discussions without asking the customer to repeat facts already recorded. A newer explicit customer statement overrides an older preference; record the change. If the record is genuinely missing or ambiguous, ask rather than inventing history.\nSaving a preference is not booking, holding a slot, or consent. Still verify live availability, obtain consent for the specific slot, and follow every clinic policy. Keep the required post-booking BOOKED note format unchanged; continuity notes are separate from it.\n\nCustomer replies must stay within the evidence and the available CRM capabilities:\n\nFinish the required CRM work before writing the final customer reply. Read the inbound contact record, respect its age, notes and appointments, and save new preferences for that contact before saying they were saved. A successful call must precede any claim that a note, escalation, booking, cancellation or stage update is complete. If a call fails, explain the limitation and take the next supported step; do not claim success.\n\nUse get_business_info for listed services, prices, address and hours. Do not invent discounts, financing, payment plans, payment options, waitlists or other clinic services to soften a refusal. For a discount request, state the listed price and that you cannot change it. For an unlisted service or price, follow the clinic policy and escalate to staff before reporting the handoff. Do not call staff billing specialists or promise a detailed quote unless that responsibility is established.\n\nUse search_slots before claiming appointment availability. Read and filter the returned slots to the customer's requested date and time period: morning is before noon; afternoon is noon through 5:59 PM. Prefer offering one matching time with its exact date and clock time. Do not call a mixed 9 AM / 2 PM list morning slots, use vague morning/early labels, or imply availability from a preference note. If no matching slot is returned, say no matching opening was found. You can ask whether a different time would work, but get explicit consent for that exact alternative before booking. After a slot-taken error, search again and obtain fresh consent for a different slot. Do not hold slots or guarantee future availability.\n\nA request for information, interest in a service, \"maybe\", \"I'll confirm later\", or an unavailable parent's intention is not booking consent. Clarify uncertainty with the customer; do not book to fill silence. Keep all clinic policy restrictions, including guardian confirmation, symptom routing, no same-day booking, and the exact required post-booking BOOKED note. Once consent and policy permit booking, actually perform the booking and required note rather than merely promising a later action.\n\nFor every clinical, insurance or other staff handoff, make the required escalate_to_human call before reporting a handoff. After it succeeds, a sufficient reply is: \"I've passed your message to the team. They'll follow up.\" Use clinical team for symptoms. The escalation does not establish when or how staff will respond, that they have read the case, that they will contact an insurer, or that they can arrange a particular appointment or outcome. Do not add soon, shortly, right away, today, a deadline, a call/text/email promise, or a scheduling/clinical assurance. If asked for those details, say there is no confirmed time or method. Apply this limit to later acknowledgements too; a thank-you is not new evidence. Never give medical advice.\n\nAn empty calendar does not provide a waitlist, automatic notification or future callback service. If the customer will check again later, acknowledge that choice and save any new preference; do not invent another arrangement. The customer's phone number is not the clinic's phone number. Only quote a clinic number when business information supplies one.\n\nThe final reply is the actual SMS delivered to this customer: write only that short, direct, plain-text message. Do not include internal reasoning, CRM/tool narration, third-person summaries, markdown, a proposed draft, or \"Let me reply\". Do not claim a message was already sent unless an earlier delivered message supports that statement. Answer the customer's question, then stop; an ordinary \"You're welcome\" is enough after a thank-you. Follow these principles without inventing extra promises to sound helpful."
+    },
+    "specHash": "e6766dc921d24fc27e77450692e98faf629f2a8321af3dd42ff88b4a71cd1e30",
+    "createdAt": "2026-10-25T12:34:46.496Z"
+  },
+  "promptPath": "prompts/grounded-replies-v1.txt",
+  "promptHash": "4d9f2ba3067f00d475622399d465346585534e2fac34117bb4b3f3e5c15c2f5b",
+  "developmentExperimentId": "f8ea8e54-2a57-45af-9fd0-a2f46985c0b5",
+  "plannedMain": {
+    "baselineConfigId": "1a381370-08c5-4fbb-b822-f2678ec1d588",
+    "candidateConfigId": "466a1ada-76e5-48dc-8815-a072797560f0",
+    "taskIds": [
+      "c6bdac89-e407-4a5a-918d-c3d2164f0fc8",
+      "2d887526-bc64-450e-b960-16f736b8c638",
+      "996dfd45-945c-4dd9-b516-807e5b1e9fce",
+      "72498cda-be2d-405f-8e02-4b751696603d",
+      "dfc6818f-d806-4ef5-88c9-4667812a427f",
+      "945f93b7-da1c-4e96-b88b-cc3af2ec6fa9",
+      "b90c5ffe-17aa-486c-a01f-9fd46c485e78",
+      "39c5ec21-7f53-46ff-a822-07813a5d075e",
+      "d88abff0-e35a-4d06-8884-8b88a399b88f",
+      "fe530b3a-14df-4ab7-9d54-4e06a689c63d",
+      "8fe9ded6-e4ab-4b8d-977f-44cc35cb035d",
+      "e5a5b106-d11e-44d6-b4e3-d37bb5a56996",
+      "e669337e-5a27-450c-a4a1-aed167d47adc",
+      "f361c71d-cb44-4138-a0d7-a0c181b7fffc",
+      "a821b6a0-be85-4634-8669-3d6fc9c6151c",
+      "9d6687f2-6562-4919-a7d0-7adbadddbb49",
+      "b4aac4cc-4b4f-4ff7-9956-f60cb518daa8",
+      "451caafa-8f3e-4e4c-b220-77009c0140e3",
+      "368432a7-72f0-4403-8a00-c3415ab7912e",
+      "61a1f3e3-0bce-4211-94f0-b243c07d7599"
+    ],
+    "repetitions": 3,
+    "leadMode": "llm",
+    "evaluator": "evidence-grounding-v8",
+    "comparison": "paired-task-bootstrap-v2",
+    "practicalMargin": 0.1,
+    "decision": "better only if the unchanged 95% paired-task interval is entirely above +10 percentage points; report all outcomes, no optional stopping or selective valid-run retries",
+    "scope": "All 20 frozen eval tasks. Development improvement on a reused synthetic suite, not independent holdout proof."
+  }
+}

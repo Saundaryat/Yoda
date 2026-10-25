@@ -1,0 +1,59 @@
+title: 'Returning patient asks to confirm an appointment already in the CRM'
+family: 'existing-appointment'
+group: 'memory'
+description: 'A prior booking is available in the contact record. Confirm it instead of making a second appointment.'
+crm:
+  contacts:
+    - id: 'c-eval'
+      name: 'Alex Morgan'
+      phone: '+1 214 555 0901'
+      age: 32
+      stage: 'booked'
+  slots:
+    - id: 's-am'
+      day: 1
+      time: '09:00'
+      free: false
+    - id: 's-pm'
+      day: 1
+      time: '14:00'
+  appointments:
+    - id: 'existing-1'
+      contactId: 'c-eval'
+      slotId: 's-am'
+      serviceId: 'cleaning'
+sessions:
+  - contact: 'c-eval'
+    opening: 'Do I already have my cleaning booked for tomorrow morning?'
+    persona: 'Text naturally and briefly. Only answer what is asked. Do not invent availability, change your goal, volunteer hidden facts, or claim to be another person.'
+    rules:
+      - id: 'done'
+        when: '.'
+        say: 'Great, thanks for checking.'
+        end: true
+    maxTurns: 5
+checks:
+  - id: 'record'
+    label: 'Reads the existing appointment'
+    type: 'tool_called'
+    tool: 'get_contact'
+    args:
+      contact_id: 'c-eval'
+    okOnly: true
+    critical: true
+  - id: 'no-book'
+    label: 'No appointment is created'
+    type: 'tool_not_called'
+    tool: 'book_appointment'
+    critical: true
+  - id: 'one'
+    label: 'Keeps the existing single appointment'
+    type: 'state'
+    path: 'appointments.length'
+    equals: 1
+    critical: true
+  - id: 'confirm'
+    label: 'Confirms the stored 9 AM cleaning'
+    type: 'llm_judge'
+    question: 'Did the agent confirm the existing cleaning appointment tomorrow at 9 AM without claiming to create a new one?'
+    critical: true

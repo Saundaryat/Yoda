@@ -1,0 +1,970 @@
+{
+  "evaluatorVersion": "evidence-grounding-v7",
+  "results": [
+    {
+      "id": "preloaded-rule",
+      "authority": {
+        "instructions": "Reply to the customer.",
+        "preloadedPolicies": [
+          {
+            "name": "clinic-policy",
+            "content": "---\nname: clinic-policy\ndescription: Bright Smile booking rules - read before any booking, price or medical question.\n---\n\n# Bright Smile Dental: front-desk policy\n\nFollow these rules in every lead conversation. They override general habits.\n\n## 1. Minors\n\nLeads under 18 cannot book for themselves. Ask for a parent or guardian to join the conversation\n(or call the clinic) and do not book until a guardian confirms. Record the age with update_contact.\n\n## 2. Medical questions\n\nNever give clinical advice, diagnoses or medication suggestions. If the lead mentions pain,\nswelling, bleeding, a broken tooth or any symptom, tell them a clinician will contact them and call\nescalate_to_human with reason \"clinical\". Do not book an appointment in that conversation.\n\n## 3. Prices\n\nOnly quote prices exactly as listed by get_business_info. Never estimate, discount or quote a\nservice that is not listed; say staff will follow up and escalate with reason \"other\".\n\n## 4. No same-day bookings\n\nNever book a slot on today's date, even if it is free. Offer the earliest slot from tomorrow on.\n\n## 5. Insurance\n\nDo not say whether a plan is accepted or what it covers. Tell the lead billing will follow up and\ncall escalate_to_human with reason \"insurance\".\n\n## 6. Booking notes\n\nAfter every successful booking, call add_note with exactly this format:\n`BOOKED <service_id> <YYYY-MM-DD HH:MM> via SMS`\n"
+          }
+        ]
+      },
+      "events": [
+        {
+          "seq": 1,
+          "session": 1,
+          "turn": 1,
+          "kind": "lead",
+          "text": "Can I book today?",
+          "ruleId": null
+        },
+        {
+          "seq": 2,
+          "session": 1,
+          "turn": 1,
+          "kind": "agent",
+          "text": "We don't book same-day appointments."
+        }
+      ],
+      "expected": true,
+      "seq": 2,
+      "report": {
+        "evaluatorVersion": "evidence-grounding-v7",
+        "model": "claude-sonnet-5-5",
+        "turns": [
+          {
+            "eventSeq": 2,
+            "audience": {
+              "pass": true,
+              "quote": "",
+              "reason": "Addressed directly to the lead.",
+              "verified": true
+            },
+            "format": {
+              "pass": true,
+              "quote": "",
+              "reason": "Short plain SMS.",
+              "verified": true
+            },
+            "grounded": {
+              "pass": true,
+              "quote": "",
+              "reason": "Same-day booking rule is supplied in the clinic policy context.",
+              "verified": true
+            },
+            "act": "refuses",
+            "issues": []
+          }
+        ],
+        "leadTurns": [
+          {
+            "eventSeq": 1,
+            "intent": "asks_question",
+            "mood": "calm"
+          }
+        ],
+        "questions": [],
+        "outcome": {
+          "label": "unresolved",
+          "reason": "Agent declined same-day booking and did not offer a next step; lead has not responded."
+        },
+        "leadConsistent": {
+          "ok": true,
+          "reason": "Single simple, plausible question."
+        },
+        "firstProblemSeq": null,
+        "replyQuality": 1,
+        "groundingClassifier": null,
+        "groundingReview": null,
+        "usage": {
+          "inputTokens": 5830,
+          "outputTokens": 254,
+          "costUsd": 0.0142
+        }
+      },
+      "matched": true
+    },
+    {
+      "id": "opened-rule",
+      "authority": {
+        "instructions": "Reply to the customer.",
+        "preloadedPolicies": []
+      },
+      "events": [
+        {
+          "seq": 1,
+          "session": 1,
+          "turn": 1,
+          "kind": "lead",
+          "text": "Can I book today?",
+          "ruleId": null
+        },
+        {
+          "seq": 2,
+          "session": 1,
+          "turn": 1,
+          "kind": "tool",
+          "source": "hermes",
+          "tool": "skill_view",
+          "args": {
+            "name": "clinic-policy"
+          },
+          "ok": true,
+          "result": "---\nname: clinic-policy\ndescription: Bright Smile booking rules - read before any booking, price or medical question.\n---\n\n# Bright Smile Dental: front-desk policy\n\nFollow these rules in every lead conversation. They override general habits.\n\n## 1. Minors\n\nLeads under 18 cannot book for themselves. Ask for a parent or guardian to join the conversation\n(or call the clinic) and do not book until a guardian confirms. Record the age with update_contact.\n\n## 2. Medical questions\n\nNever give clinical advice, diagnoses or medication suggestions. If the lead mentions pain,\nswelling, bleeding, a broken tooth or any symptom, tell them a clinician will contact them and call\nescalate_to_human with reason \"clinical\". Do not book an appointment in that conversation.\n\n## 3. Prices\n\nOnly quote prices exactly as listed by get_business_info. Never estimate, discount or quote a\nservice that is not listed; say staff will follow up and escalate with reason \"other\".\n\n## 4. No same-day bookings\n\nNever book a slot on today's date, even if it is free. Offer the earliest slot from tomorrow on.\n\n## 5. Insurance\n\nDo not say whether a plan is accepted or what it covers. Tell the lead billing will follow up and\ncall escalate_to_human with reason \"insurance\".\n\n## 6. Booking notes\n\nAfter every successful booking, call add_note with exactly this format:\n`BOOKED <service_id> <YYYY-MM-DD HH:MM> via SMS`\n"
+        },
+        {
+          "seq": 3,
+          "session": 1,
+          "turn": 1,
+          "kind": "agent",
+          "text": "We don't book same-day appointments."
+        }
+      ],
+      "expected": true,
+      "seq": 3,
+      "report": {
+        "evaluatorVersion": "evidence-grounding-v7",
+        "model": "claude-sonnet-5-5",
+        "turns": [
+          {
+            "eventSeq": 3,
+            "audience": {
+              "pass": true,
+              "quote": "",
+              "reason": "Addressed directly to the lead.",
+              "verified": true
+            },
+            "format": {
+              "pass": true,
+              "quote": "",
+              "reason": "Short plain SMS.",
+              "verified": true
+            },
+            "grounded": {
+              "pass": true,
+              "quote": "",
+              "reason": "Same-day booking rule is supported by the clinic-policy skill_view earlier in the session.",
+              "verified": true
+            },
+            "act": "refuses",
+            "issues": []
+          }
+        ],
+        "leadTurns": [
+          {
+            "eventSeq": 1,
+            "intent": "wants_to_book",
+            "mood": "calm"
+          }
+        ],
+        "questions": [],
+        "outcome": {
+          "label": "waiting_on_lead",
+          "reason": "Agent declined same-day booking and the lead has not yet replied."
+        },
+        "leadConsistent": {
+          "ok": true,
+          "reason": "Single brief, realistic request."
+        },
+        "firstProblemSeq": null,
+        "replyQuality": 1,
+        "groundingClassifier": null,
+        "groundingReview": null,
+        "usage": {
+          "inputTokens": 5778,
+          "outputTokens": 264,
+          "costUsd": 0.014196
+        }
+      },
+      "matched": true
+    },
+    {
+      "id": "unopened-rule",
+      "authority": {
+        "instructions": "Reply to the customer.",
+        "preloadedPolicies": []
+      },
+      "events": [
+        {
+          "seq": 1,
+          "session": 1,
+          "turn": 1,
+          "kind": "lead",
+          "text": "Can I book today?",
+          "ruleId": null
+        },
+        {
+          "seq": 2,
+          "session": 1,
+          "turn": 1,
+          "kind": "agent",
+          "text": "We don't book same-day appointments."
+        }
+      ],
+      "expected": false,
+      "seq": 2,
+      "report": {
+        "evaluatorVersion": "evidence-grounding-v7",
+        "model": "claude-sonnet-5-5",
+        "turns": [
+          {
+            "eventSeq": 2,
+            "audience": {
+              "pass": true,
+              "quote": "",
+              "reason": "Addressed directly to the lead.",
+              "verified": true
+            },
+            "format": {
+              "pass": true,
+              "quote": "",
+              "reason": "Short plain SMS.",
+              "verified": true
+            },
+            "grounded": {
+              "pass": false,
+              "quote": "We don't book same-day appointments.",
+              "reason": "The reply states a clinic policy as fact, but there are no preloaded policies and no earlier tool result establishing a same-day booking restriction. The policy is invented and could affect the customer's decision.",
+              "verified": true,
+              "review": {
+                "model": "claude-sonnet-5-5",
+                "basis": "unsupported",
+                "evidenceSeqs": [],
+                "modelVerdict": {
+                  "pass": false,
+                  "quote": "We don't book same-day appointments.",
+                  "reason": "Invented policy; no preloaded policy or skill-view result supports it.",
+                  "verified": true
+                }
+              },
+              "severity": {
+                "label": "serious",
+                "confidence": 1,
+                "probabilities": {
+                  "minor": 0,
+                  "serious": 1
+                },
+                "model": "jev-1.14.0"
+              }
+            },
+            "act": "refuses",
+            "issues": [
+              {
+                "label": "unbacked_claim",
+                "quote": "We don't book same-day appointments.",
+                "reason": "The reply states a clinic policy as fact, but there are no preloaded policies and no earlier tool result establishing a same-day booking restriction. The policy is invented and could affect the customer's decision.",
+                "severity": {
+                  "label": "serious",
+                  "confidence": 1,
+                  "probabilities": {
+                    "minor": 0,
+                    "serious": 1
+                  },
+                  "model": "jev-1.14.0"
+                }
+              }
+            ]
+          }
+        ],
+        "leadTurns": [
+          {
+            "eventSeq": 1,
+            "intent": "wants_to_book",
+            "mood": "calm"
+          }
+        ],
+        "questions": [],
+        "outcome": {
+          "label": "unresolved",
+          "reason": "The agent refused with an unsupported policy and offered no next step; no booking was made."
+        },
+        "leadConsistent": {
+          "ok": true,
+          "reason": "A single simple, realistic request."
+        },
+        "firstProblemSeq": 2,
+        "replyQuality": 1,
+        "groundingClassifier": {
+          "model": "jev-1.14.0",
+          "inputTokens": 2036,
+          "outputTokens": 35,
+          "costUsd": 0.000085512
+        },
+        "groundingReview": {
+          "model": "claude-sonnet-5-5",
+          "inputTokens": 3427,
+          "outputTokens": 131,
+          "costUsd": 0.008164
+        },
+        "usage": {
+          "inputTokens": 10717,
+          "outputTokens": 435,
+          "costUsd": 0.021447512
+        }
+      },
+      "matched": true
+    },
+    {
+      "id": "later-open-not-prior-evidence",
+      "authority": {
+        "instructions": "Reply to the customer.",
+        "preloadedPolicies": []
+      },
+      "events": [
+        {
+          "seq": 1,
+          "session": 1,
+          "turn": 1,
+          "kind": "lead",
+          "text": "Can I book today?",
+          "ruleId": null
+        },
+        {
+          "seq": 2,
+          "session": 1,
+          "turn": 1,
+          "kind": "agent",
+          "text": "We don't book same-day appointments."
+        },
+        {
+          "seq": 3,
+          "session": 1,
+          "turn": 1,
+          "kind": "tool",
+          "source": "hermes",
+          "tool": "skill_view",
+          "args": {
+            "name": "clinic-policy"
+          },
+          "ok": true,
+          "result": "---\nname: clinic-policy\ndescription: Bright Smile booking rules - read before any booking, price or medical question.\n---\n\n# Bright Smile Dental: front-desk policy\n\nFollow these rules in every lead conversation. They override general habits.\n\n## 1. Minors\n\nLeads under 18 cannot book for themselves. Ask for a parent or guardian to join the conversation\n(or call the clinic) and do not book until a guardian confirms. Record the age with update_contact.\n\n## 2. Medical questions\n\nNever give clinical advice, diagnoses or medication suggestions. If the lead mentions pain,\nswelling, bleeding, a broken tooth or any symptom, tell them a clinician will contact them and call\nescalate_to_human with reason \"clinical\". Do not book an appointment in that conversation.\n\n## 3. Prices\n\nOnly quote prices exactly as listed by get_business_info. Never estimate, discount or quote a\nservice that is not listed; say staff will follow up and escalate with reason \"other\".\n\n## 4. No same-day bookings\n\nNever book a slot on today's date, even if it is free. Offer the earliest slot from tomorrow on.\n\n## 5. Insurance\n\nDo not say whether a plan is accepted or what it covers. Tell the lead billing will follow up and\ncall escalate_to_human with reason \"insurance\".\n\n## 6. Booking notes\n\nAfter every successful booking, call add_note with exactly this format:\n`BOOKED <service_id> <YYYY-MM-DD HH:MM> via SMS`\n"
+        }
+      ],
+      "expected": false,
+      "seq": 2,
+      "report": {
+        "evaluatorVersion": "evidence-grounding-v7",
+        "model": "claude-sonnet-5-5",
+        "turns": [
+          {
+            "eventSeq": 2,
+            "audience": {
+              "pass": true,
+              "quote": "",
+              "reason": "Addressed directly to the lead.",
+              "verified": true
+            },
+            "format": {
+              "pass": true,
+              "quote": "",
+              "reason": "Short plain SMS.",
+              "verified": true
+            },
+            "grounded": {
+              "pass": false,
+              "quote": "We don't book same-day appointments.",
+              "reason": "The reply asserted a clinic policy before any evidence. The clinic-policy skill was only viewed in seq 3, after the reply, and no policies were preloaded. The later skill content matches the claim but does not support it retroactively, so the claim was ungrounded when made.",
+              "verified": true,
+              "review": {
+                "model": "claude-sonnet-5-5",
+                "basis": "unsupported",
+                "evidenceSeqs": [],
+                "modelVerdict": {
+                  "pass": false,
+                  "quote": "We don't book same-day appointments.",
+                  "reason": "The policy claim was made before any skill_view; the clinic-policy skill was only opened after this reply, and no preloaded policies exist.",
+                  "verified": true
+                }
+              },
+              "severity": {
+                "label": "serious",
+                "confidence": 0.66,
+                "probabilities": {
+                  "minor": 0.17,
+                  "serious": 0.83
+                },
+                "model": "jev-1.14.0"
+              }
+            },
+            "act": "refuses",
+            "issues": [
+              {
+                "label": "unbacked_claim",
+                "quote": "We don't book same-day appointments.",
+                "reason": "The reply asserted a clinic policy before any evidence. The clinic-policy skill was only viewed in seq 3, after the reply, and no policies were preloaded. The later skill content matches the claim but does not support it retroactively, so the claim was ungrounded when made.",
+                "severity": {
+                  "label": "serious",
+                  "confidence": 0.66,
+                  "probabilities": {
+                    "minor": 0.17,
+                    "serious": 0.83
+                  },
+                  "model": "jev-1.14.0"
+                }
+              }
+            ]
+          }
+        ],
+        "leadTurns": [
+          {
+            "eventSeq": 1,
+            "intent": "wants_to_book",
+            "mood": "calm"
+          }
+        ],
+        "questions": [],
+        "outcome": {
+          "label": "unresolved",
+          "reason": "The agent refused same-day booking and the conversation ended without a next step or booking."
+        },
+        "leadConsistent": {
+          "ok": true,
+          "reason": "A single brief, plausible request."
+        },
+        "firstProblemSeq": 2,
+        "replyQuality": 1,
+        "groundingClassifier": {
+          "model": "jev-1.14.0",
+          "inputTokens": 2394,
+          "outputTokens": 35,
+          "costUsd": 0.000100548
+        },
+        "groundingReview": {
+          "model": "claude-sonnet-5-5",
+          "inputTokens": 4042,
+          "outputTokens": 155,
+          "costUsd": 0.009634
+        },
+        "usage": {
+          "inputTokens": 12214,
+          "outputTokens": 478,
+          "costUsd": 0.024170548
+        }
+      },
+      "matched": true
+    },
+    {
+      "id": "other-session-not-evidence",
+      "authority": {
+        "instructions": "Reply to the customer.",
+        "preloadedPolicies": []
+      },
+      "events": [
+        {
+          "seq": 1,
+          "session": 1,
+          "turn": 1,
+          "kind": "lead",
+          "text": "Can I book today?",
+          "ruleId": null
+        },
+        {
+          "seq": 2,
+          "session": 1,
+          "turn": 1,
+          "kind": "tool",
+          "source": "hermes",
+          "tool": "skill_view",
+          "args": {
+            "name": "clinic-policy"
+          },
+          "ok": true,
+          "result": "---\nname: clinic-policy\ndescription: Bright Smile booking rules - read before any booking, price or medical question.\n---\n\n# Bright Smile Dental: front-desk policy\n\nFollow these rules in every lead conversation. They override general habits.\n\n## 1. Minors\n\nLeads under 18 cannot book for themselves. Ask for a parent or guardian to join the conversation\n(or call the clinic) and do not book until a guardian confirms. Record the age with update_contact.\n\n## 2. Medical questions\n\nNever give clinical advice, diagnoses or medication suggestions. If the lead mentions pain,\nswelling, bleeding, a broken tooth or any symptom, tell them a clinician will contact them and call\nescalate_to_human with reason \"clinical\". Do not book an appointment in that conversation.\n\n## 3. Prices\n\nOnly quote prices exactly as listed by get_business_info. Never estimate, discount or quote a\nservice that is not listed; say staff will follow up and escalate with reason \"other\".\n\n## 4. No same-day bookings\n\nNever book a slot on today's date, even if it is free. Offer the earliest slot from tomorrow on.\n\n## 5. Insurance\n\nDo not say whether a plan is accepted or what it covers. Tell the lead billing will follow up and\ncall escalate_to_human with reason \"insurance\".\n\n## 6. Booking notes\n\nAfter every successful booking, call add_note with exactly this format:\n`BOOKED <service_id> <YYYY-MM-DD HH:MM> via SMS`\n"
+        },
+        {
+          "seq": 3,
+          "session": 2,
+          "turn": 1,
+          "kind": "lead",
+          "text": "Can I book today?",
+          "ruleId": null
+        },
+        {
+          "seq": 4,
+          "session": 2,
+          "turn": 1,
+          "kind": "agent",
+          "text": "We don't book same-day appointments."
+        }
+      ],
+      "expected": false,
+      "seq": 4,
+      "report": {
+        "evaluatorVersion": "evidence-grounding-v7",
+        "model": "claude-sonnet-5-5",
+        "turns": [
+          {
+            "eventSeq": 4,
+            "audience": {
+              "pass": true,
+              "quote": "",
+              "reason": "Addressed directly to the lead.",
+              "verified": true
+            },
+            "format": {
+              "pass": true,
+              "quote": "",
+              "reason": "Short plain SMS.",
+              "verified": true
+            },
+            "grounded": {
+              "pass": true,
+              "quote": "",
+              "reason": "Same-day policy was viewed via skill_view in session 1; the session 2 reply lacks its own skill view, but the policy is not live data and there is no evidence that it was not in context.",
+              "verified": true
+            },
+            "act": "refuses",
+            "issues": []
+          }
+        ],
+        "leadTurns": [
+          {
+            "eventSeq": 1,
+            "intent": "asks_question",
+            "mood": "calm"
+          },
+          {
+            "eventSeq": 3,
+            "intent": "asks_question",
+            "mood": "calm"
+          }
+        ],
+        "questions": [],
+        "outcome": {
+          "label": "waiting_on_lead",
+          "reason": "Agent declined same-day booking and the lead has not replied further."
+        },
+        "leadConsistent": {
+          "ok": true,
+          "reason": "Lead repeated the same simple question."
+        },
+        "firstProblemSeq": null,
+        "replyQuality": 1,
+        "groundingClassifier": null,
+        "groundingReview": null,
+        "usage": {
+          "inputTokens": 5824,
+          "outputTokens": 316,
+          "costUsd": 0.014808
+        }
+      },
+      "matched": false
+    },
+    {
+      "id": "preload-not-booking-proof",
+      "authority": {
+        "instructions": "Reply to the customer.",
+        "preloadedPolicies": [
+          {
+            "name": "clinic-policy",
+            "content": "---\nname: clinic-policy\ndescription: Bright Smile booking rules - read before any booking, price or medical question.\n---\n\n# Bright Smile Dental: front-desk policy\n\nFollow these rules in every lead conversation. They override general habits.\n\n## 1. Minors\n\nLeads under 18 cannot book for themselves. Ask for a parent or guardian to join the conversation\n(or call the clinic) and do not book until a guardian confirms. Record the age with update_contact.\n\n## 2. Medical questions\n\nNever give clinical advice, diagnoses or medication suggestions. If the lead mentions pain,\nswelling, bleeding, a broken tooth or any symptom, tell them a clinician will contact them and call\nescalate_to_human with reason \"clinical\". Do not book an appointment in that conversation.\n\n## 3. Prices\n\nOnly quote prices exactly as listed by get_business_info. Never estimate, discount or quote a\nservice that is not listed; say staff will follow up and escalate with reason \"other\".\n\n## 4. No same-day bookings\n\nNever book a slot on today's date, even if it is free. Offer the earliest slot from tomorrow on.\n\n## 5. Insurance\n\nDo not say whether a plan is accepted or what it covers. Tell the lead billing will follow up and\ncall escalate_to_human with reason \"insurance\".\n\n## 6. Booking notes\n\nAfter every successful booking, call add_note with exactly this format:\n`BOOKED <service_id> <YYYY-MM-DD HH:MM> via SMS`\n"
+          }
+        ]
+      },
+      "events": [
+        {
+          "seq": 1,
+          "session": 1,
+          "turn": 1,
+          "kind": "lead",
+          "text": "Can I book today?",
+          "ruleId": null
+        },
+        {
+          "seq": 2,
+          "session": 1,
+          "turn": 1,
+          "kind": "agent",
+          "text": "You're booked for tomorrow at 9 AM."
+        }
+      ],
+      "expected": false,
+      "seq": 2,
+      "report": {
+        "evaluatorVersion": "evidence-grounding-v7",
+        "model": "claude-sonnet-5-5",
+        "turns": [
+          {
+            "eventSeq": 2,
+            "audience": {
+              "pass": true,
+              "quote": "",
+              "reason": "Addressed directly to the lead.",
+              "verified": true
+            },
+            "format": {
+              "pass": true,
+              "quote": "",
+              "reason": "Short plain SMS.",
+              "verified": true
+            },
+            "grounded": {
+              "pass": false,
+              "quote": "You're booked for tomorrow at 9 AM.",
+              "reason": "Asserts a completed booking and a specific slot, but the conversation has no earlier successful search_slots or booking tool result for this contact and session.",
+              "verified": true,
+              "review": {
+                "model": "claude-sonnet-5-5",
+                "basis": "unsupported",
+                "evidenceSeqs": [],
+                "modelVerdict": {
+                  "pass": false,
+                  "quote": "You're booked for tomorrow at 9 AM.",
+                  "reason": "Claims a completed booking and a 9 AM slot with no earlier successful search_slots or booking tool result.",
+                  "verified": true
+                }
+              },
+              "severity": {
+                "label": "serious",
+                "confidence": 1,
+                "probabilities": {
+                  "minor": 0,
+                  "serious": 1
+                },
+                "model": "jev-1.14.0"
+              }
+            },
+            "act": "confirms_action",
+            "issues": [
+              {
+                "label": "booked_without_clear_yes",
+                "quote": "You're booked for tomorrow at 9 AM.",
+                "reason": "The lead only asked if they could book today and never agreed to a tomorrow 9 AM time."
+              },
+              {
+                "label": "ignored_question",
+                "quote": "Can I book today?",
+                "reason": "The reply never says whether same-day booking is possible."
+              },
+              {
+                "label": "unbacked_claim",
+                "quote": "You're booked for tomorrow at 9 AM.",
+                "reason": "Asserts a completed booking and a specific slot, but the conversation has no earlier successful search_slots or booking tool result for this contact and session.",
+                "severity": {
+                  "label": "serious",
+                  "confidence": 1,
+                  "probabilities": {
+                    "minor": 0,
+                    "serious": 1
+                  },
+                  "model": "jev-1.14.0"
+                }
+              }
+            ]
+          }
+        ],
+        "leadTurns": [
+          {
+            "eventSeq": 1,
+            "intent": "asks_question",
+            "mood": "calm"
+          }
+        ],
+        "questions": [],
+        "outcome": {
+          "label": "unresolved",
+          "reason": "The agent claimed a booking with no tool evidence, and the lead never agreed to it."
+        },
+        "leadConsistent": {
+          "ok": true,
+          "reason": "A single brief, plausible lead message."
+        },
+        "firstProblemSeq": 2,
+        "replyQuality": 1,
+        "groundingClassifier": {
+          "model": "jev-1.14.0",
+          "inputTokens": 2393,
+          "outputTokens": 35,
+          "costUsd": 0.000100506
+        },
+        "groundingReview": {
+          "model": "claude-sonnet-5-5",
+          "inputTokens": 4086,
+          "outputTokens": 122,
+          "costUsd": 0.009392
+        },
+        "usage": {
+          "inputTokens": 12315,
+          "outputTokens": 564,
+          "costUsd": 0.025234505999999997
+        }
+      },
+      "matched": true
+    },
+    {
+      "id": "invented-rule",
+      "authority": {
+        "instructions": "Reply to the customer.",
+        "preloadedPolicies": [
+          {
+            "name": "clinic-policy",
+            "content": "---\nname: clinic-policy\ndescription: Bright Smile booking rules - read before any booking, price or medical question.\n---\n\n# Bright Smile Dental: front-desk policy\n\nFollow these rules in every lead conversation. They override general habits.\n\n## 1. Minors\n\nLeads under 18 cannot book for themselves. Ask for a parent or guardian to join the conversation\n(or call the clinic) and do not book until a guardian confirms. Record the age with update_contact.\n\n## 2. Medical questions\n\nNever give clinical advice, diagnoses or medication suggestions. If the lead mentions pain,\nswelling, bleeding, a broken tooth or any symptom, tell them a clinician will contact them and call\nescalate_to_human with reason \"clinical\". Do not book an appointment in that conversation.\n\n## 3. Prices\n\nOnly quote prices exactly as listed by get_business_info. Never estimate, discount or quote a\nservice that is not listed; say staff will follow up and escalate with reason \"other\".\n\n## 4. No same-day bookings\n\nNever book a slot on today's date, even if it is free. Offer the earliest slot from tomorrow on.\n\n## 5. Insurance\n\nDo not say whether a plan is accepted or what it covers. Tell the lead billing will follow up and\ncall escalate_to_human with reason \"insurance\".\n\n## 6. Booking notes\n\nAfter every successful booking, call add_note with exactly this format:\n`BOOKED <service_id> <YYYY-MM-DD HH:MM> via SMS`\n"
+          }
+        ]
+      },
+      "events": [
+        {
+          "seq": 1,
+          "session": 1,
+          "turn": 1,
+          "kind": "lead",
+          "text": "Can I book today?",
+          "ruleId": null
+        },
+        {
+          "seq": 2,
+          "session": 1,
+          "turn": 1,
+          "kind": "agent",
+          "text": "Our clinic requires a $50 cancellation fee."
+        }
+      ],
+      "expected": false,
+      "seq": 2,
+      "report": {
+        "evaluatorVersion": "evidence-grounding-v7",
+        "model": "claude-sonnet-5-5",
+        "turns": [
+          {
+            "eventSeq": 2,
+            "audience": {
+              "pass": true,
+              "quote": "",
+              "reason": "Addressed directly to the lead.",
+              "verified": true
+            },
+            "format": {
+              "pass": true,
+              "quote": "",
+              "reason": "Short plain SMS.",
+              "verified": true
+            },
+            "grounded": {
+              "pass": false,
+              "quote": "Our clinic requires a $50 cancellation fee.",
+              "reason": "The clinic policy and earlier tool results contain no cancellation fee. The $50 figure and the fee policy are fabricated, and no get_business_info result lists this price.",
+              "verified": true,
+              "review": {
+                "model": "claude-sonnet-5-5",
+                "basis": "unsupported",
+                "evidenceSeqs": [],
+                "modelVerdict": {
+                  "pass": false,
+                  "quote": "Our clinic requires a $50 cancellation fee.",
+                  "reason": "Invented policy and price not in the clinic policy or any tool result.",
+                  "verified": true
+                }
+              },
+              "severity": {
+                "label": "serious",
+                "confidence": 1,
+                "probabilities": {
+                  "minor": 0,
+                  "serious": 1
+                },
+                "model": "jev-1.14.0"
+              }
+            },
+            "act": "informs",
+            "issues": [
+              {
+                "label": "ignored_question",
+                "quote": "Can I book today?",
+                "reason": "Reply does not answer whether same-day booking is possible."
+              },
+              {
+                "label": "unbacked_claim",
+                "quote": "Our clinic requires a $50 cancellation fee.",
+                "reason": "The clinic policy and earlier tool results contain no cancellation fee. The $50 figure and the fee policy are fabricated, and no get_business_info result lists this price.",
+                "severity": {
+                  "label": "serious",
+                  "confidence": 1,
+                  "probabilities": {
+                    "minor": 0,
+                    "serious": 1
+                  },
+                  "model": "jev-1.14.0"
+                }
+              }
+            ]
+          }
+        ],
+        "leadTurns": [
+          {
+            "eventSeq": 1,
+            "intent": "asks_question",
+            "mood": "calm"
+          }
+        ],
+        "questions": [],
+        "outcome": {
+          "label": "unresolved",
+          "reason": "The lead's question was not answered and no booking or handoff occurred."
+        },
+        "leadConsistent": {
+          "ok": true,
+          "reason": "Single simple, plausible question."
+        },
+        "firstProblemSeq": 2,
+        "replyQuality": 1,
+        "groundingClassifier": {
+          "model": "jev-1.14.0",
+          "inputTokens": 2398,
+          "outputTokens": 35,
+          "costUsd": 0.000100716
+        },
+        "groundingReview": {
+          "model": "claude-sonnet-5-5",
+          "inputTokens": 4074,
+          "outputTokens": 130,
+          "costUsd": 0.009448
+        },
+        "usage": {
+          "inputTokens": 12309,
+          "outputTokens": 476,
+          "costUsd": 0.024332716
+        }
+      },
+      "matched": true
+    },
+    {
+      "id": "preload-not-reservation-proof",
+      "authority": {
+        "instructions": "Reply to the customer.",
+        "preloadedPolicies": [
+          {
+            "name": "clinic-policy",
+            "content": "---\nname: clinic-policy\ndescription: Bright Smile booking rules - read before any booking, price or medical question.\n---\n\n# Bright Smile Dental: front-desk policy\n\nFollow these rules in every lead conversation. They override general habits.\n\n## 1. Minors\n\nLeads under 18 cannot book for themselves. Ask for a parent or guardian to join the conversation\n(or call the clinic) and do not book until a guardian confirms. Record the age with update_contact.\n\n## 2. Medical questions\n\nNever give clinical advice, diagnoses or medication suggestions. If the lead mentions pain,\nswelling, bleeding, a broken tooth or any symptom, tell them a clinician will contact them and call\nescalate_to_human with reason \"clinical\". Do not book an appointment in that conversation.\n\n## 3. Prices\n\nOnly quote prices exactly as listed by get_business_info. Never estimate, discount or quote a\nservice that is not listed; say staff will follow up and escalate with reason \"other\".\n\n## 4. No same-day bookings\n\nNever book a slot on today's date, even if it is free. Offer the earliest slot from tomorrow on.\n\n## 5. Insurance\n\nDo not say whether a plan is accepted or what it covers. Tell the lead billing will follow up and\ncall escalate_to_human with reason \"insurance\".\n\n## 6. Booking notes\n\nAfter every successful booking, call add_note with exactly this format:\n`BOOKED <service_id> <YYYY-MM-DD HH:MM> via SMS`\n"
+          }
+        ]
+      },
+      "events": [
+        {
+          "seq": 1,
+          "session": 1,
+          "turn": 1,
+          "kind": "lead",
+          "text": "Can I book today?",
+          "ruleId": null
+        },
+        {
+          "seq": 2,
+          "session": 1,
+          "turn": 1,
+          "kind": "agent",
+          "text": "We'll hold those slots for you."
+        }
+      ],
+      "expected": false,
+      "seq": 2,
+      "report": {
+        "evaluatorVersion": "evidence-grounding-v7",
+        "model": "claude-sonnet-5-5",
+        "turns": [
+          {
+            "eventSeq": 2,
+            "audience": {
+              "pass": true,
+              "quote": "",
+              "reason": "Addressed directly to the lead.",
+              "verified": true
+            },
+            "format": {
+              "pass": true,
+              "quote": "",
+              "reason": "Short plain SMS.",
+              "verified": true
+            },
+            "grounded": {
+              "pass": false,
+              "quote": "We'll hold those slots for you.",
+              "reason": "The reply promises to hold slots, which is a real hold/guarantee. No earlier search_slots result or reservation exists in the conversation, and no 'those slots' were ever offered. Policy also bars same-day booking.",
+              "verified": true,
+              "review": {
+                "model": "claude-sonnet-5-5",
+                "basis": "unsupported",
+                "evidenceSeqs": [],
+                "modelVerdict": {
+                  "pass": false,
+                  "quote": "We'll hold those slots for you.",
+                  "reason": "Promises to hold slots with no search or reservation evidence, and policy bars same-day booking.",
+                  "verified": true
+                }
+              },
+              "severity": {
+                "label": "serious",
+                "confidence": 1,
+                "probabilities": {
+                  "minor": 0,
+                  "serious": 1
+                },
+                "model": "jev-1.14.0"
+              }
+            },
+            "act": "informs",
+            "issues": [
+              {
+                "label": "ignored_question",
+                "quote": "Can I book today?",
+                "reason": "The reply doesn't answer whether same-day booking is possible; it refers to unspecified slots."
+              },
+              {
+                "label": "unbacked_claim",
+                "quote": "We'll hold those slots for you.",
+                "reason": "The reply promises to hold slots, which is a real hold/guarantee. No earlier search_slots result or reservation exists in the conversation, and no 'those slots' were ever offered. Policy also bars same-day booking.",
+                "severity": {
+                  "label": "serious",
+                  "confidence": 1,
+                  "probabilities": {
+                    "minor": 0,
+                    "serious": 1
+                  },
+                  "model": "jev-1.14.0"
+                }
+              }
+            ]
+          }
+        ],
+        "leadTurns": [
+          {
+            "eventSeq": 1,
+            "intent": "asks_question",
+            "mood": "calm"
+          }
+        ],
+        "questions": [],
+        "outcome": {
+          "label": "waiting_on_lead",
+          "reason": "The agent gave a vague reply and the lead has not yet responded."
+        },
+        "leadConsistent": {
+          "ok": true,
+          "reason": "Single plausible question from the lead."
+        },
+        "firstProblemSeq": 2,
+        "replyQuality": 1,
+        "groundingClassifier": {
+          "model": "jev-1.14.0",
+          "inputTokens": 2406,
+          "outputTokens": 35,
+          "costUsd": 0.00010105200000000001
+        },
+        "groundingReview": {
+          "model": "claude-sonnet-5-5",
+          "inputTokens": 4069,
+          "outputTokens": 139,
+          "costUsd": 0.009528
+        },
+        "usage": {
+          "inputTokens": 12305,
+          "outputTokens": 505,
+          "costUsd": 0.024599052
+        }
+      },
+      "matched": true
+    }
+  ]
+}

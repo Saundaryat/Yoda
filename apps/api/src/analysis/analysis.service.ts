@@ -13,6 +13,7 @@ import { checkResults, experiments, runEvents, runs, tasks } from '../db/schema.
 import { improvementSummary } from './labels.js';
 import {
   allRunsPassRate,
+  hasCompleteRunCoverage,
   compare,
   compareMetric,
   mean,
@@ -38,7 +39,9 @@ export class AnalysisService {
       ? await this.db.select().from(tasks).where(inArray(tasks.id, experiment.taskIds))
       : [];
     const allRuns = await this.db.select().from(runs).where(eq(runs.experimentId, experimentId));
-    const scored = allRuns.filter((r) => r.status === 'scored');
+    const scored = allRuns.filter(
+      (r) => r.status === 'scored' && r.passed !== null && r.score !== null,
+    );
     const sideOf = (configId: string): Side =>
       configId === experiment.baselineConfigId ? 'a' : 'b';
 
@@ -124,10 +127,23 @@ export class AnalysisService {
       });
 
     return {
-      comparison: compare(passes, { plannedTasks: experiment.taskIds.length }),
+      comparison: compare(passes, {
+        plannedTasks: experiment.taskIds.length,
+        plannedRepetitions: experiment.repetitions,
+        experimentStatus: experiment.status,
+        coverageComplete: hasCompleteRunCoverage(
+          allRuns,
+          experiment.taskIds,
+          [experiment.baselineConfigId, experiment.candidateConfigId],
+          experiment.repetitions,
+        ),
+      }),
       coverage: {
-        plannedRuns: allRuns.length || experiment.taskIds.length * experiment.repetitions * 2,
+        plannedRuns: experiment.taskIds.length * experiment.repetitions * 2,
         scoredRuns: scored.length,
+        ungradedRuns: allRuns.filter(
+          (r) => r.status === 'scored' && (r.passed === null || r.score === null),
+        ).length,
         errorRuns: allRuns.filter((r) => r.status === 'error').length,
         cancelledRuns: allRuns.filter((r) => r.status === 'cancelled').length,
         openRuns: allRuns.filter((r) => r.status === 'queued' || r.status === 'running').length,
@@ -170,6 +186,7 @@ export class AnalysisService {
       CheckFlip & { n: Record<Side, number>; pass: Record<Side, number> }
     >();
     for (const check of checks) {
+      if (check.skipped || check.informational) continue;
       const run = runById.get(check.runId)!;
       const task = taskResults.find((t) => t.taskId === run.taskId)!;
       const key = `${run.taskId}/${check.checkId}`;

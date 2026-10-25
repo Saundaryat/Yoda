@@ -11,7 +11,7 @@ import type {
 import { existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { scoreRun } from '../scoring/checks.js';
-import type { Judge } from '../scoring/judge.js';
+import type { GroundingAuthority, Judge } from '../scoring/judge.js';
 import { classifyTurn, InfraError, runTurn, stopGateway } from './hermes-cli.js';
 import { PROVIDER_KEY_ENV, seedHome } from './hermes-home.js';
 import { LeadScript, type Lead, type LeadMessage } from './lead.js';
@@ -60,6 +60,7 @@ export interface RunOutcome extends Score {
   judge: JudgeReport | null;
   durationMs: number;
   context: {
+    groundingAuthority: GroundingAuthority;
     /** The system prompt Hermes built for each session (skills index, memory, SOUL...). */
     systemPrompts: (string | null)[];
     model: string | null;
@@ -222,7 +223,16 @@ export async function executeRun(input: RunInput, settings: ExecutorSettings): P
     timeZone: CLINIC_TIMEZONE,
     dateStyle: 'full',
   }).format(now);
-  const judge = settings.judge ? await settings.judge.judge(task, events, today) : null;
+  const groundingAuthority: GroundingAuthority = {
+    instructions: spec.systemPrompt,
+    preloadedPolicies:
+      spec.skillMode === 'preloaded'
+        ? Object.entries(skills).map(([name, content]) => ({ name, content }))
+        : [],
+  };
+  const judge = settings.judge
+    ? await settings.judge.judge(task, events, today, groundingAuthority)
+    : null;
   const store = new HermesStore(home);
   const sessions = sessionIds.map((id) => store.session(id));
   store.close();
@@ -242,6 +252,7 @@ export async function executeRun(input: RunInput, settings: ExecutorSettings): P
     leadUsage: llmLeads.length ? sumLeadUsage(llmLeads.map((l) => l.usage)) : null,
     durationMs: Date.now() - started,
     context: {
+      groundingAuthority,
       systemPrompts: sessions.map((s) => s.systemPrompt),
       model: session?.model ?? null,
       billingProvider: session?.billingProvider ?? null,

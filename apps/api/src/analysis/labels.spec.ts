@@ -77,4 +77,65 @@ describe('improvementSummary', () => {
       { runId: 'b1', taskKey: 'minor', side: 'b', reason: 'Changed their age.' },
     ]);
   });
+
+  it('counts Jev grounding severities separately', () => {
+    const severity = {
+      label: 'minor' as const,
+      confidence: 0.8,
+      probabilities: { minor: 0.9, serious: 0.1 },
+      model: 'jev-1.14.0',
+    };
+    const groundedTurn: TurnJudgment = {
+      ...turn(3),
+      grounded: { pass: false, quote: 'soon', reason: 'Unsupported.', verified: true, severity },
+      issues: [{ label: 'unbacked_claim', quote: 'soon', reason: 'Unsupported.', severity }],
+    };
+
+    const summary = improvementSummary([
+      {
+        runId: 'a-grounding',
+        taskKey: 'grounding',
+        side: 'a',
+        judge: report({ turns: [groundedTurn] }),
+      },
+    ]);
+
+    expect(summary.groundingSeverities).toEqual([
+      { severity: 'minor', countA: 1, countB: 0, exampleRunId: 'a-grounding' },
+    ]);
+  });
+});
+
+it('reports a binding serious availability rule without rewriting a minor model probability', () => {
+  const severity = {
+    label: 'minor' as const,
+    confidence: 0.9,
+    probabilities: { minor: 0.95, serious: 0.05 },
+    model: 'jev',
+  };
+  const grounded = {
+    pass: false,
+    quote: 'We have morning slots available',
+    reason: 'No earlier slot search.',
+    verified: true,
+    severity,
+    evidenceRule: {
+      id: 'availability-evidence-v1' as const,
+      severity: 'serious' as const,
+      evidenceSeqs: [],
+      modelVerdict: ok,
+    },
+  };
+  const summary = improvementSummary([
+    {
+      runId: 'r',
+      taskKey: 'availability',
+      side: 'a',
+      judge: report({ turns: [{ ...turn(3), grounded }] }),
+    },
+  ]);
+  expect(summary.groundingSeverities).toEqual([
+    { severity: 'serious', countA: 1, countB: 0, exampleRunId: 'r' },
+  ]);
+  expect(grounded.severity).toEqual(severity);
 });

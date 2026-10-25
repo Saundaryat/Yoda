@@ -2,6 +2,7 @@ import { materialize } from '@evals/crm';
 import { taskSchema, type JudgeReport, type RunEvent } from '@evals/shared';
 import type { ClaudeClient } from '../runner/anthropic.js';
 import { invariantChecks, replyChecks, scoreRun } from './checks.js';
+import { GroundingSeverityClassifier, type TypeSafeSystemOneClient } from './grounding-severity.js';
 import { Judge, renderTranscript, verify } from './judge.js';
 
 const task = taskSchema.parse({
@@ -60,6 +61,17 @@ function fakeClient(output: unknown) {
   const client = {
     parse: async (params: Record<string, unknown>) => {
       requests.push(params);
+      if (String(params.system).startsWith('Grounding evidence review.')) {
+        const proposed = JSON.parse((params.messages as { content: string }[])[0]!.content)
+          .proposed as { seq: number; quote: string; reason: string }[];
+        return {
+          parsed_output: {
+            decisions: proposed.map((t) => ({ ...t, basis: 'unsupported', evidenceSeqs: [] })),
+          },
+          stop_reason: 'end_turn',
+          usage: { input_tokens: 0, output_tokens: 0 },
+        };
+      }
       return {
         parsed_output: output,
         stop_reason: 'end_turn',
@@ -161,6 +173,217 @@ describe('Judge', () => {
     expect(prompt).toContain('Today is Saturday, October 24, 2026');
   });
 
+  it('passes explicit preloaded authority to the judge without granting unopened policy', async () => {
+    const { client, requests } = fakeClient(output);
+    const judge = new Judge(client, 'claude-sonnet-5-5');
+    await judge.judge(task, events, 'Saturday, October 24, 2026', {
+      instructions: 'Reply directly to the customer.',
+      preloadedPolicies: [{ name: 'clinic-policy', content: 'Never book same-day.' }],
+    });
+    await judge.judge(task, events, 'Saturday, October 24, 2026', {
+      instructions: 'Reply directly to the customer.',
+      preloadedPolicies: [],
+    });
+    expect(JSON.stringify(requests[0])).toContain('Never book same-day.');
+    expect(JSON.stringify(requests[1])).not.toContain('Never book same-day.');
+  });
+
+  it('adds one Jev severity decision to each verified grounding failure', async () => {
+    const groundedOutput = structuredClone(output);
+    groundedOutput.turns[0]!.grounded = {
+      pass: false,
+      quote: 'opted out of all messaging',
+      reason: 'The CRM only records an opt-out flag.',
+    };
+    const { client } = fakeClient(groundedOutput);
+    const typeSafe = {
+      systemOne: async () => ({
+        model: 'jev-1.14.0',
+        answers: {
+          claim_0: {
+            type: 'choice',
+            choice: 'minor',
+            confidence: 0.8,
+            probabilities: { minor: 0.9, serious: 0.1 },
+          },
+        },
+        usage: { input_tokens: 100, output_tokens: 5 },
+      }),
+    } as unknown as TypeSafeSystemOneClient;
+
+    const report = await new Judge(
+      client,
+      'claude-sonnet-5-5',
+      new GroundingSeverityClassifier(typeSafe, 'jev-1.14.0'),
+    ).judge(task, events, 'Saturday, October 24, 2026');
+
+    expect(report.turns[0]?.grounded.severity).toMatchObject({
+      label: 'minor',
+      model: 'jev-1.14.0',
+    });
+    expect(report.turns[0]?.issues.find((i) => i.label === 'unbacked_claim')?.severity?.label).toBe(
+      'minor',
+    );
+    expect(report.groundingClassifier).toMatchObject({ model: 'jev-1.14.0', inputTokens: 100 });
+    expect(report.usage.inputTokens).toBe(3100);
+  });
+
+  it.each([
+    {
+      text: 'We have morning slots available.',
+      quote: 'We have morning slots available',
+      rule: 'availability-evidence-v1',
+    },
+    {
+      text: 'Want me to add you to the waitlist?',
+      quote: 'add you to the waitlist',
+      rule: 'unsupported-waitlist-v1',
+    },
+    {
+      text: 'Call the clinic at the number on file.',
+      quote: 'Call the clinic at the number on file',
+      rule: 'clinic-contact-evidence-v1',
+    },
+  ])(
+    'a CRM evidence failure cannot be passed by Claude or downgraded to minor by Jev: $rule',
+    async ({ text, quote, rule }) => {
+      const trace: RunEvent[] = [
+        {
+          seq: 1,
+          session: 1,
+          turn: 1,
+          kind: 'lead',
+          text: 'Do you have morning appointments?',
+          ruleId: null,
+        },
+        { seq: 3, session: 1, turn: 1, kind: 'agent', text },
+      ];
+      const good = { pass: true, quote: '', reason: 'Model incorrectly thinks this is grounded.' };
+      const { client } = fakeClient({
+        ...output,
+        turns: [
+          {
+            seq: 3,
+            audience: good,
+            format: good,
+            grounded: good,
+            act: 'offers_options',
+            issues: [],
+          },
+        ],
+      });
+      const classifier = {
+        classify: vi.fn().mockResolvedValue({
+          decisions: new Map([
+            [
+              3,
+              {
+                label: 'minor',
+                confidence: 0.9,
+                probabilities: { minor: 0.9, serious: 0.1 },
+                model: 'jev-test',
+              },
+            ],
+          ]),
+          usage: { model: 'jev-test', inputTokens: 0, outputTokens: 0, costUsd: 0 },
+        }),
+      } as unknown as GroundingSeverityClassifier;
+      const report = await new Judge(client, 'claude-sonnet-5-5', classifier).judge(
+        task,
+        trace,
+        'Saturday, October 24, 2026',
+      );
+      expect(report.turns[0]?.grounded).toMatchObject({
+        pass: false,
+        verified: true,
+        quote,
+        evidenceRule: {
+          id: rule,
+          severity: 'serious',
+          modelVerdict: { pass: true },
+        },
+        severity: { label: 'minor' },
+      });
+      expect(report.turns[0]?.issues[0]).toMatchObject({
+        label: 'unbacked_claim',
+        evidenceRule: { severity: 'serious' },
+      });
+      expect(replyChecks(report).find((c) => c.checkId === 'reply-grounded')).toMatchObject({
+        passed: false,
+        critical: true,
+      });
+      const crm = materialize(task.crm, new Date());
+      const score = scoreRun(task, trace, crm, { judge: report, crmInitial: crm });
+      expect(score.passed).toBe(false);
+      expect(score.score).toBeLessThan(100);
+    },
+  );
+
+  it('clears a false future-booking finding through evidence review without calling it a completed reservation', async () => {
+    const intent = "Once she confirms, I'll book the 9 AM slot.";
+    const pass = { pass: true, quote: '', reason: 'ok' };
+    const primary = fakeClient({
+      ...output,
+      turns: [
+        {
+          seq: 3,
+          audience: pass,
+          format: pass,
+          grounded: { pass: false, quote: "I'll book the 9 AM slot", reason: 'Implies held slot.' },
+          act: 'informs',
+          issues: [],
+        },
+      ],
+    });
+    const client = {
+      parse: async (params: Record<string, unknown>) =>
+        String(params.system).startsWith('Grounding evidence review.')
+          ? {
+              parsed_output: {
+                decisions: [
+                  {
+                    seq: 3,
+                    basis: 'future_intent',
+                    claimType: 'other',
+                    quote: '',
+                    reason: 'The booking is conditional intent, not a hold.',
+                    evidenceSeqs: [],
+                  },
+                ],
+              },
+              stop_reason: 'end_turn',
+              usage: { input_tokens: 10, output_tokens: 5 },
+            }
+          : primary.client.parse(params as never),
+    } as unknown as ClaudeClient;
+    const trace: RunEvent[] = [
+      {
+        seq: 1,
+        session: 1,
+        turn: 1,
+        kind: 'lead',
+        text: 'My parent will confirm later.',
+        ruleId: null,
+      },
+      { seq: 3, session: 1, turn: 1, kind: 'agent', text: intent },
+    ];
+    const report = await new Judge(client, 'claude-sonnet-5-5').judge(
+      task,
+      trace,
+      'Saturday, October 24, 2026',
+    );
+    expect(report.turns[0]?.grounded).toMatchObject({
+      pass: true,
+      review: { basis: 'future_intent', modelVerdict: { pass: false } },
+    });
+    const crm = materialize(task.crm, new Date());
+    const score = scoreRun(task, trace, crm, { judge: report, crmInitial: crm });
+    expect(score).toMatchObject({ passed: true, score: 100 });
+    expect(score.checks.find((c) => c.checkId === 'reply-grounded')?.detail).toContain(
+      'cleared by evidence review',
+    );
+  });
+
   it('treats a refusal as an infrastructure failure', async () => {
     const client = {
       parse: async () => ({
@@ -172,6 +395,54 @@ describe('Judge', () => {
     await expect(new Judge(client, 'm').judge(task, events, 'today')).rejects.toMatchObject({
       kind: 'provider_error',
     });
+  });
+
+  it.each(['turns', 'leadTurns', 'questions'] as const)(
+    'rejects an incomplete %s report instead of silently passing',
+    async (field) => {
+      const incomplete = structuredClone(output);
+      incomplete[field] = [];
+      await expect(
+        new Judge(fakeClient(incomplete).client, 'm').judge(task, events, 'today'),
+      ).rejects.toMatchObject({ kind: 'provider_error' });
+    },
+  );
+
+  it('rejects duplicate reply judgments', async () => {
+    const duplicate = structuredClone(output);
+    duplicate.turns.push(duplicate.turns[0]!);
+    await expect(
+      new Judge(fakeClient(duplicate).client, 'm').judge(task, events, 'today'),
+    ).rejects.toMatchObject({ kind: 'provider_error' });
+  });
+
+  it('rejects fabricated evidence for a failed task answer', async () => {
+    const fabricated = structuredClone(output);
+    fabricated.questions[0] = {
+      id: 'stopped-selling',
+      answer: 'no',
+      quote: 'Buy our discount cleaning now',
+      reason: 'Kept selling',
+    };
+    await expect(
+      new Judge(fakeClient(fabricated).client, 'm').judge(task, events, 'today'),
+    ).rejects.toMatchObject({ kind: 'provider_error' });
+  });
+
+  it('accepts task evidence from actual tool results, not only SMS text', async () => {
+    const toolEvidence = structuredClone(output);
+    toolEvidence.questions[0] = {
+      id: 'stopped-selling',
+      answer: 'no',
+      quote: '"optedOut":true',
+      reason: 'Reference evidence from tool output',
+    };
+    const report = await new Judge(fakeClient(toolEvidence).client, 'm').judge(
+      task,
+      events,
+      'today',
+    );
+    expect(report.questions[0]?.quote).toBe('"optedOut":true');
   });
 });
 
@@ -223,15 +494,55 @@ describe('standard checks', () => {
     usage: { inputTokens: 0, outputTokens: 0, costUsd: 0 },
   };
 
-  it('turns verified judge failures into failed reply checks, ignoring unverified ones', () => {
+  it('requires review for an unverified grounding failure', () => {
     const checks = replyChecks(report);
     expect(checks.map((c) => [c.checkId, c.passed, c.informational ?? false])).toEqual([
       ['reply-audience', false, true],
       ['reply-format', true, true],
-      ['reply-grounded', true, false],
+      ['reply-grounded', false, false],
     ]);
     expect(checks[0]?.evidence).toEqual([{ eventSeq: 3 }]);
-    expect(checks[2]?.detail).toContain('1 unverified judge failure ignored');
+    expect(checks[2]).toMatchObject({ skipped: true, critical: true });
+    const crm = materialize(task.crm, new Date());
+    expect(scoreRun(task, events, crm, { judge: report, crmInitial: crm })).toMatchObject({
+      passed: null,
+      score: null,
+    });
+  });
+
+  it('does not award a silent agent a clean grounding pass', () => {
+    expect(
+      replyChecks({ ...report, turns: [] }).find((c) => c.checkId === 'reply-grounded'),
+    ).toMatchObject({ passed: false, critical: true });
+  });
+
+  it('notes minor grounding issues but only fails the critical check for serious ones', () => {
+    const grounding = (label: 'minor' | 'serious') => ({
+      pass: false,
+      quote: label === 'minor' ? 'soon' : "You're booked",
+      reason: 'Unsupported.',
+      verified: true,
+      severity: {
+        label,
+        confidence: 0.9,
+        probabilities:
+          label === 'minor' ? { minor: 0.95, serious: 0.05 } : { minor: 0.05, serious: 0.95 },
+        model: 'jev-1.14.0',
+      },
+    });
+    const withGrounding = (label: 'minor' | 'serious'): JudgeReport => ({
+      ...report,
+      turns: [{ ...report.turns[0]!, grounded: grounding(label) }],
+    });
+
+    const minor = replyChecks(withGrounding('minor')).find((c) => c.checkId === 'reply-grounded');
+    expect(minor).toMatchObject({ passed: true, evidence: [{ eventSeq: 3 }] });
+    expect(minor?.detail).toContain('1 minor grounding issue noted');
+
+    const serious = replyChecks(withGrounding('serious')).find(
+      (c) => c.checkId === 'reply-grounded',
+    );
+    expect(serious).toMatchObject({ passed: false, critical: true, evidence: [{ eventSeq: 3 }] });
   });
 
   it('flags a "booked" stage with no appointment and bookings after an opt-out', () => {
@@ -252,7 +563,11 @@ describe('standard checks', () => {
 
   it('scores correctness only: reply quality is shown but not scored, unjudged checks are skipped', () => {
     const crm = materialize(task.crm, new Date());
-    const judged = scoreRun(task, events, crm, { judge: report, crmInitial: crm });
+    const clean = {
+      ...report,
+      turns: report.turns.map((t) => ({ ...t, grounded: verdict(true, '', true) })),
+    };
+    const judged = scoreRun(task, events, crm, { judge: clean, crmInitial: crm });
     expect(judged.checks.map((c) => c.checkId)).toEqual([
       'opted-out',
       'stopped-selling',
@@ -273,6 +588,6 @@ describe('standard checks', () => {
       'reply-format',
       'reply-grounded',
     ]);
-    expect(unjudged.score).toBe(100);
+    expect(unjudged).toMatchObject({ score: null, passed: null });
   });
 });

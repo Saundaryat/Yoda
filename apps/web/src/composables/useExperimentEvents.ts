@@ -12,6 +12,7 @@ export function useExperimentEvents(id: Ref<string>, onEvent: (event: ProgressEv
     id,
     (experimentId) => {
       close();
+      if (!experimentId) return;
       source = new EventSource(`/api/experiments/${experimentId}/events`);
       source.onmessage = (message) => onEvent(JSON.parse(message.data) as ProgressEvent);
     },
