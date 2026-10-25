@@ -1,0 +1,60 @@
+{
+  "date": "2026-10-25",
+  "app": "http://127.0.0.1:3080",
+  "guide": "/how-it-works",
+  "experiment": "bc07fddb-0b09-4103-9fea-cb6263028f6f",
+  "changes": [
+    "Global How it works link and shared product guide",
+    "Compact experiment setup summary",
+    "Saved setup and hypothesis under Metrics & evidence for scored and draft experiments"
+  ],
+  "validation": {
+    "build": "passed",
+    "typecheck": "passed",
+    "lint": "passed",
+    "browserTests": 31,
+    "liveBrowser": [
+      "compact overview confirmed",
+      "original saved hypothesis present in evidence",
+      "shared guide reachable from global header",
+      "no console errors"
+    ],
+    "mobile": "375px shared guide direct reload and overflow check passed"
+  },
+  "preservation": {
+    "configurationsUnchanged": 9,
+    "gradingBefore": {
+      "runs": {
+        "hash": "000af35d7924406870a737bf96ba72de",
+        "count": 1586
+      },
+      "checks": {
+        "hash": "334c399794c332771e3eafc5d965d27a",
+        "count": 12512
+      },
+      "events": {
+        "hash": "630920d3e28f93e74e78dfc475fa2c0c",
+        "count": 20628
+      }
+    },
+    "gradingAfter": {
+      "runs": {
+        "hash": "000af35d7924406870a737bf96ba72de",
+        "count": 1586
+      },
+      "checks": {
+        "hash": "334c399794c332771e3eafc5d965d27a",
+        "count": 12512
+      },
+      "events": {
+        "hash": "630920d3e28f93e74e78dfc475fa2c0c",
+        "count": 20628
+      }
+    }
+  },
+  "screenshots": [
+    "2026-10-25-shared-guide-overview.png",
+    "2026-10-25-shared-guide-page.png",
+    "2026-10-25-shared-guide-evidence.png"
+  ]
+}

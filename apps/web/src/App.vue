@@ -60,6 +60,7 @@ const route = useRoute();
         <strong>Agent evaluations</strong>
       </div>
       <div class="environment">
+        <RouterLink to="/how-it-works" class="help-link">How it works</RouterLink>
         <span
           ><i :class="{ online: health }" />{{ health ? 'Local environment' : 'Connecting…' }}</span
         >
@@ -228,6 +229,16 @@ nav svg,
   color: #737373;
   font-size: 12px;
 }
+.help-link {
+  color: #525252;
+  text-underline-offset: 4px;
+  white-space: nowrap;
+}
+.help-link:hover,
+.help-link.router-link-exact-active {
+  color: #171717;
+  text-decoration: underline;
+}
 .environment span {
   display: flex;
   align-items: center;
@@ -289,6 +300,9 @@ nav svg,
   }
   .product-title strong {
     font-size: 14px;
+  }
+  .environment {
+    gap: 12px;
   }
   .environment span {
     display: none;

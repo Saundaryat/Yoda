@@ -376,14 +376,22 @@ test('a reviewer can go from the verdict down to why a run failed', async ({ pag
   await page.goto('/');
   await page.getByRole('link', { name: 'E2E skill experiment' }).click();
 
-  // The overview explains the experiment before presenting its verdict.
+  // Keep setup concise; retain its saved metadata separately from the result.
   await expect(page.getByRole('link', { name: 'Back to experiments' })).toBeVisible();
-  await expect(page.getByText(/Setup & hypothesis/)).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Experiment setup', exact: true })).toContainText(
+    '2 versions',
+  );
+  await expect(
+    page.getByText('A run is one complete agent conversation', { exact: false }),
+  ).toHaveCount(0);
   await expect(page.getByText(/B passed \d+%/)).toBeVisible();
   await page.getByText('Confidence & methodology').click();
   await expect(page.getByRole('img', { name: /Difference .* points, 95% interval/ })).toBeVisible();
   await page.getByRole('button', { name: 'Metrics & evidence' }).click();
   await expect(page.getByText('skill_view', { exact: true })).toBeVisible();
+  await page.getByText('Experiment setup & hypothesis', { exact: true }).click();
+  await expect(page.locator('.setup-metadata')).toContainText('E2E skill experiment');
+  await expect(page.locator('.setup-metadata')).toContainText('Hypothesis recorded at creation');
 
   // A failed baseline run says which check failed and why.
   await page.getByRole('button', { name: /Scenarios/ }).click();
@@ -429,10 +437,17 @@ test('a new experiment is a draft until it is started', async ({ page }) => {
   await page.getByLabel('Name', { exact: true }).fill('Draft only');
   await page.getByLabel(/A — baseline/).selectOption({ label: 'Baseline' });
   await page.getByLabel(/B — candidate/).selectOption({ label: 'Baseline + clinic skill' });
+  await page.getByLabel('Hypothesis').fill('Policy access improves escalation.');
   await expect(page.getByText(/runs \(\d+ tasks × 2 configurations × 3\)/)).toBeVisible();
   await page.getByRole('button', { name: 'Create experiment' }).click();
   await expect(page.getByText('This experiment has not started.')).toBeVisible();
   await expect(page.getByRole('button', { name: /Start \d+ runs/ })).toBeVisible();
+  await page.getByRole('button', { name: 'View setup' }).click();
+  await page.getByText('Experiment setup & hypothesis', { exact: true }).click();
+  await expect(page.locator('.setup-metadata')).toContainText('Policy access improves escalation.');
+  await expect(
+    page.getByText('Evidence will appear after at least one run has been scored.'),
+  ).toBeVisible();
 });
 
 test('the experiments list publishes results and completed runs do not look like 100% success', async ({
@@ -498,4 +513,23 @@ test('pages fit a phone screen without sideways scrolling', async ({ page }) => 
     );
     expect(overflow, path).toBeLessThanOrEqual(0);
   }
+});
+
+test('shared guidance is reachable across the app and supports direct mobile links', async ({
+  page,
+}) => {
+  for (const path of ['/', '/configurations', '/tasks']) {
+    await page.goto(path);
+    await page.getByRole('link', { name: 'How it works', exact: true }).click();
+    await expect(page).toHaveURL(/\/how-it-works$/);
+    await expect(page.getByRole('heading', { name: 'How it works', exact: true })).toBeVisible();
+  }
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'How it works', exact: true })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
+    true,
+  );
+  await page.getByRole('link', { name: 'Browse experiments' }).click();
+  await expect(page).toHaveURL(/\/$/);
 });

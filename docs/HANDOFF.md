@@ -1,5 +1,11 @@
 # Handoff: Agent Evals on Hermes (2026-10-25)
 
+## Shared product guidance (2026-10-25)
+
+The global **How it works** header link opens `/how-it-works`, the shared explanation of A/B versions, scenarios, repetitions, run counts and reading results. The 20 × 2 × 3 formula is clearly labeled as an example. Experiment overviews now show a compact scenario/version/repetition summary and **View setup** action. Each experiment’s original saved name, planned coverage and full hypothesis remain under **Metrics & evidence → Experiment setup & hypothesis**, including unstarted drafts. The large generic tutorial and duplicate methodology panel were removed from experiment details; per-experiment confidence and statistical assessment remain available.
+
+Build, typecheck, lint and all **31 browser tests** passed. Navigation, mobile direct loading, draft hypothesis access and reviewer evidence navigation are covered. Live 3080 inspection verified the compact overview, retained hypothesis and global guide with no console errors. All nine configurations and hashes for 1,586 runs, 12,512 checks and 20,628 events are unchanged. Evidence: `docs/experiments/2026-10-25-shared-guide-ui.json` and `2026-10-25-shared-guide-{overview,page,evidence}.png`.
+
 ## Configuration editor layout (2026-10-25)
 
 The new/copy configuration editor on 3080 uses one continuous form with five numbered sections in reading order: name, model/instructions, policy/skills, memory/tools, review/save. Section headings align in a compact left column on desktop and move above their fields on smaller screens. This replaces the two tall side-by-side cards that placed steps 1–2 beside 3–4 and left empty space before step 5. Reasoning is grouped with model; optional tools stay collapsed; memory controls use plain language; the review section includes Save and Cancel. Configuration API payloads and saved settings are unchanged.

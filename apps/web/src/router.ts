@@ -9,6 +9,11 @@ export const router = createRouter({
       name: 'not-found',
       component: () => import('./views/NotFoundView.vue'),
     },
+    {
+      path: '/how-it-works',
+      name: 'how-it-works',
+      component: () => import('./views/HowItWorksView.vue'),
+    },
     { path: '/', name: 'experiments', component: () => import('./views/ExperimentsView.vue') },
     {
       path: '/experiments/new',

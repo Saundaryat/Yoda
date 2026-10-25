@@ -268,43 +268,13 @@ const metricRows = computed(() => {
         :provisional="r.coverage.openRuns > 0"
       />
       <GradeChanges v-if="e.rescoring" :experiment-id="e.id" />
-      <details class="setup-card">
-        <summary>
-          Setup &amp; hypothesis · {{ e.taskIds.length }} scenarios × 2 versions ×
-          {{ e.repetitions }} {{ e.repetitions === 1 ? 'repetition' : 'repetitions' }}
-        </summary>
-        <div class="section-kicker">Experiment setup</div>
-        <p class="hint">Original saved name: {{ e.name }}</p>
-        <h2>How the {{ total || e.taskIds.length * e.repetitions * 2 }} runs are created</h2>
-        <p class="setup-intro">
-          A run is one complete agent conversation for one scenario, using one agent version.
+      <section class="setup-summary" aria-label="Experiment setup">
+        <p>
+          <strong>{{ e.taskIds.length }} scenarios</strong> · 2 versions · {{ e.repetitions }}
+          {{ e.repetitions === 1 ? 'repetition' : 'repetitions' }}
         </p>
-        <div class="run-formula" aria-label="Run count calculation">
-          <div class="formula-part">
-            <strong>{{ e.taskIds.length }}</strong>
-            <span>realistic scenarios</span>
-          </div>
-          <span class="formula-symbol">×</span>
-          <div class="formula-part">
-            <strong>2</strong>
-            <span>agent versions</span>
-          </div>
-          <span class="formula-symbol">×</span>
-          <div class="formula-part">
-            <strong>{{ e.repetitions }}</strong>
-            <span>tries per version</span>
-          </div>
-          <span class="formula-symbol">=</span>
-          <div class="formula-part formula-total">
-            <strong>{{ e.taskIds.length * e.repetitions * 2 }}</strong>
-            <span>total runs</span>
-          </div>
-        </div>
-        <button class="text-action" @click="activeSection = 'scenarios'">
-          See the {{ e.taskIds.length }} scenarios and what each tests →
-        </button>
-        <p v-if="e.hypothesis" class="hint">Hypothesis recorded at creation: {{ e.hypothesis }}</p>
-      </details>
+        <button class="text-action" @click="activeSection = 'evidence'">View setup →</button>
+      </section>
 
       <section class="comparison-strip" aria-label="Compared agent versions">
         <div>
@@ -447,13 +417,7 @@ const metricRows = computed(() => {
       </p>
     </div>
 
-    <div
-      v-else-if="
-        activeSection === 'evidence' &&
-        r &&
-        (r.coverage.scoredRuns > 0 || r.coverage.ungradedRuns > 0)
-      "
-    >
+    <div v-else-if="activeSection === 'evidence'">
       <section class="section-intro">
         <span class="section-kicker">Technical detail</span>
         <h2>Metrics &amp; evidence</h2>
@@ -462,224 +426,240 @@ const metricRows = computed(() => {
         </p>
       </section>
 
-      <section v-if="r.improvement.judgedRuns.a + r.improvement.judgedRuns.b" class="card">
-        <h2>Where Hermes can improve</h2>
-        <p class="hint">
-          From the judge's labels on every message ({{ r.improvement.judgedRuns.a }} A runs and
-          {{ r.improvement.judgedRuns.b }} B runs judged). Each problem is backed by a quote from
-          the reply.
-        </p>
-        <div class="grid-2">
-          <div class="table-scroll">
-            <h3>Problems in Hermes's replies</h3>
-            <p v-if="!r.improvement.issues.length" class="muted">No problems found.</p>
-            <table v-else>
-              <thead>
-                <tr>
-                  <th>Problem</th>
-                  <th class="num side-a">A</th>
-                  <th class="num side-b">B</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="issue in r.improvement.issues" :key="issue.label">
-                  <td>{{ ISSUE_TEXT[issue.label] ?? label(issue.label) }}</td>
-                  <td class="num">
-                    {{ percent(issue.a) }} <span class="hint">({{ issue.countA }})</span>
-                  </td>
-                  <td class="num">
-                    {{ percent(issue.b) }} <span class="hint">({{ issue.countB }})</span>
-                  </td>
-                  <td>
-                    <RouterLink v-if="issue.exampleRunId" :to="`/runs/${issue.exampleRunId}`"
-                      >example</RouterLink
-                    >
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <p class="hint">Share of Hermes's replies with the problem (number of replies).</p>
-            <template v-if="r.improvement.groundingSeverities.length">
-              <h3 class="spaced">Unsupported claims by Jev severity</h3>
-              <table>
+      <details class="setup-card">
+        <summary>Experiment setup &amp; hypothesis</summary>
+        <dl class="setup-metadata">
+          <div>
+            <dt>Original saved name</dt>
+            <dd>{{ e.name }}</dd>
+          </div>
+          <div>
+            <dt>Planned coverage</dt>
+            <dd>
+              {{ e.taskIds.length }} scenarios × 2 versions × {{ e.repetitions }} repetitions =
+              {{ e.taskIds.length * e.repetitions * 2 }} runs
+            </dd>
+          </div>
+          <div>
+            <dt>Hypothesis recorded at creation</dt>
+            <dd>{{ e.hypothesis || 'No hypothesis recorded.' }}</dd>
+          </div>
+        </dl>
+        <button class="text-action" @click="activeSection = 'scenarios'">View scenarios →</button>
+      </details>
+
+      <template v-if="r && (r.coverage.scoredRuns > 0 || r.coverage.ungradedRuns > 0)">
+        <section v-if="r.improvement.judgedRuns.a + r.improvement.judgedRuns.b" class="card">
+          <h2>Where Hermes can improve</h2>
+          <p class="hint">
+            From the judge's labels on every message ({{ r.improvement.judgedRuns.a }} A runs and
+            {{ r.improvement.judgedRuns.b }} B runs judged). Each problem is backed by a quote from
+            the reply.
+          </p>
+          <div class="grid-2">
+            <div class="table-scroll">
+              <h3>Problems in Hermes's replies</h3>
+              <p v-if="!r.improvement.issues.length" class="muted">No problems found.</p>
+              <table v-else>
                 <thead>
                   <tr>
-                    <th>Severity</th>
+                    <th>Problem</th>
                     <th class="num side-a">A</th>
                     <th class="num side-b">B</th>
                     <th></th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="row in r.improvement.groundingSeverities" :key="row.severity">
-                    <td>
-                      {{ label(row.severity) }}
-                      <span v-if="row.severity === 'serious'" class="badge warn">critical</span>
+                  <tr v-for="issue in r.improvement.issues" :key="issue.label">
+                    <td>{{ ISSUE_TEXT[issue.label] ?? label(issue.label) }}</td>
+                    <td class="num">
+                      {{ percent(issue.a) }} <span class="hint">({{ issue.countA }})</span>
                     </td>
-                    <td class="num">{{ row.countA }}</td>
-                    <td class="num">{{ row.countB }}</td>
+                    <td class="num">
+                      {{ percent(issue.b) }} <span class="hint">({{ issue.countB }})</span>
+                    </td>
                     <td>
-                      <RouterLink v-if="row.exampleRunId" :to="`/runs/${row.exampleRunId}`"
+                      <RouterLink v-if="issue.exampleRunId" :to="`/runs/${issue.exampleRunId}`"
                         >example</RouterLink
                       >
                     </td>
                   </tr>
                 </tbody>
               </table>
-            </template>
-          </div>
-          <div class="table-scroll">
-            <h3>How Hermes handles each kind of customer message</h3>
-            <table>
-              <thead>
-                <tr>
-                  <th>Customer message</th>
-                  <th class="num side-a">A handled well</th>
-                  <th class="num side-b">B handled well</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="row in r.improvement.intents" :key="row.intent">
-                  <td>{{ label(row.intent) }}</td>
-                  <td class="num">
-                    {{ percent(row.handledA) }} <span class="hint">({{ row.countA }})</span>
-                  </td>
-                  <td class="num">
-                    {{ percent(row.handledB) }} <span class="hint">({{ row.countB }})</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <p class="hint">"Handled well": Hermes's next reply had no problems.</p>
-          </div>
-        </div>
-        <div class="row outcomes">
-          <strong>How conversations ended:</strong>
-          <span v-for="o in r.improvement.outcomes" :key="o.label" class="badge">
-            {{ label(o.label) }}: <span class="side-a">A {{ o.a }}</span> ·
-            <span class="side-b">B {{ o.b }}</span>
-          </span>
-        </div>
-        <p v-if="r.improvement.leadProblems.length" class="hint warn-text">
-          The simulated customer broke character in
-          {{ r.improvement.leadProblems.length }} run(s):
-          <RouterLink
-            v-for="p in r.improvement.leadProblems"
-            :key="p.runId"
-            :to="`/runs/${p.runId}`"
-          >
-            {{ p.taskKey }} ({{ p.side.toUpperCase() }})
-          </RouterLink>
-          — check those as test problems.
-        </p>
-      </section>
-
-      <section class="card table-scroll">
-        <div class="table-heading">
-          <div>
-            <h2>Performance metrics</h2>
-            <p>All values are averages across comparable scenarios.</p>
-          </div>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Metric</th>
-              <th class="num side-a">A · Baseline</th>
-              <th class="num side-b">B · Candidate</th>
-              <th class="num">Change</th>
-              <th class="num">95% range</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in metricRows" :key="row.label">
-              <td>{{ row.label }}</td>
-              <td class="num">{{ row.a }}</td>
-              <td class="num">{{ row.b }}</td>
-              <td class="num">{{ row.diff }}</td>
-              <td class="num muted">{{ row.ci || '—' }}</td>
-            </tr>
-          </tbody>
-        </table>
-        <p class="table-note">
-          {{ r.coverage.scoredRuns }} of {{ r.coverage.plannedRuns }} planned runs have complete
-          grading.
-          <span v-if="r.coverage.ungradedRuns"
-            >{{ r.coverage.ungradedRuns }} need grading and are excluded from the comparison.</span
-          >
-          {{ r.comparison.pairedTasks }} of {{ r.comparison.plannedTasks }} scenarios have results
-          for both versions.
-        </p>
-      </section>
-
-      <div class="grid-2 evidence-grid">
-        <section class="card">
-          <h2>Checks that changed</h2>
-          <p v-if="!r.checkFlips.length" class="muted">
-            Every check passed equally often under A and B.
-          </p>
-          <div v-else class="check-list">
-            <RouterLink
-              v-for="f in r.checkFlips.slice(0, 12)"
-              :key="`${f.taskId}/${f.checkId}`"
-              class="check-row"
-              :to="`/experiments/${e.id}/tasks/${f.taskId}`"
-            >
-              <span>
-                <strong>{{ f.label }}</strong>
-                <small
-                  >{{
-                    taskName(
-                      r.tasks.find((t) => t.taskId === f.taskId) ?? {
-                        key: f.taskKey,
-                        title: f.taskKey,
-                      },
-                    )
-                  }}
-                  <em v-if="f.critical">· Critical</em></small
-                >
-              </span>
-              <span>A {{ percent(f.passRateA) }} → B {{ percent(f.passRateB) }}</span>
-            </RouterLink>
-          </div>
-          <div v-if="r.criticalRegressions.length" class="regressions">
-            <strong class="error">Critical regressions found</strong>
-            <p class="hint">Review these before shipping the candidate.</p>
-          </div>
-        </section>
-
-        <section class="card">
-          <h2>Hermes-native tools</h2>
-          <p class="muted tool-intro">
-            Share of runs using skills, memory or other Hermes-native tools. CRM calls are shown in
-            each run’s conversation.
-          </p>
-          <div v-if="r.hermesToolUse.length" class="tool-list">
-            <div v-for="t in r.hermesToolUse" :key="t.tool" class="tool-row">
-              <code>{{ t.tool }}</code>
-              <span>A {{ percent(t.a) }}</span>
-              <span>B {{ percent(t.b) }}</span>
+              <p class="hint">Share of Hermes's replies with the problem (number of replies).</p>
+              <template v-if="r.improvement.groundingSeverities.length">
+                <h3 class="spaced">Unsupported claims by Jev severity</h3>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Severity</th>
+                      <th class="num side-a">A</th>
+                      <th class="num side-b">B</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="row in r.improvement.groundingSeverities" :key="row.severity">
+                      <td>
+                        {{ label(row.severity) }}
+                        <span v-if="row.severity === 'serious'" class="badge warn">critical</span>
+                      </td>
+                      <td class="num">{{ row.countA }}</td>
+                      <td class="num">{{ row.countB }}</td>
+                      <td>
+                        <RouterLink v-if="row.exampleRunId" :to="`/runs/${row.exampleRunId}`"
+                          >example</RouterLink
+                        >
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </template>
+            </div>
+            <div class="table-scroll">
+              <h3>How Hermes handles each kind of customer message</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Customer message</th>
+                    <th class="num side-a">A handled well</th>
+                    <th class="num side-b">B handled well</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="row in r.improvement.intents" :key="row.intent">
+                    <td>{{ label(row.intent) }}</td>
+                    <td class="num">
+                      {{ percent(row.handledA) }} <span class="hint">({{ row.countA }})</span>
+                    </td>
+                    <td class="num">
+                      {{ percent(row.handledB) }} <span class="hint">({{ row.countB }})</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="hint">"Handled well": Hermes's next reply had no problems.</p>
             </div>
           </div>
-          <p v-else class="muted">
-            No Hermes-native tool calls were recorded. This does not mean the agent made no CRM
-            calls.
+          <div class="row outcomes">
+            <strong>How conversations ended:</strong>
+            <span v-for="o in r.improvement.outcomes" :key="o.label" class="badge">
+              {{ label(o.label) }}: <span class="side-a">A {{ o.a }}</span> ·
+              <span class="side-b">B {{ o.b }}</span>
+            </span>
+          </div>
+          <p v-if="r.improvement.leadProblems.length" class="hint warn-text">
+            The simulated customer broke character in
+            {{ r.improvement.leadProblems.length }} run(s):
+            <RouterLink
+              v-for="p in r.improvement.leadProblems"
+              :key="p.runId"
+              :to="`/runs/${p.runId}`"
+            >
+              {{ p.taskKey }} ({{ p.side.toUpperCase() }})
+            </RouterLink>
+            — check those as test problems.
           </p>
         </section>
-      </div>
 
-      <details class="methodology">
-        <summary>How the comparison is calculated</summary>
-        <p>
-          The result compares pass rates for B minus A across paired scenarios. The 95% range
-          reflects uncertainty from both scenario selection and repeated runs. Costs use provider
-          list-price estimates.
-        </p>
-      </details>
-    </div>
-    <div v-else-if="activeSection === 'evidence'" class="card empty">
-      Evidence will appear after at least one run has been scored.
+        <section class="card table-scroll">
+          <div class="table-heading">
+            <div>
+              <h2>Performance metrics</h2>
+              <p>All values are averages across comparable scenarios.</p>
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th class="num side-a">A · Baseline</th>
+                <th class="num side-b">B · Candidate</th>
+                <th class="num">Change</th>
+                <th class="num">95% range</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in metricRows" :key="row.label">
+                <td>{{ row.label }}</td>
+                <td class="num">{{ row.a }}</td>
+                <td class="num">{{ row.b }}</td>
+                <td class="num">{{ row.diff }}</td>
+                <td class="num muted">{{ row.ci || '—' }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="table-note">
+            {{ r.coverage.scoredRuns }} of {{ r.coverage.plannedRuns }} planned runs have complete
+            grading.
+            <span v-if="r.coverage.ungradedRuns"
+              >{{ r.coverage.ungradedRuns }} need grading and are excluded from the
+              comparison.</span
+            >
+            {{ r.comparison.pairedTasks }} of {{ r.comparison.plannedTasks }} scenarios have results
+            for both versions.
+          </p>
+        </section>
+
+        <div class="grid-2 evidence-grid">
+          <section class="card">
+            <h2>Checks that changed</h2>
+            <p v-if="!r.checkFlips.length" class="muted">
+              Every check passed equally often under A and B.
+            </p>
+            <div v-else class="check-list">
+              <RouterLink
+                v-for="f in r.checkFlips.slice(0, 12)"
+                :key="`${f.taskId}/${f.checkId}`"
+                class="check-row"
+                :to="`/experiments/${e.id}/tasks/${f.taskId}`"
+              >
+                <span>
+                  <strong>{{ f.label }}</strong>
+                  <small
+                    >{{
+                      taskName(
+                        r.tasks.find((t) => t.taskId === f.taskId) ?? {
+                          key: f.taskKey,
+                          title: f.taskKey,
+                        },
+                      )
+                    }}
+                    <em v-if="f.critical">· Critical</em></small
+                  >
+                </span>
+                <span>A {{ percent(f.passRateA) }} → B {{ percent(f.passRateB) }}</span>
+              </RouterLink>
+            </div>
+            <div v-if="r.criticalRegressions.length" class="regressions">
+              <strong class="error">Critical regressions found</strong>
+              <p class="hint">Review these before shipping the candidate.</p>
+            </div>
+          </section>
+
+          <section class="card">
+            <h2>Hermes-native tools</h2>
+            <p class="muted tool-intro">
+              Share of runs using skills, memory or other Hermes-native tools. CRM calls are shown
+              in each run’s conversation.
+            </p>
+            <div v-if="r.hermesToolUse.length" class="tool-list">
+              <div v-for="t in r.hermesToolUse" :key="t.tool" class="tool-row">
+                <code>{{ t.tool }}</code>
+                <span>A {{ percent(t.a) }}</span>
+                <span>B {{ percent(t.b) }}</span>
+              </div>
+            </div>
+            <p v-else class="muted">
+              No Hermes-native tool calls were recorded. This does not mean the agent made no CRM
+              calls.
+            </p>
+          </section>
+        </div>
+      </template>
+      <div v-else class="card empty">
+        Evidence will appear after at least one run has been scored.
+      </div>
     </div>
   </template>
 </template>
@@ -759,54 +739,45 @@ const metricRows = computed(() => {
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
-.setup-card h2,
 .section-intro h2 {
   margin-bottom: 7px;
   font-size: 20px;
 }
-.setup-intro,
 .section-intro p {
   max-width: 680px;
   margin-bottom: 22px;
   color: var(--muted);
 }
-.run-formula {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr auto 1fr auto 1.15fr;
-  align-items: stretch;
-  gap: 14px;
-  margin: 25px 0 18px;
+.setup-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  padding: 4px 0 16px;
+  color: var(--muted);
 }
-.formula-part {
-  min-height: 102px;
-  padding: 18px;
-  background: #fafafa;
-  border: 1px solid var(--border);
-  border-radius: 8px;
+.setup-summary p {
+  margin: 0;
 }
-.formula-part strong {
-  display: block;
-  font-size: 26px;
-  line-height: 1.1;
+.setup-summary strong {
+  color: var(--text);
+  font-weight: 600;
 }
-.formula-part span {
-  display: block;
-  margin-top: 8px;
+.setup-metadata {
+  margin: 20px 0;
+}
+.setup-metadata > div + div {
+  margin-top: 16px;
+}
+.setup-metadata dt {
+  margin-bottom: 4px;
   color: var(--muted);
   font-size: 11px;
 }
-.formula-total {
-  color: #fff;
-  background: #171717;
-  border-color: #171717;
-}
-.formula-total span {
-  color: #bfbfbf;
-}
-.formula-symbol {
-  align-self: center;
-  color: #999;
-  font-size: 18px;
+.setup-metadata dd {
+  margin: 0;
+  overflow-wrap: anywhere;
 }
 .text-action {
   min-height: 0;
@@ -1105,22 +1076,6 @@ const metricRows = computed(() => {
   border-top: 1px solid var(--border);
   font-size: 10.5px;
 }
-.methodology {
-  margin-top: 16px;
-  padding: 15px 18px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--muted);
-  font-size: 11px;
-}
-.methodology summary {
-  color: var(--text);
-  font-weight: 650;
-}
-.methodology p {
-  max-width: 760px;
-  margin: 12px 0 0;
-}
 .outcomes {
   margin-top: 12px;
 }
@@ -1146,20 +1101,6 @@ const metricRows = computed(() => {
   }
 }
 @media (max-width: 760px) {
-  .run-formula {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 8px;
-  }
-  .formula-symbol {
-    display: none;
-  }
-  .formula-part {
-    min-height: 90px;
-    padding: 14px;
-  }
-  .formula-part strong {
-    font-size: 22px;
-  }
   .comparison-strip {
     grid-template-columns: 1fr;
   }
@@ -1191,9 +1132,6 @@ const metricRows = computed(() => {
   .comparison-strip,
   .run-status {
     padding: 20px;
-  }
-  .run-formula {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .scenario-meta > span:last-child {
     display: none;
