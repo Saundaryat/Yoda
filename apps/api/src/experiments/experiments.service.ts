@@ -107,7 +107,7 @@ export class ExperimentsService {
         .set({ status: 'running', startedAt: new Date(), executionSnapshot: snapshot })
         .where(eq(experiments.id, id));
     });
-    void this.queue.fill();
+    this.queue.kick();
     return this.get(id);
   }
 
@@ -150,6 +150,10 @@ export class ExperimentsService {
       } catch (error) {
         throw new ConflictException((error as Error).message);
       }
+      if (await this.queue.budgetReached(tx, id))
+        throw new ConflictException(
+          'Experiment spend has reached its cost cap; no more work can start',
+        );
       const retried = await tx
         .update(runs)
         .set({
@@ -168,7 +172,7 @@ export class ExperimentsService {
           .set({ status: 'running', finishedAt: null })
           .where(eq(experiments.id, id));
     });
-    void this.queue.fill();
+    this.queue.kick();
     return this.get(id);
   }
 

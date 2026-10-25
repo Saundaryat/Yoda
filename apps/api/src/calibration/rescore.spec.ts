@@ -73,7 +73,7 @@ describe('scoring-only replay provenance', () => {
       expect(replay.judge).toEqual(judge);
       expect(replay.judge.evaluatorVersion).toBe('clinical-grounding-v3');
       expect(replay.context.rescoring).toMatchObject({
-        evaluatorVersion: 'evidence-grounding-v8',
+        evaluatorVersion: 'evidence-grounding-v9',
         mode: 'score-only',
         sourceJudgeVersion: 'clinical-grounding-v3',
       });

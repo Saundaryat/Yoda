@@ -19,10 +19,12 @@ it('serializes overlapping fills and waits for aborted work before shutdown', as
     release = resolve;
   });
   const internals = queue as unknown as {
+    reconcile: () => Promise<void>;
     claim: () => Promise<Run | undefined>;
     process: (run: Run, signal: AbortSignal) => Promise<void>;
     active: Map<string, AbortController>;
   };
+  vi.spyOn(internals, 'reconcile').mockResolvedValue();
   let claims = 0;
   const claim = vi.spyOn(internals, 'claim').mockImplementation(async () => {
     const index = claims++;
@@ -43,6 +45,7 @@ it('serializes overlapping fills and waits for aborted work before shutdown', as
   );
   try {
     const fills = Array.from({ length: 5 }, () => queue.fill());
+    await Promise.resolve();
     expect(claim).toHaveBeenCalledTimes(1);
     release();
     await Promise.all(fills);

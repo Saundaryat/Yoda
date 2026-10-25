@@ -32,7 +32,9 @@ export function assessAvailability(events: RunEvent[]): AvailabilityAssessment[]
       const quote = match[0];
       const prefix = event.text.slice(Math.max(0, match.index! - 45), match.index);
       if (
-        /\b(?:if|whether|wish|wish that|check what|see what|do|would)\s*$/i.test(prefix) ||
+        /\b(?:if|once|when|whenever|unless|provided(?: that)?|as soon as|whether|wish|wish that|check what|see what|do|would)\s*$/i.test(
+          prefix,
+        ) ||
         /\b(?:no|not|don't|do not|haven't|haven’t)\b/i.test(quote)
       )
         return [];
