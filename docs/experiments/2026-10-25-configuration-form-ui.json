@@ -1,0 +1,99 @@
+{
+  "change": "Configuration editor now follows one continuous five-step flow with aligned headings and compact fields. Reasoning is beside model; optional tools use progressive disclosure; review and save are integrated.",
+  "tests": {
+    "browser": 30,
+    "responsiveWidths": [
+      375,
+      677,
+      1440
+    ],
+    "build": "passed",
+    "typecheck": "passed",
+    "lint": "passed"
+  },
+  "preservation": {
+    "before": {
+      "runs": {
+        "hash": "000af35d7924406870a737bf96ba72de",
+        "count": 1586
+      },
+      "checks": {
+        "hash": "334c399794c332771e3eafc5d965d27a",
+        "count": 12512
+      },
+      "events": {
+        "hash": "630920d3e28f93e74e78dfc475fa2c0c",
+        "count": 20628
+      }
+    },
+    "after": {
+      "runs": {
+        "hash": "000af35d7924406870a737bf96ba72de",
+        "count": 1586
+      },
+      "checks": {
+        "hash": "334c399794c332771e3eafc5d965d27a",
+        "count": 12512
+      },
+      "events": {
+        "hash": "630920d3e28f93e74e78dfc475fa2c0c",
+        "count": 20628
+      }
+    },
+    "matched": true,
+    "unchangedConfigurations": 9
+  },
+  "browser": {
+    "url": "http://127.0.0.1:3080/configurations/new",
+    "verified": [
+      "one continuous form with steps 1\u20135 in reading order",
+      "compact spacing between policy, memory and review sections",
+      "reasoning setting grouped with model",
+      "skill modes, memory seed and advanced tools expand correctly",
+      "review summary reflects memory and skill selections",
+      "no horizontal overflow or blank gaps between sections",
+      "save remains disabled for an incomplete form",
+      "no browser console errors"
+    ],
+    "expandedGeometry": {
+      "overflow": 0,
+      "sections": [
+        {
+          "bottom": -527.703125,
+          "left": 117,
+          "title": "1 Name the version",
+          "top": -643.453125
+        },
+        {
+          "bottom": -144.515625,
+          "left": 117,
+          "title": "2 Model & instructions",
+          "top": -527.703125
+        },
+        {
+          "bottom": 84.96875,
+          "left": 117,
+          "title": "3 Policy & skills",
+          "top": -144.515625
+        },
+        {
+          "bottom": 565.296875,
+          "left": 117,
+          "title": "4 Memory & tools",
+          "top": 84.96875
+        },
+        {
+          "bottom": 745.5390625,
+          "left": 117,
+          "title": "5 Review & save",
+          "top": 565.296875
+        }
+      ]
+    },
+    "consoleErrors": [],
+    "screenshots": [
+      "2026-10-25-configuration-form-top.png",
+      "2026-10-25-configuration-form-steps.png"
+    ]
+  }
+}

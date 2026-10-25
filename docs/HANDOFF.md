@@ -1,5 +1,11 @@
 # Handoff: Agent Evals on Hermes (2026-10-25)
 
+## Configuration editor layout (2026-10-25)
+
+The new/copy configuration editor on 3080 uses one continuous form with five numbered sections in reading order: name, model/instructions, policy/skills, memory/tools, review/save. Section headings align in a compact left column on desktop and move above their fields on smaller screens. This replaces the two tall side-by-side cards that placed steps 1–2 beside 3–4 and left empty space before step 5. Reasoning is grouped with model; optional tools stay collapsed; memory controls use plain language; the review section includes Save and Cancel. Configuration API payloads and saved settings are unchanged.
+
+All **30 browser tests**, build, typecheck and lint passed. The existing responsive setup check now verifies that all five sections remain vertically ordered and adjacent at 375, 677 and 1440px, including expanded optional controls. Copy/save, validation and draft preservation remain covered. Live browser inspection verified the default desktop layout, dynamic skill/memory controls and summary, no horizontal overflow and no console errors on the verified preview. Nine saved configurations and hashes for all 1,586 runs, 12,512 checks and 20,628 events remain identical. Evidence: `docs/experiments/2026-10-25-configuration-form-ui.json` and `2026-10-25-configuration-form-{top,steps}.png`.
+
 ## Consistent configuration names (2026-10-25)
 
 All nine saved configurations now use **V# · Plain-language title**, in version order. Model and reasoning settings stay in their own fields. The same display labels appear in the library, saved details, copy flow, experiment selectors and comparisons. Short descriptions explain each change. The latest candidate is **V9 · Guided booking with safeguards** (original saved name: Grounded SMS workflow v3 (Sonnet 4.6)); its comparison baseline is **V4 · Customer preference recall**. Versions indicate history rather than guaranteed quality. Original immutable names, IDs, specifications and experiment evidence are preserved; user-created names remain unchanged.

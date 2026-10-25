@@ -184,8 +184,8 @@ test('setup pages review choices, validate inputs and fit narrow screens without
   await page.getByLabel('Name', { exact: true }).fill('New policy version');
   await page.getByLabel('Model', { exact: true }).fill('test-model');
   await page.getByLabel('Instructions', { exact: true }).fill('Reply only to the customer.');
-  await page.getByText('Hermes memory on').click();
-  await page.getByText('Advanced settings · tools & reasoning', { exact: true }).click();
+  await page.getByRole('checkbox', { name: /Enable memory/ }).check();
+  await page.getByText('Advanced tool settings', { exact: true }).click();
   await expect(page.getByRole('region', { name: 'Configuration review' })).toContainText(
     'Memory on',
   );
@@ -195,6 +195,18 @@ test('setup pages review choices, validate inputs and fit narrow screens without
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth - innerWidth),
     ).toBeLessThanOrEqual(0);
+    const sections = await page.locator('.configuration-step').evaluateAll((elements) =>
+      elements.map((element) => {
+        const box = element.getBoundingClientRect();
+        return { top: box.top, bottom: box.bottom, left: box.left };
+      }),
+    );
+    expect(sections).toHaveLength(5);
+    for (let step = 1; step < sections.length; step++) {
+      expect(sections[step]!.top).toBeGreaterThan(sections[step - 1]!.top);
+      expect(Math.abs(sections[step]!.top - sections[step - 1]!.bottom)).toBeLessThanOrEqual(1);
+      expect(Math.abs(sections[step]!.left - sections[step - 1]!.left)).toBeLessThanOrEqual(1);
+    }
   }
   expect(writes).toEqual([]);
 });
@@ -403,9 +415,9 @@ test("a check's evidence button highlights the exact event", async ({ page }) =>
 test('a configuration can be copied and saved as a new one', async ({ page }) => {
   await page.goto('/configurations');
   await page.getByRole('link', { name: 'Copy' }).first().click();
-  await expect(page.getByLabel('Name')).toHaveValue(/\(copy\)$/);
-  await page.getByLabel('Name').fill('Memory on');
-  await page.getByText('Hermes memory on').click();
+  await expect(page.getByLabel('Name', { exact: true })).toHaveValue(/\(copy\)$/);
+  await page.getByLabel('Name', { exact: true }).fill('Memory on');
+  await page.getByRole('checkbox', { name: /Enable memory/ }).check();
   await page.getByRole('button', { name: 'Save configuration' }).click();
   await expect(page.getByRole('heading', { name: 'Memory on' })).toBeVisible();
 });
@@ -414,7 +426,7 @@ test('a new experiment is a draft until it is started', async ({ page }) => {
   await page.goto('/experiments/new');
   await page.getByRole('button', { name: 'Dev only (7)' }).click();
   await expect(page.getByText(/Only 7 scenarios selected/)).toBeVisible();
-  await page.getByLabel('Name').fill('Draft only');
+  await page.getByLabel('Name', { exact: true }).fill('Draft only');
   await page.getByLabel(/A — baseline/).selectOption({ label: 'Baseline' });
   await page.getByLabel(/B — candidate/).selectOption({ label: 'Baseline + clinic skill' });
   await expect(page.getByText(/runs \(\d+ tasks × 2 configurations × 3\)/)).toBeVisible();
