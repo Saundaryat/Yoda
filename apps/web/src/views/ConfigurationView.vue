@@ -2,6 +2,7 @@
 import type { Configuration } from '@evals/shared';
 import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
+import { useReviewNavigation } from '../composables/useReviewNavigation.js';
 import { useResource } from '../composables/useResource.js';
 import { dateTime } from '../format.js';
 import { configurationName, configurationPurpose } from '../names.js';
@@ -12,6 +13,7 @@ const {
   error,
   loading,
 } = useResource<Configuration>(computed(() => `/configurations/${props.id}`));
+const { backTo, backLabel, goBack } = useReviewNavigation('/configurations');
 </script>
 
 <template>
@@ -20,7 +22,9 @@ const {
   <template v-else-if="configuration">
     <div class="page-head">
       <div>
-        <p class="subtitle"><RouterLink to="/configurations">← Configurations</RouterLink></p>
+        <p class="subtitle">
+          <a :href="backTo" @click="goBack">← {{ backLabel }}</a>
+        </p>
         <p class="page-kicker">Saved agent version</p>
         <h1>{{ configurationName(configuration) }}</h1>
         <p v-if="configurationPurpose(configuration)" class="subtitle">

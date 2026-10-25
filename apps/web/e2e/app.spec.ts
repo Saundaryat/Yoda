@@ -41,10 +41,12 @@ test('rescored results distinguish replay usage from original conversations and 
   );
   await page.goto(`/experiments/${e.id}`);
   await page.getByRole('button', { name: 'Metrics & evidence', exact: true }).click();
+  await page.getByRole('button', { name: 'Performance metrics', exact: true }).click();
   await expect(
     page.getByText('New agent cost per rescore (excludes judge)', { exact: true }),
   ).toBeVisible();
   await expect(page.getByText('Original conversation time per run', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Tool usage', exact: true }).click();
   await expect(
     page.getByRole('heading', { name: 'Hermes-native tools', exact: true }),
   ).toBeVisible();
@@ -82,17 +84,23 @@ test('incomplete comparisons pair actual repetition numbers and preserve run dee
   await expect(a.getByRole('link', { name: 'Open run' })).toHaveCount(0);
   await expect(b.getByRole('link', { name: 'Open run' })).toHaveAttribute(
     'href',
-    `/runs/${task.b[0].runId}`,
+    new RegExp(`^/runs/${task.b[0].runId}\\?returnTo=`),
   );
   await page.getByRole('button', { name: '2', exact: true }).click();
-  await expect(a.getByRole('link', { name: 'Open run' })).toHaveAttribute('href', `/runs/${a2.id}`);
+  await expect(a.getByRole('link', { name: 'Open run' })).toHaveAttribute(
+    'href',
+    new RegExp(`^/runs/${a2.id}\\?returnTo=`),
+  );
   await a.getByRole('link', { name: 'Open run' }).click();
   await page.getByRole('link', { name: 'Compare A and B on this task' }).click();
   await expect(page.getByRole('button', { name: '2', exact: true })).toHaveAttribute(
     'aria-pressed',
     'true',
   );
-  await expect(a.getByRole('link', { name: 'Open run' })).toHaveAttribute('href', `/runs/${a2.id}`);
+  await expect(a.getByRole('link', { name: 'Open run' })).toHaveAttribute(
+    'href',
+    new RegExp(`^/runs/${a2.id}\\?returnTo=`),
+  );
 });
 
 test('invalid links and setup failures offer recovery without losing form inputs', async ({
@@ -351,23 +359,27 @@ test('experiment configuration and task names open their saved details', async (
   const versions = page.getByRole('region', { name: 'Compared agent versions' });
   for (const name of ['Baseline', 'Baseline + clinic skill']) {
     await versions.getByRole('link', { name, exact: true }).click();
-    await expect(page).toHaveURL(/\/configurations\/[\da-f-]+$/);
+    await expect(page).toHaveURL(/\/configurations\/[\da-f-]+\?returnTo=/);
     await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Instructions', exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Full configuration' })).toBeVisible();
     await page.reload();
     await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
-    await page.goto(experimentUrl);
+    await page.getByRole('link', { name: 'Back to experiment' }).click();
+    await expect(page).toHaveURL(experimentUrl);
   }
   await page.getByRole('button', { name: /Scenarios/ }).click();
   const clinical = page.getByTestId('scenario-clinical-escalation');
   const title = await clinical.getByRole('heading').innerText();
   await clinical.getByRole('link', { name: title, exact: true }).click();
-  await expect(page).toHaveURL(/\/tasks\/[\da-f-]+$/);
+  await expect(page).toHaveURL(/\/tasks\/[\da-f-]+\?returnTo=/);
   await expect(page.getByRole('heading', { name: title, exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'How it is scored' })).toBeVisible();
-  await page.goBack();
-  await page.getByRole('button', { name: /Scenarios/ }).click();
+  await page.getByRole('link', { name: 'Back to experiment' }).click();
+  await expect(page.getByRole('button', { name: /Scenarios/ })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
   await clinical.getByRole('link', { name: 'Compare runs' }).click();
   await expect(page.getByRole('heading', { name: 'Checks, side by side' })).toBeVisible();
 });
@@ -388,8 +400,9 @@ test('a reviewer can go from the verdict down to why a run failed', async ({ pag
   await page.getByText('Confidence & methodology').click();
   await expect(page.getByRole('img', { name: /Difference .* points, 95% interval/ })).toBeVisible();
   await page.getByRole('button', { name: 'Metrics & evidence' }).click();
+  await page.getByRole('button', { name: 'Tool usage', exact: true }).click();
   await expect(page.getByText('skill_view', { exact: true })).toBeVisible();
-  await page.getByText('Experiment setup & hypothesis', { exact: true }).click();
+  await page.getByRole('button', { name: 'Experiment setup', exact: true }).click();
   await expect(page.locator('.setup-metadata')).toContainText('E2E skill experiment');
   await expect(page.locator('.setup-metadata')).toContainText('Hypothesis recorded at creation');
 
@@ -443,8 +456,8 @@ test('a new experiment is a draft until it is started', async ({ page }) => {
   await expect(page.getByText('This experiment has not started.')).toBeVisible();
   await expect(page.getByRole('button', { name: /Start \d+ runs/ })).toBeVisible();
   await page.getByRole('button', { name: 'View setup' }).click();
-  await page.getByText('Experiment setup & hypothesis', { exact: true }).click();
   await expect(page.locator('.setup-metadata')).toContainText('Policy access improves escalation.');
+  await page.getByRole('button', { name: 'Performance metrics', exact: true }).click();
   await expect(
     page.getByText('Evidence will appear after at least one run has been scored.'),
   ).toBeVisible();
@@ -532,4 +545,148 @@ test('shared guidance is reachable across the app and supports direct mobile lin
   );
   await page.getByRole('link', { name: 'Browse experiments' }).click();
   await expect(page).toHaveURL(/\/$/);
+});
+
+test('evidence views keep their URL, browser history and run return context', async ({ page }) => {
+  const experiments = await (await page.request.get('/api/experiments')).json();
+  const e = experiments.find((item: { name: string }) => item.name === 'E2E skill experiment');
+  const findings = `/experiments/${e.id}?section=evidence`;
+  await page.goto(findings);
+  await expect(page.getByRole('heading', { name: 'Reply quality', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Hermes-native tools' })).toHaveCount(0);
+  await expect(page.getByText('skill_view', { exact: true })).toHaveCount(0);
+  const disclosure = page.locator('details', {
+    has: page.locator('summary', { hasText: 'Handling by customer message' }),
+  });
+  await expect(disclosure).not.toHaveAttribute('open', '');
+  await disclosure.locator('summary').click();
+  await expect(disclosure.getByRole('table')).toBeVisible();
+  await expect(page).toHaveURL(/breakdown=messages/);
+  const expandedFindings = page.url();
+  await page.getByRole('button', { name: 'Performance metrics', exact: true }).click();
+  await expect(page).toHaveURL(/evidence=metrics/);
+  await page.reload();
+  await expect(
+    page.getByRole('heading', { name: 'Performance metrics', exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Problems in replies' })).toHaveCount(0);
+  await page.goBack();
+  await expect(page.getByRole('heading', { name: 'Reply quality', exact: true })).toBeVisible();
+  // Return from an actual check comparison to the same evidence view and scroll position.
+  const changed = page.locator('.check-row').first();
+  await changed.scrollIntoViewIfNeeded();
+  const position = await page.evaluate(() => window.scrollY);
+  await changed.click();
+  await expect(page.getByRole('heading', { name: 'Checks, side by side' })).toBeVisible();
+  await page.getByRole('link', { name: 'Back to experiment' }).click();
+  await expect(page).toHaveURL(expandedFindings);
+  await expect(disclosure.getByRole('table')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Reply quality', exact: true })).toBeAttached();
+  expect(position).toBeGreaterThan(0);
+  await expect
+    .poll(async () => Math.abs((await page.evaluate(() => window.scrollY)) - position))
+    .toBeLessThan(30);
+  // Run links also preserve the selected comparison repetition and return path.
+  await page.getByRole('button', { name: /Scenarios/ }).click();
+  await page
+    .getByTestId('scenario-qualify-and-book')
+    .getByRole('link', { name: 'Compare runs' })
+    .click();
+  await page.getByRole('button', { name: '2', exact: true }).click();
+  await expect(page.getByRole('button', { name: '2', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await expect(page).toHaveURL(/repetition=2/);
+  const comparison = page.url();
+  await page
+    .getByRole('region', { name: 'A conversation' })
+    .getByRole('link', { name: 'Open run' })
+    .click();
+  await expect(page).toHaveURL(/\/runs\/[\da-f-]+\?returnTo=/);
+  await expect(page.getByRole('link', { name: 'Back to comparison' })).toBeVisible();
+  await page.reload();
+  await page.getByRole('link', { name: 'Back to comparison' }).click();
+  await expect(page).toHaveURL(comparison);
+  await expect(page.getByRole('button', { name: '2', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await page
+    .getByRole('region', { name: 'A conversation' })
+    .getByRole('link', { name: 'Open run' })
+    .click();
+  await page.getByRole('link', { name: 'Compare A and B on this task' }).click();
+  await page.getByRole('link', { name: 'Back to experiment' }).click();
+  await expect(page.getByRole('button', { name: /Scenarios/ })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+});
+
+test('review links have safe fallbacks when opened directly', async ({ page }) => {
+  const experiments = await (await page.request.get('/api/experiments')).json();
+  const e = experiments.find((item: { name: string }) => item.name === 'E2E skill experiment');
+  const runs = await (await page.request.get(`/api/experiments/${e.id}/runs`)).json();
+  await page.goto(`/runs/${runs[0].id}?returnTo=${encodeURIComponent('https://example.com/')}`);
+  await expect(page.getByRole('link', { name: 'Back to experiment' })).toHaveAttribute(
+    'href',
+    `/experiments/${e.id}?section=scenarios`,
+  );
+  await page.getByRole('link', { name: 'Back to experiment' }).click();
+  await expect(page.getByRole('button', { name: /Scenarios/ })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  // Every evidence view and expanded breakdown stays within the mobile page width.
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.getByRole('button', { name: 'Metrics & evidence', exact: true }).click();
+  for (const view of ['Reply quality', 'Performance metrics', 'Tool usage', 'Experiment setup']) {
+    await page.getByRole('button', { name: view, exact: true }).click();
+    await expect(page.getByRole('heading', { name: view, exact: true })).toBeVisible();
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    ).toBe(true);
+  }
+});
+
+test('returning to the experiment list preserves the history filter', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('checkbox', { name: 'Show development checks and replaced scores' }).check();
+  await expect(page).toHaveURL(/history=1/);
+  const list = page.url();
+  await page.getByRole('link', { name: 'E2E skill experiment' }).click();
+  await expect(page.getByRole('link', { name: 'Back to experiments' })).toHaveAttribute(
+    'href',
+    '/?history=1',
+  );
+  await page.getByRole('link', { name: 'Back to experiments' }).click();
+  await expect(page).toHaveURL(list);
+  await expect(
+    page.getByRole('checkbox', { name: 'Show development checks and replaced scores' }),
+  ).toBeChecked();
+});
+
+test('an evidence loading failure offers recovery without losing the selected view', async ({
+  page,
+}) => {
+  const experiments = await (await page.request.get('/api/experiments')).json();
+  const e = experiments.find((item: { name: string }) => item.name === 'E2E skill experiment');
+  let fail = true;
+  await page.route(`**/api/experiments/${e.id}/results`, (route) =>
+    fail
+      ? route.fulfill({ status: 503, json: { message: 'Evidence temporarily unavailable' } })
+      : route.continue(),
+  );
+  await page.goto(`/experiments/${e.id}?section=evidence&evidence=metrics`);
+  await expect(page.getByRole('alert')).toContainText('Evidence temporarily unavailable');
+  await expect(
+    page.getByText('Evidence will appear after at least one run has been scored.'),
+  ).toHaveCount(0);
+  fail = false;
+  await page.getByRole('button', { name: 'Retry evidence' }).click();
+  await expect(page.getByText('Pass rate (mean over tasks)', { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Performance metrics', exact: true }),
+  ).toHaveAttribute('aria-pressed', 'true');
 });

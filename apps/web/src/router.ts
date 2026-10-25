@@ -1,8 +1,28 @@
+import { nextTick } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
 export const router = createRouter({
   history: createWebHistory(),
-  scrollBehavior: (_to, _from, saved) => saved ?? { top: 0 },
+  async scrollBehavior(to, from, saved) {
+    // Changing a review section keeps its header in view; browser Back restores position.
+    if (!saved && to.path === from.path) return false;
+    if (saved?.top) {
+      await nextTick();
+      await new Promise<void>((resolve) => {
+        const start = performance.now();
+        const waitForContent = () => {
+          if (
+            document.documentElement.scrollHeight >= saved.top + window.innerHeight ||
+            performance.now() - start > 2500
+          )
+            resolve();
+          else requestAnimationFrame(waitForContent);
+        };
+        requestAnimationFrame(waitForContent);
+      });
+    }
+    return saved ?? { top: 0 };
+  },
   routes: [
     {
       path: '/:pathMatch(.*)*',

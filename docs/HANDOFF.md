@@ -1,5 +1,13 @@
 # Handoff: Agent Evals on Hermes (2026-10-25)
 
+## Focused evidence views and review navigation (2026-10-25)
+
+**Metrics & evidence** now has four focused views: **Reply quality**, **Performance metrics**, **Tool usage**, and **Experiment setup**. Reply findings use one full-width table; severity, handling by customer message and conversation outcomes expand on demand. Check changes remain available below the findings, with all changed checks accessible. The saved setup and full hypothesis have their own view. No scoring or statistical calculations were changed.
+
+Experiment sections, evidence views, expanded breakdowns, comparison repetitions and the experiment-list history filter are recorded in URLs. Run, comparison, configuration and scenario drill-downs preserve their return context. Back uses browser history when it matches the intended return page, restoring scroll after asynchronous content loads; direct links have local fallback destinations. A comparison → run → comparison path retains its original experiment destination. Evidence loading and failures now have distinct status/retry messages.
+
+Build, typecheck, lint and **35 browser tests** passed. Regressions cover URL reloads, browser and in-app Back, expanded breakdowns, exact scroll restoration, comparison repetition, list filters, direct-link fallbacks, mobile width and evidence-load recovery. Live inspection confirmed the four separate views and restoration of an expanded severity breakdown at the same 648.5px scroll position. Nine configuration records and all 1,586 runs, 12,512 checks and 20,628 events remain unchanged. Verification: `docs/experiments/2026-10-25-evidence-navigation-ui.json` and screenshots with the same prefix.
+
 ## Shared product guidance (2026-10-25)
 
 The global **How it works** header link opens `/how-it-works`, the shared explanation of A/B versions, scenarios, repetitions, run counts and reading results. The 20 × 2 × 3 formula is clearly labeled as an example. Experiment overviews now show a compact scenario/version/repetition summary and **View setup** action. Each experiment’s original saved name, planned coverage and full hypothesis remain under **Metrics & evidence → Experiment setup & hypothesis**, including unstarted drafts. The large generic tutorial and duplicate methodology panel were removed from experiment details; per-experiment confidence and statistical assessment remain available.

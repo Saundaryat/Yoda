@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { TaskDefinition } from '@evals/shared';
 import { computed } from 'vue';
-import { RouterLink } from 'vue-router';
+import { useReviewNavigation } from '../composables/useReviewNavigation.js';
 import { useResource } from '../composables/useResource.js';
 import { groupName, taskName } from '../names.js';
 
@@ -22,6 +22,7 @@ const describeCheck = (check: TaskDefinition['checks'][number]) => {
   const { id: _id, label: _label, weight: _w, critical: _c, type: _t, ...rest } = check;
   return JSON.stringify(rest);
 };
+const { backTo, backLabel, goBack } = useReviewNavigation('/tasks');
 </script>
 
 <template>
@@ -30,7 +31,9 @@ const describeCheck = (check: TaskDefinition['checks'][number]) => {
   <template v-else-if="data && d">
     <div class="page-head">
       <div>
-        <p class="subtitle"><RouterLink to="/tasks">← Scenarios</RouterLink></p>
+        <p class="subtitle">
+          <a :href="backTo" @click="goBack">← {{ backLabel }}</a>
+        </p>
         <p class="page-kicker">Scenario details</p>
         <h1>{{ taskName({ key: data.key, title: d.title }) }}</h1>
         <p class="subtitle">

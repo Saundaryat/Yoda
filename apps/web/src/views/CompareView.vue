@@ -9,9 +9,10 @@ import type {
   JudgeReport,
 } from '@evals/shared';
 import { computed, nextTick, ref, watch } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { api } from '../api.js';
 import Timeline from '../components/Timeline.vue';
+import { useReviewNavigation } from '../composables/useReviewNavigation.js';
 import { useResource } from '../composables/useResource.js';
 import { configurationName, groupName, taskName } from '../names.js';
 
@@ -41,11 +42,20 @@ const { data: results, error: resultsError } = useResource<ExperimentResults>(
 );
 const task = computed(() => results.value?.tasks.find((t) => t.taskId === props.taskId));
 const repetitions = computed(() => experiment.value?.repetitions ?? 0);
-const requestedRepetition = Number(route.query.repetition);
-const repetition = ref(
-  Number.isInteger(requestedRepetition) && requestedRepetition >= 1 && requestedRepetition <= 10
-    ? requestedRepetition
-    : 1,
+const repetition = computed({
+  get: () => {
+    const value = Number(route.query.repetition);
+    return Number.isInteger(value) && value >= 1 && value <= 10 ? value : 1;
+  },
+  set: (value: number) => {
+    void router.replace({ query: { ...route.query, repetition: value } });
+  },
+});
+const router = useRouter();
+const comparisonReturnTo = computed(
+  () =>
+    router.resolve({ path: route.path, query: { ...route.query, repetition: repetition.value } })
+      .fullPath,
 );
 const a = ref<RunDetail | null>(null);
 const b = ref<RunDetail | null>(null);
@@ -137,6 +147,9 @@ const resultLabel = (detail: RunDetail | null) => {
     }[detail.run.status];
   return detail.run.passed ? 'Passed' : 'Failed';
 };
+const { backTo, backLabel, detailLink, goBack } = useReviewNavigation(
+  computed(() => `/experiments/${props.id}?section=scenarios`),
+);
 </script>
 
 <template>
@@ -146,12 +159,14 @@ const resultLabel = (detail: RunDetail | null) => {
   <p v-else-if="!results" class="muted" role="status">Loading comparison…</p>
   <div v-else-if="!task" class="card empty">
     <h1>Scenario not in this experiment</h1>
-    <RouterLink :to="`/experiments/${id}`">Back to experiment</RouterLink>
+    <a :href="backTo" @click="goBack">{{ backLabel }}</a>
   </div>
   <template v-else-if="task">
     <div class="page-head">
       <div>
-        <p class="subtitle"><RouterLink :to="`/experiments/${id}`">← Experiment</RouterLink></p>
+        <p class="subtitle">
+          <a :href="backTo" @click="goBack">← {{ backLabel }}</a>
+        </p>
         <p class="page-kicker">Side-by-side evidence</p>
         <h1>{{ taskName(task) }}</h1>
         <p class="subtitle">
@@ -191,14 +206,14 @@ const resultLabel = (detail: RunDetail | null) => {
             <th>Check</th>
             <th class="side-a">
               A ·
-              <RouterLink v-if="a" :to="`/configurations/${a.configuration.id}`">{{
+              <RouterLink v-if="a" :to="detailLink(`/configurations/${a.configuration.id}`)">{{
                 configurationName(a.configuration)
               }}</RouterLink
               ><span v-else>No run recorded</span>
             </th>
             <th class="side-b">
               B ·
-              <RouterLink v-if="b" :to="`/configurations/${b.configuration.id}`">{{
+              <RouterLink v-if="b" :to="detailLink(`/configurations/${b.configuration.id}`)">{{
                 configurationName(b.configuration)
               }}</RouterLink
               ><span v-else>No run recorded</span>
@@ -276,7 +291,11 @@ const resultLabel = (detail: RunDetail | null) => {
       <section class="card conversation-panel" aria-label="A conversation">
         <div class="row">
           <h2 class="side-a">A · {{ a ? configurationName(a.configuration) : 'No scored run' }}</h2>
-          <RouterLink v-if="a" :to="`/runs/${a.run.id}`">Open run</RouterLink>
+          <RouterLink
+            v-if="a"
+            :to="{ path: `/runs/${a.run.id}`, query: { returnTo: comparisonReturnTo } }"
+            >Open run</RouterLink
+          >
         </div>
         <p class="panel-caption">Starting version · {{ resultLabel(a) }}</p>
         <Timeline
@@ -291,7 +310,11 @@ const resultLabel = (detail: RunDetail | null) => {
       <section class="card conversation-panel" aria-label="B conversation">
         <div class="row">
           <h2 class="side-b">B · {{ b ? configurationName(b.configuration) : 'No scored run' }}</h2>
-          <RouterLink v-if="b" :to="`/runs/${b.run.id}`">Open run</RouterLink>
+          <RouterLink
+            v-if="b"
+            :to="{ path: `/runs/${b.run.id}`, query: { returnTo: comparisonReturnTo } }"
+            >Open run</RouterLink
+          >
         </div>
         <p class="panel-caption">Proposed version · {{ resultLabel(b) }}</p>
         <Timeline

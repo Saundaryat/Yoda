@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-25",
+  "app": "http://127.0.0.1:3080",
+  "experiment": "bc07fddb-0b09-4103-9fea-cb6263028f6f",
+  "views": ["Reply quality", "Performance metrics", "Tool usage", "Experiment setup"],
+  "validation": {
+    "build": "passed",
+    "typecheck": "passed",
+    "lint": "passed",
+    "browserTests": 35,
+    "browserRegressionCoverage": [
+      "evidence URL state and reload",
+      "browser and in-app Back",
+      "expanded disclosures restored",
+      "scroll position within 30px",
+      "comparison repetition retained",
+      "comparison/run return loop avoided",
+      "history filter retained",
+      "safe local direct-link fallback",
+      "375px evidence view width",
+      "API failure retry without losing view"
+    ],
+    "liveBrowser": {
+      "fourFocusedViews": true,
+      "hypothesisPreserved": true,
+      "expandedSeverityRestored": true,
+      "scrollBefore": 648.5,
+      "scrollAfter": 648.5,
+      "consoleErrors": []
+    }
+  },
+  "preservation": {
+    "unchangedConfigurations": 9,
+    "before": {
+      "runs": {
+        "hash": "000af35d7924406870a737bf96ba72de",
+        "count": 1586
+      },
+      "checks": {
+        "hash": "334c399794c332771e3eafc5d965d27a",
+        "count": 12512
+      },
+      "events": {
+        "hash": "630920d3e28f93e74e78dfc475fa2c0c",
+        "count": 20628
+      }
+    },
+    "after": {
+      "runs": {
+        "hash": "000af35d7924406870a737bf96ba72de",
+        "count": 1586
+      },
+      "checks": {
+        "hash": "334c399794c332771e3eafc5d965d27a",
+        "count": 12512
+      },
+      "events": {
+        "hash": "630920d3e28f93e74e78dfc475fa2c0c",
+        "count": 20628
+      }
+    }
+  },
+  "screenshots": [
+    "2026-10-25-evidence-navigation-quality.png",
+    "2026-10-25-evidence-navigation-metrics.png",
+    "2026-10-25-evidence-navigation-back.png"
+  ]
+}

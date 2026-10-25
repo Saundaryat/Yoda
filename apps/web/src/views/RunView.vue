@@ -14,6 +14,7 @@ import ChecksPanel from '../components/ChecksPanel.vue';
 import CrmChanges from '../components/CrmChanges.vue';
 import StatusBadge from '../components/StatusBadge.vue';
 import Timeline from '../components/Timeline.vue';
+import { reviewReturn, useReviewNavigation } from '../composables/useReviewNavigation.js';
 import { useResource } from '../composables/useResource.js';
 import { useExperimentEvents } from '../composables/useExperimentEvents.js';
 import { label, money, percent, seconds } from '../format.js';
@@ -104,6 +105,19 @@ const failedChecks = computed(
   () => data.value?.checks.filter((c) => !c.passed && !c.skipped && !c.informational) ?? [],
 );
 const spec = computed(() => data.value?.configuration.spec);
+const { backTo, backLabel, detailLink, goBack } = useReviewNavigation(
+  computed(() => `/experiments/${data.value?.run.experimentId ?? ''}?section=scenarios`),
+);
+const comparisonBackTo = computed(() => {
+  if (!data.value) return backTo.value;
+  const path = `/experiments/${data.value.run.experimentId}/tasks/${data.value.task.id}`;
+  if (backTo.value.split('?')[0] !== path) return backTo.value;
+  const origin = new URL(backTo.value, window.location.origin);
+  return reviewReturn(
+    origin.searchParams.get('returnTo'),
+    `/experiments/${data.value.run.experimentId}?section=scenarios`,
+  );
+});
 </script>
 
 <template>
@@ -124,11 +138,11 @@ const spec = computed(() => data.value?.configuration.spec);
     <div class="page-head">
       <div>
         <p class="subtitle">
-          <RouterLink :to="`/experiments/${data.run.experimentId}`">← Experiment</RouterLink> ·
+          <a :href="backTo" @click="goBack">← {{ backLabel }}</a> ·
           <RouterLink
             :to="{
               path: `/experiments/${data.run.experimentId}/tasks/${data.task.id}`,
-              query: { repetition: data.run.repetition },
+              query: { repetition: data.run.repetition, returnTo: comparisonBackTo },
             }"
             >Compare A and B on this task</RouterLink
           >
@@ -136,9 +150,11 @@ const spec = computed(() => data.value?.configuration.spec);
         <p class="page-kicker">Run details · repetition {{ data.run.repetition }}</p>
         <h1>{{ taskName(data.task) }}</h1>
         <p class="subtitle">
-          <RouterLink :to="`/tasks/${data.task.id}`" class="mono">{{ data.task.key }}</RouterLink> ·
-          configuration
-          <RouterLink :to="`/configurations/${data.configuration.id}`"
+          <RouterLink :to="detailLink(`/tasks/${data.task.id}`)" class="mono">{{
+            data.task.key
+          }}</RouterLink>
+          · configuration
+          <RouterLink :to="detailLink(`/configurations/${data.configuration.id}`)"
             ><strong>{{ configurationName(data.configuration) }}</strong></RouterLink
           >
           · repetition

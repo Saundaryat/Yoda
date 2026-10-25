@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
+import { useReviewNavigation } from '../composables/useReviewNavigation.js';
+const { detailLink } = useReviewNavigation('/');
 import type { RunSummary } from '@evals/shared';
 
 defineProps<{
@@ -14,7 +16,7 @@ defineProps<{
     <RouterLink
       v-for="(run, i) in runs"
       :key="run.runId"
-      :to="`/runs/${run.runId}`"
+      :to="detailLink(`/runs/${run.runId}`)"
       class="dot"
       :class="run.passed ? 'pass' : 'fail'"
       :title="`Repetition ${summaries?.find((r) => r.id === run.runId)?.repetition ?? i + 1}: ${run.passed ? 'passed' : 'failed'} (score ${run.score})`"

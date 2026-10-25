@@ -6,7 +6,8 @@ import type {
   RunSummary,
 } from '@evals/shared';
 import { computed, onBeforeUnmount, ref, toRef } from 'vue';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
+import { useReviewNavigation } from '../composables/useReviewNavigation.js';
 import { api } from '../api.js';
 import PassDots from '../components/PassDots.vue';
 import StatusBadge from '../components/StatusBadge.vue';
@@ -59,7 +60,77 @@ const errorKinds = computed(() => {
 
 const busy = ref(false);
 const actionError = ref<string | null>(null);
-const activeSection = ref<'overview' | 'scenarios' | 'evidence'>('overview');
+const route = useRoute();
+const router = useRouter();
+const { detailLink, backTo, goBack } = useReviewNavigation('/');
+const evidenceViews = [
+  {
+    key: 'findings',
+    title: 'Reply quality',
+    description: 'Problems in replies and checks that changed.',
+  },
+  {
+    key: 'metrics',
+    title: 'Performance metrics',
+    description: 'Pass rates, cost, speed and grading coverage.',
+  },
+  { key: 'tools', title: 'Tool usage', description: 'Recorded skill and memory use.' },
+  {
+    key: 'setup',
+    title: 'Experiment setup',
+    description: 'Saved hypothesis and planned coverage.',
+  },
+] as const;
+const activeSection = computed({
+  get: () =>
+    ['scenarios', 'evidence'].includes(String(route.query.section))
+      ? String(route.query.section)
+      : 'overview',
+  set: (section: string) => {
+    void router.push({
+      query: {
+        ...route.query,
+        section: section === 'overview' ? undefined : section,
+        evidence: section === 'evidence' ? route.query.evidence : undefined,
+      },
+    });
+  },
+});
+const evidenceView = computed({
+  get: () =>
+    evidenceViews.some((view) => view.key === route.query.evidence)
+      ? String(route.query.evidence)
+      : 'findings',
+  set: (view: string) => {
+    void router.push({
+      query: {
+        ...route.query,
+        section: 'evidence',
+        evidence: view === 'findings' ? undefined : view,
+      },
+    });
+  },
+});
+function disclosureOpen(key: string) {
+  return String(route.query.breakdown ?? '')
+    .split(',')
+    .includes(key);
+}
+function toggleDisclosure(key: string, event: Event) {
+  const open = (event.target as HTMLDetailsElement).open;
+  if (open === disclosureOpen(key)) return;
+  const values = String(route.query.breakdown ?? '')
+    .split(',')
+    .filter(Boolean)
+    .filter((value) => value !== key);
+  if (open) values.push(key);
+  void router.replace({
+    query: { ...route.query, breakdown: values.sort().join(',') || undefined },
+  });
+}
+function openSetup() {
+  void router.push({ query: { ...route.query, section: 'evidence', evidence: 'setup' } });
+}
 
 const groupCopy: Record<string, string> = {
   policy: 'Checks whether the agent follows clinic rules and escalates safely.',
@@ -161,9 +232,9 @@ const metricRows = computed(() => {
   <p v-if="experiment.error.value" class="error">{{ experiment.error.value }}</p>
   <p v-else-if="!e" class="muted" role="status">Loading experiment…</p>
   <template v-else-if="e">
-    <RouterLink to="/" class="back-link" aria-label="Back to experiments">
+    <a :href="backTo" @click="goBack" class="back-link" aria-label="Back to experiments">
       <span aria-hidden="true">←</span> All experiments
-    </RouterLink>
+    </a>
 
     <div class="page-head">
       <div>
@@ -273,13 +344,13 @@ const metricRows = computed(() => {
           <strong>{{ e.taskIds.length }} scenarios</strong> · 2 versions · {{ e.repetitions }}
           {{ e.repetitions === 1 ? 'repetition' : 'repetitions' }}
         </p>
-        <button class="text-action" @click="activeSection = 'evidence'">View setup →</button>
+        <button class="text-action" @click="openSetup">View setup →</button>
       </section>
 
       <section class="comparison-strip" aria-label="Compared agent versions">
         <div>
           <span class="version-label">A · Baseline</span>
-          <RouterLink :to="`/configurations/${e.baselineConfigId}`" class="detail-link"
+          <RouterLink :to="detailLink(`/configurations/${e.baselineConfigId}`)" class="detail-link"
             ><strong>{{ configurationName(baseline) }}</strong></RouterLink
           >
           <small>The current agent</small>
@@ -287,7 +358,7 @@ const metricRows = computed(() => {
         <span class="versus">compared with</span>
         <div>
           <span class="version-label">B · Candidate</span>
-          <RouterLink :to="`/configurations/${e.candidateConfigId}`" class="detail-link"
+          <RouterLink :to="detailLink(`/configurations/${e.candidateConfigId}`)" class="detail-link"
             ><strong>{{ configurationName(candidate) }}</strong></RouterLink
           >
           <small>The proposed change</small>
@@ -380,7 +451,7 @@ const metricRows = computed(() => {
               <span>{{ groupDescription(t.group) }}</span>
             </div>
             <h3>
-              <RouterLink :to="`/tasks/${t.taskId}`" class="detail-link">{{
+              <RouterLink :to="detailLink(`/tasks/${t.taskId}`)" class="detail-link">{{
                 taskName(t)
               }}</RouterLink>
             </h3>
@@ -403,7 +474,7 @@ const metricRows = computed(() => {
           <RouterLink
             v-if="t.a.length && t.b.length"
             class="button compare-button"
-            :to="`/experiments/${e.id}/tasks/${t.taskId}`"
+            :to="detailLink(`/experiments/${e.id}/tasks/${t.taskId}`)"
           >
             Compare runs
           </RouterLink>
@@ -418,16 +489,24 @@ const metricRows = computed(() => {
     </div>
 
     <div v-else-if="activeSection === 'evidence'">
-      <section class="section-intro">
-        <span class="section-kicker">Technical detail</span>
-        <h2>Metrics &amp; evidence</h2>
-        <p>
-          Use this section to audit the verdict. The overview is the recommended starting point.
-        </p>
+      <nav class="evidence-navigation" aria-label="Evidence views">
+        <button
+          v-for="view in evidenceViews"
+          :key="view.key"
+          :aria-pressed="evidenceView === view.key"
+          :class="{ selected: evidenceView === view.key }"
+          @click="evidenceView = view.key"
+        >
+          {{ view.title }}
+        </button>
+      </nav>
+      <section class="section-intro evidence-intro">
+        <h2>{{ evidenceViews.find((view) => view.key === evidenceView)?.title }}</h2>
+        <p>{{ evidenceViews.find((view) => view.key === evidenceView)?.description }}</p>
       </section>
 
-      <details class="setup-card">
-        <summary>Experiment setup &amp; hypothesis</summary>
+      <section v-if="evidenceView === 'setup'" class="setup-card">
+        <h3>Experiment setup &amp; hypothesis</h3>
         <dl class="setup-metadata">
           <div>
             <dt>Original saved name</dt>
@@ -446,27 +525,31 @@ const metricRows = computed(() => {
           </div>
         </dl>
         <button class="text-action" @click="activeSection = 'scenarios'">View scenarios →</button>
-      </details>
+      </section>
 
       <template v-if="r && (r.coverage.scoredRuns > 0 || r.coverage.ungradedRuns > 0)">
-        <section v-if="r.improvement.judgedRuns.a + r.improvement.judgedRuns.b" class="card">
-          <h2>Where Hermes can improve</h2>
+        <section
+          v-if="
+            evidenceView === 'findings' && r.improvement.judgedRuns.a + r.improvement.judgedRuns.b
+          "
+          class="card findings-evidence"
+        >
+          <h3>Problems in replies</h3>
           <p class="hint">
             From the judge's labels on every message ({{ r.improvement.judgedRuns.a }} A runs and
             {{ r.improvement.judgedRuns.b }} B runs judged). Each problem is backed by a quote from
             the reply.
           </p>
-          <div class="grid-2">
+          <div class="reply-breakdown">
             <div class="table-scroll">
-              <h3>Problems in Hermes's replies</h3>
               <p v-if="!r.improvement.issues.length" class="muted">No problems found.</p>
               <table v-else>
                 <thead>
                   <tr>
                     <th>Problem</th>
-                    <th class="num side-a">A</th>
-                    <th class="num side-b">B</th>
-                    <th></th>
+                    <th class="num side-a">A · Baseline</th>
+                    <th class="num side-b">B · Candidate</th>
+                    <th><span class="muted">Evidence</span></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -479,23 +562,30 @@ const metricRows = computed(() => {
                       {{ percent(issue.b) }} <span class="hint">({{ issue.countB }})</span>
                     </td>
                     <td>
-                      <RouterLink v-if="issue.exampleRunId" :to="`/runs/${issue.exampleRunId}`"
-                        >example</RouterLink
+                      <RouterLink
+                        v-if="issue.exampleRunId"
+                        :to="detailLink(`/runs/${issue.exampleRunId}`)"
+                        >View run →</RouterLink
                       >
                     </td>
                   </tr>
                 </tbody>
               </table>
               <p class="hint">Share of Hermes's replies with the problem (number of replies).</p>
-              <template v-if="r.improvement.groundingSeverities.length">
-                <h3 class="spaced">Unsupported claims by Jev severity</h3>
+              <details
+                v-if="r.improvement.groundingSeverities.length"
+                class="evidence-disclosure"
+                :open="disclosureOpen('severity')"
+                @toggle="toggleDisclosure('severity', $event)"
+              >
+                <summary>Unsupported claims by severity</summary>
                 <table>
                   <thead>
                     <tr>
                       <th>Severity</th>
-                      <th class="num side-a">A</th>
-                      <th class="num side-b">B</th>
-                      <th></th>
+                      <th class="num side-a">A · Baseline</th>
+                      <th class="num side-b">B · Candidate</th>
+                      <th><span class="muted">Evidence</span></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -507,17 +597,23 @@ const metricRows = computed(() => {
                       <td class="num">{{ row.countA }}</td>
                       <td class="num">{{ row.countB }}</td>
                       <td>
-                        <RouterLink v-if="row.exampleRunId" :to="`/runs/${row.exampleRunId}`"
-                          >example</RouterLink
+                        <RouterLink
+                          v-if="row.exampleRunId"
+                          :to="detailLink(`/runs/${row.exampleRunId}`)"
+                          >View run →</RouterLink
                         >
                       </td>
                     </tr>
                   </tbody>
                 </table>
-              </template>
+              </details>
             </div>
-            <div class="table-scroll">
-              <h3>How Hermes handles each kind of customer message</h3>
+            <details
+              class="table-scroll evidence-disclosure"
+              :open="disclosureOpen('messages')"
+              @toggle="toggleDisclosure('messages', $event)"
+            >
+              <summary>Handling by customer message</summary>
               <table>
                 <thead>
                   <tr>
@@ -539,22 +635,29 @@ const metricRows = computed(() => {
                 </tbody>
               </table>
               <p class="hint">"Handled well": Hermes's next reply had no problems.</p>
+            </details>
+          </div>
+          <details
+            class="evidence-disclosure"
+            :open="disclosureOpen('outcomes')"
+            @toggle="toggleDisclosure('outcomes', $event)"
+          >
+            <summary>Conversation outcomes</summary>
+            <div class="row outcomes">
+              <strong>How conversations ended:</strong>
+              <span v-for="o in r.improvement.outcomes" :key="o.label" class="badge">
+                {{ label(o.label) }}: <span class="side-a">A {{ o.a }}</span> ·
+                <span class="side-b">B {{ o.b }}</span>
+              </span>
             </div>
-          </div>
-          <div class="row outcomes">
-            <strong>How conversations ended:</strong>
-            <span v-for="o in r.improvement.outcomes" :key="o.label" class="badge">
-              {{ label(o.label) }}: <span class="side-a">A {{ o.a }}</span> ·
-              <span class="side-b">B {{ o.b }}</span>
-            </span>
-          </div>
+          </details>
           <p v-if="r.improvement.leadProblems.length" class="hint warn-text">
             The simulated customer broke character in
             {{ r.improvement.leadProblems.length }} run(s):
             <RouterLink
               v-for="p in r.improvement.leadProblems"
               :key="p.runId"
-              :to="`/runs/${p.runId}`"
+              :to="detailLink(`/runs/${p.runId}`)"
             >
               {{ p.taskKey }} ({{ p.side.toUpperCase() }})
             </RouterLink>
@@ -562,10 +665,9 @@ const metricRows = computed(() => {
           </p>
         </section>
 
-        <section class="card table-scroll">
+        <section v-if="evidenceView === 'metrics'" class="card table-scroll">
           <div class="table-heading">
             <div>
-              <h2>Performance metrics</h2>
               <p>All values are averages across comparable scenarios.</p>
             </div>
           </div>
@@ -601,18 +703,18 @@ const metricRows = computed(() => {
           </p>
         </section>
 
-        <div class="grid-2 evidence-grid">
-          <section class="card">
+        <div class="evidence-grid">
+          <section v-if="evidenceView === 'findings'" class="card">
             <h2>Checks that changed</h2>
             <p v-if="!r.checkFlips.length" class="muted">
               Every check passed equally often under A and B.
             </p>
             <div v-else class="check-list">
               <RouterLink
-                v-for="f in r.checkFlips.slice(0, 12)"
+                v-for="f in r.checkFlips"
                 :key="`${f.taskId}/${f.checkId}`"
                 class="check-row"
-                :to="`/experiments/${e.id}/tasks/${f.taskId}`"
+                :to="detailLink(`/experiments/${e.id}/tasks/${f.taskId}`)"
               >
                 <span>
                   <strong>{{ f.label }}</strong>
@@ -637,8 +739,8 @@ const metricRows = computed(() => {
             </div>
           </section>
 
-          <section class="card">
-            <h2>Hermes-native tools</h2>
+          <section v-if="evidenceView === 'tools'" class="card">
+            <h3>Hermes-native tools</h3>
             <p class="muted tool-intro">
               Share of runs using skills, memory or other Hermes-native tools. CRM calls are shown
               in each run’s conversation.
@@ -657,7 +759,14 @@ const metricRows = computed(() => {
           </section>
         </div>
       </template>
-      <div v-else class="card empty">
+      <p v-else-if="results.loading.value && evidenceView !== 'setup'" class="muted" role="status">
+        Loading evidence…
+      </p>
+      <div v-else-if="results.error.value && evidenceView !== 'setup'" class="card" role="alert">
+        <p class="error">Could not load evidence: {{ results.error.value }}</p>
+        <button @click="results.reload()">Retry evidence</button>
+      </div>
+      <div v-else-if="evidenceView !== 'setup'" class="card empty">
         Evidence will appear after at least one run has been scored.
       </div>
     </div>
@@ -665,6 +774,51 @@ const metricRows = computed(() => {
 </template>
 
 <style scoped>
+.evidence-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.evidence-navigation button {
+  padding: 9px 14px;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  box-shadow: none;
+  border-radius: 8px;
+}
+.evidence-navigation button.selected {
+  color: #fff;
+  background: #171717;
+  border-color: #171717;
+}
+.evidence-intro h2 {
+  font-size: 20px;
+}
+.evidence-intro p {
+  margin-bottom: 20px;
+}
+.findings-evidence h3 {
+  margin-bottom: 12px;
+}
+.evidence-disclosure {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+.evidence-disclosure summary {
+  color: var(--text);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.reply-breakdown {
+  display: block;
+}
+.setup-card h3 {
+  margin-bottom: 16px;
+}
+
 .detail-link {
   color: inherit;
   text-decoration: underline;

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { Configuration, ExperimentSummary } from '@evals/shared';
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import {
   configurationName,
   experimentName,
   experimentStage,
   isDevelopmentExperiment,
 } from '../names.js';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import StatusBadge from '../components/StatusBadge.vue';
 import { useResource } from '../composables/useResource.js';
 import { dateTime, money, observedResult, percent, points } from '../format.js';
@@ -17,7 +17,14 @@ const { data: configurations } = useResource<Configuration[]>('/configurations')
 const configName = computed(
   () => (id: string) => configurationName(configurations.value?.find((c) => c.id === id)),
 );
-const showHistory = ref(false);
+const route = useRoute();
+const router = useRouter();
+const showHistory = computed({
+  get: () => route.query.history === '1',
+  set: (value: boolean) => {
+    void router.replace({ query: { ...route.query, history: value ? '1' : undefined } });
+  },
+});
 const shown = computed(() =>
   (experiments.value ?? [])
     .filter((e) => showHistory.value || (!e.correctedExperimentId && !isDevelopmentExperiment(e)))
@@ -110,7 +117,7 @@ const runProgress = (e: ExperimentSummary) => {
     <RouterLink
       v-for="e in shown"
       :key="e.id"
-      :to="`/experiments/${e.id}`"
+      :to="{ path: `/experiments/${e.id}`, query: showHistory ? { returnTo: route.fullPath } : {} }"
       class="experiment-card"
       :data-verdict="e.result?.verdict"
     >

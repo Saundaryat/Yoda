@@ -72,6 +72,7 @@ test('an experiment with completed conversations but no critical judgments stays
   await expect(page.getByRole('heading', { name: 'Required grading is missing.' })).toBeVisible();
   await expect(page.locator('.rate-summary')).toHaveCount(0);
   await page.getByRole('button', { name: 'Metrics & evidence', exact: true }).click();
+  await page.getByRole('button', { name: 'Performance metrics', exact: true }).click();
   await expect(page.getByText(/need grading and are excluded from the comparison/)).toBeVisible();
 });
 
@@ -108,9 +109,14 @@ test('paired task presence cannot disguise missing repetitions or a gain below t
   await expect(page.locator('.verdict .badge').first()).toHaveText('Incomplete');
   await expect(page.getByRole('heading', { name: /Every planned repetition/ })).toBeVisible();
   await page.getByRole('button', { name: 'Metrics & evidence', exact: true }).click();
+  await page.getByRole('button', { name: 'Performance metrics', exact: true }).click();
   await expect(page.getByText(/40 of 120 planned runs have complete grading/)).toBeVisible();
   incomplete = false;
   await page.reload();
+  await expect(
+    page.getByRole('button', { name: 'Performance metrics', exact: true }),
+  ).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('button', { name: 'Overview', exact: true }).click();
   await expect(page.locator('.verdict .badge').first()).toHaveText('B scored higher');
   await page.getByText('Confidence & methodology', { exact: true }).click();
   await expect(page.locator('.confidence-assessment')).toContainText('No meaningful difference');
