@@ -101,7 +101,7 @@ export function offersSlots(text: string, ids: string[], slots: CrmState['slots'
 
 function factualIssues(text: string, context: ContentContext): string[] {
   const value = normalize(text), issues: string[] = [];
-  for (const match of value.matchAll(/\b(?:age(?:d)?(?: is|:)?|(?:lead|customer|patient) (?:is|aged)|you are|as you are)\s+(\d{1,3})\b|\b(\d{1,3})\s*(?:years? old|years? of age|year-old|y\/o)\b/g)) {
+  for (const match of value.matchAll(/\b(?:age(?:d)?(?: (?:is|confirmed(?: as)?)|:)?|(?:lead|customer|patient) (?:is|aged)|you are|as you are)\s+(\d{1,3})\b|\b(\d{1,3})\s*(?:years? old|years? of age|year-old|y\/o)\b/g)) {
     const prefix = value.slice(Math.max(0, match.index! - 55), match.index!);
     const policyAge = !/^(?:lead|customer|patient|you|as you)/.test(match[0]) && /(?:minimum|at least|requires?|policy|older than|patients)[^.;!?,]*$/.test(prefix);
     const expected = policyAge ? context.minimumAge : context.age;

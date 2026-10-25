@@ -9,10 +9,11 @@ test('v4.5 accepts a factual note citing the lead preference separately from exp
   assert.equal(grade.status, 'passed');
   assert.equal(grade.score, 100);
 });
-for (const mutation of ['wrong preference time', 'invented preference', 'preference as consent', 'preference as age', 'invented diagnosis']) test(`preference notes still reject ${mutation}`, () => {
+for (const mutation of ['wrong confirmed age', 'wrong preference time', 'invented preference', 'preference as consent', 'preference as age', 'invented diagnosis']) test(`preference notes still reject ${mutation}`, () => {
   const final = structuredClone(source.final);
   const event = final.events.find((e: any) => e.name === 'add_contact_note');
   let note = String(event.arguments.note);
+  if (mutation === 'wrong confirmed age') note = note.replace('age confirmed as 28', 'age confirmed as 42');
   if (mutation === 'wrong preference time') note = note.replace('Changed preference to 4:00 PM', 'Changed preference to 2:00 PM');
   if (mutation === 'invented preference') note = note.replace('(event-8)', '(event-3)');
   if (mutation === 'preference as consent') note = note.replace('consent (event-10)', 'consent (event-8)');

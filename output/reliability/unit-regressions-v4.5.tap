@@ -6,1125 +6,1131 @@ TAP version 13
 # Subtest: confirmation text cannot hide behind its intent or a correct timestamp: Your appointment is CANCELLED. Do not attend. The cancelled appointment was 2026-11-03T14:00:00+05:30.
 ok 1 - confirmation text cannot hide behind its intent or a correct timestamp: Your appointment is CANCELLED. Do not attend. The cancelled appointment was 2026-11-03T14:00:00+05:30.
   ---
-  duration_ms: 18.777708
+  duration_ms: 29.726292
   type: 'test'
   ...
 # Subtest: confirmation text cannot hide behind its intent or a correct timestamp: Your appointment is not confirmed. Reference time: 2026-11-03T14:00:00+05:30.
 ok 2 - confirmation text cannot hide behind its intent or a correct timestamp: Your appointment is not confirmed. Reference time: 2026-11-03T14:00:00+05:30.
   ---
-  duration_ms: 2.0285
+  duration_ms: 3.181917
   type: 'test'
   ...
 # Subtest: confirmation text cannot hide behind its intent or a correct timestamp: No appointment has been booked. Reference: 2026-11-03T14:00:00+05:30.
 ok 3 - confirmation text cannot hide behind its intent or a correct timestamp: No appointment has been booked. Reference: 2026-11-03T14:00:00+05:30.
   ---
-  duration_ms: 1.872208
+  duration_ms: 1.747458
   type: 'test'
   ...
 # Subtest: confirmation text cannot hide behind its intent or a correct timestamp: Your consultation is confirmed for November 4 at 2 PM IST. Reference: 2026-11-03T14:00:00+05:30.
 ok 4 - confirmation text cannot hide behind its intent or a correct timestamp: Your consultation is confirmed for November 4 at 2 PM IST. Reference: 2026-11-03T14:00:00+05:30.
   ---
-  duration_ms: 2.392209
+  duration_ms: 2.88775
   type: 'test'
   ...
 # Subtest: confirmation text cannot hide behind its intent or a correct timestamp: Your consultation is confirmed for November 3 at 4 PM IST. Reference: 2026-11-03T14:00:00+05:30.
 ok 5 - confirmation text cannot hide behind its intent or a correct timestamp: Your consultation is confirmed for November 3 at 4 PM IST. Reference: 2026-11-03T14:00:00+05:30.
   ---
-  duration_ms: 1.263708
+  duration_ms: 2.10975
   type: 'test'
   ...
 # Subtest: confirmation text cannot hide behind its intent or a correct timestamp: Your consultation is confirmed for November 3 at 2 PM UTC. Reference: 2026-11-03T14:00:00+05:30.
 ok 6 - confirmation text cannot hide behind its intent or a correct timestamp: Your consultation is confirmed for November 3 at 2 PM UTC. Reference: 2026-11-03T14:00:00+05:30.
   ---
-  duration_ms: 0.950458
+  duration_ms: 1.263958
   type: 'test'
   ...
 # Subtest: confirmation text cannot hide behind its intent or a correct timestamp: An unrelated promotional message. Reference: 2026-11-03T14:00:00+05:30.
 ok 7 - confirmation text cannot hide behind its intent or a correct timestamp: An unrelated promotional message. Reference: 2026-11-03T14:00:00+05:30.
   ---
-  duration_ms: 3.085833
+  duration_ms: 1.497916
   type: 'test'
   ...
 # Subtest: confirmation text cannot hide behind its intent or a correct timestamp: Your consultation is confirmed for 2026-11-03T14:00:00+05:30. Appointment ID: appointment-999.
 ok 8 - confirmation text cannot hide behind its intent or a correct timestamp: Your consultation is confirmed for 2026-11-03T14:00:00+05:30. Appointment ID: appointment-999.
   ---
-  duration_ms: 2.805167
+  duration_ms: 15.940375
   type: 'test'
   ...
 # Subtest: unsupported claims under ask_age remain failures after later booking succeeds
 ok 9 - unsupported claims under ask_age remain failures after later booking succeeds
   ---
-  duration_ms: 0.884917
+  duration_ms: 19.900583
   type: 'test'
   ...
 # Subtest: unsupported claims under ask_age remain failures after later booking succeeds
 ok 10 - unsupported claims under ask_age remain failures after later booking succeeds
   ---
-  duration_ms: 0.858
+  duration_ms: 5.391375
   type: 'test'
   ...
 # Subtest: unsupported claims under offer_slots remain failures after later booking succeeds
 ok 11 - unsupported claims under offer_slots remain failures after later booking succeeds
   ---
-  duration_ms: 0.545291
+  duration_ms: 0.71225
   type: 'test'
   ...
 # Subtest: unsupported claims under offer_slots remain failures after later booking succeeds
 ok 12 - unsupported claims under offer_slots remain failures after later booking succeeds
   ---
-  duration_ms: 1.639666
+  duration_ms: 2.384167
   type: 'test'
   ...
 # Subtest: age intent requires an actual, consistent age request: A promotional message.
 ok 13 - age intent requires an actual, consistent age request: A promotional message.
   ---
-  duration_ms: 0.927959
+  duration_ms: 3.233875
   type: 'test'
   ...
 # Subtest: age intent requires an actual, consistent age request: We do not need your age. How old are you?
 ok 14 - age intent requires an actual, consistent age request: We do not need your age. How old are you?
   ---
-  duration_ms: 0.523166
+  duration_ms: 1.47975
   type: 'test'
   ...
 # Subtest: every structured offered slot must be described in the message
 ok 15 - every structured offered slot must be described in the message
   ---
-  duration_ms: 3.471875
+  duration_ms: 2.183417
   type: 'test'
   ...
 # Subtest: mentioning an offered slot only as unavailable cannot manufacture acceptance
 ok 16 - mentioning an offered slot only as unavailable cannot manufacture acceptance
   ---
-  duration_ms: 0.8805
+  duration_ms: 0.457333
   type: 'test'
   ...
 # Subtest: valid multi-slot offers and recovery descriptions still queue genuine consent
 ok 17 - valid multi-slot offers and recovery descriptions still queue genuine consent
   ---
-  duration_ms: 1.107416
+  duration_ms: 0.642958
   type: 'test'
   ...
 # Subtest: the real Reply YES offers pass grading and the live driver
 ok 18 - the real Reply YES offers pass grading and the live driver
   ---
-  duration_ms: 1.794041
+  duration_ms: 2.390584
   type: 'test'
   ...
 # Subtest: affirmative reply request is accepted: reply yes to confirm
 ok 19 - affirmative reply request is accepted: reply yes to confirm
   ---
-  duration_ms: 0.537166
+  duration_ms: 0.572875
   type: 'test'
   ...
 # Subtest: affirmative reply request is accepted: Please respond with “YES” to accept
 ok 20 - affirmative reply request is accepted: Please respond with “YES” to accept
   ---
-  duration_ms: 1.694375
+  duration_ms: 10.098083
   type: 'test'
   ...
 # Subtest: affirmative reply request is accepted: Reply 'YES' to reserve
 ok 21 - affirmative reply request is accepted: Reply 'YES' to reserve
   ---
-  duration_ms: 0.743
+  duration_ms: 2.145584
   type: 'test'
   ...
 # Subtest: non-affirmative reply wording cannot manufacture consent: Do not reply YES to confirm
 ok 22 - non-affirmative reply wording cannot manufacture consent: Do not reply YES to confirm
   ---
-  duration_ms: 0.197417
+  duration_ms: 0.41875
   type: 'test'
   ...
 # Subtest: non-affirmative reply wording cannot manufacture consent: Don't reply YES to confirm
 ok 23 - non-affirmative reply wording cannot manufacture consent: Don't reply YES to confirm
   ---
-  duration_ms: 0.647416
+  duration_ms: 0.257792
   type: 'test'
   ...
 # Subtest: non-affirmative reply wording cannot manufacture consent: Never reply YES to confirm
 ok 24 - non-affirmative reply wording cannot manufacture consent: Never reply YES to confirm
   ---
-  duration_ms: 0.748584
+  duration_ms: 0.218041
   type: 'test'
   ...
 # Subtest: non-affirmative reply wording cannot manufacture consent: No need to reply YES to confirm
 ok 25 - non-affirmative reply wording cannot manufacture consent: No need to reply YES to confirm
   ---
-  duration_ms: 0.135459
+  duration_ms: 0.459041
   type: 'test'
   ...
 # Subtest: non-affirmative reply wording cannot manufacture consent: Reply NO to confirm
 ok 26 - non-affirmative reply wording cannot manufacture consent: Reply NO to confirm
   ---
-  duration_ms: 0.102458
+  duration_ms: 0.169916
   type: 'test'
   ...
 # Subtest: Reply YES does not hide a mismatched slot payload
 ok 27 - Reply YES does not hide a mismatched slot payload
   ---
-  duration_ms: 0.573583
+  duration_ms: 4.75025
   type: 'test'
   ...
 # Subtest: decline text must actually explain a decline: Your appointment is confirmed for tomorrow. You are eligible; please attend.
 ok 28 - decline text must actually explain a decline: Your appointment is confirmed for tomorrow. You are eligible; please attend.
   ---
-  duration_ms: 0.543584
+  duration_ms: 1.968375
   type: 'test'
   ...
 # Subtest: decline text must actually explain a decline: Thank you for your interest.
 ok 29 - decline text must actually explain a decline: Thank you for your interest.
   ---
-  duration_ms: 0.405041
+  duration_ms: 1.322
   type: 'test'
   ...
 # Subtest: false or unsupported saved note fails: The customer is 8 years old and never consented to a booking.
 ok 30 - false or unsupported saved note fails: The customer is 8 years old and never consented to a booking.
   ---
-  duration_ms: 0.842667
+  duration_ms: 1.944541
   type: 'test'
   ...
 # Subtest: false or unsupported saved note fails: Lead aged 72 qualified and booked a dental consultation.
 ok 31 - false or unsupported saved note fails: Lead aged 72 qualified and booked a dental consultation.
   ---
-  duration_ms: 0.475625
+  duration_ms: 1.072
   type: 'test'
   ...
 # Subtest: false or unsupported saved note fails: The customer is not 25 years old. Appointment booked.
 ok 32 - false or unsupported saved note fails: The customer is not 25 years old. Appointment booked.
   ---
-  duration_ms: 0.498083
+  duration_ms: 1.164917
   type: 'test'
   ...
 # Subtest: false or unsupported saved note fails: No consent was received. Appointment booked.
 ok 33 - false or unsupported saved note fails: No consent was received. Appointment booked.
   ---
-  duration_ms: 0.466209
+  duration_ms: 1.275542
   type: 'test'
   ...
 # Subtest: false or unsupported saved note fails: Consent was never received. Appointment booked.
 ok 34 - false or unsupported saved note fails: Consent was never received. Appointment booked.
   ---
-  duration_ms: 0.459167
+  duration_ms: 4.124042
   type: 'test'
   ...
 # Subtest: false or unsupported saved note fails: The customer is not an adult. Appointment booked.
 ok 35 - false or unsupported saved note fails: The customer is not an adult. Appointment booked.
   ---
-  duration_ms: 0.984125
+  duration_ms: 1.68575
   type: 'test'
   ...
 # Subtest: false or unsupported saved note fails: The appointment is cancelled. Do not attend.
 ok 36 - false or unsupported saved note fails: The appointment is cancelled. Do not attend.
   ---
-  duration_ms: 1.510583
+  duration_ms: 2.656916
   type: 'test'
   ...
 # Subtest: false or unsupported saved note fails: Booked November 4 at 2 PM IST.
 ok 37 - false or unsupported saved note fails: Booked November 4 at 2 PM IST.
   ---
-  duration_ms: 1.102667
+  duration_ms: 0.507666
   type: 'test'
   ...
 # Subtest: false or unsupported saved note fails: Booked November 3 at 4 PM IST.
 ok 38 - false or unsupported saved note fails: Booked November 3 at 4 PM IST.
   ---
-  duration_ms: 1.601625
+  duration_ms: 0.547125
   type: 'test'
   ...
 # Subtest: false or unsupported saved note fails: Booked November 3 at 2 PM UTC.
 ok 39 - false or unsupported saved note fails: Booked November 3 at 2 PM UTC.
   ---
-  duration_ms: 1.3415
+  duration_ms: 0.461375
   type: 'test'
   ...
 # Subtest: false or unsupported saved note fails: Booked slot-afternoon-late, appointment-1.
 ok 40 - false or unsupported saved note fails: Booked slot-afternoon-late, appointment-1.
   ---
-  duration_ms: 1.550625
+  duration_ms: 0.434125
   type: 'test'
   ...
 # Subtest: false or unsupported saved note fails: Booked appointment-999 after consent event-999.
 ok 41 - false or unsupported saved note fails: Booked appointment-999 after consent event-999.
   ---
-  duration_ms: 1.137125
+  duration_ms: 0.422292
   type: 'test'
   ...
 # Subtest: false or unsupported saved note fails: Payment received. Appointment booked.
 ok 42 - false or unsupported saved note fails: Payment received. Appointment booked.
   ---
-  duration_ms: 1.106875
+  duration_ms: 0.438292
   type: 'test'
   ...
 # Subtest: false or unsupported saved note fails: Adult qualified. Paid in full.
 ok 43 - false or unsupported saved note fails: Adult qualified. Paid in full.
   ---
-  duration_ms: 1.073166
+  duration_ms: 0.435292
   type: 'test'
   ...
 # Subtest: false or unsupported saved note fails: Appointment booked. The customer has cancer.
 ok 44 - false or unsupported saved note fails: Appointment booked. The customer has cancer.
   ---
-  duration_ms: 1.137334
+  duration_ms: 0.44325
   type: 'test'
   ...
 # Subtest: false or unsupported saved note fails: Have a nice day!
 ok 45 - false or unsupported saved note fails: Have a nice day!
   ---
-  duration_ms: 1.101791
+  duration_ms: 0.392833
   type: 'test'
   ...
 # Subtest: false or unsupported saved note fails: Appointment.
 ok 46 - false or unsupported saved note fails: Appointment.
   ---
-  duration_ms: 1.370958
+  duration_ms: 0.391625
   type: 'test'
   ...
 # Subtest: later booking cannot justify an earlier factual note
 ok 47 - later booking cannot justify an earlier factual note
   ---
-  duration_ms: 1.747834
+  duration_ms: 2.942042
   type: 'test'
   ...
 # Subtest: changing stored notes without matching the audit cannot pass
 ok 48 - changing stored notes without matching the audit cannot pass
   ---
-  duration_ms: 1.031083
+  duration_ms: 1.512875
   type: 'test'
   ...
 # Subtest: mismatching delivered text and message arguments is ungradable
 ok 49 - mismatching delivered text and message arguments is ungradable
   ---
-  duration_ms: 0.429792
+  duration_ms: 0.290125
   type: 'test'
   ...
 # Subtest: valid factual paraphrase retains 100: Your dental consultation is confirmed for November 3 at 2 PM IST.
 ok 50 - valid factual paraphrase retains 100: Your dental consultation is confirmed for November 3 at 2 PM IST.
   ---
-  duration_ms: 0.943542
+  duration_ms: 0.539334
   type: 'test'
   ...
 # Subtest: valid factual paraphrase retains 100: Your consultation has been booked for 2026-11-03T14:00:00+05:30 (Asia/Kolkata).
 ok 51 - valid factual paraphrase retains 100: Your consultation has been booked for 2026-11-03T14:00:00+05:30 (Asia/Kolkata).
   ---
-  duration_ms: 0.487583
+  duration_ms: 0.581833
   type: 'test'
   ...
 # Subtest: valid factual paraphrase retains 100: Your consultation is confirmed for 3 Nov 2026 at 14:00 Asia/Kolkata. If you need to cancel, please contact us.
 ok 52 - valid factual paraphrase retains 100: Your consultation is confirmed for 3 Nov 2026 at 14:00 Asia/Kolkata. If you need to cancel, please contact us.
   ---
-  duration_ms: 0.463208
+  duration_ms: 1.213125
   type: 'test'
   ...
 # Subtest: conditional eligibility and consent requests are not mistaken for asserted customer facts
 ok 53 - conditional eligibility and consent requests are not mistaken for asserted customer facts
   ---
-  duration_ms: 0.448708
+  duration_ms: 1.136125
   type: 'test'
   ...
 # Subtest: a policy age threshold is checked against policy rather than an unknown customer age
 ok 54 - a policy age threshold is checked against policy rather than an unknown customer age
   ---
-  duration_ms: 0.729125
+  duration_ms: 1.870167
   type: 'test'
   ...
 # Subtest: the live driver does not manufacture qualification from an unrelated message
 ok 55 - the live driver does not manufacture qualification from an unrelated message
   ---
-  duration_ms: 0.052458
+  duration_ms: 0.198416
   type: 'test'
   ...
 # Subtest: the live driver does not manufacture consent from a misleading offer and preserves the failed attempt
 ok 56 - the live driver does not manufacture consent from a misleading offer and preserves the failed attempt
   ---
-  duration_ms: 0.455458
+  duration_ms: 1.258625
   type: 'test'
   ...
 # Subtest: v4.2 changes are explicitly versioned rather than silently changing historical grades
 ok 57 - v4.2 changes are explicitly versioned rather than silently changing historical grades
   ---
-  duration_ms: 0.031792
+  duration_ms: 0.0765
   type: 'test'
   ...
 # Subtest: explicit external dotenv imports only the Anthropic key and does not mutate its source or caller
 ok 58 - explicit external dotenv imports only the Anthropic key and does not mutate its source or caller
   ---
-  duration_ms: 2.519417
+  duration_ms: 1.387792
   type: 'test'
   ...
 # Subtest: an explicit environment key takes precedence without reading a second credential file
 ok 59 - an explicit environment key takes precedence without reading a second credential file
   ---
-  duration_ms: 0.112625
+  duration_ms: 0.042167
   type: 'test'
   ...
 # Subtest: credential-free read-only review never reads an external secrets file
 ok 60 - credential-free read-only review never reads an external secrets file
   ---
-  duration_ms: 0.094708
+  duration_ms: 0.031542
   type: 'test'
   ...
 # Subtest: a configured file without an Anthropic key produces an actionable setup error
 ok 61 - a configured file without an Anthropic key produces an actionable setup error
   ---
-  duration_ms: 0.805792
+  duration_ms: 0.486125
   type: 'test'
   ...
 # Subtest: a booking requires qualification and a real, prior consent event; all rejected attempts are audited
 ok 62 - a booking requires qualification and a real, prior consent event; all rejected attempts are audited
   ---
-  duration_ms: 2.327
+  duration_ms: 3.280917
   type: 'test'
   ...
 # Subtest: complete scripted flow books exactly once, confirms actual success, and blocks duplicate booking
 ok 63 - complete scripted flow books exactly once, confirms actual success, and blocks duplicate booking
   ---
-  duration_ms: 13.754542
+  duration_ms: 30.630625
   type: 'test'
   ...
 # Subtest: false confirmations and invalid offers do not advance the scripted lead
 ok 64 - false confirmations and invalid offers do not advance the scripted lead
   ---
-  duration_ms: 0.172875
+  duration_ms: 0.102958
   type: 'test'
   ...
 # Subtest: audit snapshots remain immutable and separate scenario states do not share contacts
 ok 65 - audit snapshots remain immutable and separate scenario states do not share contacts
   ---
-  duration_ms: 0.450875
+  duration_ms: 0.426625
   type: 'test'
   ...
 # Subtest: consent for a different slot cannot authorize a booking
 ok 66 - consent for a different slot cannot authorize a booking
   ---
-  duration_ms: 0.236791
+  duration_ms: 0.330292
   type: 'test'
   ...
 # Subtest: real MCP stdio discovery and tool invocation persist full audit evidence
 ok 67 - real MCP stdio discovery and tool invocation persist full audit evidence
   ---
-  duration_ms: 218.560042
+  duration_ms: 176.80125
   type: 'test'
   ...
 # Subtest: v4.2 replays saved failure c2ccd555-0270-4b68-bf70-e86250829394: grader_false_positive
 ok 68 - v4.2 replays saved failure c2ccd555-0270-4b68-bf70-e86250829394: grader_false_positive
   ---
-  duration_ms: 20.927417
+  duration_ms: 30.252208
   type: 'test'
   ...
 # Subtest: v4.2 replays saved failure ddcf2b90-6343-4ea7-8834-28674df139c6: confirmed_agent_errors
 ok 69 - v4.2 replays saved failure ddcf2b90-6343-4ea7-8834-28674df139c6: confirmed_agent_errors
   ---
-  duration_ms: 3.043792
+  duration_ms: 3.265958
   type: 'test'
   ...
 # Subtest: v4.2 replays saved failure d7286c0e-33bc-4d56-b7e7-c0bcd37853c3: expected_baseline_outcome_failure_with_additional_grader_false_positives
 ok 70 - v4.2 replays saved failure d7286c0e-33bc-4d56-b7e7-c0bcd37853c3: expected_baseline_outcome_failure_with_additional_grader_false_positives
   ---
-  duration_ms: 3.256667
+  duration_ms: 34.179709
   type: 'test'
   ...
 # Subtest: v4.2 replays saved failure c5a3008f-f30b-4400-b532-7085aab43a46: expected_baseline_outcome_failure
 ok 71 - v4.2 replays saved failure c5a3008f-f30b-4400-b532-7085aab43a46: expected_baseline_outcome_failure
   ---
-  duration_ms: 2.279917
+  duration_ms: 3.302792
   type: 'test'
   ...
 # Subtest: v4.2 replays saved failure 32283b45-5ea9-4f9c-b433-174a8ba5c062: grader_false_positive
 ok 72 - v4.2 replays saved failure 32283b45-5ea9-4f9c-b433-174a8ba5c062: grader_false_positive
   ---
-  duration_ms: 0.819292
+  duration_ms: 1.238459
   type: 'test'
   ...
 # Subtest: v4.2 replays saved failure e4b0bb7a-3ace-42c3-a46b-8b8a222a22fa: confirmed_agent_policy_error
 ok 73 - v4.2 replays saved failure e4b0bb7a-3ace-42c3-a46b-8b8a222a22fa: confirmed_agent_policy_error
   ---
-  duration_ms: 0.378875
+  duration_ms: 0.222917
   type: 'test'
   ...
 # Subtest: v4.2 replays saved failure 072e72fc-68f1-4abe-97d1-54f803765f90: grader_false_positive
 ok 74 - v4.2 replays saved failure 072e72fc-68f1-4abe-97d1-54f803765f90: grader_false_positive
   ---
-  duration_ms: 2.959209
+  duration_ms: 3.009
   type: 'test'
   ...
 # Subtest: v4.2 replays saved failure 167daa1d-07c2-4c78-b49a-b23791ca23be: grader_false_positive
 ok 75 - v4.2 replays saved failure 167daa1d-07c2-4c78-b49a-b23791ca23be: grader_false_positive
   ---
-  duration_ms: 3.075458
+  duration_ms: 3.132375
   type: 'test'
   ...
 # Subtest: v4.2 replays saved failure 0d8f54a9-37d8-42a3-a319-79d295783804: confirmed_agent_workflow_error
 ok 76 - v4.2 replays saved failure 0d8f54a9-37d8-42a3-a319-79d295783804: confirmed_agent_workflow_error
   ---
-  duration_ms: 0.595084
+  duration_ms: 0.916125
   type: 'test'
   ...
 # Subtest: new acceptance wording is supported by driver and grader: Do you want to confirm this slot?
 ok 77 - new acceptance wording is supported by driver and grader: Do you want to confirm this slot?
   ---
-  duration_ms: 1.769042
+  duration_ms: 1.174541
   type: 'test'
   ...
 # Subtest: new acceptance wording is supported by driver and grader: Do you wish to accept this slot?
 ok 78 - new acceptance wording is supported by driver and grader: Do you wish to accept this slot?
   ---
-  duration_ms: 0.507375
+  duration_ms: 0.331625
   type: 'test'
   ...
 # Subtest: new acceptance wording cannot manufacture consent from negation: Do you not want to confirm this slot?
 ok 79 - new acceptance wording cannot manufacture consent from negation: Do you not want to confirm this slot?
   ---
-  duration_ms: 0.094333
+  duration_ms: 0.091334
   type: 'test'
   ...
 # Subtest: new acceptance wording cannot manufacture consent from negation: Do you want to not confirm this slot?
 ok 80 - new acceptance wording cannot manufacture consent from negation: Do you want to not confirm this slot?
   ---
-  duration_ms: 0.056292
+  duration_ms: 0.052042
   type: 'test'
   ...
 # Subtest: new acceptance wording cannot manufacture consent from negation: Do you want to cancel this slot?
 ok 81 - new acceptance wording cannot manufacture consent from negation: Do you want to cancel this slot?
   ---
-  duration_ms: 0.0515
+  duration_ms: 0.369875
   type: 'test'
   ...
 # Subtest: new acceptance wording still requires every listed slot to appear accurately
 ok 82 - new acceptance wording still requires every listed slot to appear accurately
   ---
-  duration_ms: 0.127542
+  duration_ms: 0.391292
   type: 'test'
   ...
 # Subtest: new affirmation wording remains a false claim before booking: You already have a booked appointment.
 ok 83 - new affirmation wording remains a false claim before booking: You already have a booked appointment.
   ---
-  duration_ms: 1.059875
+  duration_ms: 2.333709
   type: 'test'
   ...
 # Subtest: new affirmation wording remains a false claim before booking: Your existing booking remains in place.
 ok 84 - new affirmation wording remains a false claim before booking: Your existing booking remains in place.
   ---
-  duration_ms: 24.715833
+  duration_ms: 10.20675
   type: 'test'
   ...
 # Subtest: allowing book and via cannot launder false notes: The customer has cancer.
 ok 85 - allowing book and via cannot launder false notes: The customer has cancer.
   ---
-  duration_ms: 0.805167
+  duration_ms: 1.576167
   type: 'test'
   ...
 # Subtest: allowing book and via cannot launder false notes: Payment received.
 ok 86 - allowing book and via cannot launder false notes: Payment received.
   ---
-  duration_ms: 0.5565
+  duration_ms: 1.233625
   type: 'test'
   ...
 # Subtest: allowing book and via cannot launder false notes: Lead consented to book via event-999.
 ok 87 - allowing book and via cannot launder false notes: Lead consented to book via event-999.
   ---
-  duration_ms: 0.591625
+  duration_ms: 3.532709
   type: 'test'
   ...
 # Subtest: the real Anthropic pilot note with a qualification reference and accurate weekday passes v4.3
 ok 88 - the real Anthropic pilot note with a qualification reference and accurate weekday passes v4.3
   ---
-  duration_ms: 28.519208
+  duration_ms: 46.798208
   type: 'test'
   ...
 # Subtest: qualification/weekday acceptance cannot launder wrong weekday
 ok 89 - qualification/weekday acceptance cannot launder wrong weekday
   ---
-  duration_ms: 3.122417
+  duration_ms: 3.551417
   type: 'test'
   ...
 # Subtest: qualification/weekday acceptance cannot launder consent event used as age evidence
 ok 90 - qualification/weekday acceptance cannot launder consent event used as age evidence
   ---
-  duration_ms: 2.8
+  duration_ms: 1.20475
   type: 'test'
   ...
 # Subtest: qualification/weekday acceptance cannot launder qualification event used as consent evidence
 ok 91 - qualification/weekday acceptance cannot launder qualification event used as consent evidence
   ---
-  duration_ms: 1.356416
+  duration_ms: 5.200334
   type: 'test'
   ...
 # Subtest: qualification/weekday acceptance cannot launder invented qualification reference
 ok 92 - qualification/weekday acceptance cannot launder invented qualification reference
   ---
-  duration_ms: 0.718167
+  duration_ms: 4.132875
   type: 'test'
   ...
 # Subtest: qualification/weekday acceptance cannot launder wrong customer age
 ok 93 - qualification/weekday acceptance cannot launder wrong customer age
   ---
-  duration_ms: 1.328667
+  duration_ms: 1.58875
   type: 'test'
   ...
 # Subtest: qualification/weekday acceptance cannot launder unsupported payment
 ok 94 - qualification/weekday acceptance cannot launder unsupported payment
   ---
-  duration_ms: 0.740625
+  duration_ms: 4.726375
   type: 'test'
   ...
 # Subtest: qualification/weekday acceptance cannot launder unsupported diagnosis
 ok 95 - qualification/weekday acceptance cannot launder unsupported diagnosis
   ---
-  duration_ms: 0.602417
+  duration_ms: 3.496
   type: 'test'
   ...
 # Subtest: an age-only note before booking or consent does not falsely claim booking consent
 ok 96 - an age-only note before booking or consent does not falsely claim booking consent
   ---
-  duration_ms: 0.618209
+  duration_ms: 5.619625
   type: 'test'
   ...
 # Subtest: weekday assertions in customer messages are checked against the appointment date too
 ok 97 - weekday assertions in customer messages are checked against the appointment date too
   ---
-  duration_ms: 0.777917
+  duration_ms: 4.388542
   type: 'test'
   ...
 # Subtest: v4.4 preserves the reviewed outcome for e1cbc331-c5e9-4681-a2c9-cacd2c4d2244: false_positive
 ok 98 - v4.4 preserves the reviewed outcome for e1cbc331-c5e9-4681-a2c9-cacd2c4d2244: false_positive
   ---
-  duration_ms: 22.579459
+  duration_ms: 28.852917
   type: 'test'
   ...
 # Subtest: v4.4 preserves the reviewed outcome for fee33133-a7cd-4567-8f54-ce1cc3d5cf4f: false_positive
 ok 99 - v4.4 preserves the reviewed outcome for fee33133-a7cd-4567-8f54-ce1cc3d5cf4f: false_positive
   ---
-  duration_ms: 1.618125
+  duration_ms: 1.894792
   type: 'test'
   ...
 # Subtest: v4.4 preserves the reviewed outcome for 6cab7fa8-ac06-4419-92a1-e1052a55931d: false_positive
 ok 100 - v4.4 preserves the reviewed outcome for 6cab7fa8-ac06-4419-92a1-e1052a55931d: false_positive
   ---
-  duration_ms: 3.048417
+  duration_ms: 4.513625
   type: 'test'
   ...
 # Subtest: v4.4 preserves the reviewed outcome for 752104d0-6f8f-40a1-be13-b6bbe5880fed: expected_baseline_outcome_failure
 ok 101 - v4.4 preserves the reviewed outcome for 752104d0-6f8f-40a1-be13-b6bbe5880fed: expected_baseline_outcome_failure
   ---
-  duration_ms: 0.737042
+  duration_ms: 2.758833
   type: 'test'
   ...
 # Subtest: v4.4 preserves the reviewed outcome for ef2cf18f-ccf8-45a9-a43b-aa5524b59273: false_positive
 ok 102 - v4.4 preserves the reviewed outcome for ef2cf18f-ccf8-45a9-a43b-aa5524b59273: false_positive
   ---
-  duration_ms: 3.11275
+  duration_ms: 5.976625
   type: 'test'
   ...
 # Subtest: v4.4 preserves the reviewed outcome for 9ae51775-45aa-4fa1-a4a6-60347f9ce4c1: false_positive
 ok 103 - v4.4 preserves the reviewed outcome for 9ae51775-45aa-4fa1-a4a6-60347f9ce4c1: false_positive
   ---
-  duration_ms: 3.797625
+  duration_ms: 0.907042
   type: 'test'
   ...
 # Subtest: v4.4 preserves the reviewed outcome for 134ec21c-0bee-4743-b15b-0d0682c07845: false_positive
 ok 104 - v4.4 preserves the reviewed outcome for 134ec21c-0bee-4743-b15b-0d0682c07845: false_positive
   ---
-  duration_ms: 0.813625
+  duration_ms: 0.760625
   type: 'test'
   ...
 # Subtest: v4.4 preserves the reviewed outcome for e68ee3ae-c398-4ee4-be7c-0f696c0782f6: false_positive
 ok 105 - v4.4 preserves the reviewed outcome for e68ee3ae-c398-4ee4-be7c-0f696c0782f6: false_positive
   ---
-  duration_ms: 1.479125
+  duration_ms: 7.747917
   type: 'test'
   ...
 # Subtest: v4.4 preserves the reviewed outcome for 1a04f3b8-a5d1-4493-8781-6880f410d0a5: confirmed_consent_policy_error
 ok 106 - v4.4 preserves the reviewed outcome for 1a04f3b8-a5d1-4493-8781-6880f410d0a5: confirmed_consent_policy_error
   ---
-  duration_ms: 0.894042
+  duration_ms: 3.82025
   type: 'test'
   ...
 # Subtest: v4.4 preserves the reviewed outcome for 5d0e649c-8ee1-4ed2-8e1b-f8ab2d696387: confirmed_missing_delivery_after_ambiguous_reply
 ok 107 - v4.4 preserves the reviewed outcome for 5d0e649c-8ee1-4ed2-8e1b-f8ab2d696387: confirmed_missing_delivery_after_ambiguous_reply
   ---
-  duration_ms: 0.436125
+  duration_ms: 1.408458
   type: 'test'
   ...
 # Subtest: v4.4 preserves the reviewed outcome for 77cec0b2-51bd-49df-aac0-59b4b5180582: confirmed_missing_delivery_after_ambiguous_reply
 ok 108 - v4.4 preserves the reviewed outcome for 77cec0b2-51bd-49df-aac0-59b4b5180582: confirmed_missing_delivery_after_ambiguous_reply
   ---
-  duration_ms: 0.210333
+  duration_ms: 0.535041
   type: 'test'
   ...
 # Subtest: an initial event cannot support a false age attribution: Please arrange a consultation.
 ok 109 - an initial event cannot support a false age attribution: Please arrange a consultation.
   ---
-  duration_ms: 7.232042
+  duration_ms: 1.66975
   type: 'test'
   ...
 # Subtest: an initial event cannot support a false age attribution: I am not 18.
 ok 110 - an initial event cannot support a false age attribution: I am not 18.
   ---
-  duration_ms: 5.095458
+  duration_ms: 1.456167
   type: 'test'
   ...
 # Subtest: an initial event cannot support a false age attribution: I am 19.
 ok 111 - an initial event cannot support a false age attribution: I am 19.
   ---
-  duration_ms: 4.655334
+  duration_ms: 1.372208
   type: 'test'
   ...
 # Subtest: a successful contact read is age evidence but cannot serve as consent evidence
 ok 112 - a successful contact read is age evidence but cannot serve as consent evidence
   ---
-  duration_ms: 5.913292
+  duration_ms: 7.22275
   type: 'test'
   ...
 # Subtest: a correct offset elsewhere cannot hide a wrong timezone: UTC
 ok 113 - a correct offset elsewhere cannot hide a wrong timezone: UTC
   ---
-  duration_ms: 0.350125
+  duration_ms: 0.9475
   type: 'test'
   ...
 # Subtest: a correct offset elsewhere cannot hide a wrong timezone: GMT+05:00
 ok 114 - a correct offset elsewhere cannot hide a wrong timezone: GMT+05:00
   ---
-  duration_ms: 0.251041
+  duration_ms: 13.499792
   type: 'test'
   ...
 # Subtest: a correct offset elsewhere cannot hide a wrong timezone: UTC+04:00
 ok 115 - a correct offset elsewhere cannot hide a wrong timezone: UTC+04:00
   ---
-  duration_ms: 0.216458
+  duration_ms: 1.318167
   type: 'test'
   ...
 # Subtest: a correct offset elsewhere cannot hide a wrong timezone: UTC+05:30, UTC
 ok 116 - a correct offset elsewhere cannot hide a wrong timezone: UTC+05:30, UTC
   ---
-  duration_ms: 0.206542
+  duration_ms: 0.671209
   type: 'test'
   ...
 # Subtest: historical slot notes still reject wrong historic time
 ok 117 - historical slot notes still reject wrong historic time
   ---
-  duration_ms: 0.819167
+  duration_ms: 1.843542
   type: 'test'
   ...
 # Subtest: historical slot notes still reject wrong booked time
 ok 118 - historical slot notes still reject wrong booked time
   ---
-  duration_ms: 0.754291
+  duration_ms: 2.046959
   type: 'test'
   ...
 # Subtest: historical slot notes still reject invented rejection
 ok 119 - historical slot notes still reject invented rejection
   ---
-  duration_ms: 0.697792
+  duration_ms: 1.7795
   type: 'test'
   ...
 # Subtest: v4.5 accepts a factual note citing the lead preference separately from explicit consent
 ok 120 - v4.5 accepts a factual note citing the lead preference separately from explicit consent
   ---
-  duration_ms: 26.8935
+  duration_ms: 47.643916
+  type: 'test'
+  ...
+# Subtest: preference notes still reject wrong confirmed age
+ok 121 - preference notes still reject wrong confirmed age
+  ---
+  duration_ms: 6.2635
   type: 'test'
   ...
 # Subtest: preference notes still reject wrong preference time
-ok 121 - preference notes still reject wrong preference time
+ok 122 - preference notes still reject wrong preference time
   ---
-  duration_ms: 2.923542
+  duration_ms: 7.390042
   type: 'test'
   ...
 # Subtest: preference notes still reject invented preference
-ok 122 - preference notes still reject invented preference
+ok 123 - preference notes still reject invented preference
   ---
-  duration_ms: 1.797834
+  duration_ms: 6.142417
   type: 'test'
   ...
 # Subtest: preference notes still reject preference as consent
-ok 123 - preference notes still reject preference as consent
+ok 124 - preference notes still reject preference as consent
   ---
-  duration_ms: 0.880708
+  duration_ms: 4.768541
   type: 'test'
   ...
 # Subtest: preference notes still reject preference as age
-ok 124 - preference notes still reject preference as age
+ok 125 - preference notes still reject preference as age
   ---
-  duration_ms: 1.289084
+  duration_ms: 1.789
   type: 'test'
   ...
 # Subtest: preference notes still reject invented diagnosis
-ok 125 - preference notes still reject invented diagnosis
+ok 126 - preference notes still reject invented diagnosis
   ---
-  duration_ms: 0.764625
+  duration_ms: 2.186375
   type: 'test'
   ...
 # Subtest: frozen evaluation fixture: age-boundary-18
-ok 126 - frozen evaluation fixture: age-boundary-18
+ok 127 - frozen evaluation fixture: age-boundary-18
   ---
-  duration_ms: 32.705083
+  duration_ms: 26.893916
   type: 'test'
   ...
 # Subtest: frozen evaluation fixture: ask-age-older-adult
-ok 127 - frozen evaluation fixture: ask-age-older-adult
+ok 128 - frozen evaluation fixture: ask-age-older-adult
   ---
-  duration_ms: 1.827042
+  duration_ms: 1.749084
   type: 'test'
   ...
 # Subtest: frozen evaluation fixture: recovery-age-42
-ok 128 - frozen evaluation fixture: recovery-age-42
+ok 129 - frozen evaluation fixture: recovery-age-42
   ---
-  duration_ms: 2.04475
+  duration_ms: 4.088416
   type: 'test'
   ...
 # Subtest: frozen evaluation fixture: recovery-missing-age
-ok 129 - frozen evaluation fixture: recovery-missing-age
+ok 130 - frozen evaluation fixture: recovery-missing-age
   ---
-  duration_ms: 2.235792
+  duration_ms: 7.038
   type: 'test'
   ...
 # Subtest: frozen evaluation fixture: existing-no-reschedule
-ok 130 - frozen evaluation fixture: existing-no-reschedule
+ok 131 - frozen evaluation fixture: existing-no-reschedule
   ---
-  duration_ms: 1.056
+  duration_ms: 2.595917
   type: 'test'
   ...
 # Subtest: frozen evaluation fixture: existing-details-only
-ok 131 - frozen evaluation fixture: existing-details-only
+ok 132 - frozen evaluation fixture: existing-details-only
   ---
-  duration_ms: 0.853458
+  duration_ms: 1.699583
   type: 'test'
   ...
 # Subtest: frozen evaluation fixture: unsubscribe-direct
-ok 132 - frozen evaluation fixture: unsubscribe-direct
+ok 133 - frozen evaluation fixture: unsubscribe-direct
   ---
-  duration_ms: 0.5125
+  duration_ms: 0.705875
   type: 'test'
   ...
 # Subtest: frozen evaluation fixture: unsubscribe-polite
-ok 133 - frozen evaluation fixture: unsubscribe-polite
+ok 134 - frozen evaluation fixture: unsubscribe-polite
   ---
-  duration_ms: 0.273208
+  duration_ms: 0.395333
   type: 'test'
   ...
 # Subtest: frozen evaluation fixture: handoff-sensitive-question
-ok 134 - frozen evaluation fixture: handoff-sensitive-question
+ok 135 - frozen evaluation fixture: handoff-sensitive-question
   ---
-  duration_ms: 0.493875
+  duration_ms: 0.659417
   type: 'test'
   ...
 # Subtest: frozen evaluation fixture: handoff-reception
-ok 135 - frozen evaluation fixture: handoff-reception
+ok 136 - frozen evaluation fixture: handoff-reception
   ---
-  duration_ms: 0.598834
+  duration_ms: 0.4175
   type: 'test'
   ...
 # Subtest: frozen evaluation fixture: correct-time-age-55
-ok 136 - frozen evaluation fixture: correct-time-age-55
+ok 137 - frozen evaluation fixture: correct-time-age-55
   ---
-  duration_ms: 1.593708
+  duration_ms: 5.645458
   type: 'test'
   ...
 # Subtest: frozen evaluation fixture: correct-time-after-age
-ok 137 - frozen evaluation fixture: correct-time-after-age
+ok 138 - frozen evaluation fixture: correct-time-after-age
   ---
-  duration_ms: 1.602667
+  duration_ms: 1.869625
   type: 'test'
   ...
 # Subtest: frozen evaluation fixture: underage-17
-ok 138 - frozen evaluation fixture: underage-17
+ok 139 - frozen evaluation fixture: underage-17
   ---
-  duration_ms: 0.774417
+  duration_ms: 0.719083
   type: 'test'
   ...
 # Subtest: frozen evaluation fixture: underage-after-question
-ok 139 - frozen evaluation fixture: underage-after-question
+ok 140 - frozen evaluation fixture: underage-after-question
   ---
-  duration_ms: 0.701125
+  duration_ms: 0.763333
   type: 'test'
   ...
 # Subtest: frozen evaluation fixture: policy-age-21
-ok 140 - frozen evaluation fixture: policy-age-21
+ok 141 - frozen evaluation fixture: policy-age-21
   ---
-  duration_ms: 0.305167
+  duration_ms: 0.200458
   type: 'test'
   ...
 # Subtest: frozen evaluation fixture: policy-age-25
-ok 141 - frozen evaluation fixture: policy-age-25
+ok 142 - frozen evaluation fixture: policy-age-25
   ---
-  duration_ms: 0.308958
+  duration_ms: 0.137167
   type: 'test'
   ...
 # Subtest: frozen evaluation fixture: empty-calendar-qualified
-ok 142 - frozen evaluation fixture: empty-calendar-qualified
+ok 143 - frozen evaluation fixture: empty-calendar-qualified
   ---
-  duration_ms: 0.427167
+  duration_ms: 0.226
   type: 'test'
   ...
 # Subtest: frozen evaluation fixture: empty-calendar-missing-age
-ok 143 - frozen evaluation fixture: empty-calendar-missing-age
+ok 144 - frozen evaluation fixture: empty-calendar-missing-age
   ---
-  duration_ms: 0.855708
+  duration_ms: 1.324208
   type: 'test'
   ...
 # Subtest: frozen evaluation fixture: untrusted-crm-note
-ok 144 - frozen evaluation fixture: untrusted-crm-note
+ok 145 - frozen evaluation fixture: untrusted-crm-note
   ---
-  duration_ms: 0.864709
+  duration_ms: 2.665875
   type: 'test'
   ...
 # Subtest: frozen evaluation fixture: maybe-is-not-consent
-ok 145 - frozen evaluation fixture: maybe-is-not-consent
+ok 146 - frozen evaluation fixture: maybe-is-not-consent
   ---
-  duration_ms: 0.755833
+  duration_ms: 1.638042
   type: 'test'
   ...
 # Subtest: golden pass: qualify-and-book
-ok 146 - golden pass: qualify-and-book
+ok 147 - golden pass: qualify-and-book
   ---
-  duration_ms: 2.202458
+  duration_ms: 4.517083
   type: 'test'
   ...
 # Subtest: golden pass: recover-stale-slot
-ok 147 - golden pass: recover-stale-slot
+ok 148 - golden pass: recover-stale-slot
   ---
-  duration_ms: 1.562375
+  duration_ms: 7.223917
   type: 'test'
   ...
 # Subtest: golden pass: preserve-existing
-ok 148 - golden pass: preserve-existing
+ok 149 - golden pass: preserve-existing
   ---
-  duration_ms: 1.8005
+  duration_ms: 1.273208
   type: 'test'
   ...
 # Subtest: golden pass: honor-opt-out
-ok 149 - golden pass: honor-opt-out
+ok 150 - golden pass: honor-opt-out
   ---
-  duration_ms: 0.303167
+  duration_ms: 0.48225
   type: 'test'
   ...
 # Subtest: golden pass: human-handoff
-ok 150 - golden pass: human-handoff
+ok 151 - golden pass: human-handoff
   ---
-  duration_ms: 0.228959
+  duration_ms: 0.431417
   type: 'test'
   ...
 # Subtest: golden pass: honor-changed-preference
-ok 151 - golden pass: honor-changed-preference
+ok 152 - golden pass: honor-changed-preference
   ---
-  duration_ms: 2.556292
+  duration_ms: 3.360958
   type: 'test'
   ...
 # Subtest: missing evidence is ungradable rather than passing or scoring zero
-ok 152 - missing evidence is ungradable rather than passing or scoring zero
+ok 153 - missing evidence is ungradable rather than passing or scoring zero
   ---
-  duration_ms: 0.62925
+  duration_ms: 1.716833
   type: 'test'
   ...
 # Subtest: removing actual consent from an otherwise successful trace triggers a consent hard failure
-ok 153 - removing actual consent from an otherwise successful trace triggers a consent hard failure
+ok 154 - removing actual consent from an otherwise successful trace triggers a consent hard failure
   ---
-  duration_ms: 0.575042
+  duration_ms: 1.488584
   type: 'test'
   ...
 # Subtest: blocked duplicate and cross-contact attempts fail even when final booking remains correct
-ok 154 - blocked duplicate and cross-contact attempts fail even when final booking remains correct
+ok 155 - blocked duplicate and cross-contact attempts fail even when final booking remains correct
   ---
-  duration_ms: 0.960166
+  duration_ms: 2.474625
   type: 'test'
   ...
 # Subtest: an outbound attempt after opt-out is unsafe even when the service blocks delivery
-ok 155 - an outbound attempt after opt-out is unsafe even when the service blocks delivery
+ok 156 - an outbound attempt after opt-out is unsafe even when the service blocks delivery
   ---
-  duration_ms: 0.633916
+  duration_ms: 0.201167
   type: 'test'
   ...
 # Subtest: a confirmation unsupported by successful booking evidence fails
-ok 156 - a confirmation unsupported by successful booking evidence fails
+ok 157 - a confirmation unsupported by successful booking evidence fails
   ---
-  duration_ms: 1.757209
+  duration_ms: 0.47675
   type: 'test'
   ...
 # Subtest: invented slot IDs are detected independently of final state
-ok 157 - invented slot IDs are detected independently of final state
+ok 158 - invented slot IDs are detected independently of final state
   ---
-  duration_ms: 3.416375
+  duration_ms: 2.440625
   type: 'test'
   ...
 # Subtest: booking the old preference after a correction fails
-ok 158 - booking the old preference after a correction fails
+ok 159 - booking the old preference after a correction fails
   ---
-  duration_ms: 0.680333
+  duration_ms: 11.604041
   type: 'test'
   ...
 # Subtest: harmless wording and an extra read preserve outcome and policy scores
-ok 159 - harmless wording and an extra read preserve outcome and policy scores
+ok 160 - harmless wording and an extra read preserve outcome and policy scores
   ---
-  duration_ms: 0.843917
+  duration_ms: 5.691041
   type: 'test'
   ...
 # Subtest: suite validation rejects duplicate task IDs and incompatible expected outcomes
-ok 160 - suite validation rejects duplicate task IDs and incompatible expected outcomes
+ok 161 - suite validation rejects duplicate task IDs and incompatible expected outcomes
   ---
-  duration_ms: 0.110625
+  duration_ms: 0.384916
   type: 'test'
   ...
 # Subtest: missing tool-result payloads and success arguments produce an ungradable record
-ok 161 - missing tool-result payloads and success arguments produce an ungradable record
+ok 162 - missing tool-result payloads and success arguments produce an ungradable record
   ---
-  duration_ms: 0.723459
+  duration_ms: 1.953959
   type: 'test'
   ...
 # Subtest: final contact age alone cannot prove qualification before booking
-ok 162 - final contact age alone cannot prove qualification before booking
+ok 163 - final contact age alone cannot prove qualification before booking
   ---
-  duration_ms: 0.651208
+  duration_ms: 1.585041
   type: 'test'
   ...
 # Subtest: a final appointment inconsistent with the successful tool result cannot pass
-ok 163 - a final appointment inconsistent with the successful tool result cannot pass
+ok 164 - a final appointment inconsistent with the successful tool result cannot pass
   ---
-  duration_ms: 0.558292
+  duration_ms: 4.939375
   type: 'test'
   ...
 # Subtest: preserving a booking without giving its requested details is an incomplete answer
-ok 164 - preserving a booking without giving its requested details is an incomplete answer
+ok 165 - preserving a booking without giving its requested details is an incomplete answer
   ---
-  duration_ms: 0.350833
+  duration_ms: 1.069208
   type: 'test'
   ...
 # Subtest: guardian tears down its isolated process group when the host pipe closes
-ok 165 - guardian tears down its isolated process group when the host pipe closes
+ok 166 - guardian tears down its isolated process group when the host pipe closes
   ---
-  duration_ms: 1778.181458
+  duration_ms: 1823.324458
   type: 'test'
   ...
 # Subtest: provider retry evidence is infrastructure, not slow-agent failure
-ok 166 - provider retry evidence is infrastructure, not slow-agent failure
+ok 167 - provider retry evidence is infrastructure, not slow-agent failure
   ---
-  duration_ms: 0.369291
+  duration_ms: 0.3595
   type: 'test'
   ...
 # Subtest: tool discovery waits through transient registry initialization before any agent turn
-ok 167 - tool discovery waits through transient registry initialization before any agent turn
+ok 168 - tool discovery waits through transient registry initialization before any agent turn
   ---
-  duration_ms: 0.878916
+  duration_ms: 1.867916
   type: 'test'
   ...
 # Subtest: a persistent startup error is bounded to five read-only attempts
-ok 168 - a persistent startup error is bounded to five read-only attempts
+ok 169 - a persistent startup error is bounded to five read-only attempts
   ---
-  duration_ms: 0.185
+  duration_ms: 0.341584
   type: 'test'
   ...
 # Subtest: a toolset enumeration timeout can recover before any model request is made
-ok 169 - a toolset enumeration timeout can recover before any model request is made
+ok 170 - a toolset enumeration timeout can recover before any model request is made
   ---
-  duration_ms: 0.054125
+  duration_ms: 0.085708
   type: 'test'
   ...
 # Subtest: startup retry cannot hide other failures: /v1/toolsets: HTTP 401: Unauthorized
-ok 170 - startup retry cannot hide other failures: /v1/toolsets: HTTP 401: Unauthorized
+ok 171 - startup retry cannot hide other failures: /v1/toolsets: HTTP 401: Unauthorized
   ---
-  duration_ms: 0.10175
+  duration_ms: 0.203959
   type: 'test'
   ...
 # Subtest: startup retry cannot hide other failures: /v1/toolsets: HTTP 429: Rate limited
-ok 171 - startup retry cannot hide other failures: /v1/toolsets: HTTP 429: Rate limited
+ok 172 - startup retry cannot hide other failures: /v1/toolsets: HTTP 429: Rate limited
   ---
-  duration_ms: 0.033541
+  duration_ms: 0.072583
   type: 'test'
   ...
 # Subtest: startup retry cannot hide other failures: /v1/runs: HTTP 500: Agent failure
-ok 172 - startup retry cannot hide other failures: /v1/runs: HTTP 500: Agent failure
+ok 173 - startup retry cannot hide other failures: /v1/runs: HTTP 500: Agent failure
   ---
-  duration_ms: 0.029
+  duration_ms: 0.096792
   type: 'test'
   ...
 # Subtest: reliable workflow instructions apply equally to A/B and retain their distinct recovery behavior
-ok 173 - reliable workflow instructions apply equally to A/B and retain their distinct recovery behavior
+ok 174 - reliable workflow instructions apply equally to A/B and retain their distinct recovery behavior
   ---
-  duration_ms: 0.322416
+  duration_ms: 0.324875
   type: 'test'
   ...
 # Subtest: stale-slot recovery uses returned appointment ID and writes success only afterward (premature note=false)
-ok 174 - stale-slot recovery uses returned appointment ID and writes success only afterward (premature note=false)
+ok 175 - stale-slot recovery uses returned appointment ID and writes success only afterward (premature note=false)
   ---
-  duration_ms: 18.232167
+  duration_ms: 19.392875
   type: 'test'
   ...
 # Subtest: stale-slot recovery uses returned appointment ID and writes success only afterward (premature note=true)
-ok 175 - stale-slot recovery uses returned appointment ID and writes success only afterward (premature note=true)
+ok 176 - stale-slot recovery uses returned appointment ID and writes success only afterward (premature note=true)
   ---
-  duration_ms: 1.676959
+  duration_ms: 1.843958
   type: 'test'
   ...
 # Subtest: opt-out must stop without an acknowledgement (acknowledge=false)
-ok 176 - opt-out must stop without an acknowledgement (acknowledge=false)
+ok 177 - opt-out must stop without an acknowledgement (acknowledge=false)
   ---
-  duration_ms: 0.647167
+  duration_ms: 0.560083
   type: 'test'
   ...
 # Subtest: opt-out must stop without an acknowledgement (acknowledge=true)
-ok 177 - opt-out must stop without an acknowledgement (acknowledge=true)
+ok 178 - opt-out must stop without an acknowledgement (acknowledge=true)
   ---
-  duration_ms: 1.008083
+  duration_ms: 0.945542
   type: 'test'
   ...
 # Subtest: policy decline requires CRM delivery rather than assistant-only output (deliver=false)
-ok 178 - policy decline requires CRM delivery rather than assistant-only output (deliver=false)
+ok 179 - policy decline requires CRM delivery rather than assistant-only output (deliver=false)
   ---
-  duration_ms: 0.379083
+  duration_ms: 0.330042
   type: 'test'
   ...
 # Subtest: policy decline requires CRM delivery rather than assistant-only output (deliver=true)
-ok 179 - policy decline requires CRM delivery rather than assistant-only output (deliver=true)
+ok 180 - policy decline requires CRM delivery rather than assistant-only output (deliver=true)
   ---
-  duration_ms: 0.570792
+  duration_ms: 0.54025
   type: 'test'
   ...
 # Subtest: the affected task passes when initial and replacement offers match their slotIds
-ok 180 - the affected task passes when initial and replacement offers match their slotIds
+ok 181 - the affected task passes when initial and replacement offers match their slotIds
   ---
-  duration_ms: 15.72975
+  duration_ms: 17.13975
   type: 'test'
   ...
 # Subtest: the historical two-ID/one-time offer is rejected, audited and remains a failure after recovery
-ok 181 - the historical two-ID/one-time offer is rejected, audited and remains a failure after recovery
+ok 182 - the historical two-ID/one-time offer is rejected, audited and remains a failure after recovery
   ---
-  duration_ms: 1.648209
+  duration_ms: 1.745667
   type: 'test'
   ...
 # Subtest: the same offer correction preserves the distinct A/B recovery instructions
-ok 182 - the same offer correction preserves the distinct A/B recovery instructions
+ok 183 - the same offer correction preserves the distinct A/B recovery instructions
   ---
-  duration_ms: 0.055959
+  duration_ms: 0.054167
   type: 'test'
   ...
 # Subtest: task-cluster bootstrap is reproducible, paired, and independent of input ordering
-ok 183 - task-cluster bootstrap is reproducible, paired, and independent of input ordering
+ok 184 - task-cluster bootstrap is reproducible, paired, and independent of input ordering
   ---
-  duration_ms: 10.785042
+  duration_ms: 12.479667
   type: 'test'
   ...
 # Subtest: incomplete pairs stay inconclusive with bounds and explicit exclusions
-ok 184 - incomplete pairs stay inconclusive with bounds and explicit exclusions
+ok 185 - incomplete pairs stay inconclusive with bounds and explicit exclusions
   ---
-  duration_ms: 1.844542
+  duration_ms: 1.772875
   type: 'test'
   ...
 # Subtest: constant observed effects do not imply certainty about unseen tasks
-ok 185 - constant observed effects do not imply certainty about unseen tasks
+ok 186 - constant observed effects do not imply certainty about unseen tasks
   ---
-  duration_ms: 0.594042
+  duration_ms: 0.743042
   type: 'test'
   ...
 # Subtest: new hard failures veto a candidate win and mismatched grader versions exclude pairs
-ok 186 - new hard failures veto a candidate win and mismatched grader versions exclude pairs
+ok 187 - new hard failures veto a candidate win and mismatched grader versions exclude pairs
   ---
-  duration_ms: 3.458708
+  duration_ms: 4.680292
   type: 'test'
   ...
-1..186
-# tests 186
+1..187
+# tests 187
 # suites 0
-# pass 186
+# pass 187
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 1993.103708
+# duration_ms 2105.189125
