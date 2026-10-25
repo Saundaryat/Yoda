@@ -364,3 +364,33 @@ it('graceful shutdown preserves completed conversations for grading after restar
     expect(readdirSync(join(queue.settings.runsDir, run.id))).toEqual(['attempt-1']);
   }
 });
+
+it('drain waits for experiment finalization after the last run outcome commits', async () => {
+  const internals = queue as unknown as { afterRun: (id: string) => Promise<void> };
+  const finalize = internals.afterRun.bind(queue);
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  vi.spyOn(internals, 'afterRun').mockImplementation(async (id) => {
+    await gate;
+    return finalize(id);
+  });
+  const experiment = await draft();
+  await service.start(experiment.id);
+  await vi.waitFor(async () =>
+    expect((await records(experiment.id)).every((run) => run.status === 'scored')).toBe(true),
+  );
+  let drained = false;
+  const pending = queue.drain(experiment.id).then(() => {
+    drained = true;
+  });
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 25));
+    expect(drained).toBe(false);
+  } finally {
+    release();
+    await pending;
+  }
+  expect((await service.get(experiment.id)).status).toBe('finished');
+});

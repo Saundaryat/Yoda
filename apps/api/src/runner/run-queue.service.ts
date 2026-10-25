@@ -206,7 +206,11 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
         .where(
           and(eq(runs.experimentId, experimentId), inArray(runs.status, ['queued', 'running'])),
         )) as [{ open: number }];
-      if (open === 0) return;
+      if (open === 0) {
+        // The last outcome commits before its parent is finalized. Await that transition too.
+        await this.afterRun(experimentId);
+        return;
+      }
       await new Promise((resolve) => setTimeout(resolve, 200));
     }
   }
