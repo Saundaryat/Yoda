@@ -65,6 +65,11 @@ export class ExperimentsController {
     return this.experiments.gradeChanges(id);
   }
 
+  @Get(':id/costs')
+  costs(@Param('id', ParseUUIDPipe) id: string) {
+    return this.experiments.costs(id);
+  }
+
   @Get(':id/runs')
   runs(@Param('id', ParseUUIDPipe) id: string) {
     return this.experiments.runs(id);

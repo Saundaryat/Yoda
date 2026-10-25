@@ -47,6 +47,12 @@ export const router = createRouter({
       props: true,
     },
     {
+      path: '/experiments/:id/costs',
+      name: 'costs',
+      component: () => import('./views/CostsView.vue'),
+      props: true,
+    },
+    {
       path: '/experiments/:id/tasks/:taskId',
       name: 'compare',
       component: () => import('./views/CompareView.vue'),

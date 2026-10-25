@@ -382,8 +382,11 @@ const metricRows = computed(() => {
           </p>
         </div>
         <div class="run-status-meta">
-          <span>Total spend</span>
+          <span>Estimated API cost</span>
           <strong>{{ money(e.costUsd) }}</strong>
+          <RouterLink :to="`/experiments/${e.id}/costs`" class="text-action"
+            >Cost breakdown →</RouterLink
+          >
         </div>
         <div v-if="e.status === 'running'" class="bar" aria-hidden="true">
           <span class="scored" :style="{ width: `${(e.counts.scored / total) * 100}%` }" />

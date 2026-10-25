@@ -19,6 +19,8 @@ import { checkResults, configurations, experiments, runEvents, runs, tasks } fro
 import { RunQueueService } from '../runner/run-queue.service.js';
 import { compare, hasCompleteRunCoverage } from '../analysis/statistics.js';
 
+import { costBreakdown } from './cost-breakdown.js';
+
 type ExperimentRow = typeof experiments.$inferSelect;
 
 const EMPTY_COUNTS: Record<RunStatus, number> = {
@@ -139,6 +141,26 @@ export class ExperimentsService {
 
   async get(id: string): Promise<ExperimentSummary> {
     return this.summary(await this.row(id));
+  }
+
+  async costs(id: string) {
+    const experiment = await this.row(id);
+    const records = await this.db
+      .select({
+        configId: runs.configId,
+        attempts: runs.attempts,
+        inputTokens: runs.inputTokens,
+        outputTokens: runs.outputTokens,
+        costUsd: runs.costUsd,
+        costStatus: runs.costStatus,
+        leadCostUsd: runs.leadCostUsd,
+        judgeCostUsd: runs.judgeCostUsd,
+        context: runs.context,
+        judge: runs.judge,
+      })
+      .from(runs)
+      .where(eq(runs.experimentId, id));
+    return costBreakdown(experiment, records);
   }
 
   async runs(id: string): Promise<RunSummary[]> {
