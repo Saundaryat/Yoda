@@ -23,6 +23,12 @@ The final audit verifies actual prompts/models/policy, identical paired CRM star
 
 Report: `docs/experiments/2026-10-25-grounded-sms-v3.md`; frozen protocol, all raw run evidence, audit, infrastructure retry history and preservation hashes use the same filename prefix. Candidate source: `prompts/grounded-sms-v3.txt`. There are nine immutable configurations; reload `/configurations` to see newly created versions. Version numbers describe history, not guaranteed quality.
 
+## GitHub integration verification (2026-10-25)
+
+Integrated the newer published UI commits while retaining the verified v8 grading, consent, comparison and evidence UI changes. The published `0003_persist-skipped-checks` migration remains intact; the local check-status work now follows as `0004_check-status`, compatible with both previously published and already-migrated local databases. Three new isolated migration regression cases cover fresh setup and both upgrade histories, including a second startup and data preservation.
+
+Production and the offline browser-test server share the same SPA asset/fallback routing helper. Final integrated checks passed: **209 unit tests, 13 integration tests, 26 browser tests, build, typecheck and lint**. The credential scan found no configured secrets in the pending source/evidence files; `.env` remains ignored. Test databases use throwaway schemas. This Git integration did not restart the live 3080 application or modify its saved experiments.
+
 ## Latest grader correction: v8 (2026-10-25)
 
 The live agent-evals app on **http://127.0.0.1:3080/** runs `evidence-grounding-v8`.

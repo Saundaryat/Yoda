@@ -26,8 +26,15 @@
     {
       "idx": 3,
       "version": "7",
-      "when": 1792851326337,
-      "tag": "0003_check-status",
+      "when": 1792837992840,
+      "tag": "0003_persist-skipped-checks",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792851326338,
+      "tag": "0004_check-status",
       "breakpoints": true
     }
   ]

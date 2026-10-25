@@ -1,5 +1,5 @@
 {
-  "id": "2a64b0b5-edf8-4c24-b1e5-1cfd030464d1",
+  "id": "62d2fc23-03dd-4772-b8c9-5deae01cd12e",
   "prevId": "b6407283-6443-4316-accd-f5023f88c40f",
   "version": "7",
   "dialect": "postgresql",
@@ -58,13 +58,6 @@
         },
         "skipped": {
           "name": "skipped",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
-        },
-        "informational": {
-          "name": "informational",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
