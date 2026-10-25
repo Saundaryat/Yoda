@@ -36,6 +36,13 @@
       "when": 1792851326338,
       "tag": "0004_check-status",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792962612423,
+      "tag": "0005_durable-experiments",
+      "breakpoints": true
     }
   ]
 }

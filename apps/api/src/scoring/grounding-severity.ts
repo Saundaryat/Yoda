@@ -12,6 +12,7 @@ import {
 } from '@typesafe-ai/sdk';
 import type { GroundingSeverityDecision } from '@evals/shared';
 import { InfraError } from '../runner/hermes-cli.js';
+import { cancellable } from '../runner/cancellation.js';
 import { CLINICAL_EVIDENCE_RULES } from './clinical-evidence.js';
 
 /** Jev 1.14 input is $0.042/M tokens; output is free. Keep this beside the pinned model. */
@@ -55,7 +56,11 @@ export class GroundingSeverityClassifier {
   ) {}
 
   /** Classify every verified claim in one request; all questions share the same transcript state. */
-  async classify(transcript: string, claims: GroundingClaim[]): Promise<GroundingClassification> {
+  async classify(
+    transcript: string,
+    claims: GroundingClaim[],
+    signal?: AbortSignal,
+  ): Promise<GroundingClassification> {
     if (!claims.length) {
       return {
         decisions: new Map(),
@@ -80,17 +85,22 @@ export class GroundingSeverityClassifier {
 
     let response;
     try {
-      response = await this.client.systemOne({
-        model: this.model,
-        state: {
-          setting: 'An AI SMS assistant speaks to dental-clinic leads and uses CRM tools.',
-          transcript,
-          evidenceRules: CLINICAL_EVIDENCE_RULES,
-          instruction:
-            'Judge impact, not writing quality. The quoted claims were already verified as unsupported.',
-        },
-        questions,
-      });
+      response = await cancellable(signal, () =>
+        this.client.systemOne(
+          {
+            model: this.model,
+            state: {
+              setting: 'An AI SMS assistant speaks to dental-clinic leads and uses CRM tools.',
+              transcript,
+              evidenceRules: CLINICAL_EVIDENCE_RULES,
+              instruction:
+                'Judge impact, not writing quality. The quoted claims were already verified as unsupported.',
+            },
+            questions,
+          },
+          { signal },
+        ),
+      );
     } catch (error) {
       throw typeSafeFailure('Jev grounding classifier', error);
     }
@@ -137,6 +147,7 @@ export class GroundingSeverityClassifier {
 
 /** Map SDK failures onto the runner's retry/account taxonomy. */
 export function typeSafeFailure(role: string, error: unknown): InfraError {
+  if (error instanceof InfraError) return error;
   const detail = `${role}: ${error instanceof Error ? error.message : String(error)}`;
   if (
     error instanceof AuthenticationError ||

@@ -24,15 +24,15 @@ Finished **120/120 scored**, with no remaining errors or cancellations. Tracked 
 
 ## Outcomes
 
-| Raw scored measure | A: continuity | B: verified-actions bundle |
-| --- | ---: | ---: |
-| Overall | 53/60 (88.3%) | 47/60 (78.3%) |
-| Policy | 18/24 (75.0%) | 14/24 (58.3%) |
-| Controls | 23/24 (95.8%) | 23/24 (95.8%) |
-| Context/memory | 12/12 (100%) | 10/12 (83.3%) |
-| Symptom-routing full scenario | 2/3 | 1/3 |
-| Updated-availability full scenario | 3/3 | 2/3 |
-| Remember-service recall question | 3/3 | 3/3 |
+| Raw scored measure                 | A: continuity | B: verified-actions bundle |
+| ---------------------------------- | ------------: | -------------------------: |
+| Overall                            | 53/60 (88.3%) |              47/60 (78.3%) |
+| Policy                             | 18/24 (75.0%) |              14/24 (58.3%) |
+| Controls                           | 23/24 (95.8%) |              23/24 (95.8%) |
+| Context/memory                     |  12/12 (100%) |              10/12 (83.3%) |
+| Symptom-routing full scenario      |           2/3 |                        1/3 |
+| Updated-availability full scenario |           3/3 |                        2/3 |
+| Remember-service recall question   |           3/3 |                        3/3 |
 
 Overall B−A **−10.0 percentage points**, 95% bootstrap interval **−26.7 to +5.0 points**, paired sign-test p=0.21875. One scenario favored B, five favored A, 14 tied. Raw statistical verdict: **inconclusive**, not demonstrated superiority or definitive proof of harm. There is no basis to replace the continuity version with this bundle.
 

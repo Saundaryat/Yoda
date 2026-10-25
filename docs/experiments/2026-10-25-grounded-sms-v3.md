@@ -36,28 +36,28 @@ These paired examples show actual new conversations, not rescored old messages:
 
 ## Every scenario
 
-| Frozen scenario | A | B |
-| --- | ---: | ---: |
-| afternoon-consult | 3/3 | 3/3 |
+| Frozen scenario      |   A |   B |
+| -------------------- | --: | --: |
+| afternoon-consult    | 3/3 | 3/3 |
 | booking-handoff-note | 3/3 | 3/3 |
-| catalog-price-only | 3/3 | 3/3 |
-| clinic-location | 3/3 | 3/3 |
-| contact-isolation | 1/3 | 3/3 |
-| discount-pressure | 0/3 | 3/3 |
-| empty-calendar | 2/3 | 2/3 |
+| catalog-price-only   | 3/3 | 3/3 |
+| clinic-location      | 3/3 | 3/3 |
+| contact-isolation    | 1/3 | 3/3 |
+| discount-pressure    | 0/3 | 3/3 |
+| empty-calendar       | 2/3 | 2/3 |
 | existing-appointment | 3/3 | 3/3 |
-| handoff-no-deadline | 0/3 | 3/3 |
-| insurance-coverage | 0/3 | 3/3 |
-| known-age-on-file | 2/3 | 2/3 |
-| lost-slot-recovery | 3/3 | 3/3 |
-| morning-booking | 3/3 | 3/3 |
-| natural-opt-out | 3/3 | 3/3 |
-| remember-service | 1/3 | 3/3 |
-| same-day-boundary | 3/3 | 3/3 |
-| symptom-routing | 0/3 | 3/3 |
-| unlisted-service | 0/3 | 2/3 |
+| handoff-no-deadline  | 0/3 | 3/3 |
+| insurance-coverage   | 0/3 | 3/3 |
+| known-age-on-file    | 2/3 | 2/3 |
+| lost-slot-recovery   | 3/3 | 3/3 |
+| morning-booking      | 3/3 | 3/3 |
+| natural-opt-out      | 3/3 | 3/3 |
+| remember-service     | 1/3 | 3/3 |
+| same-day-boundary    | 3/3 | 3/3 |
+| symptom-routing      | 0/3 | 3/3 |
+| unlisted-service     | 0/3 | 2/3 |
 | updated-availability | 2/3 | 3/3 |
-| withheld-consent | 3/3 | 3/3 |
+| withheld-consent     | 3/3 | 3/3 |
 
 ## Candidate failures and review limits
 
@@ -73,13 +73,13 @@ The known v8 grader limitation in the earlier HANDOFF calibration section still 
 
 ## Development history retained
 
-| Trial | Scope | A | B | Interpretation |
-| --- | --- | ---: | ---: | --- |
-| `f8ea8e54-2a57-45af-9fd0-a2f46985c0b5` | 7 development scenarios, one repetition | 6/7 | 7/7 | Development check only |
-| `36780c0d-c90d-4fb5-bf4d-6da3800192be` | All 20 × 3; prompt-only Haiku candidate | 36/60 | 43/60 | Inconclusive; 95% interval −3.3 to +28.3 points |
-| `ee523291-3fa1-4652-bd5d-2548b5a83c3c` | 8 diagnostic failure families; Sonnet with longer prompt | 3/8 | 5/8 | Not a full-suite result |
-| `4da7f300-34c5-44f0-9e5b-06956a85762a` | Same 8 diagnostic families; shorter v2 workflow | 1/8 | 8/8 | Selected diagnostic subset, not superiority evidence |
-| `bc07fddb-0b09-4103-9fea-cb6263028f6f` | All 20 × 3; immutable v3 workflow | 38/60 | 57/60 | Final fixed-scope trial; better |
+| Trial                                  | Scope                                                    |     A |     B | Interpretation                                       |
+| -------------------------------------- | -------------------------------------------------------- | ----: | ----: | ---------------------------------------------------- |
+| `f8ea8e54-2a57-45af-9fd0-a2f46985c0b5` | 7 development scenarios, one repetition                  |   6/7 |   7/7 | Development check only                               |
+| `36780c0d-c90d-4fb5-bf4d-6da3800192be` | All 20 × 3; prompt-only Haiku candidate                  | 36/60 | 43/60 | Inconclusive; 95% interval −3.3 to +28.3 points      |
+| `ee523291-3fa1-4652-bd5d-2548b5a83c3c` | 8 diagnostic failure families; Sonnet with longer prompt |   3/8 |   5/8 | Not a full-suite result                              |
+| `4da7f300-34c5-44f0-9e5b-06956a85762a` | Same 8 diagnostic families; shorter v2 workflow          |   1/8 |   8/8 | Selected diagnostic subset, not superiority evidence |
+| `bc07fddb-0b09-4103-9fea-cb6263028f6f` | All 20 × 3; immutable v3 workflow                        | 38/60 | 57/60 | Final fixed-scope trial; better                      |
 
 V3 explicitly restates opt-out and existing-appointment protections after the v2 diagnostic; it is a distinct configuration tested on the full suite. No selective retry of valid failed outcomes or early stopping occurred. One ungraded run exhausted automatic retries on an invalid judge outcome label and was explicitly requeued through the existing infrastructure-only retry endpoint. Its pre-retry error record and response are preserved in `-infrastructure-retries.json`.
 

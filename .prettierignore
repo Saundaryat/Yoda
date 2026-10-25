@@ -3,3 +3,7 @@ dist/
 coverage/
 spike/runs/
 apps/api/drizzle/meta/
+
+# Generated experiment/calibration evidence retains its original bytes.
+docs/experiments/*.json
+docs/calibration/*.json

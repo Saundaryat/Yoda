@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { RunEvent, TaskDefinition, TurnJudgment } from '@evals/shared';
 import { claudeFailure, estimateCost, type ClaudeClient } from '../runner/anthropic.js';
 import { InfraError } from '../runner/hermes-cli.js';
+import { cancellable } from '../runner/cancellation.js';
 import type { GroundingAuthority } from './judge.js';
 
 const schema = z.object({
@@ -27,32 +28,36 @@ export async function reviewGrounding(
   turns: TurnJudgment[],
   context: string,
   authority?: GroundingAuthority,
+  signal?: AbortSignal,
 ) {
-  const response = await client
-    .parse({
-      model,
-      max_tokens: 8000,
-      betas: ['server-side-fallback-2026-07-01'],
-      fallbacks: 'default',
-      output_config: { effort: 'medium', format: betaZodOutputFormat(schema) },
-      system: REVIEW_SYSTEM,
-      messages: [
-        {
-          role: 'user',
-          content: JSON.stringify({
-            context,
-            proposed: turns.map((t) => ({
-              seq: t.eventSeq,
-              quote: t.grounded.quote,
-              reason: t.grounded.reason,
-            })),
-          }),
-        },
-      ],
-    })
-    .catch((e) => {
-      throw claudeFailure('Grounding evidence review', e);
-    });
+  const response = await cancellable(signal, () =>
+    client.parse(
+      {
+        model,
+        max_tokens: 8000,
+        betas: ['server-side-fallback-2026-07-01'],
+        fallbacks: 'default',
+        output_config: { effort: 'medium', format: betaZodOutputFormat(schema) },
+        system: REVIEW_SYSTEM,
+        messages: [
+          {
+            role: 'user',
+            content: JSON.stringify({
+              context,
+              proposed: turns.map((t) => ({
+                seq: t.eventSeq,
+                quote: t.grounded.quote,
+                reason: t.grounded.reason,
+              })),
+            }),
+          },
+        ],
+      },
+      { signal },
+    ),
+  ).catch((e) => {
+    throw claudeFailure('Grounding evidence review', e);
+  });
   if (!response.parsed_output || response.stop_reason === 'refusal')
     throw new InfraError('provider_error', 'Grounding review returned no usable report');
   const decisions = new Map<number, z.infer<typeof schema>['decisions'][number]>();

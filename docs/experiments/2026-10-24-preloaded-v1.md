@@ -18,12 +18,12 @@ This follow-up was motivated by the previous experiment's low skill-opening rate
 
 Finished: **120/120 scored**, 60 per side, no remaining errors or cancellations. One B existing-appointment attempt exhausted automatic retries on the judge outcome enum; a UI retry resolved it without code or rubric changes. Tracked spend: **$7.16**. Tracked costs are estimates and can omit failed-attempt usage or separate classifier billing. The raw numeric snapshot is `2026-10-24-preloaded-v1.json`.
 
-| Raw scored measure | A: available | B: preloaded |
-| --- | ---: | ---: |
-| Overall passes | 40/60 (66.7%) | 43/60 (71.7%) |
-| Policy | 7/24 (29.2%) | 14/24 (58.3%) |
-| Control | 21/24 (87.5%) | 21/24 (87.5%) |
-| Context/memory | 12/12 (100%) | 8/12 (66.7%) |
+| Raw scored measure |  A: available |  B: preloaded |
+| ------------------ | ------------: | ------------: |
+| Overall passes     | 40/60 (66.7%) | 43/60 (71.7%) |
+| Policy             |  7/24 (29.2%) | 14/24 (58.3%) |
+| Control            | 21/24 (87.5%) | 21/24 (87.5%) |
+| Context/memory     |  12/12 (100%) |  8/12 (66.7%) |
 
 Raw overall difference +5.0 percentage points; 95% bootstrap interval −13.3 to +23.3 points; paired sign-test p=0.7266. Five scenarios favored B, three favored A, 12 tied. The UI reports **inconclusive**. Because of the evaluator validity issue below, these raw score estimates are retained for audit, not endorsed as an unbiased treatment-effect estimate. The policy subgroup interval is descriptive and does not fix the validity issue.
 

@@ -20,14 +20,14 @@ Tracked application costs are estimates and may omit failed-attempt provider usa
 
 ## Results
 
-| Measure | A: baseline | B: available skill |
-| --- | ---: | ---: |
-| Overall pass rate | 60.0% (36/60) | 66.7% (40/60) |
-| Policy | 12.5% (3/24) | 33.3% (8/24) |
-| Control | 95.8% (23/24) | 91.7% (22/24) |
-| Context/memory | 83.3% (10/12) | 83.3% (10/12) |
-| Replies with serious unbacked claims (Jev) | 17 | 12 |
-| Replies with minor unbacked claims (Jev) | 13 | 14 |
+| Measure                                    |   A: baseline | B: available skill |
+| ------------------------------------------ | ------------: | -----------------: |
+| Overall pass rate                          | 60.0% (36/60) |      66.7% (40/60) |
+| Policy                                     |  12.5% (3/24) |       33.3% (8/24) |
+| Control                                    | 95.8% (23/24) |      91.7% (22/24) |
+| Context/memory                             | 83.3% (10/12) |      83.3% (10/12) |
+| Replies with serious unbacked claims (Jev) |            17 |                 12 |
+| Replies with minor unbacked claims (Jev)   |            13 |                 14 |
 
 Overall difference B−A: **+6.7 percentage points**, 95% two-level bootstrap interval **−6.7 to +21.7 points**, paired sign-test p=0.625. Three scenarios favored B, one favored A, and 16 tied. Verdict: **inconclusive**, not a demonstrated improvement or equivalence. The full numeric snapshot is `2026-10-24-calibrated-v1.json`.
 
