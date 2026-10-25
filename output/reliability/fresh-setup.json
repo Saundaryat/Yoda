@@ -1,11 +1,11 @@
 {
-  "checkedAt": "2026-10-25T08:34:30.847Z",
-  "sourceCopy": "/var/folders/2g/h5v7scln7h52p5hvs69dwv180000gn/T/tracework-fresh-mIzbPI",
+  "checkedAt": "2026-10-25T08:53:47.710Z",
+  "sourceCopy": "/var/folders/2g/h5v7scln7h52p5hvs69dwv180000gn/T/tracework-fresh-PYzjo0",
   "command": "npm run review",
   "noExistingDependencies": true,
   "noEnvFile": true,
   "noHermesCheckout": true,
-  "freshDockerProject": "tracework-fresh-1792917270845",
+  "freshDockerProject": "tracework-fresh-1792918427709",
   "newInference": false,
   "passed": true,
   "health": {
@@ -15,7 +15,7 @@
     "readOnly": true
   },
   "suiteCount": 2,
-  "experimentId": "be82350d-d3b7-4c0b-96c3-f9724bcf3048",
+  "experimentId": "0c4f7901-3f46-4600-9ed1-3484f536bd80",
   "runs": 40,
   "validPairs": 18,
   "passes": [
@@ -25,7 +25,20 @@
   "servedProductionAssets": true,
   "writesBlocked": true,
   "freshUnitTestsPassed": true,
-  "startupLog": "/var/folders/2g/h5v7scln7h52p5hvs69dwv180000gn/T/tracework-fresh-mIzbPI/fresh-start.log",
+  "consentCorrection": {
+    "sourceExperimentId": "609e00b1-4434-4d71-9993-c1236109118f",
+    "passes": [
+      2,
+      2
+    ],
+    "hardFailures": [
+      0,
+      0
+    ],
+    "validPairs": 2,
+    "separateFromPrimary": true
+  },
+  "startupLog": "/var/folders/2g/h5v7scln7h52p5hvs69dwv180000gn/T/tracework-fresh-PYzjo0/fresh-start.log",
   "liveStartupVerified": true,
   "liveDraftCreatedAndCancelled": true,
   "liveProviderExecutionTested": false,

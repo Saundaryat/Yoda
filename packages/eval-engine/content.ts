@@ -20,6 +20,7 @@ export interface ContentContext {
 export interface ContentReview { issues: string[]; unsupportedClaims: string[] }
 const normalize = (text: string) => text.normalize('NFKC').toLowerCase().replaceAll(/[’‘]/g, "'").replaceAll(/\s+/g, ' ').trim();
 const clauses = (text: string) => normalize(text).split(/[.!?;]\s+|\bbut\b/);
+const policyAgeComparison = /\b(above|below) (?:the )?minimum age(?: of)? (\d{1,3})\b/g;
 const weekdays = /\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/g;
 
 function bookingClaim(text: string): boolean {
@@ -101,7 +102,7 @@ export function offersSlots(text: string, ids: string[], slots: CrmState['slots'
 
 function factualIssues(text: string, context: ContentContext): string[] {
   const value = normalize(text), issues: string[] = [];
-  for (const match of value.matchAll(/\b(?:age(?:d)?(?: (?:is|confirmed(?: as)?)|:)?|(?:lead|customer|patient) (?:is|aged)|you are|as you are)\s+(\d{1,3})\b|\b(\d{1,3})\s*(?:years? old|years? of age|year-old|y\/o)\b/g)) {
+  for (const match of value.matchAll(/\b(?:age(?:d)?(?: (?:is|of|confirmed(?: as)?)|:)?|(?:lead|customer|patient) (?:is|aged)|you are|as you are)\s+(\d{1,3})\b|\b(\d{1,3})\s*(?:years? old|years? of age|year-old|y\/o)\b/g)) {
     const prefix = value.slice(Math.max(0, match.index! - 55), match.index!);
     const policyAge = !/^(?:lead|customer|patient|you|as you)/.test(match[0]) && /(?:minimum|at least|requires?|policy|older than|patients)[^.;!?,]*$/.test(prefix);
     const expected = policyAge ? context.minimumAge : context.age;
@@ -109,6 +110,11 @@ function factualIssues(text: string, context: ContentContext): string[] {
   }
   for (const match of value.matchAll(/\b(?:lead|customer|patient|you) (?:is|are) not (\d{1,3})(?: years? old)?\b/g)) {
     if (Number(match[1]) === context.age) issues.push('Denial of the customer age contradicts prior evidence.');
+  }
+  for (const match of value.matchAll(policyAgeComparison)) {
+    const threshold = Number(match[2]);
+    const supported = context.age !== null && threshold === context.minimumAge && (match[1] === 'above' ? context.age > threshold : context.age < threshold);
+    if (!supported) issues.push('Stated age comparison contradicts prior age/policy evidence.');
   }
   const eligible = context.age !== null && context.age >= context.minimumAge;
   for (const match of value.matchAll(/\b(?:(?:lead|customer|patient|you) (?:is |are )?)?(?:(not (?:currently )?(?:an? )?)|(an? ))?(adult|qualified|eligible)\b/g)) {
@@ -120,7 +126,7 @@ function factualIssues(text: string, context: ContentContext): string[] {
   }
   if (/\b(?:underage|ineligible)\b/.test(value) && eligible) issues.push('Ineligibility claim contradicts the known age and policy.');
   const deniesConsent = /\b(?:never|not|didn't|hasn't|haven't)\s+(?:explicitly )?(?:consented|agreed|accepted)|\b(?:without|no)\s+(?:explicit |lead )?consent\b|\bconsent (?:(?:was|has|is|has been) )?(?:not|never)\b/.test(value);
-  const claimsConsent = /\bconsented\b|\bconsent (?:was |has been |is )?(?:received|obtained|given|confirmed)\b|\b(?:with|after|confirming|received|obtained|given|confirmed) (?:explicit |new |lead )*consent\b|\b(?:lead|customer|patient) (?:explicitly )?(?:agreed|accepted|confirmed(?!\s+(?:(?:their|his|her)\s+)?age\b))\b/.test(value);
+  const claimsConsent = /\bconsented\b|\bconsent (?:was |has been |is )?(?:received|obtained|given|confirmed|captured)\b|\b(?:with|after|confirming|received|obtained|given|confirmed|captured) (?:explicit |new |lead )*consent\b|\b(?:lead|customer|patient) (?:explicitly )?(?:agreed|accepted|confirmed(?!\s+(?:(?:their|his|her)\s+)?age\b))\b/.test(value);
   if (deniesConsent && context.consentEventIds.length) issues.push('Denial of consent contradicts prior lead consent.');
   if (claimsConsent && !deniesConsent && !context.consentEventIds.length) issues.push('Consent claim has no prior lead consent evidence.');
   if (/\b(?:opted out|unsubscribed|suppressed)\b/.test(value) && !context.optedOut) issues.push('Opt-out claim has no supporting event.');
@@ -181,12 +187,12 @@ export function reviewNote(note: string, context: ContentContext): string[] {
   for (const match of value.matchAll(/\bconsent(?:ed)?\b[^.!?;]{0,60}\b(event-\d+)\b/g)) {
     if (!context.consentEventIds.includes(match[1])) issues.push('Note consent reference does not identify a valid prior consent event.');
   }
-  if (!/\bage(?:d)?\s*(?:is|:)?\s*\d|\d\s*years? old\b|\badult\b|\bqualified\b|\bconsented\b|\bconsent (?:was )?(?:received|obtained|given|confirmed)\b|\bopted out\b|\bescalated\b/.test(value) && !bookingClaim(note)) issues.push('Note contains no verifiable clinic facts; manual review is required.');
+  if (!/\bage(?:d)?\s*(?:is|:)?\s*\d|\d\s*years? old\b|\badult\b|\bqualified\b|\bconsented\b|\bconsent (?:was )?(?:received|obtained|given|confirmed|captured)\b|\bopted out\b|\bescalated\b/.test(value) && !bookingClaim(note)) issues.push('Note contains no verifiable clinic facts; manual review is required.');
   // Fail closed on claims outside this fixture's factual vocabulary. A correct
   // booking sentence must not launder an appended diagnosis, price or biography.
   // Unsupported prose requires review; it is not asserted to be factually false.
-  const supportedWords = new Set(('the a an and or is are was were has have been had with without no not never did didnot after before at on for of to from as in by via only now then this that it my your you i we us lead customer patient age aged years year old adult qualified qualification eligible ineligible underage explicit explicitly consent consented received obtained given confirmed confirming accepted agreed book booked booking appointment consultation dental service selected slot earliest weekday afternoon initial unavailable alternative attempt preference preferred requested changed corrected gave actual successful successfully completed recorded saved minimum policy requirement requires older opted out unsubscribed suppressed escalated human handed off transferred new existing details id event time date timezone asia kolkata ist monday tuesday wednesday thursday friday saturday sunday january february march april may june july august september october november december jan feb mar apr jun jul aug sep oct nov dec pm am st nd rd th').split(' '));
-  const prose = value.replaceAll(/\b(?:slot-[a-z0-9-]+|appointment-\d+|event-\d+)\b|\b\d{4}-\d{2}-\d{2}(?:t\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2})?/g, ' ');
+  const supportedWords = new Set(('the a an and or is are was were has have been had with without no not never did didnot after before at on for of to from as in by via only now then this that it my your you i we us lead customer patient age aged years year old adult qualified qualification eligible ineligible underage explicit explicitly consent consented received obtained given captured confirmed confirming accepted agreed book booked booking appointment consultation dental service selected slot earliest weekday afternoon initial unavailable alternative attempt preference preferred requested changed corrected gave actual successful successfully completed recorded saved minimum policy requirement requires older opted out unsubscribed suppressed escalated human handed off transferred new existing details id event time date timezone asia kolkata ist monday tuesday wednesday thursday friday saturday sunday january february march april may june july august september october november december jan feb mar apr jun jul aug sep oct nov dec pm am st nd rd th').split(' '));
+  const prose = value.replaceAll(policyAgeComparison, ' ').replaceAll(/\b(?:slot-[a-z0-9-]+|appointment-\d+|event-\d+)\b|\b\d{4}-\d{2}-\d{2}(?:t\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2})?/g, ' ');
   if ([...prose.matchAll(/[a-z]+/g)].some(match => !supportedWords.has(match[0]))) issues.push('Note includes unsupported factual wording; manual review is required.');
   return [...new Set(issues)];
 }

@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 test('paired comparison exposes incomplete coverage and filters failed evidence', async ({ page }) => {
   const experiments = await (await page.request.get('/api/experiments')).json();
-  const experiment = experiments.find((e: any) => e.snapshot.configurations.length === 2 && e.snapshot.suite.definition.split === 'evaluation');
+  const experiment = experiments.find((e: any) => e.snapshot.evidenceProvenance?.sourceExperimentId === '857ce98d-e957-4709-afd8-65f928828fb4' || (!e.snapshot.evidenceProvenance && e.snapshot.configurations.length === 2 && e.snapshot.suite.definition.split === 'evaluation'));
   expect(experiment, 'Real comparison must exist for the submission walkthrough').toBeTruthy();
   const detail = await (await page.request.get(`/api/experiments/${experiment.id}`)).json();
   const failures = detail.runs.filter((r: any) => r.grade?.status === 'failed' || ['infra_error','agent_failed','ungradable'].includes(r.status)).length;

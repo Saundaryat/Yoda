@@ -17,6 +17,8 @@ These are alternative accounting interpretations, **not validated lower/upper bo
 
 The separate four-scenario startup follow-up (`7454dcc5-0a02-4998-af58-7163ba001d94`) records 15 turns, all with numeric counters. Summed scenario maxima are 157,565 input / 2,638 output, or **$0.51** with the same arithmetic; summed turn counters are 415,997 / 7,275, or **$1.36**. It is a distinct experiment and does not change the primary denominator or cost figures. [Reproducible usage ledger](../output/reliability/anthropic-usage.json).
 
+The latest **consent-workflow-v1 correction** (`609e00b1-4434-4d71-9993-c1236109118f`) is another separate four-scenario experiment. Its ten turns all have numeric counters: summed scenario maxima are 163,453 input / 3,051 output (**$0.54** illustrative arithmetic); summed turns are 326,521 / 6,084 (**$1.07**). Both use the same published-rate assumptions and unverified counter semantics above. This adds no runs to the primary denominator. Original and current grader replay make no model calls.
+
 ## Practical operating budget
 
 For planning a similar forty-scenario native Anthropic comparison, allow roughly **$4–$6 of illustrative API usage under the recorded counter interpretations**, plus headroom for retries, longer conversations, token-category differences, and price changes. This is a workload illustration, not a spend cap or invoice estimate. Three repetitions would multiply these illustrative figures to about $10.21 or $16.69 before extra failures and retries. The platform supports three repetitions but the submitted experiment used one.

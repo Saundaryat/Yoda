@@ -8,12 +8,14 @@ test('evaluator review shows current replay grades, genuine failure evidence and
   await page.goto('/');
   await expect(page.getByRole('status')).toContainText('Read-only review');
   await expect(page.getByRole('button', { name: '＋ New experiment', exact: true })).toBeDisabled();
+  const experiments = await (await page.request.get('/api/experiments')).json();
+  const primary = experiments.find((experiment: any) => experiment.snapshot.evidenceProvenance?.sourceExperimentId === '857ce98d-e957-4709-afd8-65f928828fb4');
+  await page.locator('.experiment-item').filter({ hasText: primary.id.slice(0, 8) }).click();
   await expect(page.locator('.scorecard').first()).toContainText('88.9%');
   await expect(page.locator('.scorecard').nth(1)).toContainText('90.0%');
   await expect(page.locator('.verdict')).toContainText('18 / 20 pairs');
   await page.screenshot({ path: 'output/screenshots/experiments.png', fullPage: true });
-  const experiments = await (await page.request.get('/api/experiments')).json();
-  const detail = await (await page.request.get(`/api/experiments/${experiments[0].id}`)).json();
+  const detail = await (await page.request.get(`/api/experiments/${primary.id}`)).json();
   const index = detail.runs.findIndex((run: any) => run.runtime?.sourceRunId === '1a04f3b8-a5d1-4493-8781-6880f410d0a5');
   expect(index).toBeGreaterThanOrEqual(0);
   await page.getByRole('button', { name: 'Inspect run', exact: true }).nth(index).click();
@@ -33,4 +35,27 @@ test('evaluator review shows current replay grades, genuine failure evidence and
   await page.screenshot({ path: 'output/screenshots/mobile.png', fullPage: true });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
   expect(errors).toEqual([]);
+});
+
+
+test('consent correction stays separate and shows the delivered Maybe follow-up before booking', async ({ page }) => {
+  const health = await (await page.request.get('/api/health')).json();
+  test.skip(!health.readOnly, 'This walkthrough verifies the saved correction.');
+  const experiments = await (await page.request.get('/api/experiments')).json();
+  const correction = experiments.find((experiment: any) => experiment.snapshot.evidenceProvenance?.sourceExperimentId === '609e00b1-4434-4d71-9993-c1236109118f');
+  expect(correction).toBeTruthy();
+  const detail = await (await page.request.get(`/api/experiments/${correction.id}`)).json();
+  const run = detail.runs.find((run: any) => run.task_id === 'maybe-is-not-consent' && run.configuration_snapshot.name.startsWith('B'));
+  const booking = run.final_state.events.find((event: any) => event.name === 'create_appointment');
+  await page.goto('/');
+  await page.locator('.experiment-item').filter({ hasText: correction.id.slice(0, 8) }).click();
+  await expect(page.locator('.scorecard').first()).toContainText('100.0%');
+  await expect(page.locator('.scorecard').nth(1)).toContainText('100.0%');
+  await expect(page.locator('.verdict')).toContainText('2 / 2 pairs');
+  await page.screenshot({ path: 'output/screenshots/consent-correction.png', fullPage: true });
+  await page.getByRole('button', { name: 'Inspect run', exact: true }).nth(detail.runs.indexOf(run)).click();
+  await expect(page.getByRole('dialog')).toContainText('Maybe');
+  await page.getByRole('button', { name: 'Grades', exact: true }).click();
+  await page.locator('.assertion').filter({ hasText: 'correct booking' }).getByRole('button', { name: `${booking.id} ↗`, exact: true }).click();
+  await expect(page.locator('.audit.highlighted')).toContainText(String(booking.arguments.consentEventId));
 });

@@ -14,7 +14,7 @@ function replaceMessage(event: AuditEvent, text: string) {
   event.result.text = text;
 }
 function assertCaught(grade: ReturnType<typeof gradeRun>, rule: string, eventId: string) {
-  assert.equal(grade.version, 'clinic-deterministic-v4.5');
+  assert.equal(grade.version, 'clinic-deterministic-v4.6');
   assert.equal(grade.status, 'failed');
   assert.ok(grade.score !== null && grade.score < 100);
   const assertion = grade.assertions.find(a => a.rule === rule)!;

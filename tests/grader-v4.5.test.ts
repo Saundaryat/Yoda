@@ -5,7 +5,7 @@ import { gradeRun } from '../packages/eval-engine/graders.ts';
 const source = JSON.parse(readFileSync(new URL('../fixtures/regressions/anthropic-preference-note-v4.4.json', import.meta.url), 'utf8'));
 test('v4.5 accepts a factual note citing the lead preference separately from explicit consent', () => {
   const grade = gradeRun(source.task, source.initial, source.final);
-  assert.equal(grade.version, 'clinic-deterministic-v4.5');
+  assert.equal(grade.version, 'clinic-deterministic-v4.6');
   assert.equal(grade.status, 'passed');
   assert.equal(grade.score, 100);
 });

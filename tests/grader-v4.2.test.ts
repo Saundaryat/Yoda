@@ -15,7 +15,7 @@ const corpus: { records: { id: string; task_snapshot: TaskDefinition; initial_st
 for (const saved of corpus.records) test(`v4.2 replays saved failure ${saved.id}: ${saved.assessment}`, () => {
   const before = JSON.stringify(saved);
   const grade = gradeRun(saved.task_snapshot, saved.initial_state, saved.final_state);
-  assert.equal(graderVersion, 'clinic-deterministic-v4.5');
+  assert.equal(graderVersion, 'clinic-deterministic-v4.6');
   assert.equal(JSON.stringify(saved), before, 'Regrading must not mutate historical evidence');
   const assertion = (rule: string) => grade.assertions.find(a => a.rule === rule)!;
   if (saved.assessment === 'grader_false_positive') {

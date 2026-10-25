@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { evaluationSuite } from '../fixtures/evaluation.ts';
-import { prepareScenario, referenceInstructions, reliableWorkflowInstructions, withReliableWorkflow } from '../packages/contracts/tasks.ts';
+import { prepareScenario, referenceInstructions, reliableWorkflowInstructions, consentWorkflowInstructions, withReliableWorkflow } from '../packages/contracts/tasks.ts';
 import { contactId, deliverLead, executeTool, service } from '../apps/crm-mcp/crm.ts';
 import { gradeRun } from '../packages/eval-engine/graders.ts';
 
@@ -10,11 +10,11 @@ const task = (id: string) => evaluationSuite().tasks.find(t => t.id === id)!;
 test('reliable workflow instructions apply equally to A/B and retain their distinct recovery behavior', () => {
   const recover = 'If a slot is rejected as unavailable, search again, offer an available alternative, obtain new consent, then retry.';
   const handoff = 'If a slot is rejected as unavailable, escalate_to_human and stop. Do not search for or offer an alternative slot.';
-  const old = referenceInstructions.replace(`\n${reliableWorkflowInstructions}`, '');
+  const old = referenceInstructions.replace(`\n${reliableWorkflowInstructions}`, '').replace(`\n${consentWorkflowInstructions}`, '');
   const a = withReliableWorkflow(old.replace(recover, handoff));
   const b = withReliableWorkflow(old);
   assert.equal(a.replace(handoff, recover), b);
-  assert.equal(b, referenceInstructions);
+  assert.equal(`${b}\n${consentWorkflowInstructions}`, referenceInstructions);
   assert.equal(withReliableWorkflow(b), b);
 });
 

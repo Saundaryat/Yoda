@@ -40,7 +40,7 @@ export class Store {
   async seed(): Promise<void> {
     await this.importSuite(loadSampleSuite());
     await this.importSuite(evaluationSuite());
-    await this.createConfiguration({ name: 'Reference workflow · reliable workflow v1', provider: process.env.EVAL_PROVIDER ?? defaultProvider, model: process.env.EVAL_MODEL ?? defaultModel, instructions: referenceInstructions, memoryEnabled: false });
+    await this.createConfiguration({ name: 'Reference workflow · consent workflow v1', provider: process.env.EVAL_PROVIDER ?? defaultProvider, model: process.env.EVAL_MODEL ?? defaultModel, instructions: referenceInstructions, memoryEnabled: false });
   }
   async importSuite(suite: TaskSuite): Promise<Record<string, any>> {
     const hash = digest(suite);

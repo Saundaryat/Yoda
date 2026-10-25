@@ -9,7 +9,7 @@ const corpus: { records: { id: string; task_id: string; task_snapshot: TaskDefin
   JSON.parse(readFileSync(new URL('../fixtures/regressions/anthropic-v4.3-failures.json', import.meta.url), 'utf8'));
 for (const record of corpus.records) test(`v4.4 preserves the reviewed outcome for ${record.id}: ${record.assessment}`, () => {
   const grade = gradeRun(record.task_snapshot, record.initial_state, record.final_state);
-  assert.equal(grade.version, 'clinic-deterministic-v4.5');
+  assert.equal(grade.version, 'clinic-deterministic-v4.6');
   assert.equal(grade.status, record.assessment === 'false_positive' ? 'passed' : 'failed', JSON.stringify(grade.assertions.filter(a => a.status === 'fail')));
   if (record.assessment === 'false_positive') assert.equal(grade.score, 100);
   if (record.assessment === 'confirmed_consent_policy_error') assert.ok(grade.hardFailures.includes('explicit_consent'));

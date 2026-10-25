@@ -7,7 +7,7 @@ import type { ToolName } from '../../apps/crm-mcp/crm.ts';
 import { appointmentDetailsIssues, reviewMessage, reviewNote, statesCustomerAge } from './content.ts';
 import type { ContentContext } from './content.ts';
 
-export const graderVersion = 'clinic-deterministic-v4.5';
+export const graderVersion = 'clinic-deterministic-v4.6';
 export type Dimension = 'outcome' | 'policy' | 'qualification' | 'workflow';
 export interface AssertionResult {
   rule: string;

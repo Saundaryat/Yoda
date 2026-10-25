@@ -5,14 +5,15 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { createEvaluationApp } from '../apps/api/app.ts';
-import { reliableWorkflowInstructions, reliableWorkflowRevision, slotOfferInstructions, withAlignedSlotOffers, withReliableWorkflow } from '../packages/contracts/tasks.ts';
+import { consentWorkflowInstructions, consentWorkflowRevision, withConsentWorkflow, reliableWorkflowInstructions, reliableWorkflowRevision, slotOfferInstructions, withAlignedSlotOffers, withReliableWorkflow } from '../packages/contracts/tasks.ts';
 import { graderVersion } from '../packages/eval-engine/graders.ts';
 
 // A real rerun. Historical task/configuration snapshots are inputs,
 // never edited; common instruction amendments are explicit in the new protocol.
 const [sourceArgument, selection, ...flags] = process.argv.slice(2);
-if (!sourceArgument || !selection || flags.some(flag => flag !== '--reliable-workflow' && !flag.startsWith('--provider=') && !flag.startsWith('--model='))) throw new Error('Usage: node --import tsx scripts/rerun-task.ts <source-export.json> <task-id[,task-id...]|--full-suite> [--reliable-workflow] [--provider=... --model=...]');
+if (!sourceArgument || !selection || flags.some(flag => flag !== '--reliable-workflow' && flag !== '--consent-workflow' && !flag.startsWith('--provider=') && !flag.startsWith('--model='))) throw new Error('Usage: node --import tsx scripts/rerun-task.ts <source-export.json> <task-id[,task-id...]|--full-suite> [--reliable-workflow] [--consent-workflow] [--provider=... --model=...]');
 const reliableWorkflow = flags.includes('--reliable-workflow');
+const consentWorkflow = flags.includes('--consent-workflow');
 const providerOverride = flags.find(flag => flag.startsWith('--provider='))?.slice('--provider='.length);
 const modelOverride = flags.find(flag => flag.startsWith('--model='))?.slice('--model='.length);
 assert.equal(Boolean(providerOverride), Boolean(modelOverride), 'Override provider and model together for both configurations');
@@ -56,14 +57,17 @@ try {
     const aligned = withAlignedSlotOffers(original.definition.instructions);
     const revised = reliableWorkflow && !aligned.includes(reliableWorkflowInstructions);
     const rerouted = Boolean(providerOverride && (providerOverride !== original.definition.provider || modelOverride !== original.definition.model));
+    const workflow = reliableWorkflow ? withReliableWorkflow(aligned) : aligned;
+    const consentRevised = consentWorkflow && !workflow.includes(consentWorkflowInstructions);
+    const instructions = consentWorkflow ? withConsentWorkflow(workflow) : workflow;
     const definition = { ...original.definition,
       provider: providerOverride ?? original.definition.provider, model: modelOverride ?? original.definition.model,
-      name: `${alreadyAligned ? original.definition.name : `${original.definition.name} · aligned offers v1`}${revised ? ` · ${reliableWorkflowRevision}` : ''}${rerouted ? ` · ${providerOverride}` : ''}`,
-      instructions: reliableWorkflow ? withReliableWorkflow(aligned) : aligned };
-    assert.equal(definition.instructions, `${aligned}${revised ? `\n${reliableWorkflowInstructions}` : ''}`,
+      name: `${alreadyAligned ? original.definition.name : `${original.definition.name} · aligned offers v1`}${revised ? ` · ${reliableWorkflowRevision}` : ''}${rerouted ? ` · ${providerOverride}` : ''}${consentRevised ? ` · ${consentWorkflowRevision}` : ''}`,
+      instructions };
+    assert.equal(definition.instructions, `${aligned}${revised ? `\n${reliableWorkflowInstructions}` : ''}${consentRevised ? `\n${consentWorkflowInstructions}` : ''}`,
       'Rerun must apply only the declared common amendments');
     const saved = await request('/configurations', definition);
-    if (alreadyAligned && !revised && !rerouted) assert.equal(saved.content_hash, original.content_hash, 'Unchanged configuration must retain its hash');
+    if (alreadyAligned && !revised && !rerouted && !consentRevised) assert.equal(saved.content_hash, original.content_hash, 'Unchanged configuration must retain its hash');
     configurations.push(saved);
   }
   const experiment = await request('/experiments', { suiteId: suite.id, configurationIds: configurations.map(c => c.id), repetitions: 1, taskIds });
@@ -75,6 +79,7 @@ try {
     taskIds, repetitions: 1, plannedRuns: tasks.length * configurations.length, graderVersion,
     commonInstructionAmendment: slotOfferInstructions,
     workflowInstructionAmendment: reliableWorkflow ? { revision: reliableWorkflowRevision, instructions: reliableWorkflowInstructions } : null,
+    consentInstructionAmendment: consentWorkflow ? { revision: consentWorkflowRevision, instructions: consentWorkflowInstructions } : null,
     providerRoutingOverride: providerOverride ? { provider: providerOverride, model: modelOverride, appliedToBothConfigurations: true, poolWithSourceResults: false } : null,
     runtimeDependencies: { anthropicSdkVersion, installation: anthropicSdkVersion ? 'Hermes PM declared anthropic extra' : null },
     configurations: configurations.map((config, index) => ({ ...config, sourceConfigurationId: frozen.configurations[index].id })),
@@ -82,7 +87,9 @@ try {
     executionOrder: (await request(`/experiments/${experiment.id}`)).runs.map((run: any) => ({ runId: run.id, taskId: run.task_id, configurationId: run.configuration_id })),
     hermesCommit: execFileSync('git', ['-C', resolve(process.env.EVAL_HERMES_ROOT ?? 'hermes-agent'), 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
     implementationHashes: Object.fromEntries(['apps/crm-mcp/crm.ts', 'apps/crm-mcp/server.ts', 'packages/contracts/tasks.ts', 'packages/eval-engine/content.ts', 'packages/eval-engine/graders.ts', 'packages/hermes/runner.ts'].map(path => [path, hash(readFileSync(path))])),
-    hypothesis: reliableWorkflow
+    hypothesis: consentWorkflow
+      ? 'Both configurations must obtain a later, slot-specific USER consent event before any booking attempt and deliver a new offer_slots confirmation question after Maybe. Their distinct stale-slot recovery behavior is unchanged. This is fresh inference with a common prompt/tool-guidance revision; original failed attempts remain failures.'
+      : reliableWorkflow
       ? 'Both configurations should align offered slots and follow booking-evidence, suppression and CRM-delivery rules. A retains handoff after stale-slot rejection; B retains re-search/reconfirmation recovery. This is a new prompt revision, not an offline regrade.'
       : 'Both configurations should produce slot offers whose text and slotIds agree. A retains its deliberate handoff after a stale-slot rejection; B retains re-search/reconfirmation recovery.',
     primaryMetric: 'macro task success B-A', practicalThreshold: experiment.snapshot.practicalThreshold,

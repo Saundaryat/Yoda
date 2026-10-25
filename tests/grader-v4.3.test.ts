@@ -17,7 +17,7 @@ function withNote(value: string) {
 
 test('the real Anthropic pilot note with a qualification reference and accurate weekday passes v4.3', () => {
   const grade = withNote(text);
-  assert.equal(grade.version, 'clinic-deterministic-v4.5');
+  assert.equal(grade.version, 'clinic-deterministic-v4.6');
   assert.equal(grade.status, 'passed', JSON.stringify(grade.assertions.filter(a => a.status === 'fail')));
   assert.equal(grade.score, 100);
 });

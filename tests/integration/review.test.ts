@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import { randomUUID } from 'node:crypto';
 import { Pool } from 'pg';
 import { Store, defaultDatabaseUrl } from '../../apps/api/store.ts';
-import { loadSavedEvidence } from '../../apps/api/saved-evidence.ts';
+import { consentEvidenceDirectory, loadSavedEvidence } from '../../apps/api/saved-evidence.ts';
 import { createEvaluationApp } from '../../apps/api/app.ts';
 
 test('read-only review imports real replay evidence idempotently and blocks execution and writes', { timeout: 30000 }, async () => {
@@ -28,6 +28,15 @@ test('read-only review imports real replay evidence idempotently and blocks exec
     assert.deepEqual(results.configurations.map(config => config.passed), [16, 18]);
     const failed = runs.find(run => run.grade?.hardFailures.includes('explicit_consent'))!;
     assert.ok((await store.events(failed.id)).some(event => event.event_id === 'event-5'));
+    const correctionId = await loadSavedEvidence(store, consentEvidenceDirectory);
+    assert.equal(await loadSavedEvidence(store, consentEvidenceDirectory), correctionId);
+    assert.equal((await store.listExperiments()).length, 2);
+    const correctedRuns = await store.runs(correctionId);
+    assert.equal(correctedRuns.length, 4);
+    assert.ok(correctedRuns.every(run => run.status === 'completed' && run.grade?.status === 'passed' && run.grade.score === 100 && run.grade.hardFailures.length === 0));
+    assert.equal((await store.experiment(correctionId)).snapshot.evidenceProvenance.sourceWorkflowRevision, 'consent-workflow-v1');
+    assert.deepEqual((await store.results(correctionId)).configurations.map(config => config.passed), [2, 2]);
+
     app = await createEvaluationApp({ store, readOnly: true, logger: false });
     await app.listen(0, '127.0.0.1');
     const base = `${await app.getUrl()}/api`;

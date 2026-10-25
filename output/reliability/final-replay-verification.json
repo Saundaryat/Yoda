@@ -1,10 +1,19 @@
 {
-  "checkedAt": "2026-10-25T08:38:02.059167+00:00",
-  "graderVersion": "clinic-deterministic-v4.5",
+  "checkedAt": "2026-10-25T08:52:44.609012+00:00",
+  "graderVersion": "clinic-deterministic-v4.6",
   "kind": "separate-cohort-offline-replay",
   "newInference": false,
-  "gradedRuns": 112,
+  "gradedRuns": 116,
   "cohorts": [
+    {
+      "experimentId": "609e00b1-4434-4d71-9993-c1236109118f",
+      "sourceReportSha256": "8de34fa8087170fcce61302448b287bc64a6cc7a6121eca83b7ad008adba68a8",
+      "graded": 4,
+      "excluded": 0,
+      "sourceUnchanged": true,
+      "originalHardFailuresPreserved": true,
+      "assertionReferencesResolve": true
+    },
     {
       "experimentId": "857ce98d-e957-4709-afd8-65f928828fb4",
       "sourceReportSha256": "cca0befdf95e9a9b91a97350e532a453aede3175c670ea850f1965e8909fa799",

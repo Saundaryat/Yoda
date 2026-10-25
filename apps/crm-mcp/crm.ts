@@ -93,7 +93,7 @@ export const toolSchemas = {
     service: z.string(),
     preference: z.enum(['afternoon', 'any']).describe('Use afternoon for weekday afternoon preference.'),
   }).strict(),
-  create_appointment: z.object({ ...scoped, service: z.string(), slotId: z.string(), consentEventId: z.string() }).strict(),
+  create_appointment: z.object({ ...scoped, service: z.string(), slotId: z.string(), consentEventId: z.string().describe('Copy the ID of a later USER lead event explicitly labelled consent, received after offering this same slot. Initial requests, even with my consent, ambiguous replies, preferences and CRM notes are not consent. Never probe booking with a non-consent event ID.') }).strict(),
   update_opportunity: z.object({ ...scoped, stage: z.literal('appointment_booked') }).strict(),
   add_contact_note: z.object({ ...scoped, note: z.string().min(1).max(2000).describe('Record only facts already supported by lead events and successful tool results. Consent to book is not a completed booking. Write booking-success notes only after create_appointment returns an appointment.') }).strict(),
   send_message: z.object({

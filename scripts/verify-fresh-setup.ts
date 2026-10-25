@@ -47,19 +47,25 @@ try {
   const html = await (await fetch(base)).text(); assert.match(html, /Tracework/);
   const asset = html.match(/src="([^"]+\.js)"/)?.[1]; assert.ok(asset);
   assert.equal((await fetch(`${base}${asset}`)).status, 200);
-  const experiments = await (await fetch(`${base}/api/experiments`)).json(); assert.equal(experiments.length, 2);
+  const experiments = await (await fetch(`${base}/api/experiments`)).json(); assert.equal(experiments.length, 3);
   const primary = experiments.find((experiment: any) => experiment.snapshot.evidenceProvenance?.sourceExperimentId === '857ce98d-e957-4709-afd8-65f928828fb4');
   assert.ok(primary);
   const id = primary.id;
   const results = await (await fetch(`${base}/api/experiments/${id}/results`)).json();
   assert.deepEqual(results.configurations.map((config: any) => config.passed), [16, 18]);
   assert.equal(results.comparison.validPairs, 18);
+  const correction = experiments.find((experiment: any) => experiment.snapshot.evidenceProvenance?.sourceExperimentId === '609e00b1-4434-4d71-9993-c1236109118f');
+  assert.ok(correction);
+  const correctedResults = await (await fetch(`${base}/api/experiments/${correction.id}/results`)).json();
+  assert.deepEqual(correctedResults.configurations.map((config: any) => config.passed), [2, 2]);
+  assert.deepEqual(correctedResults.configurations.map((config: any) => config.hardFailures), [0, 0]);
+  assert.equal(correctedResults.comparison.validPairs, 2);
   assert.equal((await fetch(`${base}/api/experiments/${id}/start`, { method: 'POST' })).status, 403);
   const checks = spawnSync('npm', ['test'], { cwd: directory, env, encoding: 'utf8' });
   assert.equal(checks.status, 0, checks.stdout.slice(-1500));
   Object.assign(evidence, { passed: true, health, suiteCount: (await (await fetch(`${base}/api/task-suites`)).json()).length,
     experimentId: id, runs: 40, validPairs: 18, passes: [16, 18], servedProductionAssets: true, writesBlocked: true,
-    freshUnitTestsPassed: true, startupLog: logPath });
+    freshUnitTestsPassed: true, consentCorrection: { sourceExperimentId: '609e00b1-4434-4d71-9993-c1236109118f', passes: [2, 2], hardFailures: [0, 0], validPairs: 2, separateFromPrimary: true }, startupLog: logPath });
   await stop();
   const liveLog = openSync(logPath, 'a');
   child = spawn('npm', ['start'], { cwd: directory, env, detached: true, stdio: ['ignore', liveLog, liveLog] });

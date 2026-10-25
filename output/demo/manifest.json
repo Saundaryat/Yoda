@@ -1,12 +1,27 @@
 {
-  "recordedAt": "2026-10-25T08:35:16.128Z",
-  "experimentId": "e9e6457e-174f-4d71-ba5d-596d29d14de4",
+  "recordedAt": "2026-10-25T08:52:54.382Z",
+  "experimentId": "ba01144c-fa5a-49d8-8c21-bd712f6d57c3",
   "sourceExperimentId": "857ce98d-e957-4709-afd8-65f928828fb4",
   "sourceReportSha256": "cca0befdf95e9a9b91a97350e532a453aede3175c670ea850f1965e8909fa799",
-  "graderVersion": "clinic-deterministic-v4.5",
+  "graderVersion": "clinic-deterministic-v4.6",
   "actualUI": true,
   "newInference": false,
   "workflowRevision": "reliable-workflow-v1",
+  "consentCorrection": {
+    "sourceExperimentId": "609e00b1-4434-4d71-9993-c1236109118f",
+    "sourceReportSha256": "8de34fa8087170fcce61302448b287bc64a6cc7a6121eca83b7ad008adba68a8",
+    "passes": [
+      2,
+      2
+    ],
+    "completed": 4,
+    "hardFailures": [
+      0,
+      0
+    ],
+    "workflowRevision": "consent-workflow-v1",
+    "separateFromPrimary": true
+  },
   "passes": [
     16,
     18
@@ -17,6 +32,6 @@
   ],
   "validPairs": 18,
   "infrastructureErrors": 2,
-  "narration": "On-screen captions; saved real inference with v4.5 offline grades, no synthetic result data",
+  "narration": "On-screen captions; saved real inference with v4.6 offline grades, no synthetic result data",
   "video": "tracework-demo.webm"
 }

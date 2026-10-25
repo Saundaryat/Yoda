@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-25T08:38:02.059167+00:00",
+  "checkedAt": "2026-10-25T08:52:44.609012+00:00",
   "source": "native Anthropic saved exports",
   "pricingSnapshot": "pricing-snapshot.json",
   "cohorts": [
@@ -42,6 +42,26 @@
       "actualBilledUsd": null,
       "costStatus": "unknown",
       "note": "Alternative unverified counter interpretations, not billing bounds. Cache/retry semantics and actual invoice unknown."
+    },
+    {
+      "experimentId": "609e00b1-4434-4d71-9993-c1236109118f",
+      "turns": 10,
+      "numericUsageTurns": 10,
+      "sumReportedTurnCounters": {
+        "input_tokens": 326521,
+        "output_tokens": 6084
+      },
+      "sumPerScenarioMaximumCounters": {
+        "input_tokens": 163453,
+        "output_tokens": 3051
+      },
+      "illustrativeNoncachedUsd": {
+        "summedCounters": 1.070823,
+        "perScenarioMaxima": 0.536124
+      },
+      "actualBilledUsd": null,
+      "costStatus": "unknown",
+      "note": "Separate targeted correction. Alternative counter interpretations, not billing bounds; cache and retry accounting remain unknown."
     }
   ]
 }

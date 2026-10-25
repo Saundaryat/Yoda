@@ -2,9 +2,11 @@ import assert from 'node:assert/strict';
 import { createHash, randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { consentWorkflowInstructions } from '../../packages/contracts/tasks.ts';
 import { gradeRun, graderVersion } from '../../packages/eval-engine/graders.ts';
 import { Store } from './store.ts';
 
+export const consentEvidenceDirectory = 'output/experiments/609e00b1-4434-4d71-9993-c1236109118f';
 export const savedEvidenceDirectory = 'output/experiments/857ce98d-e957-4709-afd8-65f928828fb4';
 // A terminal, independently identified review copy. Source files and their
 // recorded behavior stay unchanged; this never queues model execution.
@@ -39,7 +41,7 @@ export async function loadSavedEvidence(store: Store, directory = resolve(savedE
       ...frozen, suite, configurations, graderVersion, executor: 'saved-evidence',
       evidenceProvenance: { kind: 'saved-real-inference-offline-regrade', sourceExperimentId: source.experiment.id,
         sourceReportSha256: hash, sourceCreatedAt: source.experiment.created_at, originalGraderVersion: frozen.graderVersion,
-        replayGraderVersion: graderVersion, newInference: false, sourceWorkflowRevision: 'reliable-workflow-v1' },
+        replayGraderVersion: graderVersion, newInference: false, sourceWorkflowRevision: frozen.configurations.every((config: any) => config.definition.instructions.includes(consentWorkflowInstructions)) ? 'consent-workflow-v1' : 'reliable-workflow-v1' },
     }]);
     for (const { run, events } of source.evidence) {
       const runId = randomUUID();

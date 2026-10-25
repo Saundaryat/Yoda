@@ -1,0 +1,16 @@
+{
+  "checkedAt": "2026-10-25T08:49:37.806297+00:00",
+  "sourceReportSha256": "8de34fa8087170fcce61302448b287bc64a6cc7a6121eca83b7ad008adba68a8",
+  "allFrozenImplementationHashesUnchanged": true,
+  "all4OriginalGradesReproduced": true,
+  "all4Completed": true,
+  "allBookingsAfterDeliveredOfferAndMatchingConsent": true,
+  "bothMaybeRunsDeliveredReofferBeforeNewConsent": true,
+  "noHardFailures": true,
+  "originalGradePasses": [
+    1,
+    1
+  ],
+  "noteWordingFailures": 2,
+  "originalSourceReportUnchanged": true
+}
