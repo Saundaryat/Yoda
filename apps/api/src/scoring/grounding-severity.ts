@@ -13,6 +13,7 @@ import {
 import type { GroundingSeverityDecision } from '@evals/shared';
 import { InfraError } from '../runner/hermes-cli.js';
 import { cancellable } from '../runner/cancellation.js';
+import { recordGradingUsage, type GradingAccounting } from './grading-usage.js';
 import { CLINICAL_EVIDENCE_RULES } from './clinical-evidence.js';
 
 /** Jev 1.14 input is $0.042/M tokens; output is free. Keep this beside the pinned model. */
@@ -60,6 +61,7 @@ export class GroundingSeverityClassifier {
     transcript: string,
     claims: GroundingClaim[],
     signal?: AbortSignal,
+    accounting?: GradingAccounting,
   ): Promise<GroundingClassification> {
     if (!claims.length) {
       return {
@@ -85,6 +87,7 @@ export class GroundingSeverityClassifier {
 
     let response;
     try {
+      await accounting?.beforeCall();
       response = await cancellable(signal, () =>
         this.client.systemOne(
           {
@@ -105,6 +108,14 @@ export class GroundingSeverityClassifier {
       throw typeSafeFailure('Jev grounding classifier', error);
     }
 
+    await recordGradingUsage(accounting, 'classifier', response.model, {
+      inputTokens: response.usage.input_tokens,
+      outputTokens: response.usage.output_tokens,
+      costUsd:
+        response.usage.input_tokens === null
+          ? null
+          : (response.usage.input_tokens * JEV_INPUT_USD_PER_MILLION) / 1_000_000,
+    });
     const decisions = new Map<number, GroundingSeverityDecision>();
     claims.forEach((claim, index) => {
       const answer = response.answers[`claim_${index}`];

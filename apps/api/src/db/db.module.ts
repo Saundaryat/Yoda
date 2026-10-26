@@ -1,4 +1,11 @@
-import { Global, Inject, Module, OnApplicationShutdown, OnModuleInit } from '@nestjs/common';
+import {
+  Global,
+  Inject,
+  Logger,
+  Module,
+  OnApplicationShutdown,
+  OnModuleInit,
+} from '@nestjs/common';
 import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { fileURLToPath } from 'node:url';
@@ -19,10 +26,15 @@ const migrationsFolder = fileURLToPath(new URL('../../drizzle', import.meta.url)
       provide: POOL,
       useFactory: () => {
         const { DATABASE_URL, DB_SCHEMA } = loadConfig();
-        return new pg.Pool({
+        const pool = new pg.Pool({
           connectionString: DATABASE_URL,
           ...(DB_SCHEMA && { options: `-c search_path=${DB_SCHEMA}` }),
         });
+        // pg removes broken idle clients before emitting this event. An unhandled pool event
+        // terminates Node; query failures still reject through their normal callers.
+        const logger = new Logger('PostgresPool');
+        pool.on('error', (error) => logger.error('Idle PostgreSQL connection failed', error.stack));
+        return pool;
       },
     },
     {

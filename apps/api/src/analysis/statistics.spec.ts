@@ -107,6 +107,8 @@ describe('allRunsPassRate', () => {
 });
 
 describe('calibration: A against itself', () => {
+  // These fixed-size Monte Carlo checks exceed the default 5s on shared CI runners.
+  // Keep every draw and assertion; the timeout is not a performance criterion.
   // Two identical configurations: any "better"/"worse" is a false alarm. Each simulated experiment
   // has 20 tasks of different difficulty, 3 runs per side drawn from the same pass probability.
   it('rarely claims a difference that is not there, and the interval covers zero', () => {
@@ -126,7 +128,7 @@ describe('calibration: A against itself', () => {
     }
     expect(falseAlarms / experiments).toBeLessThan(0.08);
     expect(covered / experiments).toBeGreaterThan(0.92);
-  });
+  }, 30_000);
 
   // Power of the default design (20 tasks × 3 runs): what the docs' "smallest detectable change"
   // claim rests on. A 30-point average gain is usually caught; a 20-point one only about a third
@@ -147,11 +149,11 @@ describe('calibration: A against itself', () => {
 
   it('usually detects a 40-point gain beyond the practical margin', () => {
     expect(power(0.8, 0.1)).toBeGreaterThan(0.7);
-  });
+  }, 30_000);
 
   it('often misses a 20-point average improvement (a stated limit, not a bug)', () => {
     expect(power(0.4, 0.5)).toBeLessThan(0.6);
-  });
+  }, 30_000);
 });
 
 describe('bootstrapInterval', () => {

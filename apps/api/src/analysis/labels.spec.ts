@@ -139,3 +139,20 @@ it('reports a binding serious availability rule without rewriting a minor model 
   ]);
   expect(grounded.severity).toEqual(severity);
 });
+
+it('pairs each customer message with its chronological next reply regardless of report array order', () => {
+  const unordered = report({
+    turns: [turn(4), turn(2, [operator])],
+    leadTurns: [
+      { eventSeq: 3, intent: 'other', mood: 'calm' },
+      { eventSeq: 1, intent: 'other', mood: 'calm' },
+    ],
+  });
+  const before = structuredClone(unordered);
+  const result = improvementSummary([{ runId: 'r', taskKey: 't', side: 'a', judge: unordered }]);
+  expect(result.intents.find((row) => row.intent === 'other')).toMatchObject({
+    countA: 2,
+    handledA: 0.5,
+  });
+  expect(unordered).toEqual(before);
+});

@@ -90,7 +90,7 @@ describe.each(['fresh', 'published-v3', 'local-v3', 'current-v4'] as const)(
         ]);
         if (savedRunId) {
           const saved = await pool.query(
-            'select passed,score,context,crm_final,session_ids,conversation from runs where id=$1',
+            'select passed,score,context,crm_final,session_ids,conversation,grading_usage from runs where id=$1',
             [savedRunId],
           );
           expect(saved.rows).toEqual([
@@ -101,6 +101,7 @@ describe.each(['fresh', 'published-v3', 'local-v3', 'current-v4'] as const)(
               crm_final: { saved: 'crm' },
               session_ids: ['historical-session'],
               conversation: null,
+              grading_usage: null,
             },
           ]);
           expect(

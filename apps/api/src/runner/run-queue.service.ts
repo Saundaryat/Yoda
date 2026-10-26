@@ -16,6 +16,7 @@ import { DB, type Db } from '../db/db.module.js';
 import { checkResults, configurations, experiments, runEvents, runs, tasks } from '../db/schema.js';
 import { SkillsService } from '../skills/skills.service.js';
 import { InfraError } from './hermes-cli.js';
+import type { GradingCallUsage } from '../scoring/grading-usage.js';
 import { Judge } from '../scoring/judge.js';
 import { GroundingSeverityClassifier, typeSafeClient } from '../scoring/grounding-severity.js';
 import { claudeClient } from './anthropic.js';
@@ -272,6 +273,7 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
   }
 
   private async process(run: RunRow, signal: AbortSignal): Promise<void> {
+    const usageWrites = new Set<Promise<void>>();
     try {
       const [task] = await this.db.select().from(tasks).where(eq(tasks.id, run.taskId));
       const [experiment] = await this.db
@@ -289,6 +291,21 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
         leadModel: snapshot.leadModel,
         turnTimeoutMs: snapshot.turnTimeoutMs,
         runBudgetSeconds: snapshot.runBudgetSeconds,
+        gradingAccounting: {
+          beforeCall: async () => {
+            await this.admitGrading(run);
+            assertNotCancelled(signal);
+          },
+          record: (usage: GradingCallUsage) => {
+            const write = this.persist(() => this.saveGradingUsage(run, usage));
+            usageWrites.add(write);
+            void write.then(
+              () => usageWrites.delete(write),
+              () => usageWrites.delete(write),
+            );
+            return write;
+          },
+        },
       };
       let conversation = run.conversation;
       if (!conversation) {
@@ -310,16 +327,7 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
         run.conversation = conversation;
       }
       assertNotCancelled(signal);
-      await this.persist(async () => {
-        await this.db.transaction(async (tx) => {
-          await this.lockRunning(tx, run);
-          if (await this.budgetReached(tx, run.experimentId))
-            throw new InfraError(
-              'cost_cap',
-              'Experiment spend has reached its cost cap before grading',
-            );
-        });
-      });
+      await this.admitGrading(run);
       const outcome = await gradeConversation(
         task!.definition as TaskDefinition,
         conversation,
@@ -338,6 +346,9 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
       if (!(error instanceof InfraError) && !signal.aborted) this.logger.error(error);
       await this.persist(() => this.saveFailure(run, failure));
     } finally {
+      // Cancellation may settle a model wrapper while a returned usage write is still pending.
+      // Keep the owner (and DB pool on shutdown) until those writes are durable too.
+      await Promise.allSettled(usageWrites);
       rmSync(join(this.settings.runsDir, run.id, `attempt-${run.attempts}`, 'home', '.env'), {
         force: true,
       });
@@ -412,9 +423,59 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
     });
   }
 
+  private async admitGrading(run: RunRow): Promise<void> {
+    await this.persist(async () => {
+      await this.db.transaction(async (tx) => {
+        await this.lockRunning(tx, run);
+        if (await this.budgetReached(tx, run.experimentId))
+          throw new InfraError(
+            'cost_cap',
+            'Experiment spend has reached its cost cap before grading',
+          );
+      });
+    });
+  }
+
+  /** Record even after cancellation: the provider already returned billable work. Never reopen the run. */
+  private async saveGradingUsage(run: RunRow, usage: GradingCallUsage): Promise<void> {
+    const status = await this.db.transaction(async (tx) => {
+      await tx.select().from(experiments).where(eq(experiments.id, run.experimentId)).for('update');
+      const [saved] = await tx.select().from(runs).where(eq(runs.id, run.id));
+      if (!saved) throw new InfraError('account', 'Cannot record usage for a missing run');
+      const entries: GradingCallUsage[] =
+        saved.gradingUsage ??
+        (saved.judgeCostUsd === null
+          ? []
+          : [
+              {
+                id: 'legacy',
+                component: 'legacy',
+                model: 'unrecorded',
+                inputTokens: null,
+                outputTokens: null,
+                costUsd: saved.judgeCostUsd,
+              },
+            ]);
+      if (entries.some((entry) => entry.id === usage.id)) return saved.status;
+      const gradingUsage = [...entries, { ...usage, attempt: run.attempts }];
+      await tx
+        .update(runs)
+        .set({
+          gradingUsage,
+          // Keep every known component in admission totals; unknown components remain explicit in the ledger.
+          judgeCostUsd: gradingUsage.reduce((sum, entry) => sum + (entry.costUsd ?? 0), 0),
+        })
+        .where(eq(runs.id, run.id));
+      return saved.status;
+    });
+    // Returned usage can finish persisting after a cancel event. Invalidate cost views too.
+    this.emit(run.experimentId, run.id, status);
+  }
+
   private async saveOutcome(run: RunRow, outcome: RunOutcome): Promise<void> {
     await this.db.transaction(async (tx) => {
       await this.lockRunning(tx, run);
+      const [saved] = await tx.select().from(runs).where(eq(runs.id, run.id));
       await tx
         .update(runs)
         .set({
@@ -422,7 +483,9 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
           passed: outcome.passed,
           score: outcome.score,
           judge: outcome.judge,
-          judgeCostUsd: outcome.judge?.usage.costUsd ?? null,
+          judgeCostUsd: saved?.gradingUsage
+            ? saved.judgeCostUsd
+            : (outcome.judge?.usage.costUsd ?? null),
           durationMs: outcome.durationMs,
           errorKind: null,
           errorDetail: null,
@@ -437,7 +500,7 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
   }
 
   private async saveFailure(run: RunRow, failure: InfraError): Promise<void> {
-    let status: 'queued' | 'cancelled' | 'error' = 'error';
+    let status: RunRow['status'] = 'error';
     await this.db.transaction(async (tx) => {
       const [parent] = await tx
         .select()
@@ -445,7 +508,11 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
         .where(eq(experiments.id, run.experimentId))
         .for('update');
       const [saved] = await tx.select().from(runs).where(eq(runs.id, run.id));
-      if (saved?.status !== 'running') return; // Idempotent after an ambiguous commit.
+      if (saved?.status !== 'running') {
+        // A late failure or an acknowledged retry must emit the durable state too.
+        status = saved?.status ?? 'error';
+        return;
+      }
       const log = [
         ...(saved.attemptLog as unknown[]),
         {

@@ -96,3 +96,38 @@ Regression coverage includes repeated write failures at each persistence boundar
 acknowledgements, startup and polling repair, cancellation and shutdown during recovery, concurrent
 manual retries at the budget boundary, typed evidence sources, reordered tool sequences, paired
 conditional/factual wording, and native browser reconnections without replayed state events.
+
+## Returned grading usage and runtime error boundaries
+
+Migration `0006_grading-call-usage` adds nullable `runs.grading_usage`. It leaves historical rows and
+saved grades unchanged. For new grading work, each returned primary-judge, evidence-review, and
+classifier response is recorded before its contents are validated or the next stage starts. This
+includes refusals and malformed/partial grading reports that subsequently fail. Each call has a
+stable id across database-write retries; a lost commit acknowledgement cannot charge it twice.
+`judge_cost_usd` retains the sum of all known ledger estimates across automatic and manual retries,
+instead of being overwritten by the final successful report. Unknown-priced components remain
+explicit in the cost breakdown alongside known amounts. If a historical row already has recorded
+grading cost, its first ledger write preserves that amount as a legacy component.
+
+The worker checks spend and cancellation before each paid grading stage. Returned usage is retained
+even if the experiment is subsequently cancelled. Cancellation and shutdown keep the owner until
+any in-flight usage writes are durable. A copied/regraded run starts without its source call ledger
+so the original work is never charged again. Existing conversations remain reusable on retry.
+Provider requests that never return usage, and results lost in a forced process exit before their
+usage is committed, remain outside the known estimate. Already admitted concurrent calls can still
+complete above the admission cap.
+
+Idle PostgreSQL client errors are logged at the pool boundary; `pg` discards that client and the
+next query obtains a replacement. Active query failures continue through the normal transaction
+and persistence retry paths. Hermes usage JSON is read and validated inside its subprocess callback;
+unreadable, truncated, or structurally invalid reports reject as run infrastructure errors instead
+of throwing out of the callback and terminating the API. Error messages do not echo the report.
+
+Evaluator `evidence-grounding-v10` retains availability knowledge per CRM query scope: a filtered
+search replaces only that date, a full search replaces all dates, and successful booking or a taken
+result removes the affected slot. Only explicit affirmative waitlist statements/offers receive the
+unsupported-service override; negated or indirect wording remains subject to semantic judgment.
+Model reply/lead judgments are normalized by event sequence, and handling analysis also finds the
+chronological next reply independently of stored array order. Unfinished experiments from earlier
+evaluator versions cannot silently resume under these changed semantics; explicitly regrade or
+start a new experiment.

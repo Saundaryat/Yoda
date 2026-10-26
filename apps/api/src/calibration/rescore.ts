@@ -73,6 +73,7 @@ export function replayRow(
     passed: score.passed,
     score: score.score,
     judge,
+    gradingUsage: null, // A replay charges new work only; never copy the original call ledger.
     judgeCostUsd: mode === 'score-only' ? 0 : judge.usage.costUsd,
     // Charge only the NEW judge work, never the original agent/customer usage twice.
     inputTokens: 0,

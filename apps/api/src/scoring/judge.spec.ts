@@ -236,7 +236,7 @@ describe('Judge', () => {
     },
     {
       text: 'Want me to add you to the waitlist?',
-      quote: 'add you to the waitlist',
+      quote: 'Want me to add you to the waitlist',
       rule: 'unsupported-waitlist-v1',
     },
     {

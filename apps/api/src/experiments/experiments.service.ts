@@ -197,6 +197,7 @@ export class ExperimentsService {
         costStatus: runs.costStatus,
         leadCostUsd: runs.leadCostUsd,
         judgeCostUsd: runs.judgeCostUsd,
+        gradingUsage: runs.gradingUsage,
         context: runs.context,
         judge: runs.judge,
       })

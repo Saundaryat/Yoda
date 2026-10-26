@@ -11,6 +11,7 @@ import type {
 import { existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { scoreRun } from '../scoring/checks.js';
+import type { GradingAccounting } from '../scoring/grading-usage.js';
 import type { GroundingAuthority, Judge } from '../scoring/judge.js';
 import { classifyTurn, InfraError, runTurn, stopGateway } from './hermes-cli.js';
 import { PROVIDER_KEY_ENV, seedHome } from './hermes-home.js';
@@ -33,6 +34,7 @@ export interface ExecutorSettings {
   leadModel: string;
   /** Grades every reply after the run; null when ANTHROPIC_API_KEY isn't set (judge checks skipped). */
   judge: Judge | null;
+  gradingAccounting?: GradingAccounting;
 }
 
 export interface RunInput {
@@ -291,6 +293,7 @@ export async function gradeConversation(
           conversation.judgeDate,
           conversation.context.groundingAuthority,
           signal,
+          settings.gradingAccounting,
         ),
       )
     : null;
