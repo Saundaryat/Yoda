@@ -500,7 +500,7 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
   }
 
   private async saveFailure(run: RunRow, failure: InfraError): Promise<void> {
-    let status: 'queued' | 'cancelled' | 'error' = 'error';
+    let status: RunRow['status'] = 'error';
     await this.db.transaction(async (tx) => {
       const [parent] = await tx
         .select()
@@ -508,7 +508,11 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
         .where(eq(experiments.id, run.experimentId))
         .for('update');
       const [saved] = await tx.select().from(runs).where(eq(runs.id, run.id));
-      if (saved?.status !== 'running') return; // Idempotent after an ambiguous commit.
+      if (saved?.status !== 'running') {
+        // A late failure or an acknowledged retry must emit the durable state too.
+        status = saved?.status ?? 'error';
+        return;
+      }
       const log = [
         ...(saved.attemptLog as unknown[]),
         {

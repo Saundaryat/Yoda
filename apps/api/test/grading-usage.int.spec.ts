@@ -333,6 +333,10 @@ it('retains the owner and returned usage while cancellation races a database wri
   expect(saved.gradingUsage).toHaveLength(1);
   expect(saved.judgeCostUsd).toBeCloseTo(0.002);
   expect(fixture.calls).toEqual({ primary: 1, review: 0, classifier: 0 });
+  // A failure-write retry after the usage commit must not publish a contradictory error state.
+  await (
+    queue as unknown as { saveFailure: (run: unknown, error: unknown) => Promise<void> }
+  ).saveFailure(saved, new Error('Late failure'));
   expect(progress.at(-1)).toMatchObject({ runId: id, status: 'cancelled' });
   subscription.unsubscribe();
 });
