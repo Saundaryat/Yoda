@@ -1,0 +1,1 @@
+ALTER TABLE "runs" ADD COLUMN "grading_usage" jsonb;

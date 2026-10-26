@@ -5,6 +5,7 @@ import {
   OUTCOMES,
   type ImprovementSummary,
   type JudgeReport,
+  type TurnJudgment,
 } from '@evals/shared';
 
 export interface LabelledRun {
@@ -44,7 +45,14 @@ export function improvementSummary(runs: LabelledRun[]): ImprovementSummary {
     const pairs = bySide(side).flatMap((r) =>
       r.judge.leadTurns
         .filter((l) => l.intent === intent)
-        .map((l) => r.judge.turns.find((t) => t.eventSeq > l.eventSeq))
+        .map((l) =>
+          r.judge.turns
+            .filter((t) => t.eventSeq > l.eventSeq)
+            .reduce<TurnJudgment | undefined>(
+              (next, turn) => (!next || turn.eventSeq < next.eventSeq ? turn : next),
+              undefined,
+            ),
+        )
         .filter((t) => t !== undefined),
     );
     return { count: pairs.length, clean: pairs.filter((t) => t.issues.length === 0).length };

@@ -24,6 +24,39 @@ const inPeriod = (minute: number, period: string) =>
       ? minute >= 720 && minute < 1080
       : minute >= 1080;
 
+/** Materialize the latest known free slots per query scope, in actual event sequence. */
+function availableSlots(events: RunEvent[]) {
+  const known = new Map<string, { minute: number; start: string }>();
+  const evidenceSeqs: number[] = [];
+  for (const event of [...events].sort((a, b) => a.seq - b.seq)) {
+    if (event.kind !== 'tool' || event.source !== 'crm') continue;
+    if (event.tool === 'search_slots' && event.ok && Array.isArray(event.result)) {
+      evidenceSeqs.push(event.seq);
+      const date = typeof event.args.date === 'string' ? event.args.date : undefined;
+      // A filtered search replaces only that date's knowledge; a full search replaces all dates.
+      for (const [id, slot] of known) if (!date || slot.start.startsWith(date)) known.delete(id);
+      for (const value of event.result as unknown[]) {
+        if (!value || typeof value !== 'object') continue;
+        const slot = value as { slot_id?: unknown; start?: unknown };
+        if (typeof slot.start !== 'string' || typeof slot.slot_id !== 'string') continue;
+        const clock = /T(\d{2}):(\d{2})/.exec(slot.start);
+        if (clock)
+          known.set(slot.slot_id, {
+            minute: Number(clock[1]) * 60 + Number(clock[2]),
+            start: slot.start,
+          });
+      }
+    } else if (
+      event.tool === 'book_appointment' &&
+      (event.ok || /taken/i.test(JSON.stringify(event.result)))
+    ) {
+      if (typeof event.args.slot_id === 'string') known.delete(event.args.slot_id);
+      evidenceSeqs.push(event.seq);
+    }
+  }
+  return { slots: [...known.values()], evidenceSeqs };
+}
+
 /** Only earlier successful CRM searches in this conversation can establish live availability. */
 export function assessAvailability(events: RunEvent[]): AvailabilityAssessment[] {
   return events.flatMap((event) => {
@@ -39,34 +72,20 @@ export function assessAvailability(events: RunEvent[]): AvailabilityAssessment[]
       )
         return [];
       const before = events.filter((e) => e.session === event.session && e.seq < event.seq);
-      const search = before.findLast(
-        (e) => e.kind === 'tool' && e.source === 'crm' && e.tool === 'search_slots' && e.ok,
+      const { slots, evidenceSeqs } = availableSlots(before);
+      const searched = before.some(
+        (e) =>
+          e.kind === 'tool' &&
+          e.source === 'crm' &&
+          e.tool === 'search_slots' &&
+          e.ok &&
+          Array.isArray(e.result),
       );
-      const evidenceSeqs = search ? [search.seq] : [];
       let reason: string | null = null;
-      if (!search || search.kind !== 'tool' || !Array.isArray(search.result)) {
+      if (!searched) {
         reason =
           'Positive availability claim has no earlier successful search_slots result in this session.';
       } else {
-        const slots = search.result.flatMap((value: unknown) => {
-          if (!value || typeof value !== 'object') return [];
-          const slot = value as { slot_id?: unknown; start?: unknown };
-          if (typeof slot.start !== 'string' || typeof slot.slot_id !== 'string') return [];
-          const clock = /T(\d{2}):(\d{2})/.exec(slot.start);
-          if (!clock) return [];
-          const consumed = before.some(
-            (e) =>
-              e.seq > search.seq &&
-              e.kind === 'tool' &&
-              e.source === 'crm' &&
-              e.tool === 'book_appointment' &&
-              e.args.slot_id === slot.slot_id &&
-              (e.ok || /taken/i.test(JSON.stringify(e.result))),
-          );
-          return consumed
-            ? []
-            : [{ minute: Number(clock[1]) * 60 + Number(clock[2]), start: slot.start }];
-        });
         const mixed =
           /\b(?:morning|afternoon|evening)\s+and\s+(?:morning|afternoon|evening)\b/i.test(quote);
         const period = mixed
@@ -119,20 +138,21 @@ export function assessUnsupportedWaitlists(
           /wait[- ]?list/i.test(JSON.stringify(e.result)),
       );
     if (policyAvailable) return []; // Leave policy-supported services to semantic judgment.
-    const quote = /\b(?:add|added|put|place|placed|join)\b[^.!?\n]{0,55}\bwait[- ]?list\b/i.exec(
-      event.text,
-    )?.[0];
+    // Quoted plans and conditional capabilities are not unconditional enrollment assertions.
+    if (/["“”]/.test(event.text) || /\b(?:if|unless)\b/i.test(event.text)) return [];
+    // Only unambiguous affirmative enrollment statements/offers get a hard override.
+    // Negated, indirect and hypothetical wording stays with semantic judgment, not a substring rule.
+    const quote =
+      /\b(?:(?:i|we)(?:['’](?:ll|ve)|\s+(?:will|have|can))?|want me to|would you like me to)\s+(?:add|added|put|place|placed|join)\b[^.!?\n]{0,55}\bwait[- ]?list\b/i.exec(
+        event.text,
+      )?.[0];
     if (!quote) return [];
-    const prefix = event.text.slice(
-      Math.max(0, event.text.indexOf(quote) - 45),
-      event.text.indexOf(quote),
-    );
-    if (
-      /\b(?:can(?:not|['’]t)|don['’]t|do not|not able to|unable to)\s*(?:\w+\s+){0,3}$/i.test(
-        prefix,
-      )
-    )
-      return [];
+    const clausePrefix =
+      event.text
+        .slice(0, event.text.indexOf(quote))
+        .split(/[.!?;\n]|\b(?:but|however|instead)\b/i)
+        .at(-1) ?? '';
+    if (/\b(?:no|not|never|refuse|decline|unable|\w+n['’]t)\b/i.test(clausePrefix)) return [];
     return [
       {
         ruleId: 'unsupported-waitlist-v1' as const,

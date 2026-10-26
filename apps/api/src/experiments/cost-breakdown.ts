@@ -1,3 +1,4 @@
+import type { GradingCallUsage } from '../scoring/grading-usage.js';
 import type { CostBreakdown, CostBreakdownRow, JudgeReport } from '@evals/shared';
 
 interface CostRun {
@@ -9,6 +10,7 @@ interface CostRun {
   costStatus: string | null;
   leadCostUsd: number | null;
   judgeCostUsd: number | null;
+  gradingUsage?: GradingCallUsage[] | null;
   context: unknown;
   judge: unknown;
 }
@@ -37,6 +39,7 @@ export function costBreakdown(
     model: string | undefined,
     cost: number | null,
     used: boolean,
+    unknown = cost === null,
   ) => {
     if (!used) return;
     const id = `${label}:${model ?? 'unknown'}`;
@@ -50,8 +53,8 @@ export function costBreakdown(
       unknownEstimates: 0,
     };
     row.runs++;
-    if (cost === null) row.unknownEstimates++;
-    else row.estimatedCostUsd += cost;
+    if (unknown) row.unknownEstimates++;
+    row.estimatedCostUsd += cost ?? 0;
     rows.set(id, row);
   };
   for (const run of runs) {
@@ -74,7 +77,35 @@ export function costBreakdown(
         (context.lead?.calls ?? 0) > 0 || (run.leadCostUsd ?? 0) > 0,
       );
     }
-    if (context.rescoring?.mode === 'score-only' || run.judgeCostUsd === 0) continue;
+    if (context.rescoring?.mode === 'score-only') continue;
+    if (run.gradingUsage?.length) {
+      const labels = {
+        judge: 'Claude judge',
+        review: 'Evidence reviewer',
+        classifier: 'Jev',
+        legacy: 'Grading',
+      } as const;
+      const groups = new Map<
+        string,
+        { label: keyof typeof descriptions; model: string; known: number; unknown: boolean }
+      >();
+      for (const call of run.gradingUsage) {
+        const key = `${call.component}:${call.model}`;
+        const group = groups.get(key) ?? {
+          label: labels[call.component],
+          model: call.model,
+          known: 0,
+          unknown: false,
+        };
+        group.known += call.costUsd ?? 0;
+        group.unknown ||= call.costUsd === null;
+        groups.set(key, group);
+      }
+      for (const group of groups.values())
+        add(group.label, group.model, group.known, true, group.unknown);
+      continue;
+    }
+    if (run.judgeCostUsd === 0) continue;
     const review = judge?.groundingReview;
     const jev = judge?.groundingClassifier;
     const used = !!judge || run.judgeCostUsd !== null;

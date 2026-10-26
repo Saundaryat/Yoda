@@ -1,4 +1,5 @@
 import type { ConfigurationSpec } from '@evals/shared';
+import { z } from 'zod';
 import { spawn } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { HERMES_PROVIDER, toolsets } from './hermes-home.js';
@@ -14,7 +15,7 @@ export interface TurnUsage {
   turn_exit_reason?: string | null;
   failed?: boolean;
   failure?: string;
-  auxiliary?: { api_calls?: number; estimated_cost_usd?: number };
+  auxiliary?: { api_calls?: number | null; estimated_cost_usd?: number | null };
 }
 
 export interface TurnResult {
@@ -23,6 +24,23 @@ export interface TurnResult {
   usage: TurnUsage | null;
   timedOut: boolean;
 }
+
+// External CLI output must be validated before leaving its event callback.
+const count = z.number().finite().nonnegative().nullable().optional();
+const usageSchema = z
+  .object({
+    session_id: z.string().nullable().optional(),
+    input_tokens: count,
+    output_tokens: count,
+    estimated_cost_usd: count,
+    cost_status: z.string().nullable().optional(),
+    api_calls: count,
+    turn_exit_reason: z.string().nullable().optional(),
+    failed: z.boolean().optional(),
+    failure: z.string().optional(),
+    auxiliary: z.object({ api_calls: count, estimated_cost_usd: count }).optional(),
+  })
+  .passthrough();
 
 /** Why an attempt could not produce a scoreable run. `retry` kinds are retried from scratch. */
 export class InfraError extends Error {
@@ -159,10 +177,15 @@ export function runTurn(input: TurnInput): Promise<TurnResult> {
       clearTimeout(timer);
       input.signal?.removeEventListener('abort', onAbort);
       if (cancelled) return reject(new InfraError('cancelled', 'Run cancelled'));
-      const usage = existsSync(input.usageFile)
-        ? (JSON.parse(readFileSync(input.usageFile, 'utf8')) as TurnUsage)
-        : null;
-      resolve({ exitCode, stdout: stdout.trim(), usage, timedOut });
+      try {
+        const usage = existsSync(input.usageFile)
+          ? usageSchema.parse(JSON.parse(readFileSync(input.usageFile, 'utf8')))
+          : null;
+        resolve({ exitCode, stdout: stdout.trim(), usage, timedOut });
+      } catch {
+        // Do not echo malformed output: it can contain provider response details or credentials.
+        reject(new InfraError('crash', 'Hermes usage report is unreadable or invalid'));
+      }
     });
   });
 }

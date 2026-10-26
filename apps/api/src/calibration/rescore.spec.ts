@@ -73,7 +73,7 @@ describe('scoring-only replay provenance', () => {
       expect(replay.judge).toEqual(judge);
       expect(replay.judge.evaluatorVersion).toBe('clinical-grounding-v3');
       expect(replay.context.rescoring).toMatchObject({
-        evaluatorVersion: 'evidence-grounding-v9',
+        evaluatorVersion: 'evidence-grounding-v10',
         mode: 'score-only',
         sourceJudgeVersion: 'clinical-grounding-v3',
       });
@@ -124,4 +124,26 @@ it('focused rejudging selects entire task families across both arms and all repe
   expect(() => selectReplayScope(rows, tasks, ['unknown'])).toThrow();
   expect(() => selectReplayScope(rows, tasks, [])).toThrow();
   expect(rows).toEqual(before);
+});
+
+it('never copies a source call ledger into a replay that charges only new grading', () => {
+  const source = {
+    gradingUsage: [
+      {
+        id: 'old-call',
+        component: 'judge',
+        model: 'm',
+        inputTokens: 100,
+        outputTokens: 0,
+        costUsd: 1,
+      },
+    ],
+    context: {},
+    judgeCostUsd: 1,
+  } as unknown as Parameters<typeof replayRow>[0];
+  const judge = { model: 'm', usage: { costUsd: 0.2 } } as Parameters<typeof replayRow>[2];
+  const score = { passed: true, score: 100 } as Parameters<typeof replayRow>[3];
+  expect(replayRow(source, 'replay', judge, score).gradingUsage).toBeNull();
+  expect(replayRow(source, 'replay', judge, score).judgeCostUsd).toBe(0.2);
+  expect(source.gradingUsage).toHaveLength(1);
 });

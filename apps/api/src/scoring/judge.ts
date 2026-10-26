@@ -23,6 +23,7 @@ import {
   assessUnsupportedWaitlists,
   assessClinicContactClaims,
 } from './availability-evidence.js';
+import { recordGradingUsage, type GradingAccounting } from './grading-usage.js';
 import { reviewGrounding } from './grounding-review.js';
 
 /**
@@ -33,7 +34,7 @@ import { reviewGrounding } from './grounding-review.js';
  * can't verify. When configured, Jev then classifies verified grounding failures by severity.
  */
 
-export const EVALUATOR_VERSION = 'evidence-grounding-v9';
+export const EVALUATOR_VERSION = 'evidence-grounding-v10';
 
 export interface GroundingAuthority {
   instructions: string;
@@ -175,6 +176,7 @@ export class Judge {
     today: string,
     authority?: GroundingAuthority,
     signal?: AbortSignal,
+    accounting?: GradingAccounting,
   ): Promise<JudgeReport> {
     const replies = new Map(
       events.flatMap((e) => (e.kind === 'agent' ? [[e.seq, e.text] as const] : [])),
@@ -209,6 +211,7 @@ export class Judge {
 
     let response;
     try {
+      await accounting?.beforeCall();
       response = await cancellable(signal, () =>
         this.client.parse(
           {
@@ -226,6 +229,11 @@ export class Judge {
     } catch (error) {
       throw claudeFailure('LLM judge', error);
     }
+    await recordGradingUsage(accounting, 'judge', this.model, {
+      inputTokens: response.usage.input_tokens,
+      outputTokens: response.usage.output_tokens,
+      costUsd: estimateCost(this.model, response.usage.input_tokens, response.usage.output_tokens),
+    });
     const parsed = response.parsed_output;
     if (response.stop_reason === 'refusal' || !parsed) {
       throw new InfraError(
@@ -280,6 +288,7 @@ export class Judge {
 
     const unclassifiedTurns: TurnJudgment[] = parsed.turns
       .filter((t) => replies.has(t.seq))
+      .sort((a, b) => a.seq - b.seq)
       .map((t) => {
         const text = replies.get(t.seq)!;
         const verdicts = {
@@ -333,6 +342,7 @@ export class Judge {
           `${renderAuthority(authority)}\n${CLINICAL_EVIDENCE_RULES}\n${transcriptText}`,
           authority,
           signal,
+          accounting,
         )
       : null;
     const reviewedTurns = unclassifiedTurns.map((turn): TurnJudgment => {
@@ -384,6 +394,7 @@ export class Judge {
             `${renderAuthority(authority)}\n\n${renderTranscript(events)}`,
             groundingClaims,
             signal,
+            accounting,
           )
         : null;
     const turns = reviewedTurns.map((turn): TurnJudgment => {
@@ -413,6 +424,7 @@ export class Judge {
       turns,
       leadTurns: parsed.leadTurns
         .filter((l) => leadSeqs.has(l.seq))
+        .sort((a, b) => a.seq - b.seq)
         .map(({ seq, ...label }) => ({ eventSeq: seq, ...label })),
       questions: parsed.questions
         .filter((q) => known.has(q.id))

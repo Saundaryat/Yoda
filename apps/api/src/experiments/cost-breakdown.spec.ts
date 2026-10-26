@@ -84,3 +84,76 @@ describe('saved cost breakdown', () => {
     expect(result.estimatedCostUsd).toBeCloseTo(1.73);
   });
 });
+
+it('counts all grading attempts from the call ledger without double charging the final report', () => {
+  const result = costBreakdown(experiment, [
+    {
+      ...run,
+      gradingUsage: [
+        {
+          id: 'first',
+          component: 'judge',
+          model: 'judge',
+          inputTokens: 100,
+          outputTokens: 0,
+          costUsd: 0.2,
+        },
+        {
+          id: 'second',
+          component: 'judge',
+          model: 'judge',
+          inputTokens: 100,
+          outputTokens: 0,
+          costUsd: 0.2,
+        },
+        {
+          id: 'review',
+          component: 'review',
+          model: 'reviewer',
+          inputTokens: 50,
+          outputTokens: 0,
+          costUsd: 0.1,
+        },
+      ],
+    },
+  ]);
+  expect(result.rows.find((row) => row.label === 'Claude judge')).toMatchObject({
+    runs: 1,
+    estimatedCostUsd: 0.4,
+  });
+  expect(result.rows.find((row) => row.label === 'Evidence reviewer')?.estimatedCostUsd).toBe(0.1);
+  expect(result.rows.some((row) => row.label === 'Jev')).toBe(false);
+  expect(result.estimatedCostUsd).toBeCloseTo(1.7);
+});
+it('retains known ledger estimates while marking unavailable components', () => {
+  const result = costBreakdown(experiment, [
+    {
+      ...run,
+      judge: null,
+      gradingUsage: [
+        {
+          id: 'known',
+          component: 'judge',
+          model: 'm',
+          inputTokens: 100,
+          outputTokens: 0,
+          costUsd: 0.2,
+        },
+        {
+          id: 'unknown',
+          component: 'judge',
+          model: 'm',
+          inputTokens: 100,
+          outputTokens: 0,
+          costUsd: null,
+        },
+      ],
+    },
+  ]);
+  expect(result.rows.find((row) => row.label === 'Claude judge')).toMatchObject({
+    runs: 1,
+    estimatedCostUsd: 0.2,
+    unknownEstimates: 1,
+  });
+  expect(result.estimatedCostUsd).toBeCloseTo(1.4);
+});

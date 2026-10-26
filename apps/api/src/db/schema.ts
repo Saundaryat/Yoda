@@ -1,3 +1,4 @@
+import type { GradingCallUsage } from '../scoring/grading-usage.js';
 import type { RunConversation } from '../runner/run-executor.js';
 import type { ExecutionSnapshot } from '../runner/execution-snapshot.js';
 import {
@@ -116,6 +117,8 @@ export const runs = pgTable(
     /** The judge's per-reply verdicts and answers to the task's judge questions. */
     judge: jsonb(),
     judgeCostUsd: real(),
+    /** Per-call returned grading usage, including failed attempts. Null for historical records. */
+    gradingUsage: jsonb().$type<GradingCallUsage[]>(),
     durationMs: integer(),
     sessionIds: text().array().notNull().default([]),
     crmInitial: jsonb(),

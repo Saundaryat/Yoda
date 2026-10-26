@@ -194,3 +194,105 @@ it.each(['Once', 'When', 'Whenever', 'If', 'Unless', 'Provided that', 'As soon a
     ).toMatchObject([{ supported: false, quote: 'We have morning openings' }]);
   },
 );
+
+function scopedSearch(
+  seq: number,
+  date: string | undefined,
+  hour: number | null,
+  id: string,
+): RunEvent {
+  return {
+    seq,
+    session: 1,
+    turn: 1,
+    kind: 'tool',
+    source: 'crm',
+    tool: 'search_slots',
+    ok: true,
+    args: date ? { date } : {},
+    result:
+      hour === null
+        ? []
+        : [
+            {
+              slot_id: id,
+              start: `${date ?? '2026-10-26'}T${String(hour).padStart(2, '0')}:00:00-05:00`,
+            },
+          ],
+  };
+}
+it('retains independent date queries, including empty results for another date', () => {
+  const monday = scopedSearch(1, '2026-10-26', 9, 'mon');
+  for (const tuesday of [
+    scopedSearch(2, '2026-10-27', 14, 'tue'),
+    scopedSearch(2, '2026-10-27', null, 'tue'),
+  ]) {
+    const events = [reply('For Monday, we have a 9 AM slot available.', 3), tuesday, monday];
+    expect(assessAvailability(events)).toMatchObject([{ supported: true, evidenceSeqs: [1, 2] }]);
+  }
+});
+it.each(['2026-10-26', undefined])('a newer search replaces its own scope: %s', (scope) => {
+  expect(
+    assessAvailability([
+      scopedSearch(1, '2026-10-26', 9, 'mon'),
+      scopedSearch(2, scope, null, 'none'),
+      reply('We have a 9 AM slot available.', 3),
+    ]),
+  ).toMatchObject([{ supported: false }]);
+});
+it.each([true, false])(
+  'a booking or taken result removes only that slot across date scopes: %s',
+  (ok) => {
+    const events: RunEvent[] = [
+      scopedSearch(1, '2026-10-26', 9, 'mon'),
+      scopedSearch(2, '2026-10-27', 14, 'tue'),
+      {
+        seq: 3,
+        session: 1,
+        turn: 1,
+        kind: 'tool',
+        source: 'crm',
+        tool: 'book_appointment',
+        args: { slot_id: 'mon' },
+        ok,
+        result: ok ? {} : { error: 'just taken' },
+      },
+    ];
+    expect(
+      assessAvailability([...events, reply('We have a 9 AM slot available.', 4)])[0]?.supported,
+    ).toBe(false);
+    expect(
+      assessAvailability([...events, reply('We have a 2 PM slot available.', 4)])[0]?.supported,
+    ).toBe(true);
+  },
+);
+it.each([
+  "I won't add you to a waitlist because we don't have one.",
+  'We wouldn’t put you on a waitlist.',
+  'I will not add you to a waitlist.',
+  'I refuse to add you to a waitlist.',
+  'We should never add you to a waitlist.',
+  'No one can add you to a waitlist.',
+])('leaves negated/indirect waitlist wording to semantic judgment: %s', (text) => {
+  expect(assessUnsupportedWaitlists([reply(text)])).toEqual([]);
+});
+it('still catches an affirmative offer after a separate negated booking clause', () => {
+  expect(
+    assessUnsupportedWaitlists([
+      reply("I can't book that slot, but I can add you to our waitlist."),
+    ]),
+  ).toMatchObject([{ supported: false, ruleId: 'unsupported-waitlist-v1' }]);
+});
+
+it.each([
+  'If we ever offer a waitlist, I can add you to the waitlist then.',
+  'I can add you to a waitlist if that service becomes available.',
+  "I won't say I can add you to a waitlist.",
+  'I never said I can add you to a waitlist.',
+  'The draft "I can add you to a waitlist" would be incorrect.',
+])(
+  'leaves quoted, conditional and denied affirmative clauses to the semantic judge: %s',
+  (text) => {
+    expect(assessUnsupportedWaitlists([reply(text)])).toEqual([]);
+  },
+);

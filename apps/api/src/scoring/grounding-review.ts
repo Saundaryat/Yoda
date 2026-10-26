@@ -4,6 +4,7 @@ import type { RunEvent, TaskDefinition, TurnJudgment } from '@evals/shared';
 import { claudeFailure, estimateCost, type ClaudeClient } from '../runner/anthropic.js';
 import { InfraError } from '../runner/hermes-cli.js';
 import { cancellable } from '../runner/cancellation.js';
+import { recordGradingUsage, type GradingAccounting } from './grading-usage.js';
 import type { GroundingAuthority } from './judge.js';
 
 const actionTools = [
@@ -60,7 +61,9 @@ export async function reviewGrounding(
   context: string,
   authority?: GroundingAuthority,
   signal?: AbortSignal,
+  accounting?: GradingAccounting,
 ) {
+  await accounting?.beforeCall();
   const response = await cancellable(signal, () =>
     client.parse(
       {
@@ -88,6 +91,11 @@ export async function reviewGrounding(
     ),
   ).catch((e) => {
     throw claudeFailure('Grounding evidence review', e);
+  });
+  await recordGradingUsage(accounting, 'review', model, {
+    inputTokens: response.usage.input_tokens,
+    outputTokens: response.usage.output_tokens,
+    costUsd: estimateCost(model, response.usage.input_tokens, response.usage.output_tokens),
   });
   if (!response.parsed_output || response.stop_reason === 'refusal')
     throw new InfraError('provider_error', 'Grounding review returned no usable report');
