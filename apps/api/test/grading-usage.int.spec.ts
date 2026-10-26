@@ -316,6 +316,8 @@ it('retains the owner and returned usage while cancellation races a database wri
     await original(run, usage);
   });
   const fixture = providerFixture('none');
+  const progress: { runId: string | null; status: string }[] = [];
+  const subscription = queue.progress.subscribe((event) => progress.push(event));
   const { experiment, id } = await singleRun();
   await queue.fill();
   await until(() => entered);
@@ -331,6 +333,8 @@ it('retains the owner and returned usage while cancellation races a database wri
   expect(saved.gradingUsage).toHaveLength(1);
   expect(saved.judgeCostUsd).toBeCloseTo(0.002);
   expect(fixture.calls).toEqual({ primary: 1, review: 0, classifier: 0 });
+  expect(progress.at(-1)).toMatchObject({ runId: id, status: 'cancelled' });
+  subscription.unsubscribe();
 });
 
 it('keeps known costs beside unknown estimates and preserves an existing historical grading total', async () => {

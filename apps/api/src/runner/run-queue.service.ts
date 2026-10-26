@@ -438,7 +438,7 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
 
   /** Record even after cancellation: the provider already returned billable work. Never reopen the run. */
   private async saveGradingUsage(run: RunRow, usage: GradingCallUsage): Promise<void> {
-    await this.db.transaction(async (tx) => {
+    const status = await this.db.transaction(async (tx) => {
       await tx.select().from(experiments).where(eq(experiments.id, run.experimentId)).for('update');
       const [saved] = await tx.select().from(runs).where(eq(runs.id, run.id));
       if (!saved) throw new InfraError('account', 'Cannot record usage for a missing run');
@@ -456,7 +456,7 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
                 costUsd: saved.judgeCostUsd,
               },
             ]);
-      if (entries.some((entry) => entry.id === usage.id)) return;
+      if (entries.some((entry) => entry.id === usage.id)) return saved.status;
       const gradingUsage = [...entries, { ...usage, attempt: run.attempts }];
       await tx
         .update(runs)
@@ -466,7 +466,10 @@ export class RunQueueService implements OnApplicationBootstrap, BeforeApplicatio
           judgeCostUsd: gradingUsage.reduce((sum, entry) => sum + (entry.costUsd ?? 0), 0),
         })
         .where(eq(runs.id, run.id));
+      return saved.status;
     });
+    // Returned usage can finish persisting after a cancel event. Invalidate cost views too.
+    this.emit(run.experimentId, run.id, status);
   }
 
   private async saveOutcome(run: RunRow, outcome: RunOutcome): Promise<void> {
