@@ -43,7 +43,7 @@ One **run** is one agent version attempting one scenario once. Repetitions give 
 20 scenarios × 2 agent versions × 3 repetitions = 120 runs
 ```
 
-This is an example; the run count follows your selections. Start with a small development comparison to check your setup before running the full suite. The app's **How it works** page explains the same workflow.
+An experiment can compare up to six versions (A–F). A is the baseline; with three or more, the experiment page adds a leaderboard that ranks every version and compares each one with A (intervals widened with a Bonferroni adjustment), and you can pick any two versions for the detailed view. This is an example; the run count follows your selections. Start with a small development comparison to check your setup before running the full suite. The app's **How it works** page explains the same workflow.
 
 ## What gets tested?
 
