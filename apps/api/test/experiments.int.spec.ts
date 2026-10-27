@@ -148,6 +148,84 @@ describe('experiments end to end', () => {
     expect(detail.run.crmFinal.appointments).toHaveLength(1);
   });
 
+  it('runs three versions, ranks them and compares any chosen pair', async () => {
+    const spec = { provider: 'openai', model: 'gpt-test', systemPrompt: 'Third version.' };
+    const third = (await api.post('/api/configurations').send({ name: 'C', spec }).expect(201)).body
+      .id as string;
+    const configIds = [ids.baseline, ids.candidate, third];
+    await api
+      .post('/api/experiments')
+      .send({ name: 'bad', configIds: [ids.baseline, ids.baseline], taskIds: [ids['slot-taken']] })
+      .expect(400);
+    await api
+      .post('/api/experiments')
+      .send({
+        name: 'bad',
+        configIds,
+        baselineConfigId: ids.baseline,
+        candidateConfigId: ids.candidate,
+        taskIds: [ids['slot-taken']],
+      })
+      .expect(400);
+    const created = (
+      await api
+        .post('/api/experiments')
+        .send({
+          name: 'three',
+          configIds,
+          taskIds: [ids['qualify-and-book'], ids['slot-taken']],
+          repetitions: 1,
+        })
+        .expect(201)
+    ).body;
+    expect(created).toMatchObject({
+      configIds,
+      baselineConfigId: ids.baseline,
+      candidateConfigId: ids.candidate,
+    });
+    await api.post(`/api/experiments/${created.id}/start`).expect(201);
+    await queue.drain(created.id);
+
+    const runs = (await api.get(`/api/experiments/${created.id}/runs`)).body as {
+      configId: string;
+    }[];
+    expect(runs).toHaveLength(6);
+    // Each task's versions sit together, and the first version rotates between tasks.
+    expect(new Set(runs.slice(0, 3).map((r) => r.configId)).size).toBe(3);
+    expect(runs[0]!.configId).not.toBe(runs[3]!.configId);
+
+    const results = (await api.get(`/api/experiments/${created.id}/results`).expect(200)).body;
+    expect(results.pair).toEqual({ a: ids.baseline, b: ids.candidate });
+    expect(results.coverage).toMatchObject({ plannedRuns: 6, scoredRuns: 6 });
+    expect(results.leaderboard.entries.map((e: { letter: string }) => e.letter).sort()).toEqual([
+      'A',
+      'B',
+      'C',
+    ]);
+    expect(results.leaderboard.comparisonConfidence).toBeCloseTo(0.975);
+    const summary = (await api.get(`/api/experiments/${created.id}`)).body;
+    expect(summary.result).toEqual(results.comparison);
+
+    const chosen = (
+      await api
+        .get(`/api/experiments/${created.id}/results?a=${third}&b=${ids.candidate}`)
+        .expect(200)
+    ).body;
+    expect(chosen.pair).toEqual({ a: third, b: ids.candidate });
+    expect(chosen.comparison).toMatchObject({ pairedTasks: 2, plannedTasks: 2 });
+    expect(
+      chosen.tasks.every(
+        (t: { a: unknown[]; b: unknown[] }) => t.a.length === 1 && t.b.length === 1,
+      ),
+    ).toBe(true);
+    await api.get(`/api/experiments/${created.id}/results?a=${third}&b=${third}`).expect(400);
+
+    const costs = (await api.get(`/api/experiments/${created.id}/costs`).expect(200)).body;
+    expect(costs.rows.map((r: { label: string }) => r.label)).toEqual(
+      expect.arrayContaining(['Agent A', 'Agent B', 'Agent C']),
+    );
+  });
+
   it('retries a rate-limited attempt from scratch and keeps the failure on record', async () => {
     const id = await experiment(['qualify-and-book']);
     queue.settings.extraEnv = {
