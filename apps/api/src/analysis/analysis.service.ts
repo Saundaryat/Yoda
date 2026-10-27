@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import type {
   CheckFlip,
   ExperimentResults,
@@ -10,7 +10,9 @@ import type {
 import { and, eq, inArray } from 'drizzle-orm';
 import { DB, type Db } from '../db/db.module.js';
 import { checkResults, experiments, runEvents, runs, tasks } from '../db/schema.js';
+import { experimentConfigIds } from '../experiments/config-ids.js';
 import { improvementSummary } from './labels.js';
+import { leaderboard } from './leaderboard.js';
 import {
   allRunsPassRate,
   hasCompleteRunCoverage,
@@ -28,7 +30,14 @@ type Side = 'a' | 'b';
 export class AnalysisService {
   constructor(@Inject(DB) private readonly db: Db) {}
 
-  async results(experimentId: string): Promise<ExperimentResults> {
+  /**
+   * `pair` picks the two versions the detailed comparison describes (default A and B); the
+   * leaderboard always covers every version.
+   */
+  async results(
+    experimentId: string,
+    pair: { a?: string; b?: string } = {},
+  ): Promise<ExperimentResults> {
     const [experiment] = await this.db
       .select()
       .from(experiments)
@@ -38,12 +47,31 @@ export class AnalysisService {
     const taskRows = experiment.taskIds.length
       ? await this.db.select().from(tasks).where(inArray(tasks.id, experiment.taskIds))
       : [];
-    const allRuns = await this.db.select().from(runs).where(eq(runs.experimentId, experimentId));
-    const scored = allRuns.filter(
-      (r) => r.status === 'scored' && r.passed !== null && r.score !== null,
-    );
-    const sideOf = (configId: string): Side =>
-      configId === experiment.baselineConfigId ? 'a' : 'b';
+    const configIds = experimentConfigIds(experiment);
+    const pairA = pair.a ?? configIds[0]!;
+    const pairB = pair.b ?? (pairA === configIds[1] ? configIds[0]! : configIds[1]!);
+    if (!configIds.includes(pairA) || !configIds.includes(pairB) || pairA === pairB)
+      throw new BadRequestException('Pick two different versions from this experiment');
+    const experimentRuns = await this.db
+      .select()
+      .from(runs)
+      .where(eq(runs.experimentId, experimentId));
+    const isScored = (r: (typeof experimentRuns)[number]) =>
+      r.status === 'scored' && r.passed !== null && r.score !== null;
+    const allRuns = experimentRuns.filter((r) => r.configId === pairA || r.configId === pairB);
+    const scored = allRuns.filter(isScored);
+    const sideOf = (configId: string): Side => (configId === pairA ? 'a' : 'b');
+    const pairOptions = (versions: [string, string]) => ({
+      plannedTasks: experiment.taskIds.length,
+      plannedRepetitions: experiment.repetitions,
+      experimentStatus: experiment.status,
+      coverageComplete: hasCompleteRunCoverage(
+        experimentRuns.filter((r) => versions.includes(r.configId)),
+        experiment.taskIds,
+        versions,
+        experiment.repetitions,
+      ),
+    });
 
     const checks = scored.length
       ? await this.db
@@ -127,26 +155,35 @@ export class AnalysisService {
       });
 
     return {
-      comparison: compare(passes, {
-        plannedTasks: experiment.taskIds.length,
-        plannedRepetitions: experiment.repetitions,
-        experimentStatus: experiment.status,
-        coverageComplete: hasCompleteRunCoverage(
-          allRuns,
-          experiment.taskIds,
-          [experiment.baselineConfigId, experiment.candidateConfigId],
-          experiment.repetitions,
-        ),
-      }),
+      pair: { a: pairA, b: pairB },
+      leaderboard: leaderboard(
+        experimentRuns.filter(isScored).map((r) => ({
+          taskId: r.taskId,
+          configId: r.configId,
+          passed: r.passed!,
+          score: r.score!,
+          costUsd: r.costUsd,
+          durationMs: r.durationMs,
+          totalTokens: (r.inputTokens ?? 0) + (r.outputTokens ?? 0),
+        })),
+        {
+          configIds,
+          taskIds: experiment.taskIds,
+          repetitions: experiment.repetitions,
+          pairOptions,
+        },
+      ),
+      comparison: compare(passes, pairOptions([pairA, pairB])),
       coverage: {
-        plannedRuns: experiment.taskIds.length * experiment.repetitions * 2,
-        scoredRuns: scored.length,
-        ungradedRuns: allRuns.filter(
+        plannedRuns: experiment.taskIds.length * experiment.repetitions * configIds.length,
+        scoredRuns: experimentRuns.filter(isScored).length,
+        ungradedRuns: experimentRuns.filter(
           (r) => r.status === 'scored' && (r.passed === null || r.score === null),
         ).length,
-        errorRuns: allRuns.filter((r) => r.status === 'error').length,
-        cancelledRuns: allRuns.filter((r) => r.status === 'cancelled').length,
-        openRuns: allRuns.filter((r) => r.status === 'queued' || r.status === 'running').length,
+        errorRuns: experimentRuns.filter((r) => r.status === 'error').length,
+        cancelledRuns: experimentRuns.filter((r) => r.status === 'cancelled').length,
+        openRuns: experimentRuns.filter((r) => r.status === 'queued' || r.status === 'running')
+          .length,
       },
       allRunsPass: { a: allRunsPassRate(passes, 'a'), b: allRunsPassRate(passes, 'b') },
       groups,

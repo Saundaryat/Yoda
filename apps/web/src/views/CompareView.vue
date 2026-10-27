@@ -8,6 +8,7 @@ import type {
   RunEvent,
   JudgeReport,
 } from '@evals/shared';
+import { versionLetter } from '@evals/shared';
 import { computed, nextTick, ref, watch } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { api } from '../api.js';
@@ -38,8 +39,19 @@ const { data: runSummaries, error: runsError } = useResource<RunSummary[]>(
   computed(() => `/experiments/${props.id}/runs`),
 );
 const { data: results, error: resultsError } = useResource<ExperimentResults>(
-  computed(() => `/experiments/${props.id}/results`),
+  computed(() => {
+    const pair = new URLSearchParams();
+    if (typeof route.query.a === 'string') pair.set('a', route.query.a);
+    if (typeof route.query.b === 'string') pair.set('b', route.query.b);
+    return `/experiments/${props.id}/results${pair.size ? `?${pair}` : ''}`;
+  }),
 );
+const letterOf = (configId: string | undefined) => {
+  const index = experiment.value?.configIds.indexOf(configId ?? '') ?? -1;
+  return index < 0 ? '' : versionLetter(index);
+};
+const letterA = computed(() => letterOf(results.value?.pair.a) || 'A');
+const letterB = computed(() => letterOf(results.value?.pair.b) || 'B');
 const task = computed(() => results.value?.tasks.find((t) => t.taskId === props.taskId));
 const repetitions = computed(() => experiment.value?.repetitions ?? 0);
 const repetition = computed({
@@ -98,8 +110,8 @@ watch(
           (r) => r.taskId === props.taskId && r.configId === configId && r.repetition === rep,
         )?.id;
       const [nextA, nextB] = await Promise.all([
-        load(runId(e.baselineConfigId)),
-        load(runId(e.candidateConfigId)),
+        load(runId(results.value?.pair.a ?? e.baselineConfigId)),
+        load(runId(results.value?.pair.b ?? e.candidateConfigId)),
       ]);
       if (generation !== loadGeneration) return;
       a.value = nextA;
@@ -205,14 +217,14 @@ const { backTo, backLabel, detailLink, goBack } = useReviewNavigation(
           <tr>
             <th>Check</th>
             <th class="side-a">
-              A ·
+              {{ letterA }} ·
               <RouterLink v-if="a" :to="detailLink(`/configurations/${a.configuration.id}`)">{{
                 configurationName(a.configuration)
               }}</RouterLink
               ><span v-else>No run recorded</span>
             </th>
             <th class="side-b">
-              B ·
+              {{ letterB }} ·
               <RouterLink v-if="b" :to="detailLink(`/configurations/${b.configuration.id}`)">{{
                 configurationName(b.configuration)
               }}</RouterLink
@@ -242,7 +254,7 @@ const { backTo, backLabel, detailLink, goBack } = useReviewNavigation(
                   class="evidence-jump"
                   @click="focusEvidence('a', row.a)"
                 >
-                  Show A evidence
+                  Show {{ letterA }} evidence
                 </button>
               </details>
               <span v-else>—</span>
@@ -259,7 +271,7 @@ const { backTo, backLabel, detailLink, goBack } = useReviewNavigation(
                   class="evidence-jump"
                   @click="focusEvidence('b', row.b)"
                 >
-                  Show B evidence
+                  Show {{ letterB }} evidence
                 </button>
               </details>
               <span v-else>—</span>
@@ -290,7 +302,9 @@ const { backTo, backLabel, detailLink, goBack } = useReviewNavigation(
     <div v-if="!loading && !loadError" class="grid-2 comparison-conversations">
       <section class="card conversation-panel" aria-label="A conversation">
         <div class="row">
-          <h2 class="side-a">A · {{ a ? configurationName(a.configuration) : 'No scored run' }}</h2>
+          <h2 class="side-a">
+            {{ letterA }} · {{ a ? configurationName(a.configuration) : 'No scored run' }}
+          </h2>
           <RouterLink
             v-if="a"
             :to="{ path: `/runs/${a.run.id}`, query: { returnTo: comparisonReturnTo } }"
@@ -309,7 +323,9 @@ const { backTo, backLabel, detailLink, goBack } = useReviewNavigation(
       </section>
       <section class="card conversation-panel" aria-label="B conversation">
         <div class="row">
-          <h2 class="side-b">B · {{ b ? configurationName(b.configuration) : 'No scored run' }}</h2>
+          <h2 class="side-b">
+            {{ letterB }} · {{ b ? configurationName(b.configuration) : 'No scored run' }}
+          </h2>
           <RouterLink
             v-if="b"
             :to="{ path: `/runs/${b.run.id}`, query: { returnTo: comparisonReturnTo } }"

@@ -5,13 +5,15 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import type {
-  CreateExperiment,
+import {
+  requestedConfigIds,
+  versionLetter,
+  type CreateExperiment,
   ExperimentSummary,
-  GradeChangeReport,
-  RunGradeChange,
-  RunStatus,
-  RunSummary,
+  type GradeChangeReport,
+  type RunGradeChange,
+  type RunStatus,
+  type RunSummary,
 } from '@evals/shared';
 import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm';
 import { DB, type Db } from '../db/db.module.js';
@@ -20,6 +22,7 @@ import { RunQueueService } from '../runner/run-queue.service.js';
 import { compare, hasCompleteRunCoverage } from '../analysis/statistics.js';
 
 import { costBreakdown } from './cost-breakdown.js';
+import { experimentConfigIds } from './config-ids.js';
 
 type ExperimentRow = typeof experiments.$inferSelect;
 
@@ -39,14 +42,15 @@ export class ExperimentsService {
   ) {}
 
   async create(input: CreateExperiment): Promise<ExperimentSummary> {
-    if (input.baselineConfigId === input.candidateConfigId) {
-      throw new BadRequestException('Pick two different configurations');
+    const configIds = requestedConfigIds(input);
+    if (new Set(configIds).size !== configIds.length) {
+      throw new BadRequestException('Pick different configurations for every version');
     }
     const configs = await this.db
       .select()
       .from(configurations)
-      .where(inArray(configurations.id, [input.baselineConfigId, input.candidateConfigId]));
-    if (configs.length !== 2) throw new BadRequestException('Unknown configuration');
+      .where(inArray(configurations.id, configIds));
+    if (configs.length !== configIds.length) throw new BadRequestException('Unknown configuration');
     const taskIds = [...new Set(input.taskIds)];
     const found = await this.db
       .select({ id: tasks.id })
@@ -56,15 +60,25 @@ export class ExperimentsService {
 
     const [row] = await this.db
       .insert(experiments)
-      .values({ ...input, taskIds, executionSnapshot: this.queue.snapshot(configs) })
+      .values({
+        name: input.name,
+        hypothesis: input.hypothesis,
+        repetitions: input.repetitions,
+        leadMode: input.leadMode,
+        baselineConfigId: configIds[0]!,
+        candidateConfigId: configIds[1]!,
+        configIds,
+        taskIds,
+        executionSnapshot: this.queue.snapshot(configs),
+      })
       .returning();
     return this.summary(row!);
   }
 
   /**
-   * Queue every (task, configuration, repetition) scenario. A and B of the same task and
-   * repetition are queued next to each other, alternating which goes first, so a provider slowing
-   * down or changing mid-experiment hits both sides alike.
+   * Queue every (task, configuration, repetition) scenario. All versions of the same task and
+   * repetition are queued next to each other, rotating which goes first, so a provider slowing
+   * down or changing mid-experiment hits every version alike.
    */
   async start(id: string): Promise<ExperimentSummary> {
     await this.db.transaction(async (tx) => {
@@ -75,12 +89,12 @@ export class ExperimentsService {
         .for('update');
       if (!experiment) throw new NotFoundException(`Experiment ${id} not found`);
       if (experiment.status !== 'draft') throw new ConflictException('Experiment already started');
-      const pair = [experiment.baselineConfigId, experiment.candidateConfigId];
+      const versions = experimentConfigIds(experiment);
       // Legacy drafts have never run: freeze their inputs exactly once when first started.
       const snapshot =
         experiment.executionSnapshot ??
         this.queue.snapshot(
-          await tx.select().from(configurations).where(inArray(configurations.id, pair)),
+          await tx.select().from(configurations).where(inArray(configurations.id, versions)),
         );
       try {
         this.queue.validateSnapshot(snapshot);
@@ -90,7 +104,8 @@ export class ExperimentsService {
       const values: (typeof runs.$inferInsert)[] = [];
       for (let repetition = 1; repetition <= experiment.repetitions; repetition++) {
         experiment.taskIds.forEach((taskId, i) => {
-          const order = (i + repetition) % 2 === 0 ? pair : [...pair].reverse();
+          const shift = (i + repetition) % versions.length;
+          const order = [...versions.slice(shift), ...versions.slice(0, shift)];
           for (const configId of order)
             values.push({
               experimentId: id,
@@ -320,7 +335,7 @@ export class ExperimentsService {
         taskId: run.taskId,
         taskKey: task.key,
         taskTitle: task.title,
-        side: run.configId === experiment.baselineConfigId ? 'A' : 'B',
+        side: versionLetter(Math.max(0, experimentConfigIds(experiment).indexOf(run.configId))),
         repetition: run.repetition,
         previousPassed: original.passed,
         passed: run.passed,
@@ -425,7 +440,10 @@ export class ExperimentsService {
               plannedRepetitions: row.repetitions,
               experimentStatus: row.status,
               coverageComplete: hasCompleteRunCoverage(
-                records,
+                records.filter(
+                  (r) =>
+                    r.configId === row.baselineConfigId || r.configId === row.candidateConfigId,
+                ),
                 row.taskIds,
                 [row.baselineConfigId, row.candidateConfigId],
                 row.repetitions,
@@ -439,6 +457,7 @@ export class ExperimentsService {
       status: row.status,
       baselineConfigId: row.baselineConfigId,
       candidateConfigId: row.candidateConfigId,
+      configIds: experimentConfigIds(row),
       taskIds: row.taskIds,
       repetitions: row.repetitions,
       leadMode: row.leadMode,

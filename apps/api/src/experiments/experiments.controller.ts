@@ -6,6 +6,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Query,
   Sse,
 } from '@nestjs/common';
 import { createExperimentSchema, type CreateExperiment } from '@evals/shared';
@@ -56,8 +57,8 @@ export class ExperimentsController {
 
   /** The comparison so far. Provisional while runs are still open (see coverage.openRuns). */
   @Get(':id/results')
-  results(@Param('id', ParseUUIDPipe) id: string) {
-    return this.analysis.results(id);
+  results(@Param('id', ParseUUIDPipe) id: string, @Query('a') a?: string, @Query('b') b?: string) {
+    return this.analysis.results(id, { a: a || undefined, b: b || undefined });
   }
 
   @Get(':id/grade-changes')

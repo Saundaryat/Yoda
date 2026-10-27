@@ -1,5 +1,10 @@
 import type { GradingCallUsage } from '../scoring/grading-usage.js';
-import type { CostBreakdown, CostBreakdownRow, JudgeReport } from '@evals/shared';
+import {
+  versionLetter,
+  type CostBreakdown,
+  type CostBreakdownRow,
+  type JudgeReport,
+} from '@evals/shared';
 
 interface CostRun {
   configId: string;
@@ -22,6 +27,10 @@ interface CostContext {
 const descriptions = {
   'Agent A': 'The baseline assistant replies to customers and uses CRM tools.',
   'Agent B': 'The candidate assistant replies to customers and uses CRM tools.',
+  'Agent C': 'Another candidate assistant replies to customers and uses CRM tools.',
+  'Agent D': 'Another candidate assistant replies to customers and uses CRM tools.',
+  'Agent E': 'Another candidate assistant replies to customers and uses CRM tools.',
+  'Agent F': 'Another candidate assistant replies to customers and uses CRM tools.',
   Customer: 'Generates customer follow-up messages from the scenario.',
   'Claude judge': 'Checks the conversation against the task and clinic rules.',
   'Evidence reviewer': 'Double-checks claims flagged as unsupported.',
@@ -29,8 +38,17 @@ const descriptions = {
   Grading: 'Saved grading estimate whose individual components are unavailable.',
 };
 
+/** Agent A is the baseline; B, C… are candidates in experiment order. */
+function agentLabel(
+  experiment: { baselineConfigId: string; configIds?: string[] | null },
+  configId: string,
+): keyof typeof descriptions {
+  const index = (experiment.configIds ?? [experiment.baselineConfigId]).indexOf(configId);
+  return `Agent ${versionLetter(index < 0 ? 1 : index)}` as keyof typeof descriptions;
+}
+
 export function costBreakdown(
-  experiment: { id: string; name: string; baselineConfigId: string },
+  experiment: { id: string; name: string; baselineConfigId: string; configIds?: string[] | null },
   runs: CostRun[],
 ): CostBreakdown {
   const rows = new Map<string, CostBreakdownRow>();
@@ -63,7 +81,7 @@ export function costBreakdown(
     // Replays retain old conversations and judge metadata. Charge only new work.
     if (!context.rescoring) {
       add(
-        run.configId === experiment.baselineConfigId ? 'Agent A' : 'Agent B',
+        agentLabel(experiment, run.configId),
         context.model,
         run.costUsd,
         (run.costUsd ?? 0) > 0 ||

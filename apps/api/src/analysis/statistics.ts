@@ -55,7 +55,7 @@ function resample<T>(xs: T[], random: () => number): T[] {
 export function bootstrapInterval<T>(
   tasks: Paired<T>[],
   statistic: (task: Paired<T>) => number,
-  { samples = 10_000, seed = 1 } = {},
+  { samples = 10_000, seed = 1, level = 0.95 } = {},
 ): [number, number] {
   if (!tasks.length) return [0, 0];
   const random = seededRandom(seed);
@@ -70,7 +70,8 @@ export function bootstrapInterval<T>(
       ),
     ),
   ).sort((x, y) => x - y);
-  return [quantile(estimates, 0.025), quantile(estimates, 0.975)];
+  const tail = (1 - level) / 2;
+  return [quantile(estimates, tail), quantile(estimates, 1 - tail)];
 }
 
 function logChoose(n: number, k: number): number {
@@ -118,6 +119,7 @@ export function compare(
     plannedRepetitions,
     experimentStatus,
     coverageComplete = true,
+    confidence = 0.95,
   }: {
     plannedTasks?: number;
     practicalMargin?: number;
@@ -126,11 +128,13 @@ export function compare(
     plannedRepetitions?: number;
     experimentStatus?: string;
     coverageComplete?: boolean;
+    /** Interval level; lowered from 0.95 only to adjust for several comparisons. */
+    confidence?: number;
   } = {},
 ): Comparison {
   const paired = tasks.filter((t) => t.a.length > 0 && t.b.length > 0);
   const diffs = paired.map(difference);
-  const ci = bootstrapInterval(paired, difference, { samples, seed });
+  const ci = bootstrapInterval(paired, difference, { samples, seed, level: confidence });
   const wins = diffs.filter((d) => d > 0).length;
   const losses = diffs.filter((d) => d < 0).length;
   const spread = standardDeviation(diffs);
@@ -161,6 +165,7 @@ export function compare(
     minimumDetectable:
       paired.length >= 2 && spread > 0 ? (2.8 * spread) / Math.sqrt(paired.length) : null,
     practicalMargin,
+    ...(confidence !== 0.95 && { confidenceLevel: confidence }),
   };
   return { ...comparison, verdict: verdictFor(comparison) };
 }

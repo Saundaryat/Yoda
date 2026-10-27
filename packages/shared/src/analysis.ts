@@ -27,6 +27,36 @@ export interface Comparison {
   /** Roughly the smallest true difference this design detects 80% of the time. */
   minimumDetectable: number | null;
   practicalMargin: number;
+  /** Interval coverage; below 0.95 only when adjusted for several comparisons against one baseline. */
+  confidenceLevel?: number;
+}
+
+/** One agent version's standing among every version in a multi-version experiment. */
+export interface LeaderboardEntry {
+  configId: string;
+  /** A, B, C… in experiment order; A is the baseline. */
+  letter: string;
+  /** 1 = highest observed pass rate. Ties share a rank. */
+  rank: number;
+  /** Mean over tasks of this version's pass rate, with a 95% two-level bootstrap interval. */
+  passRate: number;
+  ci: [number, number];
+  /** Share of tasks where every run passed (pass^k). */
+  allRunsPass: number;
+  meanScore: number | null;
+  scoredRuns: number;
+  plannedRuns: number;
+  costUsd: number | null;
+  durationMs: number | null;
+  totalTokens: number | null;
+  /** Paired comparison against the baseline (null for the baseline itself). */
+  vsBaseline: Comparison | null;
+}
+
+export interface Leaderboard {
+  entries: LeaderboardEntry[];
+  /** Confidence level of each vsBaseline interval (Bonferroni over the comparisons). */
+  comparisonConfidence: number;
 }
 
 export interface MetricComparison {
@@ -58,6 +88,10 @@ export interface CheckFlip {
 }
 
 export interface ExperimentResults {
+  /** The two versions the detailed comparison below describes (default: A and B). */
+  pair: { a: string; b: string };
+  /** Every version ranked; one entry per version, so two for a classic A/B experiment. */
+  leaderboard: Leaderboard;
   comparison: Comparison;
   coverage: {
     plannedRuns: number;

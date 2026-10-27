@@ -58,6 +58,8 @@ export const experiments = pgTable('experiments', {
   candidateConfigId: uuid()
     .notNull()
     .references(() => configurations.id),
+  /** Every compared version, baseline first; baseline/candidate above mirror the first two. */
+  configIds: uuid().array(),
   taskIds: uuid().array().notNull(),
   repetitions: integer().notNull(),
   leadMode: text({ enum: ['scripted', 'llm'] })

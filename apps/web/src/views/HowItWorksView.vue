@@ -14,8 +14,11 @@ import { RouterLink } from 'vue-router';
       <h2 id="workflow-title">From a change to evidence</h2>
       <ol class="guide-flow">
         <li>
-          <strong>Choose two versions</strong>
-          <p>A is the baseline. B is the candidate with the change you want to test.</p>
+          <strong>Choose the versions</strong>
+          <p>
+            A is the baseline. B is the candidate with the change you want to test. Add C, D… (up to
+            six) to rank several changes in one experiment.
+          </p>
           <RouterLink to="/configurations">Agent versions →</RouterLink>
         </li>
         <li>

@@ -146,7 +146,13 @@ const runProgress = (e: ExperimentSummary) => {
         </div>
         <div class="versus" aria-hidden="true">→</div>
         <div class="config config-b">
-          <span>B · Proposed version</span><strong>{{ configName(e.candidateConfigId) }}</strong>
+          <span>B · Proposed version</span
+          ><strong
+            >{{ configName(e.candidateConfigId)
+            }}<template v-if="e.configIds.length > 2">
+              +{{ e.configIds.length - 2 }} more</template
+            ></strong
+          >
         </div>
       </div>
 

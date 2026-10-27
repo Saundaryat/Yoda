@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import type {
-  Configuration,
-  ExperimentResults,
-  ExperimentSummary,
-  RunSummary,
+import {
+  versionLetter,
+  type Configuration,
+  type ExperimentResults,
+  type ExperimentSummary,
+  type RunSummary,
 } from '@evals/shared';
 import { computed, onBeforeUnmount, ref, toRef } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
@@ -13,6 +14,7 @@ import PassDots from '../components/PassDots.vue';
 import StatusBadge from '../components/StatusBadge.vue';
 import VerdictCard from '../components/VerdictCard.vue';
 import GradeChanges from '../components/GradeChanges.vue';
+import LeaderboardCard from '../components/LeaderboardCard.vue';
 import { useExperimentEvents } from '../composables/useExperimentEvents.js';
 import { useResource } from '../composables/useResource.js';
 import { ISSUE_TEXT, label, money, percent, points, seconds } from '../format.js';
@@ -21,8 +23,22 @@ import { configurationName, experimentName, groupName, taskName } from '../names
 const props = defineProps<{ id: string }>();
 const id = toRef(props, 'id');
 
+const route = useRoute();
+const router = useRouter();
+/** The two versions the detailed comparison shows, from ?a=&b= (default A and B). */
+const pairQuery = computed(() => {
+  const query: { a?: string; b?: string } = {};
+  if (typeof route.query.a === 'string') query.a = route.query.a;
+  if (typeof route.query.b === 'string') query.b = route.query.b;
+  return query;
+});
 const experiment = useResource<ExperimentSummary>(computed(() => `/experiments/${id.value}`));
-const results = useResource<ExperimentResults>(computed(() => `/experiments/${id.value}/results`));
+const results = useResource<ExperimentResults>(
+  computed(() => {
+    const pair = new URLSearchParams(pairQuery.value);
+    return `/experiments/${id.value}/results${pair.size ? `?${pair}` : ''}`;
+  }),
+);
 const runs = useResource<RunSummary[]>(computed(() => `/experiments/${id.value}/runs`));
 const { data: configurations } = useResource<Configuration[]>('/configurations');
 
@@ -42,8 +58,30 @@ const e = computed(() => experiment.data.value);
 const r = computed(() => results.data.value);
 const config = (configId: string | undefined) =>
   configurations.value?.find((c) => c.id === configId);
-const baseline = computed(() => config(e.value?.baselineConfigId));
-const candidate = computed(() => config(e.value?.candidateConfigId));
+const pairA = computed(() => r.value?.pair.a ?? e.value?.baselineConfigId);
+const pairB = computed(() => r.value?.pair.b ?? e.value?.candidateConfigId);
+const baseline = computed(() => config(pairA.value));
+const candidate = computed(() => config(pairB.value));
+const versionCount = computed(() => e.value?.configIds.length ?? 2);
+const letterOf = (configId: string | undefined, fallback: string) => {
+  const index = e.value?.configIds.indexOf(configId ?? '') ?? -1;
+  return index < 0 ? fallback : versionLetter(index);
+};
+const letterA = computed(() => letterOf(pairA.value, 'A'));
+const letterB = computed(() => letterOf(pairB.value, 'B'));
+const labelA = computed(() =>
+  letterA.value === 'A' ? 'A · Baseline' : `${letterA.value} · Version`,
+);
+const labelB = computed(() =>
+  letterA.value === 'A' && letterB.value === 'B' ? 'B · Candidate' : `${letterB.value} · Version`,
+);
+function selectPair(a: string, b: string) {
+  void router.replace({ query: { ...route.query, a, b } });
+}
+const compareLink = (path: string) => {
+  const link = detailLink(path);
+  return { ...link, query: { ...link.query, ...pairQuery.value } };
+};
 
 const total = computed(() =>
   e.value ? Object.values(e.value.counts).reduce((s, n) => s + n, 0) : 0,
@@ -61,8 +99,6 @@ const errorKinds = computed(() => {
 
 const busy = ref(false);
 const actionError = ref<string | null>(null);
-const route = useRoute();
-const router = useRouter();
 const { detailLink, backTo, goBack } = useReviewNavigation('/');
 const evidenceViews = [
   {
@@ -251,7 +287,7 @@ const metricRows = computed(() => {
       </div>
       <div class="row">
         <button v-if="e.status === 'draft'" class="primary" :disabled="busy" @click="act('start')">
-          Start {{ e.taskIds.length * e.repetitions * 2 }} runs
+          Start {{ e.taskIds.length * e.repetitions * versionCount }} runs
         </button>
         <button
           v-if="e.status === 'running'"
@@ -340,9 +376,17 @@ const metricRows = computed(() => {
         :provisional="r.coverage.openRuns > 0"
       />
       <GradeChanges v-if="e.rescoring" :experiment-id="e.id" />
+      <LeaderboardCard
+        v-if="r && versionCount > 2"
+        :leaderboard="r.leaderboard"
+        :configurations="configurations ?? []"
+        :pair="r.pair"
+        @select-pair="selectPair"
+      />
       <section class="setup-summary" aria-label="Experiment setup">
         <p>
-          <strong>{{ e.taskIds.length }} scenarios</strong> · 2 versions · {{ e.repetitions }}
+          <strong>{{ e.taskIds.length }} scenarios</strong> · {{ versionCount }} versions ·
+          {{ e.repetitions }}
           {{ e.repetitions === 1 ? 'repetition' : 'repetitions' }}
         </p>
         <button class="text-action" @click="openSetup">View setup →</button>
@@ -350,16 +394,16 @@ const metricRows = computed(() => {
 
       <section class="comparison-strip" aria-label="Compared agent versions">
         <div>
-          <span class="version-label">A · Baseline</span>
-          <RouterLink :to="detailLink(`/configurations/${e.baselineConfigId}`)" class="detail-link"
+          <span class="version-label">{{ labelA }}</span>
+          <RouterLink :to="detailLink(`/configurations/${pairA}`)" class="detail-link"
             ><strong>{{ configurationName(baseline) }}</strong></RouterLink
           >
           <small>The current agent</small>
         </div>
         <span class="versus">compared with</span>
         <div>
-          <span class="version-label">B · Candidate</span>
-          <RouterLink :to="detailLink(`/configurations/${e.candidateConfigId}`)" class="detail-link"
+          <span class="version-label">{{ labelB }}</span>
+          <RouterLink :to="detailLink(`/configurations/${pairB}`)" class="detail-link"
             ><strong>{{ configurationName(candidate) }}</strong></RouterLink
           >
           <small>The proposed change</small>
@@ -368,7 +412,7 @@ const metricRows = computed(() => {
 
       <div v-if="e.status === 'draft'" class="card">
         This experiment has not started. Running it will create
-        {{ e.taskIds.length * e.repetitions * 2 }} agent conversations.
+        {{ e.taskIds.length * e.repetitions * versionCount }} agent conversations.
       </div>
 
       <section v-if="total" class="run-status">
@@ -420,8 +464,8 @@ const metricRows = computed(() => {
                 <span>{{ g.tasks }} {{ g.tasks === 1 ? 'scenario' : 'scenarios' }}</span>
               </div>
               <div class="group-rates">
-                <span>A {{ percent(g.passRateA) }}</span>
-                <span>B {{ percent(g.passRateB) }}</span>
+                <span>{{ letterA }} {{ percent(g.passRateA) }}</span>
+                <span>{{ letterB }} {{ percent(g.passRateB) }}</span>
                 <strong>{{ points(g.difference) }}</strong>
               </div>
             </div>
@@ -463,11 +507,11 @@ const metricRows = computed(() => {
           </div>
           <div class="scenario-results">
             <div>
-              <span>A · Baseline</span>
+              <span>{{ labelA }}</span>
               <PassDots :runs="t.a" :summaries="runs.data.value" side="a" />
             </div>
             <div>
-              <span>B · Candidate</span>
+              <span>{{ labelB }}</span>
               <PassDots :runs="t.b" :summaries="runs.data.value" side="b" />
             </div>
           </div>
@@ -478,7 +522,7 @@ const metricRows = computed(() => {
           <RouterLink
             v-if="t.a.length && t.b.length"
             class="button compare-button"
-            :to="detailLink(`/experiments/${e.id}/tasks/${t.taskId}`)"
+            :to="compareLink(`/experiments/${e.id}/tasks/${t.taskId}`)"
           >
             Compare runs
           </RouterLink>
@@ -520,7 +564,7 @@ const metricRows = computed(() => {
             <dt>Planned coverage</dt>
             <dd>
               {{ e.taskIds.length }} scenarios × 2 versions × {{ e.repetitions }} repetitions =
-              {{ e.taskIds.length * e.repetitions * 2 }} runs
+              {{ e.taskIds.length * e.repetitions * versionCount }} runs
             </dd>
           </div>
           <div>
@@ -551,8 +595,8 @@ const metricRows = computed(() => {
                 <thead>
                   <tr>
                     <th>Problem</th>
-                    <th class="num side-a">A · Baseline</th>
-                    <th class="num side-b">B · Candidate</th>
+                    <th class="num side-a">{{ labelA }}</th>
+                    <th class="num side-b">{{ labelB }}</th>
                     <th><span class="muted">Evidence</span></th>
                   </tr>
                 </thead>
@@ -587,8 +631,8 @@ const metricRows = computed(() => {
                   <thead>
                     <tr>
                       <th>Severity</th>
-                      <th class="num side-a">A · Baseline</th>
-                      <th class="num side-b">B · Candidate</th>
+                      <th class="num side-a">{{ labelA }}</th>
+                      <th class="num side-b">{{ labelB }}</th>
                       <th><span class="muted">Evidence</span></th>
                     </tr>
                   </thead>
@@ -622,8 +666,8 @@ const metricRows = computed(() => {
                 <thead>
                   <tr>
                     <th>Customer message</th>
-                    <th class="num side-a">A handled well</th>
-                    <th class="num side-b">B handled well</th>
+                    <th class="num side-a">{{ letterA }} handled well</th>
+                    <th class="num side-b">{{ letterB }} handled well</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -650,8 +694,8 @@ const metricRows = computed(() => {
             <div class="row outcomes">
               <strong>How conversations ended:</strong>
               <span v-for="o in r.improvement.outcomes" :key="o.label" class="badge">
-                {{ label(o.label) }}: <span class="side-a">A {{ o.a }}</span> ·
-                <span class="side-b">B {{ o.b }}</span>
+                {{ label(o.label) }}: <span class="side-a">{{ letterA }} {{ o.a }}</span> ·
+                <span class="side-b">{{ letterB }} {{ o.b }}</span>
               </span>
             </div>
           </details>
@@ -679,8 +723,8 @@ const metricRows = computed(() => {
             <thead>
               <tr>
                 <th>Metric</th>
-                <th class="num side-a">A · Baseline</th>
-                <th class="num side-b">B · Candidate</th>
+                <th class="num side-a">{{ labelA }}</th>
+                <th class="num side-b">{{ labelB }}</th>
                 <th class="num">Change</th>
                 <th class="num">95% range</th>
               </tr>
@@ -734,7 +778,10 @@ const metricRows = computed(() => {
                     <em v-if="f.critical">· Critical</em></small
                   >
                 </span>
-                <span>A {{ percent(f.passRateA) }} → B {{ percent(f.passRateB) }}</span>
+                <span
+                  >{{ letterA }} {{ percent(f.passRateA) }} → {{ letterB }}
+                  {{ percent(f.passRateB) }}</span
+                >
               </RouterLink>
             </div>
             <div v-if="r.criticalRegressions.length" class="regressions">
@@ -752,8 +799,8 @@ const metricRows = computed(() => {
             <div v-if="r.hermesToolUse.length" class="tool-list">
               <div v-for="t in r.hermesToolUse" :key="t.tool" class="tool-row">
                 <code>{{ t.tool }}</code>
-                <span>A {{ percent(t.a) }}</span>
-                <span>B {{ percent(t.b) }}</span>
+                <span>{{ letterA }} {{ percent(t.a) }}</span>
+                <span>{{ letterB }} {{ percent(t.b) }}</span>
               </div>
             </div>
             <p v-else class="muted">

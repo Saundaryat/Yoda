@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import {
+  MAX_VERSIONS,
   MIN_TASKS_FOR_VERDICT,
+  versionLetter,
   type Configuration,
   type CreateExperiment,
   type ExperimentSummary,
@@ -34,20 +36,14 @@ const orderedConfigurations = computed(() =>
 const form = ref({
   name: '',
   hypothesis: '',
-  baselineConfigId: '',
-  candidateConfigId: '',
+  /** Baseline first, then every candidate. */
+  configIds: ['', ''] as string[],
   repetitions: 3,
   leadMode: 'scripted' as LeadMode,
 });
 const selected = ref(new Set<string>());
 const error = ref<string | null>(null);
 const saving = ref(false);
-watch(
-  () => form.value.baselineConfigId,
-  (id) => {
-    if (form.value.candidateConfigId === id) form.value.candidateConfigId = '';
-  },
-);
 
 // Default to the frozen eval split when it exists, otherwise the dev split.
 watch(tasks, (list) => {
@@ -93,7 +89,9 @@ function selectAll() {
   selected.value = new Set((tasks.value ?? []).map((task) => task.id));
 }
 
-const runCount = computed(() => selected.value.size * 2 * form.value.repetitions);
+const runCount = computed(
+  () => selected.value.size * form.value.configIds.length * form.value.repetitions,
+);
 
 /** Average cost per scored run in earlier experiments: a rough guide, not a quote. */
 const costPerRun = computed(() => {
@@ -108,22 +106,18 @@ const costPerRun = computed(() => {
 const valid = computed(
   () =>
     form.value.name.trim() &&
-    form.value.baselineConfigId &&
-    form.value.candidateConfigId &&
-    form.value.baselineConfigId !== form.value.candidateConfigId &&
+    form.value.configIds.every(Boolean) &&
+    new Set(form.value.configIds).size === form.value.configIds.length &&
     selected.value.size > 0 &&
     Number.isInteger(form.value.repetitions) &&
     form.value.repetitions >= 1 &&
     form.value.repetitions <= 10,
 );
-const baseline = computed(() =>
-  configurations.value?.find((c) => c.id === form.value.baselineConfigId),
-);
-const candidate = computed(() =>
-  configurations.value?.find((c) => c.id === form.value.candidateConfigId),
-);
+const config = (id: string) => configurations.value?.find((c) => c.id === id);
+/** For each chosen candidate, the settings that differ from the baseline (A). */
 const differences = computed(() => {
-  if (!baseline.value || !candidate.value) return [];
+  const baseline = config(form.value.configIds[0] ?? '');
+  if (!baseline) return [];
   const fields = {
     provider: 'Provider',
     model: 'Model',
@@ -135,13 +129,18 @@ const differences = computed(() => {
     toolSearch: 'Tool search',
     reasoning: 'Reasoning',
   } as const;
-  return Object.entries(fields)
-    .filter(
-      ([key]) =>
-        JSON.stringify(baseline.value!.spec[key as keyof typeof fields]) !==
-        JSON.stringify(candidate.value!.spec[key as keyof typeof fields]),
-    )
-    .map(([, label]) => label);
+  return form.value.configIds.slice(1).flatMap((id, index) => {
+    const candidate = config(id);
+    if (!candidate) return [];
+    const differing = Object.entries(fields)
+      .filter(
+        ([key]) =>
+          JSON.stringify(baseline.spec[key as keyof typeof fields]) !==
+          JSON.stringify(candidate.spec[key as keyof typeof fields]),
+      )
+      .map(([, label]) => label);
+    return [{ letter: versionLetter(index + 1), differing }];
+  });
 });
 
 async function create() {
@@ -150,8 +149,11 @@ async function create() {
   error.value = null;
   try {
     const body: CreateExperiment = {
-      ...form.value,
       name: form.value.name.trim(),
+      hypothesis: form.value.hypothesis,
+      configIds: [...form.value.configIds],
+      repetitions: form.value.repetitions,
+      leadMode: form.value.leadMode,
       taskIds: [...selected.value],
     };
     const experiment = await api<ExperimentSummary>('/experiments', {
@@ -207,43 +209,64 @@ async function create() {
           placeholder="What do you expect, written before the results? e.g. The skill helps the policy tasks; controls stay flat."
         />
       </label>
-      <h2 class="setup-section"><span class="setup-step">2</span> Choose the two versions</h2>
+      <h2 class="setup-section">
+        <span class="setup-step">2</span> Choose the versions to compare
+      </h2>
       <p class="panel-caption">
-        Keep the model and other settings the same when testing one change.
+        Keep the model and other settings the same when testing one change. Add up to
+        {{ MAX_VERSIONS }} versions to rank several changes in one run.
       </p>
-      <label class="field">
-        <span class="side-a">A — baseline</span>
-        <select v-model="form.baselineConfigId" required>
-          <option value="" disabled>Choose a configuration</option>
-          <option v-for="c in orderedConfigurations" :key="c.id" :value="c.id">
-            {{ configurationName(c) }}
-          </option>
-        </select>
-        <small>The starting version you want to compare against.</small>
-      </label>
-      <label class="field">
-        <span class="side-b">B — candidate</span>
-        <select v-model="form.candidateConfigId" required>
-          <option value="" disabled>Choose a configuration</option>
-          <option
-            v-for="c in orderedConfigurations"
-            :key="c.id"
-            :value="c.id"
-            :disabled="c.id === form.baselineConfigId"
+      <div v-for="(_, index) in form.configIds" :key="index" class="field">
+        <label :for="`version-${index}`" :class="index === 0 ? 'side-a' : 'side-b'"
+          >{{ versionLetter(index) }} — {{ index === 0 ? 'baseline' : 'candidate' }}</label
+        >
+        <div class="version-row">
+          <select :id="`version-${index}`" v-model="form.configIds[index]" required>
+            <option value="" disabled>Choose a configuration</option>
+            <option
+              v-for="c in orderedConfigurations"
+              :key="c.id"
+              :value="c.id"
+              :disabled="form.configIds.some((other, i) => i !== index && other === c.id)"
+            >
+              {{ configurationName(c) }}
+            </option>
+          </select>
+          <button
+            v-if="index >= 2"
+            type="button"
+            class="text-action"
+            :aria-label="`Remove version ${versionLetter(index)}`"
+            @click="form.configIds.splice(index, 1)"
           >
-            {{ configurationName(c) }}
-          </option>
-        </select>
-        <small>The version containing your proposed change.</small>
-      </label>
-      <div v-if="baseline && candidate" class="setup-note">
+            Remove
+          </button>
+        </div>
+        <small>{{
+          index === 0
+            ? 'The starting version you want to compare against.'
+            : index === 1
+              ? 'The version containing your proposed change.'
+              : 'Another version, ranked against the others and compared with A.'
+        }}</small>
+      </div>
+      <button
+        v-if="form.configIds.length < MAX_VERSIONS"
+        type="button"
+        class="text-action add-version"
+        @click="form.configIds.push('')"
+      >
+        + Add version {{ versionLetter(form.configIds.length) }}
+      </button>
+      <div v-for="d in differences" :key="d.letter" class="setup-note">
+        <span v-if="differences.length > 1" class="muted">{{ d.letter }} vs A</span>
         <strong>{{
-          differences.length ? 'Settings that differ' : 'Identical settings (A/A control)'
+          d.differing.length ? 'Settings that differ' : 'Identical settings (A/A control)'
         }}</strong>
         <p>
           {{
-            differences.length
-              ? differences.join(' · ')
+            d.differing.length
+              ? d.differing.join(' · ')
               : 'These versions use the same settings. This comparison measures run-to-run variation.'
           }}
         </p>
@@ -304,13 +327,17 @@ async function create() {
     <section class="card setup-review" aria-label="Experiment review">
       <h2><span class="setup-step">5</span> Review your experiment</h2>
       <div class="setup-review-grid">
-        <div>
-          <span class="muted">A · Starting version</span
-          ><strong>{{ baseline ? configurationName(baseline) : 'Choose a baseline' }}</strong>
-        </div>
-        <div>
-          <span class="muted">B · Proposed version</span
-          ><strong>{{ candidate ? configurationName(candidate) : 'Choose a candidate' }}</strong>
+        <div v-for="(configId, index) in form.configIds" :key="index">
+          <span class="muted"
+            >{{ versionLetter(index) }} ·
+            {{ index === 0 ? 'Starting version' : 'Proposed version' }}</span
+          ><strong>{{
+            config(configId)
+              ? configurationName(config(configId))
+              : index === 0
+                ? 'Choose a baseline'
+                : 'Choose a candidate'
+          }}</strong>
         </div>
         <div>
           <span class="muted">Customer</span
@@ -321,8 +348,8 @@ async function create() {
       </div>
       <div class="summary">
         <div>
-          <strong>{{ runCount }}</strong> runs ({{ selected.size }} tasks × 2 configurations ×
-          {{ form.repetitions }})
+          <strong>{{ runCount }}</strong> runs ({{ selected.size }} tasks ×
+          {{ form.configIds.length }} versions × {{ form.repetitions }})
         </div>
         <div class="muted">
           Estimated spend:
@@ -361,6 +388,18 @@ async function create() {
 </template>
 
 <style scoped>
+.version-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.version-row select {
+  flex: 1;
+}
+.add-version {
+  align-self: flex-start;
+  margin-bottom: 12px;
+}
 .lead {
   border: none;
   padding: 0;
