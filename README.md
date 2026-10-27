@@ -156,16 +156,17 @@ The integration/browser harnesses use test executors rather than real agent perf
 
 ## Repository map
 
-| Location                | Contents                                                             |
-| ----------------------- | -------------------------------------------------------------------- |
-| `apps/web/`             | Vue interface for setup, comparisons, and evidence review            |
-| `apps/api/`             | NestJS API, experiment queue, Hermes runner, grading, and analysis   |
-| `packages/crm/`         | Mock CRM/calendar tools exposed through MCP (Model Context Protocol) |
-| `packages/shared/`      | Shared schemas, types, and comparison/cost contracts                 |
-| `suites/clinic/`        | Development scenarios and frozen evaluation suite                    |
-| `skills/clinic-policy/` | Clinic policy skill available to agent configurations                |
-| `prompts/`              | Saved candidate instruction sets                                     |
-| `docs/experiments/`     | Experiment protocols, reports, and verification evidence             |
-| `docs/calibration/`     | Grader calibration results                                           |
+| Location                | Contents                                                                          |
+| ----------------------- | --------------------------------------------------------------------------------- |
+| `apps/web/`             | Vue interface for setup, comparisons, and evidence review                         |
+| `apps/api/`             | NestJS API, experiment queue, Hermes runner, grading, and analysis                |
+| `packages/crm/`         | Mock CRM/calendar tools exposed through MCP (Model Context Protocol)              |
+| `packages/shared/`      | Shared schemas, types, and comparison/cost contracts                              |
+| `suites/clinic/`        | Development scenarios and frozen evaluation suite                                 |
+| `skills/clinic-policy/` | Clinic policy skill available to agent configurations                             |
+| `prompts/`              | Saved candidate instruction sets                                                  |
+| `docs/wiki/`            | [Project wiki](docs/wiki/Home.md): setup, architecture, scoring, API and glossary |
+| `docs/experiments/`     | Experiment protocols, reports, and verification evidence                          |
+| `docs/calibration/`     | Grader calibration results                                                        |
 
 For the current implementation history and remaining review questions, see [docs/HANDOFF.md](docs/HANDOFF.md).
