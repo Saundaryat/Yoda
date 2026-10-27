@@ -259,12 +259,10 @@ async function create() {
         + Add version {{ versionLetter(form.configIds.length) }}
       </button>
       <div v-for="d in differences" :key="d.letter" class="setup-note">
-        <strong
-          >{{ d.letter }} vs A:
-          {{
-            d.differing.length ? 'settings that differ' : 'identical settings (A/A control)'
-          }}</strong
-        >
+        <span v-if="differences.length > 1" class="muted">{{ d.letter }} vs A</span>
+        <strong>{{
+          d.differing.length ? 'Settings that differ' : 'Identical settings (A/A control)'
+        }}</strong>
         <p>
           {{
             d.differing.length

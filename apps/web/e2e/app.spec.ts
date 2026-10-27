@@ -451,7 +451,12 @@ test('a new experiment is a draft until it is started', async ({ page }) => {
   await page.getByLabel(/A — baseline/).selectOption({ label: 'Baseline' });
   await page.getByLabel(/B — candidate/).selectOption({ label: 'Baseline + clinic skill' });
   await page.getByLabel('Hypothesis').fill('Policy access improves escalation.');
-  await expect(page.getByText(/runs \(\d+ tasks × 2 configurations × 3\)/)).toBeVisible();
+  await expect(page.getByText(/runs \(\d+ tasks × 2 versions × 3\)/)).toBeVisible();
+  await page.getByRole('button', { name: '+ Add version C' }).click();
+  await expect(page.getByText(/runs \(\d+ tasks × 3 versions × 3\)/)).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Create experiment' })).toBeDisabled();
+  await page.getByRole('button', { name: 'Remove version C' }).click();
+  await expect(page.getByText(/runs \(\d+ tasks × 2 versions × 3\)/)).toBeVisible();
   await page.getByRole('button', { name: 'Create experiment' }).click();
   await expect(page.getByText('This experiment has not started.')).toBeVisible();
   await expect(page.getByRole('button', { name: /Start \d+ runs/ })).toBeVisible();
